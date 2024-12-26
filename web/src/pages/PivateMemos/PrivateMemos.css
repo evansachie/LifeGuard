@@ -1,0 +1,290 @@
+.private-memos {
+    padding: 20px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+.private-memos h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.memo-input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.memo-input {
+    width: 100%;
+    height: 200px;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    resize: none;
+    font-size: 16px;
+    background-color: #fff;
+    color: #212529;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.save-memo-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    align-self: flex-end;
+    margin-top: 10px;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 14px;
+}
+
+.save-memo-button:hover {
+    background-color: #0056b3;
+}
+
+.saved-memos-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    max-height: calc(100% - 280px);
+    padding-right: 10px;
+}
+
+.saved-memos-list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.saved-memo {
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    word-wrap: break-word;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.done-memo-button,
+.undone-memo-button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 14px;
+    color: #fff;
+}
+
+.done-memo-button {
+    background-color: #007bff;
+}
+
+.done-memo-button:hover {
+    background-color: #0056b3;
+}
+
+.undone-memo-button {
+    background-color: #6c757d;
+}
+
+.undone-memo-button:hover {
+    background-color: #5a6268;
+}
+
+.dark-mode .done-memo-button {
+    background-color: #007bff;
+}
+
+.dark-mode .done-memo-button:hover {
+    background-color: #0056b3;
+}
+
+.dark-mode .undone-memo-button {
+    background-color: #6c757d;
+}
+
+.dark-mode .undone-memo-button:hover {
+    background-color: #5a6268;
+}
+
+
+.memo-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.edit-memo-button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    background-color: #28a745;
+    color: #fff;
+    font-size: 14px;
+}
+
+.edit-memo-button:hover {
+    background-color: #1e7e34;
+}
+
+.delete-memo-button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    background-color: #dc3545;
+    color: #fff;
+    font-size: 14px;
+}
+
+.delete-memo-button:hover {
+    background-color: #c82333;
+}
+
+.edit-memo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.edit-memo-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    resize: none;
+    font-size: 16px;
+    background-color: #fff;
+    color: #212529;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+}
+
+.edit-memo-actions {
+    display: flex;
+    gap: 10px;
+    align-self: flex-end;
+}
+
+.save-edit-button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    background-color: #28a745;
+    color: #fff;
+    font-size: 14px;
+}
+
+.save-edit-button:hover {
+    background-color: #1e7e34;
+}
+
+.cancel-edit-button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    background-color: #6c757d;
+    color: #fff;
+    font-size: 14px;
+}
+
+.cancel-edit-button:hover {
+    background-color: #5a6268;
+}
+
+.dark-mode {
+    background-color: #212529;
+    color: #fff;
+}
+
+.dark-mode .memo-input {
+    background-color: #343a40;
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .save-memo-button,
+.dark-mode .edit-memo-button,
+.dark-mode .save-edit-button {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.dark-mode .save-memo-button:hover,
+.dark-mode .edit-memo-button:hover,
+.dark-mode .save-edit-button:hover {
+    background-color: #1e7e34;
+}
+
+.dark-mode .delete-memo-button:hover {
+    background-color: #c82333;
+}
+
+.dark-mode .cancel-edit-button {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+.dark-mode .cancel-edit-button:hover {
+    background-color: #5a6268;
+}
+
+.dark-mode .saved-memo {
+    background-color: #343a40;
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+    .private-memos {
+        padding: 10px;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .memo-input-container {
+        margin-bottom: 10px;
+    }
+
+    .memo-input {
+        height: 150px;
+    }
+
+    .saved-memos-container {
+        max-height: none;
+        flex-grow: 1;
+    }
+
+    .saved-memo {
+        padding: 10px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .memo-actions {
+        margin-top: 10px;
+    }
+
+    .edit-memo-input {
+        font-size: 14px;
+    }
+}

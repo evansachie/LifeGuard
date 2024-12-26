@@ -1,0 +1,152 @@
+.dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: 'Roboto', sans-serif;
+}
+
+.dashboard-header {
+    margin-bottom: 2rem;
+}
+
+.dashboard-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.date {
+    font-size: 1rem;
+    color: #666;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.dashboard-card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+}
+
+.dashboard-card h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.dashboard-card h2 svg {
+    margin-right: 0.5rem;
+}
+
+.hydration-meter {
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    height: 10px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.hydration-level {
+    background-color: #4169e1;
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.reminders-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0 0 1rem 0;
+}
+
+.reminders-list li {
+    margin-bottom: 0.5rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.reminders-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: #4169e1;
+}
+
+.reminders-list li.done {
+    text-decoration: line-through;
+    color: #888;
+}
+
+.quote-text {
+    font-style: italic;
+    margin-bottom: 0.5rem;
+}
+
+.quote-author {
+    text-align: right;
+    font-weight: 600;
+}
+
+.card-link {
+    display: inline-block;
+    margin-top: 1rem;
+    color: #4169e1;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.card-link:hover {
+    color: #1e40af;
+}
+
+.dark-mode {
+    background-color: #1a202c;
+    color: #e2e8f0;
+}
+
+.dark-mode .dashboard-card {
+    background-color: #2d3748;
+}
+
+.dark-mode .date {
+    color: #a0aec0;
+}
+
+.dark-mode .hydration-meter {
+    background-color: #4a5568;
+}
+
+.dark-mode .card-link {
+    color: #63b3ed;
+}
+
+.dark-mode .card-link:hover {
+    color: #90cdf4;
+}
+
+@media (max-width: 768px) {
+    .dashboard {
+        padding: 1rem;
+    }
+
+    .dashboard-header h1 {
+        font-size: 2rem;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}

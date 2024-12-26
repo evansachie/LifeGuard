@@ -1,29 +1,79 @@
 {
-  "name": "web",
+  "name": "react-tailwind-app",
+  "version": "0.1.0",
+  "engines": {
+    "npm": "10.5.0",
+    "node": "20.12.0"
+  },
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.15.13",
+    "@mui/material": "^5.15.13",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.6.8",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "firebase": "^10.12.2",
+    "firebase-admin": "^12.1.1",
+    "framer-motion": "^11.3.17",
+    "isurl": "^4.0.2",
+    "jsonwebtoken": "^9.0.2",
+    "jwt-decode": "^4.0.0",
+    "lucide-react": "^0.357.0",
+    "mdb-react-ui-kit": "^8.0.0",
+    "pg": "^8.11.5",
+    "react": "^18.2.0",
+    "react-confetti": "^6.1.0",
+    "react-dom": "^18.2.0",
+    "react-dropzone": "^14.2.3",
+    "react-icons": "^5.2.1",
+    "react-modal": "^3.16.1",
+    "react-router-dom": "^6.22.3",
+    "react-swipeable": "^7.0.1",
+    "react-toastify": "^10.0.4",
+    "react-use": "^17.5.1",
+    "uuid": "^9.0.1",
+    "uuidv4": "^6.2.13",
+    "web-vitals": "^2.1.4"
+  },
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "start": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
-  "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "devDependencies": {
-    "@eslint/js": "^9.13.0",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
-    "@vitejs/plugin-react": "^4.3.3",
-    "eslint": "^9.13.0",
-    "eslint-plugin-react-hooks": "^5.0.0",
-    "eslint-plugin-react-refresh": "^0.4.14",
-    "globals": "^15.11.0",
-    "typescript": "~5.6.2",
-    "typescript-eslint": "^8.11.0",
-    "vite": "^5.4.10"
-  }
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "postcss-import": "^16.1.0",
+    "postcss-nesting": "^12.1.5",
+    "tailwindcss": "^3.4.4",
+    "vite": "^5.3.1"
+  },
+  "proxy": "http://localhost:5001"
 }

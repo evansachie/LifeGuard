@@ -1,0 +1,106 @@
+.coming-soon-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.coming-soon-container.light-mode {
+    background-color: #ffffff;
+    color: #333333;
+}
+
+.coming-soon-container.dark-mode {
+    background-color: #333333;
+    color: #ffffff;
+}
+
+.coming-soon-content {
+    text-align: center;
+    max-width: 600px;
+    padding: 20px;
+}
+
+.coming-soon-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.coming-soon-content p {
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+}
+
+.countdown {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.countdown-item {
+    margin: 0 20px;
+}
+
+.countdown-value {
+    font-size: 2rem;
+    font-weight: bold;
+    display: block;
+}
+
+.countdown-label {
+    font-size: 1rem;
+    text-transform: uppercase;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.3s ease;
+}
+
+.back-link:hover {
+    color: #007bff;
+}
+
+.back-link i {
+    margin-right: 5px;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.countdown-value {
+    animation: pulse 2s infinite;
+}
+
+/* Responsive styles */
+@media (max-width: 600px) {
+    .coming-soon-content h1 {
+        font-size: 2rem;
+    }
+
+    .coming-soon-content p {
+        font-size: 1rem;
+    }
+
+    .countdown-value {
+        font-size: 1.5rem;
+    }
+
+    .countdown-label {
+        font-size: 0.8rem;
+    }
+}

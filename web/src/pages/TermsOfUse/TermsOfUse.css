@@ -1,0 +1,142 @@
+.terms-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.terms-container.light-mode {
+    background-color: #ffffff;
+    color: #333333;
+}
+
+.terms-container.dark-mode {
+    background-color: #333333;
+    color: #ffffff;
+}
+
+.terms-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.back-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.3s ease;
+}
+
+.back-link:hover {
+    color: #007bff;
+}
+
+.back-link i {
+    margin-right: 5px;
+}
+
+.terms-content {
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.terms-container.dark-mode .terms-content {
+    background-color: #4a4a4a;
+    color: #ffffff;
+}
+
+.terms-content h2 {
+    margin-top: 20px;
+}
+
+.link {
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.link:hover {
+    color: #0056b3;
+}
+
+.terms-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.accept-btn {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: background-color 0.3s ease;
+    animation: pulse 2s infinite;
+}
+
+.accept-btn.accepted {
+    background-color: #2e7d32;
+    animation: none;
+}
+
+.decline-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.decline-btn:hover {
+    background-color: #c62828;
+}
+
+/* Responsive styles */
+@media (max-width: 600px) {
+    .terms-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .terms-header h1 {
+        margin-top: 10px;
+    }
+
+    .terms-actions {
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    .accept-btn {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}
+
+/* Animations */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}

@@ -1,0 +1,442 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+:root {
+    --primary-color: #6772e5;
+    --secondary-color: #333;
+    --text-color: #555;
+    --light-bg-color: #f8f8f8;
+    --dark-bg-color: #1c1c1c;
+    --light-card-color: #fff;
+    --dark-card-color: #2d2d2d;
+    --light-text-color: #333;
+    --dark-text-color: #f5f5f5;
+    --success-color: #28a745;
+    --error-color: #dc3545;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.profile-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 60px 20px;
+    background-color: var(--light-bg-color);
+    transition: background-color 0.3s ease;
+}
+
+.dark-mode .profile-container {
+    background-color: var(--dark-bg-color);
+}
+
+.profile-card {
+    max-width: 800px;
+    width: 100%;
+    background-color: var(--light-card-color);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark-mode .profile-card {
+    background-color: var(--dark-card-color);
+    color: var(--dark-text-color);
+}
+
+.profile-header {
+    text-align: center;
+    padding: 30px;
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.profile-header h1 {
+    font-size: 36px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.profile-content {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    padding: 30px;
+}
+
+.profile-info,
+.profile-settings {
+    flex: 1;
+    background-color: var(--light-bg-color);
+    padding: 30px;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+}
+
+.dark-mode .profile-info,
+.dark-mode .profile-settings {
+    background-color: var(--dark-card-color);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.profile-info h2,
+.profile-settings h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--secondary-color);
+    margin-bottom: 20px;
+    transition: color 0.3s ease;
+}
+
+.dark-mode .profile-info h2,
+.dark-mode .profile-settings h2 {
+    color: var(--dark-text-color);
+}
+
+.profile-info p {
+    font-size: 16px;
+    color: var(--text-color);
+    margin-bottom: 10px;
+    transition: color 0.3s ease;
+}
+
+.dark-mode .profile-info p {
+    color: var(--dark-text-color);
+}
+
+.profile-info input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    color: var(--text-color);
+    transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+.dark-mode .profile-info input {
+    background-color: var(--dark-card-color);
+    border-color: #5d5d5d;
+    color: var(--dark-text-color);
+}
+
+.profile-info .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.profile-info .form-actions button {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.profile-info .form-actions .save-button {
+    background-color: var(--success-color);
+    color: #fff;
+}
+
+.profile-info .form-actions .save-button:hover {
+    background-color: #218838;
+}
+
+.profile-info .form-actions .cancel-button {
+    background-color: var(--error-color);
+    color: #fff;
+}
+
+.profile-info .form-actions .cancel-button:hover {
+    background-color: #c82333;
+}
+
+.profile-settings button {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-bottom: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.profile-settings button:hover {
+    background-color: #555;
+}
+
+.dark-mode .profile-settings button:hover {
+    background-color: #803d00;
+}
+
+.profile-info .edit-button {
+    display: flex;
+    align-items: center;
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.profile-info .edit-button:hover {
+    background-color: #555;
+}
+
+.dark-mode .profile-info .edit-button:hover {
+    background-color: #803d00;
+}
+
+.upload-modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--light-card-color);
+    padding: 20px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 100%;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark-mode .upload-modal {
+    background-color: var(--dark-card-color);
+    color: var(--dark-text-color);
+}
+
+.upload-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.modal-actions button {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.modal-actions .upload-button {
+    background-color: var(--success-color);
+    color: #fff;
+}
+
+.modal-actions .upload-button:hover {
+    background-color: #218838;
+}
+
+.modal-actions .cancel-button {
+    background-color: var(--error-color);
+    color: #fff;
+}
+
+.modal-actions .cancel-button:hover {
+    background-color: #c82333;
+}
+
+.loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+}
+
+.spinner {
+    border: 4px solid var(--primary-color);
+    border-top-color: transparent;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.profile-info label {
+    color: var(--text-color);
+    transition: color 0.3s ease;
+}
+
+.dark-mode .profile-info label {
+    color: var(--dark-text-color);
+}
+
+@media (max-width: 768px) {
+    .profile-content {
+        flex-direction: column;
+        gap: 30px;
+        padding: 20px;
+    }
+
+    .profile-info,
+    .profile-settings {
+        padding: 20px;
+    }
+}
+
+.profile-picture-container {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.user-profile-picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-form {
+    background-color: var(--light-bg-color);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+}
+
+.dark-mode .profile-form {
+    background-color: var(--dark-card-color);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: var(--secondary-color);
+}
+
+.dark-mode .form-group label {
+    color: var(--dark-text-color);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.dark-mode .form-group input {
+    background-color: var(--dark-bg-color);
+    border-color: #4a5568;
+    color: var(--dark-text-color);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.save-button,
+.cancel-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.save-button {
+    background-color: var(--success-color);
+    color: #fff;
+}
+
+.save-button:hover {
+    background-color: #218838;
+}
+
+.cancel-button {
+    background-color: var(--error-color);
+    color: #fff;
+}
+
+.cancel-button:hover {
+    background-color: #c82333;
+}
+
+.edit-button {
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.edit-button:hover {
+    background-color: #0056b3;
+}

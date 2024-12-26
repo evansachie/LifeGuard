@@ -1,3 +1,35 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+
+    & h2 {
+      font-size: 1.5rem;
+    }
+
+    & p {
+      font-size: 1rem;
+    }
+
+    & .banner {
+      @apply container w-full h-28 items-center content-center flex flex-row rounded-3xl overflow-hidden;
+    }
+
+    & {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    & code {
+      font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+      monospace;
+    }
+  }
+}
