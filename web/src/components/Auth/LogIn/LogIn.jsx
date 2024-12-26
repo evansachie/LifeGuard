@@ -62,7 +62,7 @@ export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
             </div>
             <div className="login-form-container">
                 <div className="login-form-card">
-                    <img src="/images/logo-no-bkgd.png" alt="lhp logo" className="logo" />
+                    <img src="/images/lifeguard-2.svg" alt="lhp logo" className="logo" />
                     <h2 className="login-heading">Welcome Back</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">

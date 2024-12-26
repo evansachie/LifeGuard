@@ -88,7 +88,7 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
             </div>
             <div className="signup-form-container">
                 <div className="signup-form-card">
-                    <img src="/images/logo-no-bkgd.png" alt="lhp logo" className="logo" />
+                    <img src="/images/lifeguard-2.svg" alt="lhp logo" className="logo" />
                     <h2 className="signup-heading">Join our Community</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
