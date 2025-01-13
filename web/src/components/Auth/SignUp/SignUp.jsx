@@ -89,7 +89,7 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
             <div className="signup-form-container">
                 <div className="signup-form-card">
                     <img src="/images/lifeguard-2.svg" alt="lhp logo" className="logo" />
-                    <h2 className="signup-heading">Join our Community</h2>
+                    <h2 className="signup-heading">Efficiently Track your Health and Environment</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
                             <div className="input-icon-wrapper">
@@ -103,7 +103,7 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
                                     placeholder=" "
                                     required
                                 />
-                                <label htmlFor="userName">Username</label>
+                                <label htmlFor="userName">Full Name</label>
                             </div>
                             {errors.userName && <span className="error">{errors.userName}</span>}
                         </div>
