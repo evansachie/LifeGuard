@@ -3,6 +3,10 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FaRunning } from 'react-icons/fa';
 import axios from 'axios';
 import { FaHome, FaStickyNote, FaCarrot, FaWater, FaDumbbell, FaCog, FaQuestionCircle, FaSignOutAlt, FaMoon, FaSun, FaBars, FaTimes, FaBurn } from 'react-icons/fa';
+import { TbReportAnalytics } from "react-icons/tb";
+import { IoIosChatboxes } from "react-icons/io";
+import { FaUserDoctor } from "react-icons/fa6";
+import { FaMap } from "react-icons/fa";
 import DefaultUser from '../../assets/lifeguard/user.png';
 import './Sidebar.css';
 
@@ -83,16 +87,18 @@ function Sidebar({ toggleTheme, isDarkMode }) {
     const navItems = [
         { path: '/dashboard', icon: <FaHome />, label: 'Dashboard' },
         { path: '/sticky-notes', icon: <FaStickyNote />, label: 'Sticky Notes' },
-        {
-            label: 'Activity Level',
-            icon: <FaRunning />,
-            subItems: [
-                { path: '/calories', icon: <FaBurn />, label: 'Calories' },
-                { path: '/food', icon: <FaCarrot />, label: 'Food' },
-            ],
-        },
-        { path: '/hydration', icon: <FaWater />, label: 'Hydration' },
-        { path: '/activities', icon: <FaDumbbell />, label: 'Activities' },
+        // {
+        //     label: 'Activity Level',
+        //     icon: <FaRunning />,
+        //     subItems: [
+        //         { path: '/calories', icon: <FaBurn />, label: 'Calories' },
+        //         { path: '/food', icon: <FaCarrot />, label: 'Food' },
+        //     ],
+        // },
+        { path: '/health-report', icon: <TbReportAnalytics />, label: 'Health Report' },
+        { path: '/chat', icon: <IoIosChatboxes />, label: 'Online Chat' },
+        { path: '/doctors', icon: <FaUserDoctor />, label: 'Finding Doctors' },
+        { path: '/pollution-tracker', icon: <FaMap />, label: 'Pollution Tracker' },
         { path: '/settings', icon: <FaCog />, label: 'Settings' },
         { path: '/help', icon: <FaQuestionCircle />, label: 'Help' },
     ];
