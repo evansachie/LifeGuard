@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FaRunning } from 'react-icons/fa';
 import axios from 'axios';
 import { FaHome, FaStickyNote, FaCarrot, FaWater, FaDumbbell, FaCog, FaQuestionCircle, FaSignOutAlt, FaMoon, FaSun, FaBars, FaTimes, FaBurn } from 'react-icons/fa';
-import DefaultUser from '../../assets/user.png';
+import DefaultUser from '../../assets/lifeguard/user.png';
 import './Sidebar.css';
 
 function Sidebar({ toggleTheme, isDarkMode }) {
