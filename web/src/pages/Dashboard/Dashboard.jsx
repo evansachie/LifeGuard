@@ -3,7 +3,9 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import './Dashboard.css';
 import HealthTracker from '../../components/HealthTracker/HealthTracker';
-import { FaWater, FaStickyNote, FaChartLine, FaBell } from 'react-icons/fa';
+import { FaStickyNote, FaChartLine, FaTemperatureHigh, FaWind } from 'react-icons/fa';
+import { IoFootstepsOutline } from "react-icons/io5";
+import { WiHumidity } from "react-icons/wi";
 
 function Dashboard({ isDarkMode }) {
     const [hydrationLevel, setHydrationLevel] = useState(1);
@@ -83,18 +85,14 @@ function Dashboard({ isDarkMode }) {
     return (
         <div className={`dashboard ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
             <header className="dashboard-header">
-                <h1>Welcome back, {username}!</h1>
+                <h1>Welcome to your Health Dashboard, {username}!</h1>
                 <p className="date">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
             </header>
 
             <div className="dashboard-grid">
                 <div className="dashboard-card hydration-card">
-                    <h2><FaWater /> Hydration</h2>
-                    <div className="hydration-meter">
-                        <div className="hydration-level" style={{width: `${(hydrationLevel / 5) * 100}%`}}></div>
-                    </div>
-                    <p>{hydrationLevelToOunces(hydrationLevel)} oz / {isAthletic ? 140 : 120} oz drank</p>
-                    <Link to="/hydration" className="card-link">Track Hydration</Link>
+                    <h2><FaTemperatureHigh /> Temperature</h2>
+                    <Link to="/temperature" className="card-link">Track Temperature</Link>
                 </div>
 
                 <div className="dashboard-card reminders-card">
@@ -117,6 +115,24 @@ function Dashboard({ isDarkMode }) {
                     <br/>
                     {quote && quote.author ? `– ${quote.author}` : ''}
                 </div>
+            </div>
+
+            <div className='dashboard-grid'>
+                <div className="dashboard-card hydration-card">
+                        <h2><IoFootstepsOutline /> Activities / Step Counter</h2>
+                        <Link to="/steps" className="card-link">Track Steps</Link>
+                </div>
+
+                <div className="dashboard-card hydration-card">
+                        <h2><WiHumidity /> Humidity</h2>
+                        <Link to="/temperature" className="card-link">Track Humidity</Link>
+                </div>
+
+                <div className="dashboard-card hydration-card">
+                        <h2><FaWind /> Atmospheric Pressure</h2>
+                        <Link to="/temperature" className="card-link">Track Atmospheric Pressure</Link>
+                </div>
+                
             </div>
 
             <HealthTracker isDarkMode={isDarkMode} />
