@@ -32,7 +32,7 @@ export default function Screen2() {
         
         <Pressable 
           style={styles.nextButton}
-          onPress={() => router.replace("/(tabs)")}
+          onPress={() => router.replace("/(auth)/welcome" as any)}
         >
           <Text style={styles.nextButtonText}>→</Text>
         </Pressable>
