@@ -16,10 +16,10 @@ The LifeGuard project is organized into the following folders:
 
 - `hardware/`: Contains the PCB design, enclosure files, and other hardware-related assets.
 - `firmware/`: Houses the Arduino/C++ code for the Nicla Sense ME board.
-- `mobile-app/`: Holds the source code for the React Native mobile application.
-- `web-dashboard/`: Contains the React-based web application for data visualization and device management.
+- `mobile/`: Holds the source code for the React Native mobile application.
+- `web/`: Contains the React-based web application for data visualization and device management.
 - `backend/`: Includes the code for the backend services, either in .NET or Firebase.
-- `docs/`: Stores the project documentation, research papers, and other supporting files.
+- `docs/`: Stores the project documentation, thesis, research papers, and other supporting files.
 
 ## Getting Started
 1. Clone the repository: `git clone https://github.com/AWESOME04/LifeGuard.git`
