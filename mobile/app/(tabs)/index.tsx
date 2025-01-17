@@ -26,11 +26,7 @@ export default function HomeScreen() {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.greeting}>
-          <Image 
-            source={require('@/assets/footsteps-in.svg')}
-            style={styles.waveIcon}
-          />
-          <Text style={styles.greetingText}>Hi {userName}!</Text>
+          <Text style={styles.greetingText}>👋 Hi {userName}!</Text>
         </View>
         <Pressable onPress={() => {}}>
           <Image 
@@ -44,8 +40,8 @@ export default function HomeScreen() {
       <View style={styles.menuGrid}>
         <MenuItem 
           title="Health Report"
-          icon={require('@/assets/health-report.svg')}
-          onPress={() => {}}
+          icon={require('../../assets/health-report.svg')}
+          onPress={() => router.push("/health-report")}
         />
         <MenuItem 
           title="Online Chat"
