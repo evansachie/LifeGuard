@@ -41,12 +41,12 @@ export default function HomeScreen() {
         <MenuItem 
           title="Health Report"
           icon={require('../../assets/health-report.svg')}
-          onPress={() => router.push("/health-report")}
+          onPress={() => router.push("/(screens)/health-report")}
         />
         <MenuItem 
           title="Online Chat"
-          icon={require('@/assets/online-chat.svg')}
-          onPress={() => {}}
+          icon={require('../../assets/online-chat.svg')}
+          onPress={() => router.push("/(screens)/chat")}
         />
         <MenuItem 
           title="Finding Doctors"

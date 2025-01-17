@@ -12,6 +12,9 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
+        tabBarActiveTintColor: '#5D3FD3',
+        tabBarInactiveTintColor: '#A9A9A9',
+        tabBarShowLabel: false,
         headerShown: false,
         tabBarStyle: {
           backgroundColor: '#FFFFFF',
@@ -20,21 +23,14 @@ export default function TabLayout() {
           height: 60,
           paddingBottom: 8,
         },
-        tabBarActiveTintColor: '#5D3FD3',
-        tabBarInactiveTintColor: '#A9A9A9',
       }}>
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ focused }) => (
-            <Image
+          tabBarIcon: ({ focused, color }) => (
+            <Image 
               source={require('../../assets/home-nav.svg')}
-              style={{
-                width: 24,
-                height: 24,
-                tintColor: focused ? '#5D3FD3' : '#A9A9A9'
-              }}
+              style={{ width: 24, height: 24, tintColor: color }}
             />
           ),
         }}
@@ -42,15 +38,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="insights"
         options={{
-          title: 'Insights',
-          tabBarIcon: ({ focused }) => (
-            <Image
+          tabBarIcon: ({ focused, color }) => (
+            <Image 
               source={require('../../assets/insights.svg')}
-              style={{
-                width: 24,
-                height: 24,
-                tintColor: focused ? '#5D3FD3' : '#A9A9A9'
-              }}
+              style={{ width: 24, height: 24, tintColor: color }}
             />
           ),
         }}
@@ -58,15 +49,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="notifications"
         options={{
-          title: 'Alerts',
-          tabBarIcon: ({ focused }) => (
-            <Image
+          tabBarIcon: ({ focused, color }) => (
+            <Image 
               source={require('../../assets/notifications.svg')}
-              style={{
-                width: 24,
-                height: 24,
-                tintColor: focused ? '#5D3FD3' : '#A9A9A9'
-              }}
+              style={{ width: 24, height: 24, tintColor: color }}
             />
           ),
         }}
@@ -74,15 +60,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          title: 'Settings',
-          tabBarIcon: ({ focused }) => (
-            <Image
+          tabBarIcon: ({ focused, color }) => (
+            <Image 
               source={require('../../assets/settings.svg')}
-              style={{
-                width: 24,
-                height: 24,
-                tintColor: focused ? '#5D3FD3' : '#A9A9A9'
-              }}
+              style={{ width: 24, height: 24, tintColor: color }}
             />
           ),
         }}
