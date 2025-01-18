@@ -226,6 +226,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 15,
+    marginLeft: 5,
   },
   activityIcon: {
     width: 24,
