@@ -54,7 +54,7 @@ export default function HealthcareProvidersScreen() {
       specialty: 'Emergency Cardiologist',
       rating: 4.7,
       distance: '800m away',
-      image: require('../../assets/doctor1.jpg'),
+      image: require('../../assets/doctor1.svg'),
       isEmergencyProvider: true,
     },
     {
@@ -62,7 +62,7 @@ export default function HealthcareProvidersScreen() {
       specialty: 'Remote Health Specialist',
       rating: 4.7,
       distance: '800m away',
-      image: require('../../assets/doctor2.jpg'),
+      image: require('../../assets/doctor2.svg'),
       isEmergencyProvider: true,
     },
     {
@@ -70,7 +70,7 @@ export default function HealthcareProvidersScreen() {
       specialty: 'Emergency Care',
       rating: 4.7,
       distance: '800m away',
-      image: require('../../assets/doctor3.jpg'),
+      image: require('../../assets/doctor3.svg'),
       isEmergencyProvider: true,
     },
     {
@@ -78,14 +78,14 @@ export default function HealthcareProvidersScreen() {
       specialty: 'Remote Monitoring',
       rating: 4.7,
       distance: '800m away',
-      image: require('../../assets/doctor4.jpg'),
+      image: require('../../assets/doctor4.svg'),
     },
     {
       name: 'Dr. Rishita',
       specialty: 'Preventive Care',
       rating: 4.7,
       distance: '800m away',
-      image: require('../../assets/doctor5.jpg'),
+      image: require('../../assets/doctor5.svg'),
     },
   ];
 
@@ -105,7 +105,7 @@ export default function HealthcareProvidersScreen() {
       {/* Emergency Notice */}
       <View style={styles.emergencyNotice}>
         <Image 
-          source={require('../../assets/emergency.svg')} 
+          source={require('../../assets/emergency.png')} 
           style={styles.emergencyIcon}
         />
         <Text style={styles.emergencyText}>
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   emergencyText: {
-    color: '#FFFFFF',
+    color: '#000000',
     fontSize: 12,
     fontWeight: '600',
   },
