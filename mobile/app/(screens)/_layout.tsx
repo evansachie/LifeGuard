@@ -15,6 +15,18 @@ export default function ScreensLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="healthcare-providers"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="provider-detail"
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 }
