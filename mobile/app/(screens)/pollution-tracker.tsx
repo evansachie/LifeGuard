@@ -1,9 +1,8 @@
 import { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import Map, { Marker, NavigationControl } from 'react-map-gl';
 import * as Location from 'expo-location';
-import Constants from 'expo-constants';
 import { PollutionZone, LegendItem } from '../../types/pollution';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -57,9 +56,6 @@ const legendItems: LegendItem[] = [
 
 const Legend = () => (
   <View style={styles.legendContainer}>
-    <View style={styles.legendHeader}>
-      <Text style={styles.legendTitle}>KEY / LEGEND</Text>
-    </View>
     {legendItems.map((item, index) => (
       <View key={index} style={styles.legendItem}>
         <View style={[styles.legendColor, { backgroundColor: item.color }]} />
@@ -111,15 +107,6 @@ export default function PollutionTrackerScreen() {
     <View style={styles.container}>
       <StatusBar style="dark" />
       
-      {/* Header */}
-      <View style={styles.header}>
-        <Image 
-          source={require('../../assets/pollution.svg')}
-          style={styles.mapIcon}
-        />
-        <Text style={styles.headerTitle}>Pollution Tracker</Text>
-      </View>
-
       {/* Map */}
       <View style={styles.mapContainer}>
         <Map
@@ -132,25 +119,28 @@ export default function PollutionTrackerScreen() {
           <NavigationControl position="top-right" />
           
           {/* Pollution Zone Markers */}
-          {pollutionZones.map((zone) => (
-            <Marker
-              key={zone.id}
-              longitude={zone.coordinates.longitude}
-              latitude={zone.coordinates.latitude}
-            >
-              <View 
-                style={[
-                  styles.pollutionMarker,
-                  {
-                    backgroundColor: `${getPollutionColor(zone.level)}50`,
-                    borderColor: getPollutionColor(zone.level),
-                    width: zone.radius / 50,
-                    height: zone.radius / 50,
-                  }
-                ]} 
-              />
-            </Marker>
-          ))}
+          {pollutionZones.map((zone) => {
+            const size = Math.max(40, zone.radius / 15); // Increased minimum size and adjusted scale
+            return (
+              <Marker
+                key={zone.id}
+                longitude={zone.coordinates.longitude}
+                latitude={zone.coordinates.latitude}
+              >
+                <View 
+                  style={[
+                    styles.pollutionMarker,
+                    {
+                      backgroundColor: `${getPollutionColor(zone.level)}80`,
+                      borderColor: getPollutionColor(zone.level),
+                      width: size,
+                      height: size,
+                    }
+                  ]} 
+                />
+              </Marker>
+            );
+          })}
 
           {/* Current Location */}
           {location && (
@@ -175,26 +165,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 60,
-    paddingBottom: 20,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
-  },
-  mapIcon: {
-    width: 24,
-    height: 24,
-    marginRight: 10,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-  },
   mapContainer: {
     flex: 1,
     position: 'relative',
@@ -218,14 +188,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-  },
-  legendHeader: {
-    marginBottom: 10,
-  },
-  legendTitle: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#333',
   },
   legendItem: {
     flexDirection: 'row',
