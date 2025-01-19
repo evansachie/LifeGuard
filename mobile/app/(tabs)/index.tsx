@@ -56,7 +56,7 @@ export default function HomeScreen() {
         <MenuItem 
           title="Pollution Tracker"
           icon={require('@/assets/pollution-tracker.svg')}
-          onPress={() => router.push("/(tabs)/pollution-tracker")}
+          onPress={() => router.push("/(screens)/pollution-tracker")}
         />
       </View>
     </ScrollView>
