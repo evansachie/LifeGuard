@@ -20,6 +20,11 @@ export default function ScreensLayout() {
         headerStyle: {
           backgroundColor: '#FFFFFF',
         },
+        headerTitleStyle: {
+          color: '#333',
+          fontSize: 18,
+          fontWeight: '600',
+        },
       }}
     >
       <Stack.Screen
@@ -51,6 +56,24 @@ export default function ScreensLayout() {
         options={{
           headerTitle: () => <PollutionTrackerHeader />,
           headerShown: true,
+        }}
+      />
+      <Stack.Screen
+        name="account"
+        options={{
+          title: "Account",
+        }}
+      />
+      <Stack.Screen
+        name="notification-settings"
+        options={{
+          title: "Notifications",
+        }}
+      />
+      <Stack.Screen
+        name="privacy"
+        options={{
+          title: "Privacy Policy",
         }}
       />
     </Stack>
