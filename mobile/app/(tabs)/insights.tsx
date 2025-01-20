@@ -30,7 +30,7 @@ export default function InsightsScreen() {
       title: 'Temperature',
       value: '29.9',
       unit: '°C',
-      icon: require('../../assets/temp-in.svg'),
+      icon: require('../../assets/temp-icon.svg'),
     },
     {
       title: 'Activities',
