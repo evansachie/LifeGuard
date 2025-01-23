@@ -4,11 +4,6 @@ import './PollutionTracker.css';
 import { FaMapMarkerAlt, FaInfoCircle } from 'react-icons/fa';
 import mapboxgl from 'mapbox-gl';
 
-// Mapbox worker setup for Vite
-mapboxgl.workerClass = await import('mapbox-gl/dist/mapbox-gl-csp-worker').then(
-  (m) => m.default
-);
-
 const MAPBOX_API_KEY = import.meta.env.VITE_MAPBOX_API_KEY;
 
 const INITIAL_VIEW_STATE = {
@@ -114,6 +109,14 @@ export default function PollutionTracker({ isDarkMode }) {
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
   const [selectedZone, setSelectedZone] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
+
+  useEffect(() => {
+    import('mapbox-gl/dist/mapbox-gl-csp-worker').then(
+      (workerModule) => {
+        mapboxgl.workerClass = workerModule.default;
+      }
+    );
+  }, []);
 
   useEffect(() => {
     if ('geolocation' in navigator) {

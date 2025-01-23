@@ -16,6 +16,9 @@ export default defineConfig({
     },
     extensions: ['.js', '.jsx', '.json']
   },
+  build: {
+    target: ['es2022']  // Set a more modern target that supports top-level await
+  },
   server: {
     port: 3000
   }
