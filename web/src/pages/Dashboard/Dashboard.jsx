@@ -14,12 +14,12 @@ function Dashboard({ isDarkMode }) {
     const [quote, setQuote] = useState(null);
     const [username, setUsername] = useState('');
 
-    // useEffect(() => {
-    //     fetchHydrationData();
-    //     fetchQuoteData();
-    //     fetchSavedMemos();
-    //     fetchUserDetails();
-    // }, []);
+    useEffect(() => {
+        // fetchHydrationData();
+        fetchQuoteData();
+        // fetchSavedMemos();
+        // fetchUserDetails();
+    }, []);
 
     const fetchHydrationData = async () => {
         try {
@@ -53,13 +53,12 @@ function Dashboard({ isDarkMode }) {
 
     const fetchQuoteData = async () => {
         try {
-            const response = await axios.get('https://api.quotable.io/random');
-            const quoteData = response.data;
-            const cleanedQuote = {
-                text: quoteData.content,
-                author: quoteData.author,
-            };
-            setQuote(cleanedQuote);
+            const response = await axios.get('https://api.allorigins.win/raw?url=https://zenquotes.io/api/random');
+            const quoteData = response.data[0];
+            setQuote({
+                quote: quoteData.q,
+                author: quoteData.a
+            });
         } catch (error) {
             console.error('Error fetching quote data:', error);
         }
@@ -111,9 +110,9 @@ function Dashboard({ isDarkMode }) {
 
                 <div className="dashboard-card quote-card">
                     <h2><FaChartLine /> Daily Inspiration</h2>
-                    {quote ? `"${quote.text}"` : 'Loading quote...'}
+                    {quote ? `"${quote.quote}"` : 'Loading quote...'}
                     <br/>
-                    {quote && quote.author ? `– ${quote.author}` : ''}
+                    {quote && `– ${quote.author}`}
                 </div>
             </div>
 
