@@ -20,7 +20,6 @@ import Help from './pages/Help/Help';
 import TermsOfUse from './pages/TermsOfUse/TermsOfUse';
 import PrivacyPolicy from './pages/PrivacyPolicy/PrivacyPolicy';
 import Analytics from './pages/Analytics/Analytics';
-import useTokenRefresh from './hooks/useTokenRefresh';
 
 import './App.css';
 
@@ -34,8 +33,6 @@ function App() {
     const handleAuthSuccess = () => {
     };
 
-    const token = useTokenRefresh();
-
     return (
         <Router>
             <Routes>
@@ -48,7 +45,7 @@ function App() {
                             <Sidebar toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
                             <div className="content-container">
                                 <Routes>
-                                    <Route path="dashboard" element={token ? <Dashboard token={token} isDarkMode={isDarkMode} /> : <Navigate to="/" />} />
+                                    <Route path="/dashboard" element={<Dashboard isDarkMode={isDarkMode} />} />
                                     <Route path="/sticky-notes" element={<PrivateMemos isDarkMode={isDarkMode} />} />
                                     <Route path="/calories" element={<Calories isDarkMode={isDarkMode} />} />
                                     <Route path="/food" element={<Food isDarkMode={isDarkMode} />} />
