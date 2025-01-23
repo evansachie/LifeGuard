@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { FaRunning } from 'react-icons/fa';
 import axios from 'axios';
-import { FaHome, FaStickyNote, FaCarrot, FaWater, FaDumbbell, FaCog, FaQuestionCircle, FaSignOutAlt, FaMoon, FaSun, FaBars, FaTimes, FaBurn } from 'react-icons/fa';
+import { FaHome, FaStickyNote,FaCog, FaQuestionCircle, FaSignOutAlt, FaMoon, FaSun, FaBars, FaTimes, FaBurn } from 'react-icons/fa';
+import { MdHealthAndSafety } from "react-icons/md";
+import { IoMdFitness } from "react-icons/io";
 import { TbReportAnalytics } from "react-icons/tb";
-import { IoIosChatboxes } from "react-icons/io";
-import { FaUserDoctor } from "react-icons/fa6";
+import { MdContactEmergency } from "react-icons/md";
+
 import { FaMap } from "react-icons/fa";
 import DefaultUser from '../../assets/lifeguard/user.png';
 import './Sidebar.css';
@@ -33,9 +34,9 @@ function Sidebar({ toggleTheme, isDarkMode }) {
         setIsMobileMenuOpen(false);
     }, [location.pathname]);
 
-    useEffect(() => {
-        fetchUserDetails();
-    }, []);
+    // useEffect(() => {
+    //     fetchUserDetails();
+    // }, []);
 
     const handleClickOutside = (event) => {
         if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
@@ -87,27 +88,32 @@ function Sidebar({ toggleTheme, isDarkMode }) {
     const navItems = [
         { path: '/dashboard', icon: <FaHome />, label: 'Dashboard' },
         { path: '/sticky-notes', icon: <FaStickyNote />, label: 'Sticky Notes' },
-        // {
-        //     label: 'Activity Level',
-        //     icon: <FaRunning />,
-        //     subItems: [
-        //         { path: '/calories', icon: <FaBurn />, label: 'Calories' },
-        //         { path: '/food', icon: <FaCarrot />, label: 'Food' },
-        //     ],
-        // },
         { path: '/health-report', icon: <TbReportAnalytics />, label: 'Health Report' },
-        { path: '/chat', icon: <IoIosChatboxes />, label: 'Online Chat' },
-        { path: '/doctors', icon: <FaUserDoctor />, label: 'Finding Doctors' },
         { path: '/pollution-tracker', icon: <FaMap />, label: 'Pollution Tracker' },
+        { path: '/health-tips', icon: <MdHealthAndSafety />, label: 'Health Tips' },
+        { path: '/exercise-routines', icon: <IoMdFitness />, label: 'Exercise Routines' },
+        { path: '/emergency-contacts', icon: <MdContactEmergency />, label: 'Emergency Contacts' },
         { path: '/settings', icon: <FaCog />, label: 'Settings' },
         { path: '/help', icon: <FaQuestionCircle />, label: 'Help' },
     ];
 
     const renderProfileMenu = () => (
         <div ref={profileMenuRef} className="profile-menu">
-            <button className="profile-menu-item" onMouseDown={() => handleProfileMenuItemClick('/profile')}>Edit Profile</button>
-            <button className="profile-menu-item" onMouseDown={() => handleProfileMenuItemClick('/settings')}>Settings</button>
-            <button className="profile-menu-item logout" onMouseDown={() => handleProfileMenuItemClick('logout')}>Log Out</button>
+            <button 
+                className="profile-menu-item" 
+                onMouseDown={() => handleProfileMenuItemClick('/profile')}>
+                Edit Profile
+            </button>
+            <button 
+                className="profile-menu-item" 
+                onMouseDown={() => handleProfileMenuItemClick('/settings')}>
+                Settings
+            </button>
+            <button 
+                className="profile-menu-item logout" 
+                onMouseDown={() => handleProfileMenuItemClick('logout')}>
+                Log Out
+            </button>
         </div>
     );
 

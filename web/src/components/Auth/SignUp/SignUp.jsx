@@ -144,6 +144,9 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
                         </button>
                     </form>
                     <p className="already">Already have an account? <Link to="/log-in" className="link">Log In</Link></p>
+                    <Link to='/dashboard'>
+                        <button>Test</button>
+                    </Link>
                 </div>
             </div>
         </div>

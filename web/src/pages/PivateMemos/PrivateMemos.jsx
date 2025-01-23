@@ -11,185 +11,185 @@ const PrivateMemos = ({ isDarkMode }) => {
     const navigate = useNavigate();
     const [doneMemos, setDoneMemos] = useState([]);
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            navigate('/log-in');
-            return;
-        }
+    // useEffect(() => {
+    //     const token = localStorage.getItem('token');
+    //     if (!token) {
+    //         navigate('/log-in');
+    //         return;
+    //     }
 
-        const fetchMemos = async () => {
-            try {
-                const response = await fetch('https://lighthouse-portal.onrender.com/api/memos', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                    },
-                });
-                if (response.ok) {
-                    const memos = await response.json();
-                    setSavedMemos(memos);
-                } else {
-                    setError('Error fetching memos. Please try again later.');
-                }
-            } catch (error) {
-                console.error('Error fetching memos:', error);
-                setError('An error occurred while fetching memos. Please try again later.');
-            }
-        };
-        fetchMemos();
-    }, [navigate]);
+    //     const fetchMemos = async () => {
+    //         try {
+    //             const response = await fetch('https://lighthouse-portal.onrender.com/api/memos', {
+    //                 headers: {
+    //                     'Authorization': `Bearer ${token}`,
+    //                 },
+    //             });
+    //             if (response.ok) {
+    //                 const memos = await response.json();
+    //                 setSavedMemos(memos);
+    //             } else {
+    //                 setError('Error fetching memos. Please try again later.');
+    //             }
+    //         } catch (error) {
+    //             console.error('Error fetching memos:', error);
+    //             setError('An error occurred while fetching memos. Please try again later.');
+    //         }
+    //     };
+    //     fetchMemos();
+    // }, [navigate]);
 
-    const handleMemoChange = (e) => {
-        setMemo(e.target.value);
-    };
+    // const handleMemoChange = (e) => {
+    //     setMemo(e.target.value);
+    // };
 
-    const handleSaveMemo = async () => {
-        if (memo.trim() !== '') {
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    navigate('/log-in');
-                    return;
-                }
+    // const handleSaveMemo = async () => {
+    //     if (memo.trim() !== '') {
+    //         try {
+    //             const token = localStorage.getItem('token');
+    //             if (!token) {
+    //                 navigate('/log-in');
+    //                 return;
+    //             }
 
-                // Fetch the user's email from the server
-                const userResponse = await fetch('https://lighthouse-portal.onrender.com/api/users', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                    },
-                });
+    //             // Fetch the user's email from the server
+    //             const userResponse = await fetch('https://lighthouse-portal.onrender.com/api/users', {
+    //                 headers: {
+    //                     'Authorization': `Bearer ${token}`,
+    //                 },
+    //             });
 
-                if (userResponse.ok) {
-                    const { email } = await userResponse.json();
-                    const response = await fetch('https://lighthouse-portal.onrender.com/api/memos', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`,
-                        },
-                        body: JSON.stringify({ email, memo }),
-                    });
+    //             if (userResponse.ok) {
+    //                 const { email } = await userResponse.json();
+    //                 const response = await fetch('https://lighthouse-portal.onrender.com/api/memos', {
+    //                     method: 'POST',
+    //                     headers: {
+    //                         'Content-Type': 'application/json',
+    //                         'Authorization': `Bearer ${token}`,
+    //                     },
+    //                     body: JSON.stringify({ email, memo }),
+    //                 });
 
-                    if (response.ok) {
-                        const newMemo = await response.json();
-                        console.log('New memo saved:', newMemo);
-                        setSavedMemos([...savedMemos, newMemo]);
-                        // Reset the memo input field after a successful save
-                        setMemo('');
-                    } else {
-                        console.error('Error saving memo:', response.status);
-                    }
-                } else {
-                    console.error('Error fetching user email:', userResponse.status);
-                }
-            } catch (error) {
-                console.error('Error saving memo:', error);
-            }
-        }
-    };
+    //                 if (response.ok) {
+    //                     const newMemo = await response.json();
+    //                     console.log('New memo saved:', newMemo);
+    //                     setSavedMemos([...savedMemos, newMemo]);
+    //                     // Reset the memo input field after a successful save
+    //                     setMemo('');
+    //                 } else {
+    //                     console.error('Error saving memo:', response.status);
+    //                 }
+    //             } else {
+    //                 console.error('Error fetching user email:', userResponse.status);
+    //             }
+    //         } catch (error) {
+    //             console.error('Error saving memo:', error);
+    //         }
+    //     }
+    // };
 
-    const handleDeleteMemo = async (id) => {
-        try {
-            const token = localStorage.getItem('token');
-            await fetch(`https://lighthouse-portal.onrender.com/api/memos/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-            });
-            setSavedMemos(savedMemos.filter((m) => m.id !== id));
-        } catch (error) {
-            console.error('Error deleting memo:', error);
-        }
-    };
+    // const handleDeleteMemo = async (id) => {
+    //     try {
+    //         const token = localStorage.getItem('token');
+    //         await fetch(`https://lighthouse-portal.onrender.com/api/memos/${id}`, {
+    //             method: 'DELETE',
+    //             headers: {
+    //                 'Authorization': `Bearer ${token}`,
+    //             },
+    //         });
+    //         setSavedMemos(savedMemos.filter((m) => m.id !== id));
+    //     } catch (error) {
+    //         console.error('Error deleting memo:', error);
+    //     }
+    // };
 
-    const handleEditMemo = (id) => {
-        setEditingMemoId(id);
-    };
+    // const handleEditMemo = (id) => {
+    //     setEditingMemoId(id);
+    // };
 
-    const handleCancelEdit = () => {
-        setEditingMemoId(null);
-        setMemo(''); // Clear the memo input when canceling edit
-    };
+    // const handleCancelEdit = () => {
+    //     setEditingMemoId(null);
+    //     setMemo(''); // Clear the memo input when canceling edit
+    // };
 
-    const handleDoneChange = async (id, done) => {
-        try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                navigate('/log-in');
-                return;
-            }
+    // const handleDoneChange = async (id, done) => {
+    //     try {
+    //         const token = localStorage.getItem('token');
+    //         if (!token) {
+    //             navigate('/log-in');
+    //             return;
+    //         }
 
-            const response = await fetch(`https://lighthouse-portal.onrender.com/api/memos/${id}/done`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify({ done }),
-            });
+    //         const response = await fetch(`https://lighthouse-portal.onrender.com/api/memos/${id}/done`, {
+    //             method: 'PUT',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 'Authorization': `Bearer ${token}`,
+    //             },
+    //             body: JSON.stringify({ done }),
+    //         });
 
-            if (response.ok) {
-                const updatedMemo = await response.json();
-                setSavedMemos(
-                    savedMemos.map((m) => (m.id === id ? updatedMemo : m))
-                );
-            } else {
-                const errorData = await response.json();
-                console.error('Error updating memo done state:', errorData.error);
-                setError(`Error updating memo done state: ${errorData.error}`);
-            }
-        } catch (error) {
-            console.error('Error updating memo done state:', error);
-            setError('An error occurred while updating the memo done state. Please try again later.');
-        }
-    };
+    //         if (response.ok) {
+    //             const updatedMemo = await response.json();
+    //             setSavedMemos(
+    //                 savedMemos.map((m) => (m.id === id ? updatedMemo : m))
+    //             );
+    //         } else {
+    //             const errorData = await response.json();
+    //             console.error('Error updating memo done state:', errorData.error);
+    //             setError(`Error updating memo done state: ${errorData.error}`);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error updating memo done state:', error);
+    //         setError('An error occurred while updating the memo done state. Please try again later.');
+    //     }
+    // };
 
-    const handleDoneMemo = (id) => {
-        handleDoneChange(id, true);
-    };
+    // const handleDoneMemo = (id) => {
+    //     handleDoneChange(id, true);
+    // };
 
-    const handleUndoneMemo = (id) => {
-        handleDoneChange(id, false);
-    };
+    // const handleUndoneMemo = (id) => {
+    //     handleDoneChange(id, false);
+    // };
 
-    const handleUpdateMemo = async (id, event) => {
-        const updatedMemo = event.target.parentElement.parentElement.querySelector('.edit-memo-input').value;
+    // const handleUpdateMemo = async (id, event) => {
+    //     const updatedMemo = event.target.parentElement.parentElement.querySelector('.edit-memo-input').value;
 
-        try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                navigate('/log-in'); // Redirect to the login page if the user is not logged in
-                return;
-            }
+    //     try {
+    //         const token = localStorage.getItem('token');
+    //         if (!token) {
+    //             navigate('/log-in'); // Redirect to the login page if the user is not logged in
+    //             return;
+    //         }
 
-            const response = await fetch(`https://lighthouse-portal.onrender.com/api/memos/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify({ memo: updatedMemo }),
-            });
+    //         const response = await fetch(`https://lighthouse-portal.onrender.com/api/memos/${id}`, {
+    //             method: 'PUT',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 'Authorization': `Bearer ${token}`,
+    //             },
+    //             body: JSON.stringify({ memo: updatedMemo }),
+    //         });
 
-            if (response.ok) {
-                const updatedMemoData = await response.json();
+    //         if (response.ok) {
+    //             const updatedMemoData = await response.json();
 
-                setSavedMemos(
-                    savedMemos.map((m) => (m.id === id ? updatedMemoData : m))
-                );
+    //             setSavedMemos(
+    //                 savedMemos.map((m) => (m.id === id ? updatedMemoData : m))
+    //             );
 
-                setEditingMemoId(null);
-            } else {
-                const errorData = await response.json();
-                console.error('Error updating memo:', errorData.error);
-                setError(`Error updating memo: ${errorData.error}`);
-            }
-        } catch (error) {
-            console.error('Error updating memo:', error);
-            setError('An error occurred while updating the memo. Please try again later.');
-        }
-    };
+    //             setEditingMemoId(null);
+    //         } else {
+    //             const errorData = await response.json();
+    //             console.error('Error updating memo:', errorData.error);
+    //             setError(`Error updating memo: ${errorData.error}`);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error updating memo:', error);
+    //         setError('An error occurred while updating the memo. Please try again later.');
+    //     }
+    // };
 
     return (
         <div className={`private-memos ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
@@ -198,18 +198,18 @@ const PrivateMemos = ({ isDarkMode }) => {
                 <textarea
                     className={`memo-input ${isDarkMode ? 'dark-mode' : 'light-mode'}`}
                     value={memo}
-                    onChange={handleMemoChange}
+                    // onChange={handleMemoChange}
                     placeholder="Write your private memo..."
                 />
                 <button
                     className={`save-memo-button ${isDarkMode ? 'dark-mode' : 'light-mode'}`}
-                    onClick={handleSaveMemo}
+                    // onClick={handleSaveMemo}
                 >
-                    Save Memo
+                    Save Note
                 </button>
             </div>
             <div className="saved-memos-container">
-                <h3>Saved Memos</h3>
+                <h3>Saved Notes</h3>
                 <div className="saved-memos-list">
                     {savedMemos.map(({id, memo, done}) => (
                         <div key={id} className={`saved-memo ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>

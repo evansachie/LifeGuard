@@ -1,34 +1,42 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import './HealthTracker.css';
-import { FaBurn, FaWater} from 'react-icons/fa';
-import { MdDirectionsRun } from "react-icons/md";
+import { WiDust } from "react-icons/wi";
+import { FaLungs, FaHeartbeat } from 'react-icons/fa';
+import { MdAir } from "react-icons/md";
 
 function HealthTracker({ isDarkMode }) {
     return (
         <div className={`health-tracker ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
-            <h2 className="health-tracker-heading">Health Tracker</h2>
+            <h2 className="health-tracker-heading">Health Impact Monitor</h2>
             <div className="health-tracker-grid">
-                <Link to="/calories" className="health-tracker-card">
+                <Link to="/respiratory" className="health-tracker-card">
                     <div className="health-tracker-icon">
-                        <FaBurn />
+                        <FaLungs />
                     </div>
-                    <h3>Calories</h3>
-                    <p>Track your daily calorie intake</p>
+                    <h3>Respiratory Health</h3>
+                    <p>Monitor impact on breathing</p>
                 </Link>
-                <Link to="/hydration" className="health-tracker-card">
+                <Link to="/air-quality-history" className="health-tracker-card">
                     <div className="health-tracker-icon">
-                        <FaWater />
+                        <MdAir />
                     </div>
-                    <h3>Hydration</h3>
-                    <p>Monitor your water consumption</p>
+                    <h3>Air Quality History</h3>
+                    <p>Track air quality patterns</p>
                 </Link>
-                <Link to="/activities" className="health-tracker-card">
+                <Link to="/pollutant-exposure" className="health-tracker-card">
                     <div className="health-tracker-icon">
-                        <MdDirectionsRun />
+                        <WiDust />
                     </div>
-                    <h3>Activities</h3>
-                    <p>Effective exercises for overall wellness</p>
+                    <h3>Pollutant Exposure</h3>
+                    <p>Daily exposure levels</p>
+                </Link>
+                <Link to="/health-recommendations" className="health-tracker-card">
+                    <div className="health-tracker-icon">
+                        <FaHeartbeat />
+                    </div>
+                    <h3>Health Tips</h3>
+                    <p>Personalized health recommendations</p>
                 </Link>
             </div>
         </div>

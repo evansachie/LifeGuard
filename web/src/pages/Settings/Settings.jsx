@@ -16,11 +16,11 @@ const SettingsPage = () => {
     const [unit, setUnit] = useState('Metric');
     const navigate = useNavigate();
     
-    useEffect(() => {
-        fetchUserUsername();
-        fetchUserEmail();
-        fetchUserSettings();
-    }, []);
+    // useEffect(() => {
+    //     fetchUserUsername();
+    //     fetchUserEmail();
+    //     fetchUserSettings();
+    // }, []);
 
     const fetchUserSettings = async () => {
         try {
