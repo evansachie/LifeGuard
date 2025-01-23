@@ -205,11 +205,11 @@ const PrivateMemos = ({ isDarkMode }) => {
                     className={`save-memo-button ${isDarkMode ? 'dark-mode' : 'light-mode'}`}
                     // onClick={handleSaveMemo}
                 >
-                    Save Memo
+                    Save Note
                 </button>
             </div>
             <div className="saved-memos-container">
-                <h3>Saved Memos</h3>
+                <h3>Saved Notes</h3>
                 <div className="saved-memos-list">
                     {savedMemos.map(({id, memo, done}) => (
                         <div key={id} className={`saved-memo ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
