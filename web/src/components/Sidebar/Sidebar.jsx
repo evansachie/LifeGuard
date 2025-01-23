@@ -96,11 +96,11 @@ function Sidebar({ toggleTheme, isDarkMode }) {
         //     ],
         // },
         { path: '/health-report', icon: <TbReportAnalytics />, label: 'Health Report' },
-        { path: '/chat', icon: <IoIosChatboxes />, label: 'Online Chat' },
-        { path: '/doctors', icon: <FaUserDoctor />, label: 'Finding Doctors' },
+        // { path: '/chat', icon: <IoIosChatboxes />, label: 'Online Chat' },
+        // { path: '/doctors', icon: <FaUserDoctor />, label: 'Finding Doctors' },
         { path: '/pollution-tracker', icon: <FaMap />, label: 'Pollution Tracker' },
         { path: '/settings', icon: <FaCog />, label: 'Settings' },
-        { path: '/help', icon: <FaQuestionCircle />, label: 'Help' },
+        { path: '/help', icon: <FaQuestionCircle />, label: 'Help & Tips' },
     ];
 
     const renderProfileMenu = () => (

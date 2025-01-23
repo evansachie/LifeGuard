@@ -7,13 +7,6 @@ import SignUp from "./components/Auth/SignUp/SignUp";
 import Sidebar from './components/Sidebar/Sidebar';
 import Dashboard from './pages/Dashboard/Dashboard'
 import PrivateMemos from './pages/PivateMemos/PrivateMemos';
-import Calories from './pages/Calories/Calories';
-import Food from './pages/Food/Food';
-import Hydration from './pages/Hydration/Hydration';
-import Exercise from './pages/Exercise/Exercise';
-import MentalExercise from "./components/MentalExercise/MentalExercise";
-import PhysicalExercise from "./components/PhysicalExercise/PhysicalExercise";
-import EmotionalExercise from "./components/EmotionalExercise/EmotionalExercise"
 import HealthReport from "./pages/HealthReport/HealthReport";
 import Profile from "./pages/Profile/Profile";
 import Settings from "./pages/Settings/Settings";
@@ -48,14 +41,8 @@ function App() {
                                 <Routes>
                                     <Route path="/dashboard" element={<Dashboard isDarkMode={isDarkMode} />} />
                                     <Route path="/sticky-notes" element={<PrivateMemos isDarkMode={isDarkMode} />} />
-                                    <Route path="/calories" element={<Calories isDarkMode={isDarkMode} />} />
-                                    <Route path="/food" element={<Food isDarkMode={isDarkMode} />} />
-                                    <Route path="/hydration" element={<Hydration isDarkMode={isDarkMode} />} />
                                     <Route path="/health-report" element={<HealthReport isDarkMode={isDarkMode} />} />
-                                    <Route path="/activities" element={<Exercise isDarkMode={isDarkMode} />} />
-                                    <Route path="/mental-exercises" element={<MentalExercise isDarkMode={isDarkMode} />} />
-                                    <Route path="/physical-exercises" element={<PhysicalExercise isDarkMode={isDarkMode} />} />
-                                    <Route path="/emotional-exercises" element={<EmotionalExercise isDarkMode={isDarkMode} />} />
+
                                     <Route path="/profile" element={<Profile isDarkMode={isDarkMode} />} />
                                     <Route path="/settings" element={<Settings isDarkMode={isDarkMode} />} />
                                     <Route path="/help" element={<Help isDarkMode={isDarkMode} />} />
