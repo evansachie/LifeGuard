@@ -14,12 +14,12 @@ function Dashboard({ isDarkMode }) {
     const [quote, setQuote] = useState(null);
     const [username, setUsername] = useState('');
 
-    useEffect(() => {
-        fetchHydrationData();
-        fetchQuoteData();
-        fetchSavedMemos();
-        fetchUserDetails();
-    }, []);
+    // useEffect(() => {
+    //     fetchHydrationData();
+    //     fetchQuoteData();
+    //     fetchSavedMemos();
+    //     fetchUserDetails();
+    // }, []);
 
     const fetchHydrationData = async () => {
         try {

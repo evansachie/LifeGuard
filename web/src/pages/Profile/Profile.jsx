@@ -35,9 +35,9 @@ function Profile() {
         }
     };
 
-    useEffect(() => {
-        fetchUserDetails();
-    }, []);
+    // useEffect(() => {
+    //     fetchUserDetails();
+    // }, []);
 
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });

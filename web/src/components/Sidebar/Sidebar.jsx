@@ -33,9 +33,9 @@ function Sidebar({ toggleTheme, isDarkMode }) {
         setIsMobileMenuOpen(false);
     }, [location.pathname]);
 
-    useEffect(() => {
-        fetchUserDetails();
-    }, []);
+    // useEffect(() => {
+    //     fetchUserDetails();
+    // }, []);
 
     const handleClickOutside = (event) => {
         if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
