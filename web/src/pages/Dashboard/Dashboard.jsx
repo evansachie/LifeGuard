@@ -139,7 +139,7 @@ function Dashboard({ isDarkMode }) {
 
             <div className="dashboard-grid">
                 <div className="dashboard-card temperature-card">
-                    <h2><FaTemperatureHigh /> Temperature</h2>
+                    <h2><FaTemperatureHigh />Atmospheric Temperature</h2>
                     <div className="card-value">{pollutionData.temperature.toFixed(1)}°C</div>
                     {/* <Link to="/temperature" className="card-link">View Details</Link> */}
                 </div>
@@ -220,7 +220,7 @@ function Dashboard({ isDarkMode }) {
                 
             </div>
 
-            <div className="alerts-section">
+            <div className="dashboard-card alerts-section">
                 <h2><FaExclamationTriangle /> Recent Alerts</h2>
                 <div className="alerts-list">
                     {alerts.map(alert => (
