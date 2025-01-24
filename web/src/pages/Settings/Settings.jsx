@@ -154,24 +154,6 @@ const SettingsPage = () => {
                     </div>
                 </div>
                 <div className="mb-6">
-                    <input
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 leading-tight focus:outline-none focus:shadow-outline transition duration-300 focus:ring-2 focus:ring-indigo-500"
-                        id="campaignName"
-                        type="text"
-                        placeholder="Your Campaign Name"
-                        value={campaignName}
-                        onChange={(e) => setCampaignName(e.target.value)}
-                    />
-                </div>
-                <div className="mb-6">
-                    <input
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 leading-tight focus:outline-none focus:shadow-outline transition duration-300 focus:ring-2 focus:ring-indigo-500"
-                        type="time"
-                        value={endOfDay}
-                        onChange={(e) => setEndOfDay(e.target.value)}
-                    />
-                </div>
-                <div className="mb-6">
                     <div className="relative">
                         <select
                             className="block appearance-none w-full bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-indigo-500 transition duration-300"
@@ -214,7 +196,7 @@ const SettingsPage = () => {
                 </div>
                 <div className="mb-6 flex items-center">
                     <span className="mr-2 text-gray-700 dark:text-gray-300">Contact Support:</span>
-                    <a href="mailto:joshua@progressneverstops.com"
+                    <a href="evansachie01@gmail.com"
                        className="text-indigo-500 hover:text-indigo-600 transition duration-300">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24"
                              stroke="currentColor">
