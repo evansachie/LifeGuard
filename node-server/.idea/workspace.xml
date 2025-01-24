@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="2bfeaa64-ccbe-4356-88bd-eac7b7dbac32" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;AWESOME04&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/AWESOME04/lighthouse-portal-server.git&quot;,
+    &quot;accountId&quot;: &quot;047c3576-2e1d-4b07-af4a-2e6526c1fe79&quot;
+  }
+}</component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="2fbSlvHKHckUtp57kZnYSJc17b8" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;javascript.nodejs.core.library.configured.version&quot;: &quot;20.12.0&quot;,
+    &quot;javascript.nodejs.core.library.typings.version&quot;: &quot;20.12.13&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Snave/Downloads/lighthouse-server/lighthouse-portal-server&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\WebStorm 2023.3.6\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Snave\Downloads\lighthouse-server\lighthouse-portal-server\Routes" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-WS-241.17011.90" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2bfeaa64-ccbe-4356-88bd-eac7b7dbac32" name="Changes" comment="" />
+      <created>1714068438838</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1714068438838</updated>
+      <workItem from="1714068439974" duration="1697000" />
+      <workItem from="1714139875060" duration="2225000" />
+      <workItem from="1714221921125" duration="4538000" />
+      <workItem from="1714434019836" duration="849000" />
+      <workItem from="1714480658487" duration="434000" />
+      <workItem from="1714485158970" duration="10349000" />
+      <workItem from="1714753394583" duration="7583000" />
+      <workItem from="1714855972492" duration="4210000" />
+      <workItem from="1714937846068" duration="150000" />
+      <workItem from="1714938016276" duration="126000" />
+      <workItem from="1714998802276" duration="1749000" />
+      <workItem from="1715074131727" duration="6769000" />
+      <workItem from="1715181250934" duration="2193000" />
+      <workItem from="1715259221516" duration="8809000" />
+      <workItem from="1715461839192" duration="2463000" />
+      <workItem from="1715535452909" duration="13533000" />
+      <workItem from="1715611373985" duration="597000" />
+      <workItem from="1715674660752" duration="612000" />
+      <workItem from="1715679064372" duration="739000" />
+      <workItem from="1715682603459" duration="1924000" />
+      <workItem from="1715767447557" duration="650000" />
+      <workItem from="1715853190183" duration="4220000" />
+      <workItem from="1715953134588" duration="5950000" />
+      <workItem from="1716026318248" duration="601000" />
+      <workItem from="1716052526741" duration="4701000" />
+      <workItem from="1716137701442" duration="9755000" />
+      <workItem from="1716196767784" duration="2593000" />
+      <workItem from="1716302005546" duration="1836000" />
+      <workItem from="1716326861956" duration="2533000" />
+      <workItem from="1716383649395" duration="3902000" />
+      <workItem from="1716405282102" duration="504000" />
+      <workItem from="1716407744514" duration="7577000" />
+      <workItem from="1716573271645" duration="3625000" />
+      <workItem from="1716800916913" duration="2317000" />
+      <workItem from="1717090763962" duration="575000" />
+      <workItem from="1717868587064" duration="2073000" />
+      <workItem from="1717952354718" duration="24219000" />
+      <workItem from="1718013576159" duration="817000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+</project>
