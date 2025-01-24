@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import './HealthTracker.css';
 import { WiDust } from "react-icons/wi";
-import { FaLungs, FaHeartbeat } from 'react-icons/fa';
+import { FaBurn } from 'react-icons/fa';
 import { MdAir } from "react-icons/md";
 
 function HealthTracker({ isDarkMode }) {
@@ -10,12 +10,12 @@ function HealthTracker({ isDarkMode }) {
         <div className={`health-tracker ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
             <h2 className="health-tracker-heading">Health Impact Monitor</h2>
             <div className="health-tracker-grid">
-                <Link to="/respiratory" className="health-tracker-card">
+                <Link to="/bmr-calculator" className="health-tracker-card">
                     <div className="health-tracker-icon">
-                        <FaLungs />
+                        <FaBurn />
                     </div>
-                    <h3>Respiratory Health</h3>
-                    <p>Monitor impact on breathing</p>
+                    <h3>BMR Calculator</h3>
+                    <p>Discover your daily calorie needs and optimize your health goals.</p>
                 </Link>
                 <Link to="/air-quality-history" className="health-tracker-card">
                     <div className="health-tracker-icon">
@@ -30,13 +30,6 @@ function HealthTracker({ isDarkMode }) {
                     </div>
                     <h3>Pollutant Exposure</h3>
                     <p>Daily exposure levels</p>
-                </Link>
-                <Link to="/health-recommendations" className="health-tracker-card">
-                    <div className="health-tracker-icon">
-                        <FaHeartbeat />
-                    </div>
-                    <h3>Health Tips</h3>
-                    <p>Personalized health recommendations</p>
                 </Link>
             </div>
         </div>

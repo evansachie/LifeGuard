@@ -9,6 +9,8 @@ import Dashboard from './pages/Dashboard/Dashboard'
 import PrivateMemos from './pages/PivateMemos/PrivateMemos';
 import HealthReport from "./pages/HealthReport/HealthReport";
 import PollutionTracker from './pages/PollutionTracker/PollutionTracker';
+
+import Calories from "./pages/Calories/Calories";
 import Profile from "./pages/Profile/Profile";
 import Settings from "./pages/Settings/Settings";
 import Help from './pages/Help/Help';
@@ -43,6 +45,8 @@ function App() {
                                     <Route path="/dashboard" element={<Dashboard isDarkMode={isDarkMode} />} />
                                     <Route path="/sticky-notes" element={<PrivateMemos isDarkMode={isDarkMode} />} />
                                     <Route path="/health-report" element={<HealthReport isDarkMode={isDarkMode} />} />
+                                    <Route path="/bmr-calculator" element={<Calories isDarkMode={isDarkMode} />} />
+
                                     <Route path="/pollution-tracker" element={<PollutionTracker isDarkMode={isDarkMode} />} />
 
                                     <Route path="/profile" element={<Profile isDarkMode={isDarkMode} />} />
