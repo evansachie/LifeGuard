@@ -1,17 +1,18 @@
 import * as React from "react";
 import { useState, } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 import LogIn from "./components/Auth/LogIn/LogIn";
 import SignUp from "./components/Auth/SignUp/SignUp";
+
 import Sidebar from './components/Sidebar/Sidebar';
 import Dashboard from './pages/Dashboard/Dashboard'
 import PrivateMemos from './pages/PivateMemos/PrivateMemos';
 import HealthReport from "./pages/HealthReport/HealthReport";
 import PollutionTracker from './pages/PollutionTracker/PollutionTracker';
-
 import Calories from "./pages/Calories/Calories";
 import Profile from "./pages/Profile/Profile";
+
 import Settings from "./pages/Settings/Settings";
 import Help from './pages/Help/Help';
 import TermsOfUse from './pages/TermsOfUse/TermsOfUse';
