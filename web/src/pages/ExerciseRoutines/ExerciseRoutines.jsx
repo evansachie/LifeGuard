@@ -6,7 +6,7 @@ import { BiTargetLock } from 'react-icons/bi';
 import './ExerciseRoutines.css';
 
 // 3D Model Component
-const MODEL_URL = "https://sketchfab.com/models/8a99795ae6e8440b8a87e59ca6821b55/embed?autospin=0&autostart=1&preload=1&ui_controls=0&ui_infos=0&ui_inspector=0&ui_stop=0&ui_watermark=0&ui_help=0&transparent=0&annotations_visible=1";
+const MODEL_URL = "https://sketchfab.com/models/d32f5724fc294048888d03d215b9a1ff/embed?autospin=0&autostart=1&preload=1&ui_controls=0&ui_infos=0&ui_inspector=0&ui_stop=0&ui_watermark=0&ui_help=0&transparent=0&annotations_visible=1";
 
 const fitnessLevels = [
   { id: 'beginner', label: 'Beginner', color: '#4CAF50' },
