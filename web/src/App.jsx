@@ -1,17 +1,20 @@
 import * as React from "react";
 import { useState, } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 import LogIn from "./components/Auth/LogIn/LogIn";
 import SignUp from "./components/Auth/SignUp/SignUp";
+
 import Sidebar from './components/Sidebar/Sidebar';
 import Dashboard from './pages/Dashboard/Dashboard'
 import PrivateMemos from './pages/PivateMemos/PrivateMemos';
 import HealthReport from "./pages/HealthReport/HealthReport";
-import PollutionTracker from './pages/PollutionTracker/PollutionTracker';
 
+import PollutionTracker from './pages/PollutionTracker/PollutionTracker';
 import Calories from "./pages/Calories/Calories";
 import Profile from "./pages/Profile/Profile";
+import HealthTips from "./pages/HealthTips/HealthTips";
+
 import Settings from "./pages/Settings/Settings";
 import Help from './pages/Help/Help';
 import TermsOfUse from './pages/TermsOfUse/TermsOfUse';
@@ -48,6 +51,7 @@ function App() {
                                     <Route path="/bmr-calculator" element={<Calories isDarkMode={isDarkMode} />} />
 
                                     <Route path="/pollution-tracker" element={<PollutionTracker isDarkMode={isDarkMode} />} />
+                                    <Route path="/health-tips" element={<HealthTips isDarkMode={isDarkMode} />} />
 
                                     <Route path="/profile" element={<Profile isDarkMode={isDarkMode} />} />
                                     <Route path="/settings" element={<Settings isDarkMode={isDarkMode} />} />
