@@ -11,6 +11,8 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.13",
     "@mui/material": "^5.15.13",
+    "@react-three/drei": "^9.121.3",
+    "@react-three/fiber": "^8.17.12",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -38,6 +40,7 @@
     "react-swipeable": "^7.0.1",
     "react-toastify": "^10.0.4",
     "react-use": "^17.5.1",
+    "three": "^0.172.0",
     "uuid": "^9.0.1",
     "uuidv4": "^6.2.13",
     "web-vitals": "^2.1.4"
