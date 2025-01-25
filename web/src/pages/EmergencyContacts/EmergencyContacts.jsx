@@ -19,6 +19,34 @@ const initialContacts = [
     phone: '+1 (555) 987-6543',
     email: 'jane.smith@example.com',
     relationship: 'Friend'
+  },
+  {
+    id: 3,
+    name: 'Mark Smith',
+    phone: '+1 (555) 987-6543',
+    email: 'mark.smith@example.com',
+    relationship: 'Brother'
+  },
+  {
+    id: 4,
+    name: 'Ken Smith',
+    phone: '+1 (555) 987-6543',
+    email: 'ken.smith@example.com',
+    relationship: 'Nephew'
+  },
+  {
+    id: 5,
+    name: 'Obed Smith',
+    phone: '+1 (555) 987-6543',
+    email: 'obed.smith@example.com',
+    relationship: 'Nephew'
+  },
+  {
+    id: 6,
+    name: 'Pep Smith',
+    phone: '+1 (555) 987-6543',
+    email: 'pep.smith@example.com',
+    relationship: 'Auntie'
   }
 ];
 
