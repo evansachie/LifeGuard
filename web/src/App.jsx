@@ -14,6 +14,7 @@ import PollutionTracker from './pages/PollutionTracker/PollutionTracker';
 import Calories from "./pages/Calories/Calories";
 import Profile from "./pages/Profile/Profile";
 import HealthTips from "./pages/HealthTips/HealthTips";
+import ExerciseRoutines from "./pages/ExerciseRoutines/ExerciseRoutines";
 
 import Settings from "./pages/Settings/Settings";
 import Help from './pages/Help/Help';
@@ -52,6 +53,7 @@ function App() {
 
                                     <Route path="/pollution-tracker" element={<PollutionTracker isDarkMode={isDarkMode} />} />
                                     <Route path="/health-tips" element={<HealthTips isDarkMode={isDarkMode} />} />
+                                    <Route path="/exercise-routines" element={<ExerciseRoutines isDarkMode={isDarkMode} />} />
 
                                     <Route path="/profile" element={<Profile isDarkMode={isDarkMode} />} />
                                     <Route path="/settings" element={<Settings isDarkMode={isDarkMode} />} />
