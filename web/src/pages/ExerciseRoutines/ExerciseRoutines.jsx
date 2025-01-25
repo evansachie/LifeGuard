@@ -6,7 +6,7 @@ import { BiTargetLock } from 'react-icons/bi';
 import './ExerciseRoutines.css';
 
 // 3D Model Component
-const MODEL_URL = "https://sketchfab.com/models/8a99795ae6e8440b8a87e59ca6821b55/embed";
+const MODEL_URL = "https://sketchfab.com/models/8a99795ae6e8440b8a87e59ca6821b55/embed?autospin=0&autostart=1&preload=1&ui_controls=0&ui_infos=0&ui_inspector=0&ui_stop=0&ui_watermark=0&ui_help=0&transparent=0&annotations_visible=1";
 
 const fitnessLevels = [
   { id: 'beginner', label: 'Beginner', color: '#4CAF50' },
@@ -22,7 +22,20 @@ const workoutCategories = [
   { id: 'cooldown', label: 'Cool Down', icon: <GiMeditation /> }
 ];
 
-// Complete workout data for all levels
+const muscleGroups = {
+  'Full Body': ['deltoid', 'trapezius', 'pectoralis_major', 'biceps_brachii', 'triceps_brachii', 'latissimus_dorsi', 
+                'rectus_abdominis', 'external_oblique', 'quadriceps_femoris', 'hamstrings', 'gastrocnemius', 'gluteus_maximus'],
+  'Upper Body': ['deltoid', 'trapezius', 'pectoralis_major', 'biceps_brachii', 'triceps_brachii', 'latissimus_dorsi'],
+  'Core': ['rectus_abdominis', 'external_oblique', 'internal_oblique'],
+  'Lower Body': ['quadriceps_femoris', 'hamstrings', 'gastrocnemius', 'gluteus_maximus', 'soleus'],
+  'Back': ['trapezius', 'latissimus_dorsi', 'rhomboid_major'],
+  'Chest': ['pectoralis_major', 'pectoralis_minor'],
+  'Arms': ['biceps_brachii', 'triceps_brachii', 'deltoid'],
+  'Legs': ['quadriceps_femoris', 'hamstrings', 'gastrocnemius', 'soleus'],
+  'Shoulders': ['deltoid', 'trapezius']
+};
+
+// Workout data with YouTube videos
 const workoutData = {
   beginner: {
     warmup: [
@@ -31,8 +44,7 @@ const workoutData = {
         title: 'Dynamic Stretching',
         description: 'Full body dynamic stretches to prepare for workout',
         duration: '5 mins',
-        videoUrl: 'https://example.com/video1',
-        thumbnail: 'https://source.unsplash.com/random/800x600/?stretching',
+        videoUrl: 'https://www.youtube.com/embed/uW3-Ue07H0M',
         calories: 25,
         targetMuscles: ['Full Body']
       }
@@ -43,8 +55,7 @@ const workoutData = {
         title: 'Light Jogging',
         description: 'Easy-paced jogging to build endurance',
         duration: '10 mins',
-        videoUrl: 'https://example.com/video2',
-        thumbnail: 'https://source.unsplash.com/random/800x600/?jogging',
+        videoUrl: 'https://www.youtube.com/embed/3XbfW90grUk',
         calories: 100,
         targetMuscles: ['Legs', 'Core']
       }
@@ -52,35 +63,32 @@ const workoutData = {
     strength: [
       {
         id: 's1',
-        title: 'Bodyweight Squats',
-        description: 'Basic squats focusing on form and technique',
-        duration: '3 sets x 10 reps',
-        videoUrl: 'https://example.com/video3',
-        thumbnail: 'https://source.unsplash.com/random/800x600/?squats',
-        calories: 50,
-        targetMuscles: ['Quadriceps', 'Glutes']
+        title: 'Basic Strength Training',
+        description: 'Beginner-friendly strength training routine',
+        duration: '17 mins',
+        videoUrl: 'https://www.youtube.com/embed/WIHy-ZnSndA',
+        calories: 150,
+        targetMuscles: ['Full Body']
       }
     ],
     hiit: [
       {
         id: 'h1',
         title: 'Basic HIIT Circuit',
-        description: 'Simple high-intensity interval training for beginners',
-        duration: '15 mins',
-        videoUrl: 'https://example.com/video4',
-        thumbnail: 'https://source.unsplash.com/random/800x600/?hiit',
-        calories: 150,
+        description: 'High-intensity interval training for beginners',
+        duration: '20 mins',
+        videoUrl: 'https://www.youtube.com/embed/M0uO8X3_tEA',
+        calories: 200,
         targetMuscles: ['Full Body']
       }
     ],
     cooldown: [
       {
         id: 'cd1',
-        title: 'Static Stretching',
-        description: 'Gentle stretches to cool down and improve flexibility',
+        title: 'Cool Down Stretches',
+        description: 'Essential post-workout stretching routine',
         duration: '5 mins',
-        videoUrl: 'https://example.com/video5',
-        thumbnail: 'https://source.unsplash.com/random/800x600/?stretching',
+        videoUrl: 'https://www.youtube.com/embed/Qy3U09CnELI',
         calories: 20,
         targetMuscles: ['Full Body']
       }
@@ -89,61 +97,56 @@ const workoutData = {
   intermediate: {
     warmup: [
       {
-        id: 'w2',
-        title: 'Advanced Dynamic Warmup',
-        description: 'Comprehensive dynamic warmup routine',
-        duration: '8 mins',
-        videoUrl: 'https://example.com/video6',
-        thumbnail: 'https://source.unsplash.com/random/800x600/?workout',
-        calories: 40,
+        id: 'w1',
+        title: 'Dynamic Stretching',
+        description: 'Full body dynamic stretches to prepare for workout',
+        duration: '5 mins',
+        videoUrl: 'https://www.youtube.com/embed/uW3-Ue07H0M',
+        calories: 25,
         targetMuscles: ['Full Body']
       }
     ],
     cardio: [
       {
-        id: 'c2',
-        title: 'Interval Running',
-        description: 'Alternating between high and low intensity running',
-        duration: '20 mins',
-        videoUrl: 'https://example.com/video7',
-        thumbnail: 'https://source.unsplash.com/random/800x600/?running',
-        calories: 200,
+        id: 'c1',
+        title: 'Light Jogging',
+        description: 'Easy-paced jogging to build endurance',
+        duration: '10 mins',
+        videoUrl: 'https://www.youtube.com/embed/3XbfW90grUk',
+        calories: 100,
         targetMuscles: ['Legs', 'Core']
       }
     ],
     strength: [
       {
-        id: 's2',
-        title: 'Dumbbell Circuit',
-        description: 'Full body strength training with dumbbells',
-        duration: '4 sets x 12 reps',
-        videoUrl: 'https://example.com/video8',
-        thumbnail: 'https://source.unsplash.com/random/800x600/?dumbbell',
-        calories: 180,
-        targetMuscles: ['Upper Body', 'Core']
+        id: 's1',
+        title: 'Basic Strength Training',
+        description: 'Beginner-friendly strength training routine',
+        duration: '17 mins',
+        videoUrl: 'https://www.youtube.com/embed/WIHy-ZnSndA',
+        calories: 150,
+        targetMuscles: ['Full Body']
       }
     ],
     hiit: [
       {
-        id: 'h2',
-        title: 'Intermediate HIIT',
-        description: 'Challenging HIIT workout with compound movements',
-        duration: '25 mins',
-        videoUrl: 'https://example.com/video9',
-        thumbnail: 'https://source.unsplash.com/random/800x600/?fitness',
-        calories: 300,
+        id: 'h1',
+        title: 'Basic HIIT Circuit',
+        description: 'High-intensity interval training for beginners',
+        duration: '20 mins',
+        videoUrl: 'https://www.youtube.com/embed/M0uO8X3_tEA',
+        calories: 200,
         targetMuscles: ['Full Body']
       }
     ],
     cooldown: [
       {
-        id: 'cd2',
-        title: 'Yoga-Based Cooldown',
-        description: 'Yoga-inspired stretching and breathing exercises',
-        duration: '10 mins',
-        videoUrl: 'https://example.com/video10',
-        thumbnail: 'https://source.unsplash.com/random/800x600/?yoga',
-        calories: 30,
+        id: 'cd1',
+        title: 'Cool Down Stretches',
+        description: 'Essential post-workout stretching routine',
+        duration: '5 mins',
+        videoUrl: 'https://www.youtube.com/embed/Qy3U09CnELI',
+        calories: 20,
         targetMuscles: ['Full Body']
       }
     ]
@@ -151,65 +154,126 @@ const workoutData = {
   advanced: {
     warmup: [
       {
-        id: 'w3',
-        title: 'Elite Warmup Protocol',
-        description: 'High-intensity dynamic warmup with plyometrics',
-        duration: '12 mins',
-        videoUrl: 'https://example.com/video11',
-        thumbnail: 'https://source.unsplash.com/random/800x600/?fitness',
-        calories: 60,
+        id: 'w1',
+        title: 'Dynamic Stretching',
+        description: 'Full body dynamic stretches to prepare for workout',
+        duration: '5 mins',
+        videoUrl: 'https://www.youtube.com/embed/uW3-Ue07H0M',
+        calories: 25,
         targetMuscles: ['Full Body']
       }
     ],
     cardio: [
       {
-        id: 'c3',
-        title: 'Advanced HIIT Sprint',
-        description: 'High-intensity sprint intervals',
-        duration: '30 mins',
-        videoUrl: 'https://example.com/video12',
-        thumbnail: 'https://source.unsplash.com/random/800x600/?sprint',
-        calories: 400,
+        id: 'c1',
+        title: 'Light Jogging',
+        description: 'Easy-paced jogging to build endurance',
+        duration: '10 mins',
+        videoUrl: 'https://www.youtube.com/embed/3XbfW90grUk',
+        calories: 100,
         targetMuscles: ['Legs', 'Core']
       }
     ],
     strength: [
       {
-        id: 's3',
-        title: 'Power Lifting Circuit',
-        description: 'Heavy compound movements for strength',
-        duration: '5 sets x 5 reps',
-        videoUrl: 'https://example.com/video13',
-        thumbnail: 'https://source.unsplash.com/random/800x600/?weightlifting',
-        calories: 250,
+        id: 's1',
+        title: 'Basic Strength Training',
+        description: 'Beginner-friendly strength training routine',
+        duration: '17 mins',
+        videoUrl: 'https://www.youtube.com/embed/WIHy-ZnSndA',
+        calories: 150,
         targetMuscles: ['Full Body']
       }
     ],
     hiit: [
       {
-        id: 'h3',
-        title: 'Elite HIIT Complex',
-        description: 'Advanced HIIT with olympic lifting movements',
-        duration: '35 mins',
-        videoUrl: 'https://example.com/video14',
-        thumbnail: 'https://source.unsplash.com/random/800x600/?crossfit',
-        calories: 450,
+        id: 'h1',
+        title: 'Basic HIIT Circuit',
+        description: 'High-intensity interval training for beginners',
+        duration: '20 mins',
+        videoUrl: 'https://www.youtube.com/embed/M0uO8X3_tEA',
+        calories: 200,
         targetMuscles: ['Full Body']
       }
     ],
     cooldown: [
       {
-        id: 'cd3',
-        title: 'Recovery Protocol',
-        description: 'Advanced recovery techniques and mobility work',
-        duration: '15 mins',
-        videoUrl: 'https://example.com/video15',
-        thumbnail: 'https://source.unsplash.com/random/800x600/?mobility',
-        calories: 40,
+        id: 'cd1',
+        title: 'Cool Down Stretches',
+        description: 'Essential post-workout stretching routine',
+        duration: '5 mins',
+        videoUrl: 'https://www.youtube.com/embed/Qy3U09CnELI',
+        calories: 20,
         targetMuscles: ['Full Body']
       }
     ]
   }
+};
+
+const ModelSection = ({ activeExercise }) => {
+  useEffect(() => {
+    const iframe = document.querySelector('.model-container iframe');
+    if (!iframe || !activeExercise) return;
+
+    const targetMuscles = activeExercise.targetMuscles.flatMap(group => 
+      muscleGroups[group] || []
+    );
+
+    // Function to send message to Sketchfab
+    const highlightMuscles = () => {
+      // First reset all muscles
+      iframe.contentWindow.postMessage({
+        type: 'callMethod',
+        data: {
+          method: 'clearAnnotations'
+        }
+      }, '*');
+
+      // Then highlight target muscles
+      targetMuscles.forEach(muscle => {
+        iframe.contentWindow.postMessage({
+          type: 'callMethod',
+          data: {
+            method: 'showAnnotation',
+            args: [muscle]
+          }
+        }, '*');
+      });
+    };
+
+    // Try highlighting multiple times to ensure it works
+    const attempts = [0, 1000, 2000, 3000]; // Try at 0s, 1s, 2s, and 3s
+    attempts.forEach(delay => {
+      setTimeout(highlightMuscles, delay);
+    });
+
+    // Also try when receiving ready message
+    const handleMessage = (event) => {
+      if (event.data === 'viewerready') {
+        highlightMuscles();
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, [activeExercise]);
+
+  return (
+    <div className="model-section">
+      <div className="model-container">
+        <iframe
+          title="3D Muscle Model"
+          src={MODEL_URL}
+          allowFullScreen
+          mozallowfullscreen="true"
+          webkitallowfullscreen="true"
+        />
+      </div>
+    </div>
+  );
 };
 
 function ExerciseRoutines({ isDarkMode }) {
@@ -219,6 +283,7 @@ function ExerciseRoutines({ isDarkMode }) {
   const [activeWorkout, setActiveWorkout] = useState(null);
   const [workoutTimer, setWorkoutTimer] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [activeExercise, setActiveExercise] = useState(null);
 
   useEffect(() => {
     // Simulate API loading
@@ -258,6 +323,13 @@ function ExerciseRoutines({ isDarkMode }) {
       y: 0,
       opacity: 1
     }
+  };
+
+  const handleExerciseClick = (exercise) => {
+    setActiveExercise(exercise);
+    setActiveWorkout(exercise);
+    setWorkoutTimer(0);
+    setIsTimerRunning(true);
   };
 
   if (isLoading) {
@@ -379,14 +451,22 @@ function ExerciseRoutines({ isDarkMode }) {
                 className="exercise-card"
                 variants={itemVariants}
               >
-                <div 
-                  className="exercise-thumbnail"
-                  style={{ backgroundImage: `url(${exercise.thumbnail})` }}
-                >
+                <div className="exercise-video">
+                  {exercise.videoUrl ? (
+                    <iframe
+                      src={exercise.videoUrl}
+                      title={exercise.title}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <div className="video-placeholder">
+                      <FaPlay />
+                      <p>Video Coming Soon</p>
+                    </div>
+                  )}
                   <span className="exercise-duration">{exercise.duration}</span>
-                  <button className="play-video">
-                    <FaPlay />
-                  </button>
                 </div>
                 <div className="exercise-content">
                   <h3>{exercise.title}</h3>
@@ -405,11 +485,7 @@ function ExerciseRoutines({ isDarkMode }) {
                     {!activeWorkout && (
                       <button 
                         className="start-exercise"
-                        onClick={() => {
-                          setActiveWorkout(exercise);
-                          setWorkoutTimer(0);
-                          setIsTimerRunning(true);
-                        }}
+                        onClick={() => handleExerciseClick(exercise)}
                       >
                         Start Exercise
                       </button>
@@ -420,25 +496,7 @@ function ExerciseRoutines({ isDarkMode }) {
             ))}
           </motion.section>
         </div>
-
-        {/* 3D Model Section */}
-        <div className="model-section">
-          <div className="model-container">
-            <iframe
-              title="3D Muscle Model"
-              src={MODEL_URL}
-              frameBorder="0"
-              allowFullScreen
-              mozallowfullscreen="true"
-              webkitallowfullscreen="true"
-              allow="autoplay; fullscreen; xr-spatial-tracking"
-              xr-spatial-tracking
-              execution-while-out-of-viewport
-              execution-while-not-rendered
-              web-share
-            />
-          </div>
-        </div>
+        <ModelSection activeExercise={activeExercise} />
       </div>
     </div>
   );
