@@ -66,6 +66,7 @@ function App() {
                                     <Route path="/terms-of-use" element={<TermsOfUse isDarkMode={isDarkMode} />} />
                                     <Route path="/privacy-policy" element={<PrivacyPolicy isDarkMode={isDarkMode} />} />
                                     <Route path="/analytics" element={<Analytics isDarkMode={isDarkMode} />} />
+                                    
                                     <Route path="*" element={<NotFound isDarkMode={isDarkMode} />} />
                                 </Routes>
                             </div>
