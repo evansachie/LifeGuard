@@ -72,14 +72,20 @@ const healthTipsData = {
     {
       id: 'v1',
       title: 'Emergency First Aid Basics',
-      thumbnail: 'https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?w=400',
-      duration: '5:30'
+      videoUrl: 'https://www.youtube.com/embed/IisqrLOnqX8',
+      duration: '6:42'
     },
     {
       id: 'v2',
       title: 'Understanding Air Quality Index',
-      thumbnail: 'https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?w=400',
-      duration: '4:15'
+      videoUrl: 'https://www.youtube.com/embed/rn9eUIbqCPU',
+      duration: '1:27'
+    },
+    {
+      id: 'v3',
+      title: 'Foods to Boost Your Immune System (and Kill Viruses)',
+      videoUrl: 'https://www.youtube.com/embed/WHQnxa3vVfk',
+      duration: '9:56'
     }
   ]
 };
@@ -205,9 +211,13 @@ function HealthTips({ isDarkMode }) {
         <div className="video-grid">
           {healthTipsData.videos.map(video => (
             <div key={video.id} className="video-card">
-              <div className="video-thumbnail" style={{ backgroundImage: `url(${video.thumbnail})` }}>
-                <span className="video-duration">{video.duration}</span>
-                <FaYoutube className="play-icon" />
+              <div className="video-iframe-container">
+                <iframe
+                  src={video.videoUrl}
+                  title={video.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
               </div>
               <h4>{video.title}</h4>
             </div>
