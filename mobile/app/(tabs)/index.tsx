@@ -44,16 +44,6 @@ export default function HomeScreen() {
           onPress={() => router.push("/(screens)/health-report")}
         />
         <MenuItem 
-          title="Online Chat"
-          icon={require('../../assets/online-chat.svg')}
-          onPress={() => router.push("/(screens)/chat")}
-        />
-        <MenuItem 
-          title="Healthcare Providers"
-          icon={require('../../assets/finding-doctors.svg')}
-          onPress={() => router.push("/(screens)/healthcare-providers")}
-        />
-        <MenuItem 
           title="Pollution Tracker"
           icon={require('@/assets/pollution-tracker.svg')}
           onPress={() => router.push("/(screens)/pollution-tracker")}
