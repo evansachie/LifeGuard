@@ -28,12 +28,6 @@ export default function ScreensLayout() {
       }}
     >
       <Stack.Screen
-        name="chat"
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
         name="health-report"
         options={{
           headerShown: false,
