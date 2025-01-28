@@ -125,9 +125,10 @@ function Sidebar({ toggleTheme, isDarkMode }) {
                         <div className="profile-picture-container">
                             <img src={profilePictureUrl || DefaultUser} alt="Profile" className="profile-picture" />
                         </div>
-                        <span className="username">{username}</span>
+                        {/* <span className="username">{username}</span> */}
+                        <span className="username">Evans</span>
                     </div>
-                    <button className="theme-toggle" onClick={toggleTheme}>
+                    <button className="theme-toggle" onClick={toggleTheme}> 
                         {isDarkMode ? <FaSun /> : <FaMoon />}
                     </button>
                 </div>
