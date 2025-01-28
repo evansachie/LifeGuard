@@ -15,52 +15,68 @@ const PrivacyPolicy = ({ isDarkMode }) => {
             </div>
 
             <div className="privacy-policy-content">
-                <h2><strong>Our Commitment to Privacy</strong></h2>
-                <p>
-                    At our fitness app, we take your privacy very seriously. We are committed to protecting your personal information and ensuring that your data is handled with the utmost care and confidentiality.
-                </p>
+            <h2><strong>Our Commitment to Privacy</strong></h2>
+            <p>
+                Your privacy is important to us. This Privacy Policy outlines how we collect, use, and protect your personal information when you use our application. By using our services, you agree to the practices described in this policy.
+            </p>
 
-                <h2><strong>Information We Collect</strong></h2>
-                <p>
-                    We collect the following types of information from our users:
-                </p>
-                <ul>
-                    <li>Personal information (name, email address, etc.) provided during account registration</li>
-                    <li>Fitness and health data (activity levels, calorie intake, hydration levels, etc.) tracked through the app</li>
-                    <li>Device information (device model, operating system, etc.) for analytical purposes</li>
-                </ul>
+            <h2><strong>Information We Collect</strong></h2>
+            <p>
+                We collect the following types of information to provide and improve our services:
+            </p>
+            <ul>
+                <li><strong>Personal Information:</strong> Information you provide, such as your name, email address, and profile picture, when creating an account.</li>
+                <li><strong>Health and Activity Data:</strong> Information you input into health trackers, notes, or other features.</li>
+                <li><strong>Environmental Data:</strong> Data collected through sensors or external integrations for air quality and pollution tracking.</li>
+                <li><strong>Usage Data:</strong> Information about how you interact with our application, including pages visited, features used, and time spent on the platform.</li>
+            </ul>
 
-                <h2><strong>How We Use Your Information</strong></h2>
-                <p>
-                    The information we collect is used for the following purposes:
-                </p>
-                <ul>
-                    <li>To provide and improve our fitness app and services</li>
-                    <li>To personalize your experience and offer tailored recommendations</li>
-                    <li>To communicate with you about updates, promotions, and other relevant information</li>
-                    <li>To analyze usage data and optimize our app's performance</li>
-                </ul>
+            <h2><strong>How We Use Your Information</strong></h2>
+            <p>
+                We use your information to:
+            </p>
+            <ul>
+                <li>Provide and personalize the services you use.</li>
+                <li>Improve our application's performance and user experience.</li>
+                <li>Send important updates, notifications, or reminders.</li>
+                <li>Maintain the security of your account and data.</li>
+            </ul>
 
-                <h2><strong>Data Security</strong></h2>
-                <p>
-                    We implement industry-standard security measures to protect your personal information from unauthorized access, use, or disclosure. However, please note that no method of data transmission or storage is completely secure, and we cannot guarantee absolute security.
-                </p>
+            <h2><strong>How We Protect Your Information</strong></h2>
+            <p>
+                We implement robust security measures to protect your personal information, including encryption, secure storage, and restricted access. However, no system can be completely secure, and we encourage you to safeguard your account credentials.
+            </p>
 
-                <h2><strong>Third-Party Services</strong></h2>
-                <p>
-                    Our app may integrate with third-party services (e.g., fitness trackers, social media platforms) to enhance your experience. When using these services, their privacy policies and terms of service will apply. We encourage you to review them carefully.
-                </p>
+            <h2><strong>Sharing Your Information</strong></h2>
+            <p>
+                We do not sell or share your personal information with third parties, except in the following cases:
+            </p>
+            <ul>
+                <li>To comply with legal requirements or protect our rights.</li>
+                <li>To trusted service providers who assist in delivering our services (e.g., hosting, analytics).</li>
+            </ul>
 
-                <h2><strong>Changes to This Privacy Policy</strong></h2>
-                <p>
-                    We may update this Privacy Policy from time to time. Any changes will be posted on this page, and we encourage you to review this policy periodically.
-                </p>
+            <h2><strong>Your Choices</strong></h2>
+            <p>
+                You have control over your data. You can:
+            </p>
+            <ul>
+                <li>Access and update your account information.</li>
+                <li>Request the deletion of your personal data.</li>
+                <li>Opt-out of receiving promotional communications.</li>
+            </ul>
 
-                <h2><strong>Contact Us</strong></h2>
-                <p>
-                    If you have any questions or concerns about our Privacy Policy, please contact us at <a href="mailto:SUPPORT@PROGRESSNEVERSSTOPS.COM" className="link">SUPPORT@PROGRESSNEVERSSTOPS.COM</a>.
-                </p>
-            </div>
+            <h2><strong>Changes to This Policy</strong></h2>
+            <p>
+                We may update this Privacy Policy from time to time to reflect changes in our practices or for legal reasons. We will notify you of any significant updates through our application or via email.
+            </p>
+
+            <h2><strong>Contact Us</strong></h2>
+            <p>
+                If you have any questions or concerns about this Privacy Policy or how your information is handled, please contact us at <strong>evansachie0101@gmail.com</strong>.
+            </p>
+        </div>
+
         </div>
     );
 };
