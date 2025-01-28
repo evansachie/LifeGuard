@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { FaDumbbell, FaFire, FaHeartbeat, FaStopwatch, FaPlay, FaPause, FaRedo } from 'react-icons/fa';
 import { GiMuscleUp, GiWeightLiftingUp, GiMeditation } from 'react-icons/gi';
 import { BiTargetLock } from 'react-icons/bi';
@@ -22,13 +22,12 @@ const workoutCategories = [
   { id: 'cooldown', label: 'Cool Down', icon: <GiMeditation /> }
 ];
 
-// Update the mapping to use single primary muscle group annotations
 const categoryAnnotationMap = {
-  warmup: 7,    // Deltoid for upper body warm-up
-  cardio: 4,    // Quadriceps for cardio/running
-  strength: 9,  // Pectoralis Major for strength
-  hiit: 1,      // Gluteus Maximus for HIIT
-  cooldown: 7   // Deltoid for cool down stretches
+  warmup: 7,
+  cardio: 4,
+  strength: 9,
+  hiit: 1, 
+  cooldown: 7
 };
 
 // Workout data with YouTube videos
@@ -217,9 +216,7 @@ const ModelSection = ({ activeExercise, selectedCategory }) => {
     // Update iframe src with single annotation
     iframe.src = `${MODEL_URL}&annotation=${annotation}`;
 
-    // Function to send message to Sketchfab
     const highlightMuscles = () => {
-      // First reset all muscles
       iframe.contentWindow.postMessage({
         type: 'callMethod',
         data: {
@@ -239,13 +236,11 @@ const ModelSection = ({ activeExercise, selectedCategory }) => {
       });
     };
 
-    // Try highlighting multiple times to ensure it works
-    const attempts = [0, 1000, 2000, 3000]; // Try at 0s, 1s, 2s, and 3s
+    const attempts = [0, 1000, 2000, 3000]; 
     attempts.forEach(delay => {
       setTimeout(highlightMuscles, delay);
     });
 
-    // Also try when receiving ready message
     const handleMessage = (event) => {
       if (event.data === 'viewerready') {
         highlightMuscles();
