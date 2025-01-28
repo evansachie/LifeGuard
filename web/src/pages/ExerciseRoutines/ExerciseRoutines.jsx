@@ -22,17 +22,13 @@ const workoutCategories = [
   { id: 'cooldown', label: 'Cool Down', icon: <GiMeditation /> }
 ];
 
-const muscleGroups = {
-  'Full Body': ['deltoid', 'trapezius', 'pectoralis_major', 'biceps_brachii', 'triceps_brachii', 'latissimus_dorsi', 
-                'rectus_abdominis', 'external_oblique', 'quadriceps_femoris', 'hamstrings', 'gastrocnemius', 'gluteus_maximus'],
-  'Upper Body': ['deltoid', 'trapezius', 'pectoralis_major', 'biceps_brachii', 'triceps_brachii', 'latissimus_dorsi'],
-  'Core': ['rectus_abdominis', 'external_oblique', 'internal_oblique'],
-  'Lower Body': ['quadriceps_femoris', 'hamstrings', 'gastrocnemius', 'gluteus_maximus', 'soleus'],
-  'Back': ['trapezius', 'latissimus_dorsi', 'rhomboid_major'],
-  'Chest': ['pectoralis_major', 'pectoralis_minor'],
-  'Arms': ['biceps_brachii', 'triceps_brachii', 'deltoid'],
-  'Legs': ['quadriceps_femoris', 'hamstrings', 'gastrocnemius', 'soleus'],
-  'Shoulders': ['deltoid', 'trapezius']
+// Update the mapping to use single primary muscle group annotations
+const categoryAnnotationMap = {
+  warmup: 7,    // Deltoid for upper body warm-up
+  cardio: 4,    // Quadriceps for cardio/running
+  strength: 9,  // Pectoralis Major for strength
+  hiit: 1,      // Gluteus Maximus for HIIT
+  cooldown: 7   // Deltoid for cool down stretches
 };
 
 // Workout data with YouTube videos
@@ -88,7 +84,7 @@ const workoutData = {
         title: 'Cool Down Stretches',
         description: 'Essential post-workout stretching routine',
         duration: '5 mins',
-        videoUrl: 'https://www.youtube.com/embed/Qy3U09CnELI',
+        videoUrl: 'https://www.youtube.com/embed/3w1szPuqY8I',
         calories: 20,
         targetMuscles: ['Full Body']
       }
@@ -98,32 +94,32 @@ const workoutData = {
     warmup: [
       {
         id: 'w1',
-        title: 'Dynamic Stretching',
+        title: 'Intermediate Dynamic Stretching',
         description: 'Full body dynamic stretches to prepare for workout',
-        duration: '5 mins',
-        videoUrl: 'https://www.youtube.com/embed/uW3-Ue07H0M',
-        calories: 25,
+        duration: '17 mins',
+        videoUrl: 'https://www.youtube.com/embed/h1AxL1Qp9eA',
+        calories: 50,
         targetMuscles: ['Full Body']
       }
     ],
     cardio: [
       {
         id: 'c1',
-        title: 'Light Jogging',
-        description: 'Easy-paced jogging to build endurance',
-        duration: '10 mins',
-        videoUrl: 'https://www.youtube.com/embed/3XbfW90grUk',
-        calories: 100,
+        title: 'Intermediate Light Jogging',
+        description: 'medium-paced jogging to build endurance',
+        duration: '30 mins',
+        videoUrl: 'https://www.youtube.com/embed/c1mBu4tK90k',
+        calories: 120,
         targetMuscles: ['Legs', 'Core']
       }
     ],
     strength: [
       {
         id: 's1',
-        title: 'Basic Strength Training',
+        title: 'Intermediate Strength Training',
         description: 'Beginner-friendly strength training routine',
         duration: '17 mins',
-        videoUrl: 'https://www.youtube.com/embed/WIHy-ZnSndA',
+        videoUrl: 'https://www.youtube.com/embed/uM9iFSHUIgU',
         calories: 150,
         targetMuscles: ['Full Body']
       }
@@ -131,21 +127,21 @@ const workoutData = {
     hiit: [
       {
         id: 'h1',
-        title: 'Basic HIIT Circuit',
+        title: 'Intermediate HIIT Circuit',
         description: 'High-intensity interval training for beginners',
-        duration: '20 mins',
-        videoUrl: 'https://www.youtube.com/embed/M0uO8X3_tEA',
-        calories: 200,
+        duration: '30 mins',
+        videoUrl: 'https://www.youtube.com/embed/uearF2Iorng',
+        calories: 250,
         targetMuscles: ['Full Body']
       }
     ],
     cooldown: [
       {
         id: 'cd1',
-        title: 'Cool Down Stretches',
+        title: 'Intermediate Cool Down Stretches',
         description: 'Essential post-workout stretching routine',
-        duration: '5 mins',
-        videoUrl: 'https://www.youtube.com/embed/Qy3U09CnELI',
+        duration: '30 mins',
+        videoUrl: 'https://www.youtube.com/embed/3w1szPuqY8I',
         calories: 20,
         targetMuscles: ['Full Body']
       }
@@ -155,7 +151,7 @@ const workoutData = {
     warmup: [
       {
         id: 'w1',
-        title: 'Dynamic Stretching',
+        title: 'Intermediate Dynamic Stretching',
         description: 'Full body dynamic stretches to prepare for workout',
         duration: '5 mins',
         videoUrl: 'https://www.youtube.com/embed/uW3-Ue07H0M',
@@ -202,7 +198,7 @@ const workoutData = {
         title: 'Cool Down Stretches',
         description: 'Essential post-workout stretching routine',
         duration: '5 mins',
-        videoUrl: 'https://www.youtube.com/embed/Qy3U09CnELI',
+        videoUrl: 'https://www.youtube.com/embed/3w1szPuqY8I',
         calories: 20,
         targetMuscles: ['Full Body']
       }
@@ -210,14 +206,16 @@ const workoutData = {
   }
 };
 
-const ModelSection = ({ activeExercise }) => {
+const ModelSection = ({ activeExercise, selectedCategory }) => {
   useEffect(() => {
     const iframe = document.querySelector('.model-container iframe');
-    if (!iframe || !activeExercise) return;
+    if (!iframe || !selectedCategory) return;
 
-    const targetMuscles = activeExercise.targetMuscles.flatMap(group => 
-      muscleGroups[group] || []
-    );
+    const annotation = categoryAnnotationMap[selectedCategory];
+    console.log('Selected annotation:', annotation);
+    
+    // Update iframe src with single annotation
+    iframe.src = `${MODEL_URL}&annotation=${annotation}`;
 
     // Function to send message to Sketchfab
     const highlightMuscles = () => {
@@ -259,7 +257,7 @@ const ModelSection = ({ activeExercise }) => {
     return () => {
       window.removeEventListener('message', handleMessage);
     };
-  }, [activeExercise]);
+  }, [activeExercise, selectedCategory]);
 
   return (
     <div className="model-section">
@@ -496,7 +494,10 @@ function ExerciseRoutines({ isDarkMode }) {
             ))}
           </motion.section>
         </div>
-        <ModelSection activeExercise={activeExercise} />
+        <ModelSection 
+          activeExercise={activeExercise} 
+          selectedCategory={selectedCategory} 
+        />
       </div>
     </div>
   );
