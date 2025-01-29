@@ -1,8 +1,19 @@
+using Application.Contracts;
 using DotNetEnv;
 using Identity;
+using Identity.Features.ResendOTP;
+using Identity.Features.VerifyOTP;
 using Identity.Models;
+using Infrastructure.EmailService;
+using Infrastructure.OTPService;
+using Identity.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Reflection;
+using System.Text;
 namespace LifeGuard
 {
     public class Program
@@ -36,6 +47,36 @@ namespace LifeGuard
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<LifeGuardIdentityDbContext>().AddDefaultTokenProviders();
             builder.Services.AddControllers();
+
+
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(VerifyOTPCommand).Assembly));
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(ResendOTPCommand).Assembly));
+
+            builder.Services.AddTransient<IAuthService, AuthService>();
+            builder.Services.AddTransient<IEmailService, EmailService>();
+            builder.Services.AddTransient<IOTPService, OTPService>();
+
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(o =>
+                o.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero,
+                    ValidIssuer = jwt_issuer,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt_key))
+
+
+                });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
