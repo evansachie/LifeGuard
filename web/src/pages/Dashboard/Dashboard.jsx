@@ -133,7 +133,7 @@ function Dashboard({ isDarkMode }) {
     return (
         <div className={`dashboard ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
             <header className="dashboard-header">
-                <h1>Welcome to your LifeGuard Dashboard{username ? `, ${username}` : ''}!</h1>
+                <h1>Welcome {username ? `, ${username}` : ''}!</h1>
                 <p className="date">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
             </header>
 

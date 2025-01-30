@@ -1,15 +1,20 @@
 import * as React from "react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaUser, FaEnvelope, FaLock, FaMoon, FaSun } from "react-icons/fa";
+import { FaUser, FaEnvelope, FaLock, FaMoon, FaSun, FaPhone } from "react-icons/fa";
 import signupIllustration from '../../../assets/auth/fitness.svg';
+import signupIllustration2 from '../../../assets/auth/signupIllustration2.svg';
+import signupIllustration3 from '../../../assets/auth/signupIllustration3.svg';
 import "./SignUp.css";
+import ImageSlider from '../../ImageSlider/ImageSlider';
 
 export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
     const [formData, setFormData] = useState({
         userName: "",
         email: "",
-        password: ""
+        password: "",
+        phoneNumber: "",
+        confirmPassword: ""
     });
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
@@ -28,24 +33,38 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
         if (validateForm()) {
             setIsLoading(true);
             try {
-                const response = await fetch('https://lighthouse-portal.onrender.com/api/auth/signup', {
+                const response = await fetch('https://lifeguard-hiij.onrender.com/api/Account/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(formData),
+                    body: JSON.stringify({
+                        fullName: formData.userName,
+                        email: formData.email,
+                        password: formData.password,
+                        phoneNumber: formData.phoneNumber
+                    }),
                 });
 
                 if (response.ok) {
-                    const { token } = await response.json();
-                    localStorage.setItem('token', token);
+                    const data = await response.json();
+                    // Store userId from registration response
+                    localStorage.setItem('userId', data.userId);
                     onAuthSuccess();
                     navigate('/dashboard');
                 } else {
-                    console.error('Signup error:', response.status);
+                    const errorData = await response.json();
+                    setErrors(prev => ({
+                        ...prev,
+                        submit: errorData.message || 'Registration failed. Please try again.'
+                    }));
                 }
             } catch (error) {
                 console.error('Error signing up:', error);
+                setErrors(prev => ({
+                    ...prev,
+                    submit: 'An error occurred during registration. Please try again later.'
+                }));
             } finally {
                 setIsLoading(false);
             }
@@ -57,7 +76,7 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
         let isValid = true;
 
         if (!formData.userName.trim()) {
-            errors.userName = "Username is required";
+            errors.userName = "Full name is required";
             isValid = false;
         }
 
@@ -69,8 +88,24 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
             isValid = false;
         }
 
+        if (!formData.phoneNumber.trim()) {
+            errors.phoneNumber = "Phone number is required";
+            isValid = false;
+        } else if (formData.phoneNumber.length < 10) {
+            errors.phoneNumber = "Phone number must be at least 10 digits";
+            isValid = false;
+        }
+
         if (!formData.password.trim()) {
             errors.password = "Password is required";
+            isValid = false;
+        } else if (formData.password.length < 6) {
+            errors.password = "Password must be at least 6 characters";
+            isValid = false;
+        }
+
+        if (formData.password !== formData.confirmPassword) {
+            errors.confirmPassword = "Passwords do not match";
             isValid = false;
         }
 
@@ -78,18 +113,25 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
         return isValid;
     };
 
+    // Add images array (for now using the same image)
+    const sliderImages = [
+        signupIllustration,
+        signupIllustration2,
+        signupIllustration3
+    ];
+
     return (
         <div className={`signup-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
             <button className="theme-toggle" onClick={toggleTheme}>
                 {isDarkMode ? <FaSun /> : <FaMoon />}
             </button>
             <div className="signup-illustration">
-                <img src={signupIllustration} alt="Join our community" />
+                <ImageSlider images={sliderImages} />
             </div>
             <div className="signup-form-container">
                 <div className="signup-form-card">
                     <img src="/images/lifeguard-2.svg" alt="lhp logo" className="logo" />
-                    <h2 className="signup-heading">Efficiently Track your Health and Environment</h2>
+                    <h2 className="signup-heading">Start your journey!</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
                             <div className="input-icon-wrapper">
@@ -107,6 +149,24 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
                             </div>
                             {errors.userName && <span className="error">{errors.userName}</span>}
                         </div>
+
+                        <div className="form-group">
+                            {/* <div className="input-icon-wrapper">
+                                {!formData.phoneNumber && <FaPhone className="input-icon" />}
+                                <input
+                                    type="tel"
+                                    id="phoneNumber"
+                                    name="phoneNumber"
+                                    value={formData.phoneNumber}
+                                    onChange={handleChange}
+                                    placeholder=" "
+                                    required
+                                />
+                                <label htmlFor="phoneNumber">Phone Number</label>
+                            </div> */}
+                            {errors.phoneNumber && <span className="error">{errors.phoneNumber}</span>}
+                        </div>
+
                         <div className="form-group">
                             <div className="input-icon-wrapper">
                                 {!formData.email && <FaEnvelope className="input-icon" />}
@@ -123,6 +183,7 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
                             </div>
                             {errors.email && <span className="error">{errors.email}</span>}
                         </div>
+
                         <div className="form-group">
                             <div className="input-icon-wrapper">
                                 {!formData.password && <FaLock className="input-icon" />}
@@ -139,6 +200,26 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
                             </div>
                             {errors.password && <span className="error">{errors.password}</span>}
                         </div>
+
+                        <div className="form-group">
+                            <div className="input-icon-wrapper">
+                                {!formData.confirmPassword && <FaLock className="input-icon" />}
+                                <input
+                                    type="password"
+                                    id="confirmPassword"
+                                    name="confirmPassword"
+                                    value={formData.confirmPassword}
+                                    onChange={handleChange}
+                                    placeholder=" "
+                                    required
+                                />
+                                <label htmlFor="confirmPassword">Confirm Password</label>
+                            </div>
+                            {errors.confirmPassword && <span className="error">{errors.confirmPassword}</span>}
+                        </div>
+
+                        {errors.submit && <div className="error-message">{errors.submit}</div>}
+
                         <button type="submit" className="btn-primary" disabled={isLoading}>
                             {isLoading ? <div className="spinner"></div> : "Join Now"}
                         </button>

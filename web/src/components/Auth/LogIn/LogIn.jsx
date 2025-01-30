@@ -3,7 +3,10 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { FaEnvelope, FaLock, FaMoon, FaSun } from "react-icons/fa";
 import loginIllustration from '../../../assets/auth/login-page-2.svg';
+import loginIllustration2 from '../../../assets/auth/login-page2.svg';
+import loginIllustration3 from '../../../assets/auth/login-page3.svg';
 import "./LogIn.css";
+import ImageSlider from '../../ImageSlider/ImageSlider';
 
 export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
     const [formData, setFormData] = useState({
@@ -27,12 +30,15 @@ export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const response = await fetch('https://lighthouse-portal.onrender.com/api/auth/login', {
+            const response = await fetch('https://lifeguard-hiij.onrender.com/api/Account/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({
+                    email: formData.email,
+                    password: formData.password
+                }),
             });
 
             if (response.ok) {
@@ -42,7 +48,7 @@ export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
                 navigate('/dashboard');
             } else {
                 const errorData = await response.json();
-                setError(errorData.error || 'An error occurred while logging in. Please try again later.');
+                setError(errorData.message || 'Invalid email or password.');
             }
         } catch (error) {
             console.error('Error logging in:', error);
@@ -52,13 +58,19 @@ export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
         }
     };
 
+    const sliderImages = [
+        loginIllustration,
+        loginIllustration2,
+        loginIllustration3
+    ];
+
     return (
         <div className={`login-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
             <button className="theme-toggle" onClick={toggleTheme}>
                 {isDarkMode ? <FaSun /> : <FaMoon />}
             </button>
             <div className="login-illustration">
-                <img src={loginIllustration} alt="Welcome back" />
+                <ImageSlider images={sliderImages} />
             </div>
             <div className="login-form-container">
                 <div className="login-form-card">
