@@ -124,7 +124,6 @@ namespace Identity.Services
                 Name = request.Name,
                 UserName = request.Email,
                 EmailConfirmed = false,
-                PhoneNumber = request.PhoneNumber,
                 PasswordHash = new PasswordHasher<ApplicationUser>().HashPassword(null, request.Password)
             };
 
