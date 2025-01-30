@@ -14,6 +14,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Text;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 namespace LifeGuard
 {
     public class Program
@@ -83,17 +85,25 @@ namespace LifeGuard
 
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("myAppCors", policy =>
+                options.AddPolicy("AllowFrontend", policy =>
                 {
-
-                    policy.WithOrigins("*")
-                            .AllowAnyHeader()
-                            .AllowAnyMethod();
+                    policy
+                        .WithOrigins(
+                            "http://localhost:3000", // Development
+                            "https://lifeguard-vq69.onrender.com", // Production
+                            "https://lifeguard-vert.vercel.app" // Production
+                        )
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
 
                 });
             });
 
             var app = builder.Build();
+
+            // Enable CORS - Add this before other middleware
+            app.UseCors("AllowFrontend");
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

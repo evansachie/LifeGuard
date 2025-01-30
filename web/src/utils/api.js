@@ -6,6 +6,32 @@ export const API_ENDPOINTS = {
     FORGOT_PASSWORD: '/api/Account/forgot-password'
 };
 
+export const fetchWithAuth = async (endpoint, options = {}) => {
+    const defaultHeaders = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    };
+
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        ...options,
+        headers: {
+            ...defaultHeaders,
+            ...options.headers,
+        },
+        mode: 'cors', // Explicitly set CORS mode
+        credentials: 'omit' // Change to 'omit' since we're not using cookies yet
+    });
+
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({
+            message: 'An error occurred while processing your request'
+        }));
+        throw new Error(error.message || 'Something went wrong');
+    }
+
+    return response.json();
+};
+
 export const handleApiResponse = async (response) => {
     const data = await response.json();
     
