@@ -108,42 +108,6 @@ input:not(:placeholder-shown) + label {
     padding: 0 0.25rem;
 }
 
-.btn-primary {
-    background-color: #3E76D8;
-    border: none;
-    color: white;
-    padding: 12px 0;
-    border-radius: 25px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    width: 100%;
-    margin-top: 1rem;
-}
-
-.btn-primary:hover {
-    background-color: #2d5bb9;
-}
-
-.btn-primary:disabled {
-    background-color: #6c94e0;
-    cursor: not-allowed;
-}
-
-.btn-primary .spinner {
-    width: 20px;
-    height: 20px;
-    border: 2px solid #ffffff;
-    border-top: 2px solid transparent;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-top: -10px;
-    margin-left: -10px;
-}
-
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }

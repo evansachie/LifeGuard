@@ -5,6 +5,7 @@ import { FaUser, FaEnvelope, FaLock, FaMoon, FaSun, FaPhone } from "react-icons/
 import signupIllustration from '../../../assets/auth/fitness.svg';
 import signupIllustration2 from '../../../assets/auth/signupIllustration2.svg';
 import signupIllustration3 from '../../../assets/auth/signupIllustration3.svg';
+import Button from "../../button/button";
 import "./SignUp.css";
 import ImageSlider from '../../ImageSlider/ImageSlider';
 
@@ -113,7 +114,6 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
         return isValid;
     };
 
-    // Add images array (for now using the same image)
     const sliderImages = [
         signupIllustration,
         signupIllustration2,
@@ -220,9 +220,7 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
 
                         {errors.submit && <div className="error-message">{errors.submit}</div>}
 
-                        <button type="submit" className="btn-primary" disabled={isLoading}>
-                            {isLoading ? <div className="spinner"></div> : "Join Now"}
-                        </button>
+                        <Button text="Join Now" disabled={isLoading}/>
                     </form>
                     <p className="already">Already have an account? <Link to="/log-in" className="link">Log In</Link></p>
                 </div>
