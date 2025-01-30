@@ -2,10 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { FaHome, FaStickyNote,FaCog, FaQuestionCircle, FaSignOutAlt, FaMoon, FaSun, FaBars, FaTimes } from 'react-icons/fa';
-import { MdHealthAndSafety } from "react-icons/md";
-import { IoMdFitness } from "react-icons/io";
 import { TbReportAnalytics } from "react-icons/tb";
-import { MdContactEmergency } from "react-icons/md";
+import { MdContactEmergency, MdHealthAndSafety } from "react-icons/md";
 
 import { FaMap } from "react-icons/fa";
 import DefaultUser from '../../assets/lifeguard/user.png';
@@ -91,7 +89,6 @@ function Sidebar({ toggleTheme, isDarkMode }) {
         { path: '/health-report', icon: <TbReportAnalytics />, label: 'Health Report' },
         { path: '/pollution-tracker', icon: <FaMap />, label: 'Pollution Tracker' },
         { path: '/health-tips', icon: <MdHealthAndSafety />, label: 'Health Tips' },
-        { path: '/exercise-routines', icon: <IoMdFitness />, label: 'Exercise Routines' },
         { path: '/emergency-contacts', icon: <MdContactEmergency />, label: 'Emergency Contacts' },
         { path: '/settings', icon: <FaCog />, label: 'Settings' },
         { path: '/help', icon: <FaQuestionCircle />, label: 'Help' },

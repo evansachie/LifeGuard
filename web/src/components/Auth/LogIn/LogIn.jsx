@@ -2,11 +2,12 @@ import * as React from "react";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { FaEnvelope, FaLock, FaMoon, FaSun } from "react-icons/fa";
+import Button from "../../button/button";
 import loginIllustration from '../../../assets/auth/login-page-2.svg';
 import loginIllustration2 from '../../../assets/auth/login-page2.svg';
 import loginIllustration3 from '../../../assets/auth/login-page3.svg';
-import "./LogIn.css";
 import ImageSlider from '../../ImageSlider/ImageSlider';
+import "./LogIn.css";
 
 export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
     const [formData, setFormData] = useState({
@@ -107,9 +108,8 @@ export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
                                 <label htmlFor="password">Password</label>
                             </div>
                         </div>
-                        <button type="submit" className="btn-primary" disabled={isLoading}>
-                            {isLoading ? <div className="spinner"></div> : "Log In"}
-                        </button>
+
+                        <Button text="Log in" disabled={isLoading}/>
                     </form>
                     {error && <div className="error-message">{error}</div>}
                     <p className="already">Don't have an account? <Link to="/" className="link">Sign Up</Link></p>

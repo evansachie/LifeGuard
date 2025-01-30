@@ -3,6 +3,14 @@
     "development"
   ],
   "hints": {
-    "compat-api/html": "off"
+    "compat-api/html": "off",
+    "compat-api/css": [
+      "default",
+      {
+        "ignore": [
+          "backdrop-filter"
+        ]
+      }
+    ]
   }
 }
