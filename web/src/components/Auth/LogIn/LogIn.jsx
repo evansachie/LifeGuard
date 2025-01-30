@@ -8,6 +8,7 @@ import loginIllustration2 from '../../../assets/auth/login-page2.svg';
 import loginIllustration3 from '../../../assets/auth/login-page3.svg';
 import ImageSlider from '../../ImageSlider/ImageSlider';
 import "./LogIn.css";
+import { API_BASE_URL, API_ENDPOINTS } from '../../../utils/api';
 
 export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
     const [formData, setFormData] = useState({
@@ -31,7 +32,7 @@ export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const response = await fetch('https://lifeguard-hiij.onrender.com/api/Account/login', {
+            const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.LOGIN}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

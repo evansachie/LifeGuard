@@ -4,7 +4,7 @@ import { FaDumbbell, FaFire, FaHeartbeat, FaStopwatch, FaPlay, FaPause, FaRedo }
 import { GiMuscleUp, GiWeightLiftingUp, GiMeditation } from 'react-icons/gi';
 import { BiTargetLock } from 'react-icons/bi';
 import './ExerciseRoutines.css';
-import { workoutData } from '../../data/exercise-data';
+import { workoutData, muscleGroups } from '../../data/exercise-data';
 
 // 3D Model Component
 const MODEL_URL = import.meta.env.VITE_MODEL_URL;
@@ -150,6 +150,32 @@ function ExerciseRoutines({ isDarkMode }) {
     setWorkoutTimer(0);
     setIsTimerRunning(true);
   };
+
+  const highlightMuscles = (exercise) => {
+    // Reset all muscles to default state
+    muscleGroups.forEach(group => {
+        const element = document.getElementById(group.id);
+        if (element) {
+            element.style.fill = isDarkMode ? '#2D3748' : '#E2E8F0';
+        }
+    });
+
+    // Highlight target muscles
+    if (exercise && exercise.targetMuscles) {
+        exercise.targetMuscles.forEach(muscleId => {
+            const element = document.getElementById(muscleId);
+            if (element) {
+                element.style.fill = '#3182CE';
+            }
+        });
+    }
+  };
+
+  useEffect(() => {
+    if (activeExercise) {
+        highlightMuscles(activeExercise);
+    }
+  }, [isDarkMode, activeExercise]);
 
   if (isLoading) {
     return (
