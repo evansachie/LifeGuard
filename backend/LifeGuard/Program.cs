@@ -90,6 +90,17 @@ namespace LifeGuard
                 app.UseSwaggerUI();
             }
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("myAppCors", policy =>
+                {
+
+                    policy.WithOrigins("*")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+
+                });
+            });
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
