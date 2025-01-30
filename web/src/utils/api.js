@@ -9,10 +9,7 @@ export const API_ENDPOINTS = {
 export const fetchWithAuth = async (endpoint, options = {}) => {
     const defaultHeaders = {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Accept': 'application/json'
     };
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -21,11 +18,14 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
             ...defaultHeaders,
             ...options.headers,
         },
-        credentials: 'include', // This is important for cookies/sessions
+        mode: 'cors', // Explicitly set CORS mode
+        credentials: 'omit' // Change to 'omit' since we're not using cookies yet
     });
 
     if (!response.ok) {
-        const error = await response.json();
+        const error = await response.json().catch(() => ({
+            message: 'An error occurred while processing your request'
+        }));
         throw new Error(error.message || 'Something went wrong');
     }
 
