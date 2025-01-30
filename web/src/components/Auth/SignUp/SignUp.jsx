@@ -8,7 +8,7 @@ import signupIllustration3 from '../../../assets/auth/signupIllustration3.svg';
 import Button from "../../button/button";
 import "./SignUp.css";
 import ImageSlider from '../../ImageSlider/ImageSlider';
-import { API_BASE_URL, API_ENDPOINTS } from '../../../utils/api';
+import { API_BASE_URL, API_ENDPOINTS, fetchWithAuth } from '../../../utils/api';
 
 export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
     const [formData, setFormData] = useState({
@@ -34,35 +34,23 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
         if (validateForm()) {
             setIsLoading(true);
             try {
-                const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.REGISTER}`, {
+                const data = await fetchWithAuth(API_ENDPOINTS.REGISTER, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
                     body: JSON.stringify({
                         name: formData.name,
                         email: formData.email,
                         password: formData.password
-                    }),
+                    })
                 });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    localStorage.setItem('userId', data.userId);
-                    onAuthSuccess();
-                    navigate('/dashboard');
-                } else {
-                    const errorData = await response.json();
-                    setErrors(prev => ({
-                        ...prev,
-                        submit: errorData.message || 'Registration failed. Please try again.'
-                    }));
-                }
+                
+                localStorage.setItem('userId', data.userId);
+                onAuthSuccess();
+                navigate('/dashboard');
             } catch (error) {
                 console.error('Error signing up:', error);
                 setErrors(prev => ({
                     ...prev,
-                    submit: 'An error occurred during registration. Please try again later.'
+                    submit: error.message || 'An error occurred during registration. Please try again later.'
                 }));
             } finally {
                 setIsLoading(false);

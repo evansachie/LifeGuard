@@ -8,7 +8,7 @@ import loginIllustration2 from '../../../assets/auth/login-page2.svg';
 import loginIllustration3 from '../../../assets/auth/login-page3.svg';
 import ImageSlider from '../../ImageSlider/ImageSlider';
 import "./LogIn.css";
-import { API_BASE_URL, API_ENDPOINTS } from '../../../utils/api';
+import { API_BASE_URL, API_ENDPOINTS, fetchWithAuth } from '../../../utils/api';
 
 export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
     const [formData, setFormData] = useState({
@@ -32,29 +32,20 @@ export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.LOGIN}`, {
+            const data = await fetchWithAuth(API_ENDPOINTS.LOGIN, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify({
                     email: formData.email,
                     password: formData.password
-                }),
+                })
             });
-
-            if (response.ok) {
-                const data = await response.json();
-                localStorage.setItem('token', data.token);
-                onAuthSuccess();
-                navigate('/dashboard');
-            } else {
-                const errorData = await response.json();
-                setError(errorData.message || 'Invalid email or password.');
-            }
+            
+            localStorage.setItem('token', data.token);
+            onAuthSuccess();
+            navigate('/dashboard');
         } catch (error) {
             console.error('Error logging in:', error);
-            setError('An error occurred while logging in. Please try again later.');
+            setError(error.message || 'An error occurred while logging in. Please try again later.');
         } finally {
             setIsLoading(false);
         }

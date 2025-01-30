@@ -6,6 +6,29 @@ export const API_ENDPOINTS = {
     FORGOT_PASSWORD: '/api/Account/forgot-password'
 };
 
+export const fetchWithAuth = async (endpoint, options = {}) => {
+    const defaultHeaders = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+    };
+
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        ...options,
+        headers: {
+            ...defaultHeaders,
+            ...options.headers,
+        },
+        credentials: 'include', // For cookies if needed
+    });
+
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Something went wrong');
+    }
+
+    return response.json();
+};
+
 export const handleApiResponse = async (response) => {
     const data = await response.json();
     
