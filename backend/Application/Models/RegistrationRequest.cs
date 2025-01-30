@@ -20,8 +20,5 @@ namespace Application.Models
         [MinLength(6)]
         public string Password { get; set; }
 
-        [Required]
-        [MinLength(10)]
-        public string PhoneNumber { get; set; }
     }
 }
