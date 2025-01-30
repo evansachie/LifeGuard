@@ -73,6 +73,7 @@ namespace LifeGuard
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.Zero,
                     ValidIssuer = jwt_issuer,
+                    ValidAudience = jwt_audience,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt_key))
 
 
@@ -80,6 +81,24 @@ namespace LifeGuard
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            // Add CORS configuration
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigins",
+                    builder =>
+                    {
+                        builder
+                            .WithOrigins(
+                                "http://localhost:3000",  // Development
+                                "https://lifeguard-vq69.onrender.com", // Production
+                                "https://lifeguard-vert.vercel.app" // Production
+                            )
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowCredentials();
+                    });
+            });
 
             var app = builder.Build();
 
@@ -92,8 +111,28 @@ namespace LifeGuard
 
             app.UseHttpsRedirection();
 
+            app.UseRouting();
+
+            // Handle OPTIONS requests
+            app.Use(async (context, next) =>
+            {
+                if (context.Request.Method == "OPTIONS")
+                {
+                    context.Response.Headers.Add("Access-Control-Allow-Origin", context.Request.Headers["Origin"]);
+                    context.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+                    context.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+                    context.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
+                    context.Response.StatusCode = 200;
+                    return;
+                }
+
+                await next();
+            });
+
             app.UseAuthorization();
 
+            // Add CORS middleware (must be before app.UseRouting())
+            app.UseCors("AllowSpecificOrigins");
 
             app.MapControllers();
 

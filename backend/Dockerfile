@@ -41,6 +41,7 @@ EXPOSE 5203
 # Set environment variables
 ENV ASPNETCORE_URLS=http://*:${PORT:-5203}
 ENV ASPNETCORE_ENVIRONMENT=Development
+ENV CORS_ORIGINS=http://localhost:3000,https://lifeguard-vert.vercel.app,https://lifeguard-vq69.onrender.com
 
 # Copy and set permissions for the entrypoint script
 COPY entrypoint.sh ./entrypoint.sh
