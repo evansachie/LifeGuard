@@ -38,7 +38,7 @@ const ModelSection = ({ activeExercise, selectedCategory }) => {
 
     const annotation = categoryAnnotationMap[selectedCategory];
     console.log('Selected annotation:', annotation);
-    
+
     // Update iframe src with single annotation
     iframe.src = `${MODEL_URL}&annotation=${annotation}`;
 

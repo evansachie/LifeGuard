@@ -10,6 +10,9 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
     const defaultHeaders = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     };
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -18,7 +21,7 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
             ...defaultHeaders,
             ...options.headers,
         },
-        credentials: 'include', // For cookies if needed
+        credentials: 'include', // This is important for cookies/sessions
     });
 
     if (!response.ok) {
