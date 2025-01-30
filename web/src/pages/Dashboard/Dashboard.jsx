@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import './Dashboard.css';
-import HealthTracker from '../../components/HealthTracker/HealthTracker';
+import QuickAccess from '../../components/QuickAccess/QuickAccess';
 import { FaTemperatureHigh, FaExclamationTriangle, FaChartLine, FaStickyNote } from 'react-icons/fa';
 import { IoFootstepsOutline } from "react-icons/io5";
 import { MdCo2 } from "react-icons/md";
@@ -52,7 +52,7 @@ function Dashboard({ isDarkMode }) {
     const fetchUserDetails = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://your-api-url/api/users/details', {
+            const response = await axios.get('https://lifeguard-hiij.onrender.com/api/Account/details', {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setUsername(response.data.username);
@@ -232,7 +232,7 @@ function Dashboard({ isDarkMode }) {
                 </div>
             </div>
 
-            <HealthTracker isDarkMode={isDarkMode} />
+            <QuickAccess isDarkMode={isDarkMode} />
         </div>
     );
 }
