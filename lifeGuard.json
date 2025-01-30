@@ -295,8 +295,7 @@
         "required": [
           "email",
           "name",
-          "password",
-          "phoneNumber"
+          "password"
         ],
         "type": "object",
         "properties": {
@@ -311,10 +310,6 @@
           },
           "password": {
             "minLength": 6,
-            "type": "string"
-          },
-          "phoneNumber": {
-            "minLength": 10,
             "type": "string"
           }
         },
