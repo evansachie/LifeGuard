@@ -18,6 +18,10 @@
     height: auto;
 }
 
+.dark-mode .otp-illustration {
+    background-color: #2d3748;
+}
+
 .otp-form-container {
     flex: 1;
     display: flex;
