@@ -62,7 +62,7 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
                 }
             } catch (error) {
                 console.error('Registration error:', error);
-                // toast.error("Error during Resgitration");
+                toast.error("Error during Resgitration");
                 setErrors(prev => ({
                     ...prev,
                     submit: error.message || 'Registration failed. Please try again.'
