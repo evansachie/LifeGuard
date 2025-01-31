@@ -9,6 +9,7 @@ import Button from "../../button/button";
 import "./SignUp.css";
 import ImageSlider from '../../ImageSlider/ImageSlider';
 import { API_ENDPOINTS, fetchWithAuth } from '../../../utils/api';
+import { toast } from "react-toastify";
 
 export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
     const [formData, setFormData] = useState({
@@ -52,8 +53,7 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
 
                 if (data.userId) {
                     localStorage.setItem('userId', data.userId);
-                    onAuthSuccess();
-                    navigate('/dashboard');
+                    navigate('/verify-otp', { state: { email: formData.email } });
                 } else {
                     setErrors(prev => ({
                         ...prev,
@@ -62,6 +62,7 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
                 }
             } catch (error) {
                 console.error('Registration error:', error);
+                // toast.error("Error during Resgitration");
                 setErrors(prev => ({
                     ...prev,
                     submit: error.message || 'Registration failed. Please try again.'
