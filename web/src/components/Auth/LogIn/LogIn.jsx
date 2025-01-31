@@ -101,7 +101,10 @@ export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
                             </div>
                         </div>
 
-                        <Button text="Log in" disabled={isLoading}/>
+                        <Button 
+                            text="Log in" 
+                            isLoading={isLoading}
+                        />
                     </form>
                     {error && <div className="error-message">{error}</div>}
                     <p className="already">Don't have an account? <Link to="/" className="link">Sign Up</Link></p>

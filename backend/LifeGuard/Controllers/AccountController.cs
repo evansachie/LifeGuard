@@ -50,25 +50,34 @@ namespace LifeGuard_API.Controllers
                 // Log the request
                 Console.WriteLine($"Registration request - Email: {request.Email}, Name: {request.Name}");
 
-                var result = await _authService.Register(request);
-                
-                // Log success
-                Console.WriteLine($"Registration successful for user: {result.UserId}");
-                
-                return Ok(result);
+                try
+                {
+                    var result = await _authService.Register(request);
+                    return Ok(result);
+                }
+                catch (Exception serviceEx)
+                {
+                    // Log service-level exception
+                    Console.WriteLine($"Service error: {serviceEx.Message}");
+                    return StatusCode(500, new
+                    {
+                        success = false,
+                        message = "Registration failed",
+                        error = serviceEx.Message
+                    });
+                }
             }
             catch (Exception ex)
             {
-                // Log the full exception details
-                Console.WriteLine($"Registration error: {ex.Message}");
+                // Log controller-level exception
+                Console.WriteLine($"Controller error: {ex.Message}");
                 Console.WriteLine($"Stack trace: {ex.StackTrace}");
                 
-                // Return a properly formatted JSON error response
-                return StatusCode(500, new { 
+                return StatusCode(500, new
+                {
                     success = false,
-                    message = "Registration failed",
-                    error = ex.Message,
-                    details = ex.InnerException?.Message 
+                    message = "An unexpected error occurred",
+                    error = "Please try again later"
                 });
             }
         }
