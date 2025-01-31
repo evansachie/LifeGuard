@@ -8,7 +8,7 @@ import signupIllustration3 from '../../../assets/auth/signupIllustration3.svg';
 import Button from "../../button/button";
 import "./SignUp.css";
 import ImageSlider from '../../ImageSlider/ImageSlider';
-import { API_BASE_URL, API_ENDPOINTS, fetchWithAuth } from '../../../utils/api';
+import { API_ENDPOINTS, fetchWithAuth } from '../../../utils/api';
 
 export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
     const [formData, setFormData] = useState({
@@ -43,9 +43,16 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
                     })
                 });
                 
-                localStorage.setItem('userId', data.userId);
-                onAuthSuccess();
-                navigate('/dashboard');
+                if (data.userId) {
+                    localStorage.setItem('userId', data.userId);
+                    onAuthSuccess();
+                    navigate('/dashboard');
+                } else {
+                    setErrors(prev => ({
+                        ...prev,
+                        submit: 'Registration successful but no user ID received'
+                    }));
+                }
             } catch (error) {
                 console.error('Error signing up:', error);
                 setErrors(prev => ({

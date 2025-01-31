@@ -117,9 +117,6 @@ namespace LifeGuard
 
             app.UseAuthorization();
 
-            app.UseCors("myAppCors");
-
-
             app.MapControllers();
 
             app.Run();

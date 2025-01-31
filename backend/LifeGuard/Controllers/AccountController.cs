@@ -34,10 +34,23 @@ namespace LifeGuard_API.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<RegistrationResponse>> Register(RegistrationRequest request)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new { message = "Invalid model state", errors = ModelState });
+                }
 
-            return Ok(await (_authService.Register(request)));
+                var result = await _authService.Register(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception details
+                Console.WriteLine($"Registration error: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                return StatusCode(500, new { message = "An error occurred during registration", error = ex.Message });
+            }
         }
 
 
