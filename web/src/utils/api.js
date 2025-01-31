@@ -13,8 +13,8 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
     };
 
     try {
-        console.log('Request payload:', options.body); // Log request payload
-
+        console.log('Attempting to connect to:', `${API_BASE_URL}${endpoint}`);
+        
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
             ...options,
             headers: {
@@ -26,7 +26,7 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
         });
 
         const data = await response.json();
-        console.log('Response data:', data); // Log response data
+        console.log('Response data:', data);
 
         if (!response.ok) {
             throw new Error(data.error || data.message || 'Something went wrong');
@@ -34,7 +34,17 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
 
         return data;
     } catch (error) {
-        console.error('API Error:', error);
+        console.error('API Error Details:', {
+            type: error.name,
+            message: error.message,
+            url: `${API_BASE_URL}${endpoint}`,
+            payload: options.body
+        });
+        
+        if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
+            throw new Error('Unable to connect to the server. Please check your internet connection or try again later.');
+        }
+        
         throw error;
     }
 };
