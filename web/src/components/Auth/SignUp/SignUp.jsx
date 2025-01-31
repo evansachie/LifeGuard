@@ -186,11 +186,17 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
                             {errors.confirmPassword && <span className="error">{errors.confirmPassword}</span>}
                         </div>
 
-                        {errors.submit && <div className="error-message">{errors.submit}</div>}
-
-                        <Button text="Join Now" disabled={isLoading}/>
+                        <Button 
+                            text="Sign Up" 
+                            isLoading={isLoading} 
+                        />
                     </form>
                     <p className="already">Already have an account? <Link to="/log-in" className="link">Log In</Link></p>
+                    {errors.submit && (
+                        <div className="error-message mt-2 text-red-500 text-center">
+                            {errors.submit}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
