@@ -1,3 +1,5 @@
+import { toast } from 'react-toastify';
+
 export const API_BASE_URL = 'https://lifeguard-hiij.onrender.com';
 
 export const API_ENDPOINTS = {
@@ -13,6 +15,12 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     };
+
+    // Add token to headers if it exists
+    const token = localStorage.getItem('token');
+    if (token) {
+        defaultHeaders['Authorization'] = `Bearer ${token}`;
+    }
 
     try {
         console.log('Making request to:', `${API_BASE_URL}${endpoint}`);
@@ -41,17 +49,18 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
         console.log('Response:', data);
 
         if (!response.ok) {
+            // If unauthorized, clear token and redirect to login
+            if (response.status === 401) {
+                localStorage.removeItem('token');
+                window.location.href = '/log-in';
+                throw new Error('Session expired. Please login again.');
+            }
             throw new Error(data.error || data.message || 'An error occurred');
         }
 
         return data;
     } catch (error) {
-        console.error('API Error Details:', {
-            type: error.name,
-            message: error.message,
-            url: `${API_BASE_URL}${endpoint}`,
-            payload: options.body
-        });
+        toast.error(error.message || 'An error occurred');
         throw error;
     }
 };
