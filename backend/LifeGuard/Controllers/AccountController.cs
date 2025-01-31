@@ -38,18 +38,41 @@ namespace LifeGuard_API.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest(new { message = "Invalid model state", errors = ModelState });
+                    var errors = ModelState
+                        .Where(x => x.Value.Errors.Count > 0)
+                        .ToDictionary(
+                            kvp => kvp.Key,
+                            kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                        );
+                    return BadRequest(new { message = "Invalid model state", errors });
                 }
 
+                // Log the request
+                Console.WriteLine($"Registration request - Email: {request.Email}, Name: {request.Name}");
+
                 var result = await _authService.Register(request);
+                
+                // Log success
+                Console.WriteLine($"Registration successful for user: {result.UserId}");
+                
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                // Log the exception details
+                // Log the full exception details
                 Console.WriteLine($"Registration error: {ex.Message}");
                 Console.WriteLine($"Stack trace: {ex.StackTrace}");
-                return StatusCode(500, new { message = "An error occurred during registration", error = ex.Message });
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                    Console.WriteLine($"Inner stack trace: {ex.InnerException.StackTrace}");
+                }
+                
+                return StatusCode(500, new { 
+                    message = "An error occurred during registration", 
+                    error = ex.Message,
+                    details = ex.InnerException?.Message 
+                });
             }
         }
 

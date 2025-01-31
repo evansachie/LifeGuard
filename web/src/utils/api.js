@@ -12,24 +12,31 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
         'Accept': 'application/json'
     };
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        ...options,
-        headers: {
-            ...defaultHeaders,
-            ...options.headers,
-        },
-        mode: 'cors',
-        credentials: 'omit'
-    });
+    try {
+        console.log('Request payload:', options.body); // Log request payload
 
-    if (!response.ok) {
-        const error = await response.json().catch(() => ({
-            message: 'An error occurred while processing your request'
-        }));
-        throw new Error(error.message || 'Something went wrong');
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+            ...options,
+            headers: {
+                ...defaultHeaders,
+                ...options.headers,
+            },
+            mode: 'cors',
+            credentials: 'omit'
+        });
+
+        const data = await response.json();
+        console.log('Response data:', data); // Log response data
+
+        if (!response.ok) {
+            throw new Error(data.error || data.message || 'Something went wrong');
+        }
+
+        return data;
+    } catch (error) {
+        console.error('API Error:', error);
+        throw error;
     }
-
-    return response.json();
 };
 
 export const handleApiResponse = async (response) => {
