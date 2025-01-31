@@ -7,40 +7,29 @@ export const API_ENDPOINTS = {
 };
 
 export const fetchWithAuth = async (endpoint, options = {}) => {
-    try {
-        const defaultHeaders = {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        };
+    const defaultHeaders = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    };
 
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-            ...options,
-            headers: {
-                ...defaultHeaders,
-                ...options.headers,
-            },
-            mode: 'cors',
-            credentials: 'include'
-        });
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        ...options,
+        headers: {
+            ...defaultHeaders,
+            ...options.headers,
+        },
+        mode: 'cors',
+        credentials: 'omit'
+    });
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            // Log the error details for debugging
-            console.error('API Error:', {
-                status: response.status,
-                statusText: response.statusText,
-                data
-            });
-            
-            throw new Error(data.message || 'Server error occurred');
-        }
-
-        return data;
-    } catch (error) {
-        console.error('API Error:', error);
-        throw error;
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({
+            message: 'An error occurred while processing your request'
+        }));
+        throw new Error(error.message || 'Something went wrong');
     }
+
+    return response.json();
 };
 
 export const handleApiResponse = async (response) => {
