@@ -9,6 +9,7 @@ import loginIllustration3 from '../../../assets/auth/loginIllustration3.svg';
 import ImageSlider from '../../ImageSlider/ImageSlider';
 import "./LogIn.css";
 import { API_BASE_URL, API_ENDPOINTS, fetchWithAuth } from '../../../utils/api';
+import { toast } from 'react-toastify';
 
 export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
     const [formData, setFormData] = useState({
@@ -16,7 +17,6 @@ export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
         password: ""
     });
 
-    const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -34,18 +34,15 @@ export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
         try {
             const data = await fetchWithAuth(API_ENDPOINTS.LOGIN, {
                 method: 'POST',
-                body: JSON.stringify({
-                    email: formData.email,
-                    password: formData.password
-                })
+                body: JSON.stringify(formData)
             });
             
             localStorage.setItem('token', data.token);
+            toast.success('Login successful!');
             onAuthSuccess();
             navigate('/dashboard');
         } catch (error) {
-            console.error('Error logging in:', error);
-            setError(error.message || 'An error occurred while logging in. Please try again later.');
+            toast.error(error.message || 'Failed to login');
         } finally {
             setIsLoading(false);
         }
@@ -106,7 +103,6 @@ export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
                             isLoading={isLoading}
                         />
                     </form>
-                    {error && <div className="error-message">{error}</div>}
                     <p className="already">Don't have an account? <Link to="/" className="link">Sign Up</Link></p>
                 </div>
             </div>
