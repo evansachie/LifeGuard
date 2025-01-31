@@ -89,20 +89,18 @@ namespace LifeGuard
                 {
                     policy
                         .WithOrigins(
-                            "http://localhost:3000", // Development
-                            "https://lifeguard-vq69.onrender.com", // Production
-                            "https://lifeguard-vert.vercel.app" // Production
+                            "http://localhost:3000",
+                            "https://lifeguard-vq69.onrender.com",
+                            "https://lifeguard-vert.vercel.app"
                         )
                         .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials();
-
+                        .AllowAnyHeader();
                 });
             });
 
             var app = builder.Build();
 
-            // Enable CORS - Add this before other middleware
+            // Make sure this is before UseHttpsRedirection and other middleware
             app.UseCors("AllowFrontend");
 
             // Configure the HTTP request pipeline.
