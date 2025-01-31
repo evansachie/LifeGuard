@@ -3,7 +3,9 @@ export const API_BASE_URL = 'https://lifeguard-hiij.onrender.com';
 export const API_ENDPOINTS = {
     LOGIN: '/api/Account/login',
     REGISTER: '/api/Account/register',
-    FORGOT_PASSWORD: '/api/Account/forgot-password'
+    FORGOT_PASSWORD: '/api/Account/forgot-password',
+    VERIFY_OTP: '/api/Account/VerifyOTP',
+    RESEND_OTP: '/api/Account/ResendOTP'
 };
 
 export const fetchWithAuth = async (endpoint, options = {}) => {

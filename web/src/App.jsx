@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 import LogIn from "./components/Auth/LogIn/LogIn";
 import SignUp from "./components/Auth/SignUp/SignUp";
+import OTPVerification from './components/Auth/OTPVerification/OTPVerification';
 
 import Sidebar from './components/Sidebar/Sidebar';
 import Dashboard from './pages/Dashboard/Dashboard'
@@ -78,6 +79,17 @@ function App() {
                 <Route path="/terms-of-use" element={<AppLayout><TermsOfUse isDarkMode={isDarkMode} /></AppLayout>} />
                 <Route path="/privacy-policy" element={<AppLayout><PrivacyPolicy isDarkMode={isDarkMode} /></AppLayout>} />
                 <Route path="/analytics" element={<AppLayout><Analytics isDarkMode={isDarkMode} /></AppLayout>} />
+
+                <Route 
+                    path="/verify-otp" 
+                    element={
+                        <OTPVerification 
+                            isDarkMode={isDarkMode} 
+                            toggleTheme={toggleTheme}
+                            email={location.state?.email} 
+                        />
+                    } 
+                />
 
                 {/* 404 Route*/}
                 <Route path="*" element={<NotFound isDarkMode={isDarkMode} />} />
