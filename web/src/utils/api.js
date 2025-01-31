@@ -13,8 +13,9 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
     };
 
     try {
-        console.log('Attempting to connect to:', `${API_BASE_URL}${endpoint}`);
-        
+        console.log('Making request to:', `${API_BASE_URL}${endpoint}`);
+        console.log('Request payload:', options.body);
+
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
             ...options,
             headers: {
@@ -25,11 +26,20 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
             credentials: 'omit'
         });
 
-        const data = await response.json();
-        console.log('Response data:', data);
+        let data;
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+            data = await response.json();
+        } else {
+            const text = await response.text();
+            console.error('Non-JSON response:', text);
+            throw new Error('Server returned an invalid response');
+        }
+
+        console.log('Response:', data);
 
         if (!response.ok) {
-            throw new Error(data.error || data.message || 'Something went wrong');
+            throw new Error(data.error || data.message || 'An error occurred');
         }
 
         return data;
@@ -40,11 +50,6 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
             url: `${API_BASE_URL}${endpoint}`,
             payload: options.body
         });
-        
-        if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
-            throw new Error('Unable to connect to the server. Please check your internet connection or try again later.');
-        }
-        
         throw error;
     }
 };

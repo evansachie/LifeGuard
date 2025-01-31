@@ -34,6 +34,11 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
         if (validateForm()) {
             setIsLoading(true);
             try {
+                console.log('Sending registration request:', {
+                    name: formData.name,
+                    email: formData.email
+                });
+
                 const data = await fetchWithAuth(API_ENDPOINTS.REGISTER, {
                     method: 'POST',
                     body: JSON.stringify({
@@ -43,6 +48,8 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
                     })
                 });
                 
+                console.log('Registration response:', data);
+
                 if (data.userId) {
                     localStorage.setItem('userId', data.userId);
                     onAuthSuccess();
@@ -50,14 +57,14 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
                 } else {
                     setErrors(prev => ({
                         ...prev,
-                        submit: 'Registration successful but no user ID received'
+                        submit: data.message || 'Registration failed'
                     }));
                 }
             } catch (error) {
-                console.error('Error signing up:', error);
+                console.error('Registration error:', error);
                 setErrors(prev => ({
                     ...prev,
-                    submit: error.message || 'An error occurred during registration. Please try again later.'
+                    submit: error.message || 'Registration failed. Please try again.'
                 }));
             } finally {
                 setIsLoading(false);
