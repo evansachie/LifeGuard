@@ -61,8 +61,8 @@ const NotFound = ({ isDarkMode }) => {
             to="/dashboard"
             className={`inline-flex items-center gap-2 px-6 py-3 rounded-lg transition-colors shadow-lg ${
               isDarkMode
-                ? 'bg-blue-600 hover:bg-blue-700'
-                : 'bg-blue-500 hover:bg-blue-600'
+                ? 'bg-custom-blue hover:bg-custom-blue-hover'
+                : 'bg-custom-blue hover:bg-custom-blue-hover'
             } text-white`}
           >
             <FaHome />

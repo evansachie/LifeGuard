@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import './Dashboard.css';
-import HealthTracker from '../../components/HealthTracker/HealthTracker';
-import { FaTemperatureHigh, FaWind, FaCloud, FaExclamationTriangle, FaChartLine, FaStickyNote } from 'react-icons/fa';
+import { FaTemperatureHigh, FaExclamationTriangle, FaChartLine, FaStickyNote } from 'react-icons/fa';
 import { IoFootstepsOutline } from "react-icons/io5";
 import { MdCo2 } from "react-icons/md";
 import { WiBarometer, WiHumidity, WiDust } from "react-icons/wi";
 import { MdAir } from "react-icons/md";
+import { toast } from 'react-toastify';
+import { fetchWithAuth } from '../../utils/api';
+import './Dashboard.css';
+import QuickAccess from '../../components/QuickAccess/QuickAccess';
 
 function Dashboard({ isDarkMode }) {
     const [quote, setQuote] = useState(null);
+    const [userData, setUserData] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     const [pollutionData, setPollutionData] = useState({
         temperature: 28.5,
@@ -23,7 +27,7 @@ function Dashboard({ isDarkMode }) {
         no2: 25.4
     });
     // const [username, setUsername] = useState('');
-    const username = 'Evans' // up until we fetch from backend
+    const firstname = 'Evans' // up until we fetch from backend
     const [alerts, setAlerts] = useState([
         {
             id: 1,
@@ -40,7 +44,24 @@ function Dashboard({ isDarkMode }) {
     ]);
 
     useEffect(() => {
-        // fetchUserDetails();
+        const fetchUserData = async () => {
+            try {
+                const response = await fetchWithAuth('/api/Account/user-profile', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                setUserData(response);
+            } catch (error) {
+                toast.error('Failed to fetch user data');
+                console.error('Error fetching user data:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchUserData();
         fetchQuoteData();
         // Mock data updates every 5 minutes
         const interval = setInterval(() => {
@@ -48,37 +69,6 @@ function Dashboard({ isDarkMode }) {
         }, 300000);
         return () => clearInterval(interval);
     }, []);
-
-    const fetchUserDetails = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('http://your-api-url/api/users/details', {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            setUsername(response.data.username);
-        } catch (error) {
-            console.error('Error fetching user details:', error);
-        }
-    };
-
-
-    const fetchHydrationData = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('https://lighthouse-portal.onrender.com/api/hydration', {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            setHydrationLevel(response.data.hydrationLevel);
-            setIsAthletic(response.data.isAthletic);
-        } catch (error) {
-            console.error('Error fetching hydration data:', error);
-            if (error.response) {
-                console.error('Response data:', error.response.data);
-                console.error('Response status:', error.response.status);
-                console.error('Response headers:', error.response.headers);
-            }
-        }
-    };
 
     const fetchSavedMemos = async () => {
         try {
@@ -133,7 +123,7 @@ function Dashboard({ isDarkMode }) {
     return (
         <div className={`dashboard ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
             <header className="dashboard-header">
-                <h1>Welcome to your LifeGuard Dashboard{username ? `, ${username}` : ''}!</h1>
+                <h1>Welcome {isLoading ? '...' : (userData?.name || 'User')}!</h1>
                 <p className="date">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
             </header>
 
@@ -141,25 +131,21 @@ function Dashboard({ isDarkMode }) {
                 <div className="dashboard-card temperature-card">
                     <h2><FaTemperatureHigh />Atmospheric Temperature</h2>
                     <div className="card-value">{pollutionData.temperature.toFixed(1)}°C</div>
-                    {/* <Link to="/temperature" className="card-link">View Details</Link> */}
                 </div>
 
                 <div className="dashboard-card humidity-card">
                     <h2><WiHumidity /> Humidity</h2>
                     <div className="card-value">{Math.round(pollutionData.humidity)}%</div>
-                    {/* <Link to="/humidity" className="card-link">View Details</Link> */}
                 </div>
 
                 <div className="dashboard-card pressure-card">
                     <h2><WiBarometer /> Atmospheric Pressure</h2>
                     <div className="card-value">{Math.round(pollutionData.pressure)} hPa</div>
-                    {/* <Link to="/pressure" className="card-link">View Details</Link> */}
                 </div>
 
                 <div className="dashboard-card wind-card">
                     <h2><IoFootstepsOutline /> Activities</h2>
                     <div className="card-value">{pollutionData.steps.toFixed(1)} K steps</div>
-                    {/* <Link to="/wind" className="card-link">View Details</Link> */}
                 </div>
 
                 <div className="dashboard-card quote-card">
@@ -189,13 +175,11 @@ function Dashboard({ isDarkMode }) {
                     <div className="card-value" style={{ color: getAQIColor(pollutionData.aqi) }}>
                         {Math.round(pollutionData.aqi)} ppm
                     </div>
-                    {/* <Link to="/air-quality" className="card-link">View Details</Link> */}
                 </div>
 
                 <div className="dashboard-card pressure-card">
                     <h2><MdCo2 /> Carbon Dioxide (CO2)</h2>
                     <div className="card-value">{Math.round(pollutionData.pressure)} ppm</div>
-                    {/* <Link to="/pressure" className="card-link">View Details</Link> */}
                 </div>
 
                 <div className="dashboard-card pollutants-card">
@@ -214,10 +198,7 @@ function Dashboard({ isDarkMode }) {
                             <span>{pollutionData.no2.toFixed(1)} ppb</span>
                         </div>
                     </div>
-                    {/* <Link to="/pollutants" className="card-link">View Details</Link> */}
                 </div>
-
-                
             </div>
 
             <div className="dashboard-card alerts-section">
@@ -232,7 +213,7 @@ function Dashboard({ isDarkMode }) {
                 </div>
             </div>
 
-            <HealthTracker isDarkMode={isDarkMode} />
+            <QuickAccess isDarkMode={isDarkMode} />
         </div>
     );
 }

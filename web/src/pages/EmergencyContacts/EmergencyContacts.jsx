@@ -144,8 +144,8 @@ function EmergencyContacts({ isDarkMode }) {
         onClick={() => setIsModalOpen(true)}
         className={`mb-6 flex items-center gap-2 px-4 py-2 rounded-lg ${
           isDarkMode 
-            ? 'bg-blue-600 text-white hover:bg-blue-700' 
-            : 'bg-blue-500 text-white hover:bg-blue-600'
+            ? 'bg-custom-blue text-white hover:bg-custom-blue-hover' 
+            : 'bg-custom-blue text-white hover:bg-custom-blue-hover'
         }`}
       >
         <FaUserPlus />

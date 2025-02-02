@@ -1,9 +1,13 @@
 import * as React from "react";
 import { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 
 import LogIn from "./components/Auth/LogIn/LogIn";
 import SignUp from "./components/Auth/SignUp/SignUp";
+import OTPVerification from './components/Auth/OTPVerification/OTPVerification';
 
 import Sidebar from './components/Sidebar/Sidebar';
 import Dashboard from './pages/Dashboard/Dashboard'
@@ -15,6 +19,7 @@ import Calories from "./pages/Calories/Calories";
 import Profile from "./pages/Profile/Profile";
 import HealthTips from "./pages/HealthTips/HealthTips";
 import ExerciseRoutines from "./pages/ExerciseRoutines/ExerciseRoutines";
+import WellnessHub from "./pages/WellnessHub/WellnessHub";
 import EmergencyContacts from "./pages/EmergencyContacts/EmergencyContacts";
 
 import Settings from "./pages/Settings/Settings";
@@ -28,10 +33,15 @@ import NotFound from './pages/NotFound/NotFound';
 import './App.css';
 
 function App() {
-    const [isDarkMode, setIsDarkMode] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(() => {
+        const savedTheme = localStorage.getItem('theme');
+        return savedTheme ? savedTheme === 'dark' : false;
+    });
 
     const toggleTheme = () => {
-        setIsDarkMode(!isDarkMode);
+        const newTheme = !isDarkMode;
+        setIsDarkMode(newTheme);
+        localStorage.setItem('theme', newTheme ? 'dark' : 'light');
     };
 
     const handleAuthSuccess = () => {
@@ -47,35 +57,86 @@ function App() {
     );
 
     return (
-        <Router>
-            <Routes>
-                {/* Authentication Routes */}
-                <Route path="/" element={<SignUp isDarkMode={isDarkMode} toggleTheme={toggleTheme} onAuthSuccess={handleAuthSuccess} />} />
-                <Route path="/log-in" element={<LogIn isDarkMode={isDarkMode} toggleTheme={toggleTheme} onAuthSuccess={handleAuthSuccess} />} />
+        <>
+            <Router>
+                <Routes>
+                    {/* Public Routes */}
+                    <Route path="/" element={<SignUp isDarkMode={isDarkMode} toggleTheme={toggleTheme} onAuthSuccess={handleAuthSuccess} />} />
+                    <Route path="/log-in" element={<LogIn isDarkMode={isDarkMode} toggleTheme={toggleTheme} onAuthSuccess={handleAuthSuccess} />} />
+                    <Route path="/verify-otp" element={<OTPVerification isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
 
-                {/* Main App Routes with Sidebar */}
-                <Route path="/dashboard" element={<AppLayout><Dashboard isDarkMode={isDarkMode} /></AppLayout>} />
-                <Route path="/sticky-notes" element={<AppLayout><PrivateMemos isDarkMode={isDarkMode} /></AppLayout>} />
-                <Route path="/health-report" element={<AppLayout><HealthReport isDarkMode={isDarkMode} /></AppLayout>} />
+                    {/* Protected Routes */}
+                    <Route path="/dashboard" element={
+                        <ProtectedRoute>
+                            <AppLayout>
+                                <Dashboard isDarkMode={isDarkMode} />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    } />
+                    
+                    <Route path="/sticky-notes" element={
+                        <ProtectedRoute>
+                            <AppLayout><PrivateMemos isDarkMode={isDarkMode} /></AppLayout>
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/health-report" element={
+                        <ProtectedRoute>
+                            <AppLayout><HealthReport isDarkMode={isDarkMode} /></AppLayout>
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/bmr-calculator" element={
+                            <AppLayout><Calories isDarkMode={isDarkMode} /></AppLayout>
+                    } />
+                    <Route path="/pollution-tracker" element={
+                        <ProtectedRoute>
+                            <AppLayout><PollutionTracker isDarkMode={isDarkMode} /></AppLayout>
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/health-tips" element={
+                            <AppLayout><HealthTips isDarkMode={isDarkMode} /></AppLayout>
+                    } />
+                    <Route path="/exercise-routines" element={
+                            <AppLayout><ExerciseRoutines isDarkMode={isDarkMode} /></AppLayout>
+                    } />
+                    <Route path="/wellness-hub" element={
+                            <AppLayout><WellnessHub isDarkMode={isDarkMode} /></AppLayout>
+                    } />
+                    <Route path="/emergency-contacts" element={
+                        <ProtectedRoute>
+                            <AppLayout><EmergencyContacts isDarkMode={isDarkMode} /></AppLayout>
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/profile" element={
+                        <ProtectedRoute>
+                            <AppLayout><Profile isDarkMode={isDarkMode} /></AppLayout>
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/settings" element={
+                        <ProtectedRoute>
+                            <AppLayout><Settings isDarkMode={isDarkMode} /></AppLayout>
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/help" element={
+                            <AppLayout><Help isDarkMode={isDarkMode} /></AppLayout>
+                    } />
+                    <Route path="/terms-of-use" element={
+                            <AppLayout><TermsOfUse isDarkMode={isDarkMode} /></AppLayout>
+                    } />
+                    <Route path="/privacy-policy" element={
+                            <AppLayout><PrivacyPolicy isDarkMode={isDarkMode} /></AppLayout>
+                    } />
+                    <Route path="/analytics" element={
+                        <ProtectedRoute>
+                            <AppLayout><Analytics isDarkMode={isDarkMode} /></AppLayout>
+                        </ProtectedRoute>
+                    } />
 
-                <Route path="/bmr-calculator" element={<AppLayout><Calories isDarkMode={isDarkMode} /></AppLayout>} />
-                <Route path="/pollution-tracker" element={<AppLayout><PollutionTracker isDarkMode={isDarkMode} /></AppLayout>} />
-                <Route path="/health-tips" element={<AppLayout><HealthTips isDarkMode={isDarkMode} /></AppLayout>} />
-                <Route path="/exercise-routines" element={<AppLayout><ExerciseRoutines isDarkMode={isDarkMode} /></AppLayout>} />
-                <Route path="/emergency-contacts" element={<AppLayout><EmergencyContacts isDarkMode={isDarkMode} /></AppLayout>} />
-
-                <Route path="/profile" element={<AppLayout><Profile isDarkMode={isDarkMode} /></AppLayout>} />
-                <Route path="/settings" element={<AppLayout><Settings isDarkMode={isDarkMode} /></AppLayout>} />
-                <Route path="/help" element={<AppLayout><Help isDarkMode={isDarkMode} /></AppLayout>} />
-
-                <Route path="/terms-of-use" element={<AppLayout><TermsOfUse isDarkMode={isDarkMode} /></AppLayout>} />
-                <Route path="/privacy-policy" element={<AppLayout><PrivacyPolicy isDarkMode={isDarkMode} /></AppLayout>} />
-                <Route path="/analytics" element={<AppLayout><Analytics isDarkMode={isDarkMode} /></AppLayout>} />
-
-                {/* 404 Route*/}
-                <Route path="*" element={<NotFound isDarkMode={isDarkMode} />} />
-            </Routes>
-        </Router>
+                    {/* 404 Route*/}
+                    <Route path="*" element={<NotFound isDarkMode={isDarkMode} />} />
+                </Routes>
+            </Router>
+            <ToastContainer position="top-right" theme={isDarkMode ? 'dark' : 'light'} />
+        </>
     );
 }
 

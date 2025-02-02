@@ -1,15 +1,22 @@
 import * as React from "react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaUser, FaEnvelope, FaLock, FaMoon, FaSun } from "react-icons/fa";
-import signupIllustration from '../../../assets/auth/fitness.svg';
+import { FaUser, FaEnvelope, FaLock, FaMoon, FaSun, FaPhone } from "react-icons/fa";
+import signupIllustration from '../../../assets/auth/signupIllustration.svg';
+import signupIllustration2 from '../../../assets/auth/signupIllustration2.svg';
+import signupIllustration3 from '../../../assets/auth/signupIllustration3.svg';
+import Button from "../../button/button";
 import "./SignUp.css";
+import ImageSlider from '../../ImageSlider/ImageSlider';
+import { API_ENDPOINTS, fetchWithAuth } from '../../../utils/api';
+import { toast } from "react-toastify";
 
 export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
     const [formData, setFormData] = useState({
-        userName: "",
+        name: "",
         email: "",
-        password: ""
+        password: "",
+        confirmPassword: ""
     });
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
@@ -28,24 +35,38 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
         if (validateForm()) {
             setIsLoading(true);
             try {
-                const response = await fetch('https://lighthouse-portal.onrender.com/api/auth/signup', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData),
+                console.log('Sending registration request:', {
+                    name: formData.name,
+                    email: formData.email
                 });
 
-                if (response.ok) {
-                    const { token } = await response.json();
-                    localStorage.setItem('token', token);
-                    onAuthSuccess();
-                    navigate('/dashboard');
+                const data = await fetchWithAuth(API_ENDPOINTS.REGISTER, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        name: formData.name,
+                        email: formData.email,
+                        password: formData.password
+                    })
+                });
+                
+                console.log('Registration response:', data);
+
+                if (data.userId) {
+                    localStorage.setItem('userId', data.userId);
+                    navigate('/verify-otp', { state: { email: formData.email } });
                 } else {
-                    console.error('Signup error:', response.status);
+                    setErrors(prev => ({
+                        ...prev,
+                        submit: data.message || 'Registration failed'
+                    }));
                 }
             } catch (error) {
-                console.error('Error signing up:', error);
+                console.error('Registration error:', error);
+                toast.error("Error during Resgitration");
+                setErrors(prev => ({
+                    ...prev,
+                    submit: error.message || 'Registration failed. Please try again.'
+                }));
             } finally {
                 setIsLoading(false);
             }
@@ -56,8 +77,8 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
         let errors = {};
         let isValid = true;
 
-        if (!formData.userName.trim()) {
-            errors.userName = "Username is required";
+        if (!formData.name.trim()) {
+            errors.name = "Name is required";
             isValid = false;
         }
 
@@ -72,11 +93,25 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
         if (!formData.password.trim()) {
             errors.password = "Password is required";
             isValid = false;
+        } else if (formData.password.length < 6) {
+            errors.password = "Password must be at least 6 characters";
+            isValid = false;
+        }
+
+        if (formData.password !== formData.confirmPassword) {
+            errors.confirmPassword = "Passwords do not match";
+            isValid = false;
         }
 
         setErrors(errors);
         return isValid;
     };
+
+    const sliderImages = [
+        signupIllustration,
+        signupIllustration2,
+        signupIllustration3
+    ];
 
     return (
         <div className={`signup-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
@@ -84,29 +119,30 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
                 {isDarkMode ? <FaSun /> : <FaMoon />}
             </button>
             <div className="signup-illustration">
-                <img src={signupIllustration} alt="Join our community" />
+                <ImageSlider images={sliderImages} />
             </div>
             <div className="signup-form-container">
                 <div className="signup-form-card">
                     <img src="/images/lifeguard-2.svg" alt="lhp logo" className="logo" />
-                    <h2 className="signup-heading">Efficiently Track your Health and Environment</h2>
+                    <h2 className="signup-heading">Start your journey!</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
                             <div className="input-icon-wrapper">
-                                {!formData.userName && <FaUser className="input-icon" />}
+                                {!formData.name && <FaUser className="input-icon" />}
                                 <input
                                     type="text"
-                                    id="userName"
-                                    name="userName"
-                                    value={formData.userName}
+                                    id="name"
+                                    name="name"
+                                    value={formData.name}
                                     onChange={handleChange}
                                     placeholder=" "
                                     required
                                 />
-                                <label htmlFor="userName">Full Name</label>
+                                <label htmlFor="name">Name</label>
                             </div>
-                            {errors.userName && <span className="error">{errors.userName}</span>}
+                            {errors.name && <span className="error">{errors.name}</span>}
                         </div>
+
                         <div className="form-group">
                             <div className="input-icon-wrapper">
                                 {!formData.email && <FaEnvelope className="input-icon" />}
@@ -123,6 +159,7 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
                             </div>
                             {errors.email && <span className="error">{errors.email}</span>}
                         </div>
+
                         <div className="form-group">
                             <div className="input-icon-wrapper">
                                 {!formData.password && <FaLock className="input-icon" />}
@@ -139,11 +176,35 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
                             </div>
                             {errors.password && <span className="error">{errors.password}</span>}
                         </div>
-                        <button type="submit" className="btn-primary" disabled={isLoading}>
-                            {isLoading ? <div className="spinner"></div> : "Join Now"}
-                        </button>
+
+                        <div className="form-group">
+                            <div className="input-icon-wrapper">
+                                {!formData.confirmPassword && <FaLock className="input-icon" />}
+                                <input
+                                    type="password"
+                                    id="confirmPassword"
+                                    name="confirmPassword"
+                                    value={formData.confirmPassword}
+                                    onChange={handleChange}
+                                    placeholder=" "
+                                    required
+                                />
+                                <label htmlFor="confirmPassword">Confirm Password</label>
+                            </div>
+                            {errors.confirmPassword && <span className="error">{errors.confirmPassword}</span>}
+                        </div>
+
+                        <Button 
+                            text="Sign Up" 
+                            isLoading={isLoading} 
+                        />
                     </form>
                     <p className="already">Already have an account? <Link to="/log-in" className="link">Log In</Link></p>
+                    {errors.submit && (
+                        <div className="error-message mt-2 text-red-500 text-center">
+                            {errors.submit}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

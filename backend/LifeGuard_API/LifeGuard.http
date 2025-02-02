@@ -1,6 +1,0 @@
-@LifeGuard_HostAddress = http://localhost:5171
-
-GET {{LifeGuard_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
