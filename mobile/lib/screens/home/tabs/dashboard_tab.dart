@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class DashboardTab extends StatelessWidget {
   const DashboardTab({super.key});
@@ -23,6 +24,7 @@ class DashboardTab extends StatelessWidget {
                       style:
                           Theme.of(context).textTheme.headlineSmall?.copyWith(
                                 fontWeight: FontWeight.bold,
+                                color: const Color(0xFF4285F4),
                               ),
                     ),
                     const SizedBox(height: 4),
@@ -34,21 +36,100 @@ class DashboardTab extends StatelessWidget {
                     ),
                   ],
                 ),
-                CircleAvatar(
-                  radius: 24,
-                  backgroundColor: Colors.grey[200],
-                  child: const Icon(
-                    Icons.person_outline,
-                    color: Color(0xFF4285F4),
-                  ),
+                Row(
+                  children: [
+                    PopupMenuButton(
+                      offset: const Offset(0, 40),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey[100],
+                          border: Border.all(
+                            color: const Color(0xFF4285F4),
+                            width: 2,
+                          ),
+                        ),
+                        child: SvgPicture.asset(
+                          'assets/images/account.svg',
+                          width: 24,
+                          height: 24,
+                        ),
+                      ),
+                      itemBuilder: (context) => [
+                        const PopupMenuItem(
+                          value: 'profile',
+                          child: Row(
+                            children: [
+                              Icon(Icons.person_outline),
+                              SizedBox(width: 8),
+                              Text('Edit Profile'),
+                            ],
+                          ),
+                        ),
+                        const PopupMenuItem(
+                          value: 'settings',
+                          child: Row(
+                            children: [
+                              Icon(Icons.settings_outlined),
+                              SizedBox(width: 8),
+                              Text('Settings'),
+                            ],
+                          ),
+                        ),
+                        const PopupMenuItem(
+                          value: 'logout',
+                          child: Row(
+                            children: [
+                              Icon(Icons.logout),
+                              SizedBox(width: 8),
+                              Text('Log Out'),
+                            ],
+                          ),
+                        ),
+                      ],
+                      onSelected: (value) {
+                        switch (value) {
+                          case 'profile':
+                            // Navigate to profile
+                            break;
+                          case 'settings':
+                            // Navigate to settings
+                            break;
+                          case 'logout':
+                            // Handle logout
+                            break;
+                        }
+                      },
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        // Handle notifications
+                      },
+                      icon: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey[100],
+                          border: Border.all(
+                            color: const Color(0xFF4285F4),
+                            width: 2,
+                          ),
+                        ),
+                        child: const Icon(Icons.notifications_outlined),
+                      ),
+                      color: Colors.grey[600],
+                    ),
+                  ],
                 ),
               ],
             ),
+
             const SizedBox(height: 24),
 
-            // Health Stats Cards
+            // Environmental Stats
             const Text(
-              'Health Stats',
+              'Environmental Stats',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -64,32 +145,46 @@ class DashboardTab extends StatelessWidget {
               childAspectRatio: 1.5,
               children: [
                 _buildStatCard(
-                  icon: Icons.favorite,
-                  title: 'Heart Rate',
-                  value: '72',
-                  unit: 'bpm',
-                  color: Colors.red[400]!,
+                  icon: 'assets/images/temperature.svg',
+                  title: 'Temperature',
+                  value: '28.5',
+                  unit: '°C',
+                  color: Colors.orange[400]!,
                 ),
                 _buildStatCard(
-                  icon: Icons.air,
-                  title: 'Air Quality',
-                  value: 'Good',
-                  unit: 'PM2.5',
-                  color: Colors.green[400]!,
-                ),
-                _buildStatCard(
-                  icon: Icons.directions_walk,
-                  title: 'Steps',
-                  value: '6,240',
-                  unit: 'steps',
+                  icon: 'assets/images/humidity.svg',
+                  title: 'Humidity',
+                  value: '65',
+                  unit: '%',
                   color: Colors.blue[400]!,
                 ),
                 _buildStatCard(
-                  icon: Icons.thermostat,
-                  title: 'Temperature',
-                  value: '36.5',
-                  unit: '°C',
-                  color: Colors.orange[400]!,
+                  icon: 'assets/images/atm-pressure.svg',
+                  title: 'Pressure',
+                  value: '1013',
+                  unit: 'hPa',
+                  color: Colors.purple[400]!,
+                ),
+                _buildStatCard(
+                  icon: 'assets/images/reminder.svg',
+                  title: 'Reminders',
+                  value: '3',
+                  unit: 'Active',
+                  color: Colors.red[400]!,
+                ),
+                _buildStatCard(
+                  icon: 'assets/images/air-quality.svg',
+                  title: 'Air Quality',
+                  value: '75',
+                  unit: 'AQI',
+                  color: Colors.green[400]!,
+                ),
+                _buildStatCard(
+                  icon: 'assets/images/co2.svg',
+                  title: 'CO₂',
+                  value: '412',
+                  unit: 'ppm',
+                  color: Colors.teal[400]!,
                 ),
               ],
             ),
@@ -97,7 +192,7 @@ class DashboardTab extends StatelessWidget {
 
             // Quick Actions
             const Text(
-              'Quick Actions',
+              'Quick Actions Tabs',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -112,7 +207,7 @@ class DashboardTab extends StatelessWidget {
   }
 
   Widget _buildStatCard({
-    required IconData icon,
+    required String icon,
     required String title,
     required String value,
     required String unit,
@@ -125,39 +220,53 @@ class DashboardTab extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
             blurRadius: 10,
-            offset: const Offset(0, 4),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Icon(icon, color: color),
-          const Spacer(),
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.grey,
-              fontSize: 14,
-            ),
-          ),
-          const SizedBox(height: 4),
           Row(
+            children: [
+              SvgPicture.asset(
+                icon,
+                width: 24,
+                height: 24,
+                colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
                 value,
-                style: const TextStyle(
-                  fontSize: 20,
+                style: TextStyle(
+                  color: color,
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(width: 4),
               Text(
                 unit,
-                style: const TextStyle(
-                  color: Colors.grey,
+                style: TextStyle(
+                  color: Colors.grey[600],
                   fontSize: 12,
                 ),
               ),
@@ -178,23 +287,23 @@ class DashboardTab extends StatelessWidget {
       childAspectRatio: 2.5,
       children: [
         _buildActionButton(
-          icon: Icons.map,
-          title: 'Pollution Map',
+          icon: 'assets/images/health-tips.svg',
+          title: 'Health Tips',
           color: const Color(0xFF4285F4),
         ),
         _buildActionButton(
-          icon: Icons.description,
-          title: 'Health Report',
+          icon: 'assets/images/calculator.svg',
+          title: 'BMR Calculator',
           color: Colors.green,
         ),
         _buildActionButton(
-          icon: Icons.notifications,
-          title: 'Alerts',
+          icon: 'assets/images/exercise.svg',
+          title: 'Exercise Routines',
           color: Colors.orange,
         ),
         _buildActionButton(
-          icon: Icons.person,
-          title: 'Profile',
+          icon: 'assets/images/wellness.svg',
+          title: 'Wellness Hub',
           color: Colors.purple,
         ),
       ],
@@ -202,7 +311,7 @@ class DashboardTab extends StatelessWidget {
   }
 
   Widget _buildActionButton({
-    required IconData icon,
+    required String icon,
     required String title,
     required Color color,
   }) {
@@ -220,7 +329,12 @@ class DashboardTab extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                Icon(icon, color: color),
+                SvgPicture.asset(
+                  icon,
+                  width: 24,
+                  height: 24,
+                  colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
