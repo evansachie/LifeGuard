@@ -71,6 +71,18 @@ flutter:
     - assets/images/lifeguard-logo.svg
     - assets/images/fitness-1.svg
     - assets/images/fitness-2.svg
+    - assets/images/account.svg
+    - assets/images/air-quality.svg
+    - assets/images/atm-pressure.svg
+    - assets/images/co2.svg
+    - assets/images/humidity.svg
+    - assets/images/temperature.svg
+    - assets/images/reminder.svg
+    - assets/images/health-report.svg
+    - assets/images/profile.svg
+    - assets/images/emergency.svg
+    - assets/images/general-report.svg
+    - assets/images/pollution-tracker.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
