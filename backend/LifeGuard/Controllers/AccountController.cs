@@ -20,6 +20,12 @@ namespace LifeGuard_API.Controllers
             this.mediator = mediator;
 
         }
+        [Route("/")]
+        [HttpGet]
+        public IActionResult BaseUrl()
+        {
+            return Ok("Welcome to LifeGuard");
+        }
 
 
         [HttpPost("login")]
@@ -115,7 +121,7 @@ namespace LifeGuard_API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
-        [HttpGet]
+        [HttpGet("id")]
         public async Task<IActionResult> GetUserById(string id)
         {
             return Ok(await _authService.GetUserById(id));
