@@ -14,8 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Text;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 namespace LifeGuard
 {
     public class Program
@@ -65,7 +64,12 @@ namespace LifeGuard
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                
             })
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+                {
+                    options.LoginPath = "/api/Account/login";
+                })
                 .AddJwtBearer(o =>
                 o.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -75,33 +79,60 @@ namespace LifeGuard
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.Zero,
                     ValidIssuer = jwt_issuer,
+                    ValidAudience = "LifeGuardUser",
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt_key))
 
 
                 });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = @"JWT Authorization header using the Bearer scheme.
+                                   Enter 'Bearer' [space] and then your token in the text input
+                                   below.",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Scheme = "Bearer"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+
+                        },
+                        Scheme = "oauth2",
+                        Name = "Bearer",
+                        In = ParameterLocation.Header,
+                    },
+                    new List<string>()
+                    }
+                });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "LifeGuard", Version = "1.0.0" });
+            }
+            );
 
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowFrontend", policy =>
+                options.AddPolicy("myAppCors", policy =>
                 {
-                    policy
-                        .WithOrigins(
-                            "http://localhost:3000",
-                            "https://lifeguard-vq69.onrender.com",
-                            "https://lifeguard-vert.vercel.app"
-                        )
-                        .AllowAnyMethod()
-                        .AllowAnyHeader();
+
+                    policy.WithOrigins("*")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+
                 });
             });
 
             var app = builder.Build();
-
-            // Make sure this is before UseHttpsRedirection and other middleware
-            app.UseCors("AllowFrontend");
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -113,7 +144,12 @@ namespace LifeGuard
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
+
             app.UseAuthorization();
+            
+            app.UseCors("myAppCors");
+
 
             app.MapControllers();
 

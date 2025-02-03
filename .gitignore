@@ -529,3 +529,5 @@ FodyWeavers.xsd
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,aspnetcore
 
 /backend/.env.local
+bin/
+obj/

@@ -20,6 +20,12 @@ namespace LifeGuard_API.Controllers
             this.mediator = mediator;
 
         }
+        [Route("/")]
+        [HttpGet]
+        public IActionResult BaseUrl()
+        {
+            return Ok("Welcome to LifeGuard");
+        }
 
 
         [HttpPost("login")]
@@ -34,52 +40,10 @@ namespace LifeGuard_API.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<RegistrationResponse>> Register(RegistrationRequest request)
         {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    var errors = ModelState
-                        .Where(x => x.Value.Errors.Count > 0)
-                        .ToDictionary(
-                            kvp => kvp.Key,
-                            kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
-                        );
-                    return BadRequest(new { message = "Invalid model state", errors });
-                }
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-                // Log the request
-                Console.WriteLine($"Registration request - Email: {request.Email}, Name: {request.Name}");
-
-                try
-                {
-                    var result = await _authService.Register(request);
-                    return Ok(result);
-                }
-                catch (Exception serviceEx)
-                {
-                    // Log service-level exception
-                    Console.WriteLine($"Service error: {serviceEx.Message}");
-                    return StatusCode(500, new
-                    {
-                        success = false,
-                        message = "Registration failed",
-                        error = serviceEx.Message
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                // Log controller-level exception
-                Console.WriteLine($"Controller error: {ex.Message}");
-                Console.WriteLine($"Stack trace: {ex.StackTrace}");
-                
-                return StatusCode(500, new
-                {
-                    success = false,
-                    message = "An unexpected error occurred",
-                    error = "Please try again later"
-                });
-            }
+            return Ok(await (_authService.Register(request)));
         }
 
 
@@ -155,6 +119,14 @@ namespace LifeGuard_API.Controllers
                 return Ok(result);
             }
             return StatusCode((int)result.StatusCode, result);
+        }
+
+        [HttpGet("id")]
+        public async Task<IActionResult> GetUserById(string id)
+        {
+            return Ok(await _authService.GetUserById(id));
+
+            
         }
     }
 }
