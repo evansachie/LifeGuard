@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lifeguard/screens/home/tabs/dashboard_tab.dart';
-import 'package:lifeguard/screens/home/tabs/insights_tab.dart';
-import 'package:lifeguard/screens/home/tabs/notifications_tab.dart';
-import 'package:lifeguard/screens/home/tabs/settings_tab.dart';
+import 'package:lifeguard/screens/pollution_tracker/pollution_tracker.dart';
+import 'package:lifeguard/screens/health_report/health_report.dart';
+import 'package:lifeguard/screens/settings/settings_tab.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,8 +16,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _tabs = [
     const DashboardTab(),
-    const InsightsTab(),
-    const NotificationsTab(),
+    const PollutionTracker(),
+    const HealthReport(),
     const SettingsTab(),
   ];
 
@@ -48,47 +48,23 @@ class _HomeScreenState extends State<HomeScreen> {
           elevation: 0,
           items: const [
             BottomNavigationBarItem(
-              icon: Padding(
-                padding: EdgeInsets.only(bottom: 4),
-                child: Icon(Icons.home_outlined),
-              ),
-              activeIcon: Padding(
-                padding: EdgeInsets.only(bottom: 4),
-                child: Icon(Icons.home),
-              ),
+              icon: Icon(Icons.home_outlined),
+              activeIcon: Icon(Icons.home),
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Padding(
-                padding: EdgeInsets.only(bottom: 4),
-                child: Icon(Icons.insights_outlined),
-              ),
-              activeIcon: Padding(
-                padding: EdgeInsets.only(bottom: 4),
-                child: Icon(Icons.insights),
-              ),
-              label: 'Insights',
+              icon: Icon(Icons.air_outlined),
+              activeIcon: Icon(Icons.air),
+              label: 'Pollution',
             ),
             BottomNavigationBarItem(
-              icon: Padding(
-                padding: EdgeInsets.only(bottom: 4),
-                child: Icon(Icons.notifications_outlined),
-              ),
-              activeIcon: Padding(
-                padding: EdgeInsets.only(bottom: 4),
-                child: Icon(Icons.notifications),
-              ),
-              label: 'Notifications',
+              icon: Icon(Icons.health_and_safety_outlined),
+              activeIcon: Icon(Icons.health_and_safety),
+              label: 'Health',
             ),
             BottomNavigationBarItem(
-              icon: Padding(
-                padding: EdgeInsets.only(bottom: 4),
-                child: Icon(Icons.settings_outlined),
-              ),
-              activeIcon: Padding(
-                padding: EdgeInsets.only(bottom: 4),
-                child: Icon(Icons.settings),
-              ),
+              icon: Icon(Icons.settings_outlined),
+              activeIcon: Icon(Icons.settings),
               label: 'Settings',
             ),
           ],
