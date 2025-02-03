@@ -5,10 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="00fcc449-5d49-40fc-a5fc-81e8a65cd86c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../backend/Persistence/obj/Debug/net8.0/Persistence.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/Persistence/obj/Debug/net8.0/Persistence.AssemblyInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/Persistence/obj/Debug/net8.0/Persistence.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/Persistence/obj/Debug/net8.0/Persistence.AssemblyInfoInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mobile/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mobile/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../mobile/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/splash/splash_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/splash/splash_screen.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,9 +32,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 8
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
   <component name="ProjectId" id="2sWaQ97Z6RsTH5cK4zktkdKbFPY" />
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1" />
@@ -61,7 +59,7 @@
     "dart.analysis.tool.window.visible": "false",
     "git-widget-placeholder": "mobile",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Snave/Downloads/LifeGuard/mobilef",
+    "last_opened_file_path": "C:/Users/Snave/Downloads/LifeGuard/mobile",
     "show.migrate.to.gradle.popup": "false"
   }
 }]]></component>
