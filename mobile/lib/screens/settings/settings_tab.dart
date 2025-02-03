@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:lifeguard/providers/theme_provider.dart';
 
 class SettingsTab extends StatelessWidget {
   const SettingsTab({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -25,6 +30,69 @@ class SettingsTab extends StatelessWidget {
                 title: const Text('Account'),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {},
+              ),
+              ListTile(
+                leading: const Icon(Icons.palette_outlined),
+                title: const Text('Appearance'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) => Container(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            'Choose Theme',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          ListTile(
+                            leading: const Icon(Icons.brightness_5),
+                            title: const Text('Light'),
+                            trailing: themeProvider.themeMode == ThemeMode.light
+                                ? const Icon(Icons.check,
+                                    color: Color(0xFF4285F4))
+                                : null,
+                            onTap: () {
+                              themeProvider.setThemeMode(ThemeMode.light);
+                              Navigator.pop(context);
+                            },
+                          ),
+                          ListTile(
+                            leading: const Icon(Icons.brightness_2),
+                            title: const Text('Dark'),
+                            trailing: themeProvider.themeMode == ThemeMode.dark
+                                ? const Icon(Icons.check,
+                                    color: Color(0xFF4285F4))
+                                : null,
+                            onTap: () {
+                              themeProvider.setThemeMode(ThemeMode.dark);
+                              Navigator.pop(context);
+                            },
+                          ),
+                          ListTile(
+                            leading: const Icon(Icons.brightness_auto),
+                            title: const Text('System'),
+                            trailing:
+                                themeProvider.themeMode == ThemeMode.system
+                                    ? const Icon(Icons.check,
+                                        color: Color(0xFF4285F4))
+                                    : null,
+                            onTap: () {
+                              themeProvider.setThemeMode(ThemeMode.system);
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
               ListTile(
                 leading: const Icon(Icons.notifications_outlined),
