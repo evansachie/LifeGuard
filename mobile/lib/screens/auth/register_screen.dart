@@ -27,20 +27,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _handleRegister() async {
     setState(() => _isLoading = true);
-
-    // TODO: Implement registration logic
-    await Future.delayed(const Duration(seconds: 2)); // Simulate API call
-
+    await Future.delayed(const Duration(seconds: 2));
     setState(() => _isLoading = false);
-    if (mounted) {
-      // TODO: Navigate to home on success
-    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: isDark ? const Color(0xFF121212) : Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
@@ -49,7 +45,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             children: [
               IconButton(
                 onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.arrow_back),
+                icon: Icon(Icons.arrow_back,
+                    color: isDark ? Colors.white : Colors.black),
                 padding: EdgeInsets.zero,
               ),
               const SizedBox(height: 20),
@@ -64,12 +61,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               const SizedBox(height: 24),
 
-              const Text(
+              Text(
                 'Create Account',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF333333),
+                  color: isDark ? Colors.white : const Color(0xFF333333),
                 ),
               ),
               const SizedBox(height: 40),
@@ -77,11 +74,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
               // Name Field
               TextField(
                 controller: _nameController,
+                style: TextStyle(color: isDark ? Colors.white : Colors.black),
                 decoration: InputDecoration(
                   labelText: 'Full Name',
-                  prefixIcon: const Icon(Icons.person_outline),
+                  labelStyle: TextStyle(
+                    color: isDark ? Colors.white70 : null,
+                  ),
+                  prefixIcon: Icon(Icons.person_outline,
+                      color: isDark ? Colors.white70 : null),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(28),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(28),
+                    borderSide: BorderSide(
+                      color: isDark ? Colors.white24 : Colors.grey,
+                    ),
                   ),
                 ),
               ),
@@ -91,39 +99,71 @@ class _RegisterScreenState extends State<RegisterScreen> {
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
+                style: TextStyle(color: isDark ? Colors.white : Colors.black),
                 decoration: InputDecoration(
                   labelText: 'Email',
-                  prefixIcon: const Icon(Icons.email_outlined),
+                  labelStyle: TextStyle(
+                    color: isDark ? Colors.white70 : null,
+                  ),
+                  prefixIcon: Icon(Icons.email_outlined,
+                      color: isDark ? Colors.white70 : null),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(28),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(28),
+                    borderSide: BorderSide(
+                      color: isDark ? Colors.white24 : Colors.grey,
+                    ),
                   ),
                 ),
               ),
               const SizedBox(height: 20),
 
-              // Password Field
+              // Password Fields
               TextField(
                 controller: _passwordController,
                 obscureText: true,
+                style: TextStyle(color: isDark ? Colors.white : Colors.black),
                 decoration: InputDecoration(
                   labelText: 'Password',
-                  prefixIcon: const Icon(Icons.lock_outline),
+                  labelStyle: TextStyle(
+                    color: isDark ? Colors.white70 : null,
+                  ),
+                  prefixIcon: Icon(Icons.lock_outline,
+                      color: isDark ? Colors.white70 : null),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(28),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(28),
+                    borderSide: BorderSide(
+                      color: isDark ? Colors.white24 : Colors.grey,
+                    ),
                   ),
                 ),
               ),
               const SizedBox(height: 20),
 
-              // Confirm Password Field
               TextField(
                 controller: _confirmPasswordController,
                 obscureText: true,
+                style: TextStyle(color: isDark ? Colors.white : Colors.black),
                 decoration: InputDecoration(
                   labelText: 'Confirm Password',
-                  prefixIcon: const Icon(Icons.lock_outline),
+                  labelStyle: TextStyle(
+                    color: isDark ? Colors.white70 : null,
+                  ),
+                  prefixIcon: Icon(Icons.lock_outline,
+                      color: isDark ? Colors.white70 : null),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(28),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(28),
+                    borderSide: BorderSide(
+                      color: isDark ? Colors.white24 : Colors.grey,
+                    ),
                   ),
                 ),
               ),
@@ -166,9 +206,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
+                  Text(
                     'Already have an account? ',
-                    style: TextStyle(color: Color(0xFF666666)),
+                    style: TextStyle(
+                      color: isDark ? Colors.white70 : const Color(0xFF666666),
+                    ),
                   ),
                   TextButton(
                     onPressed: () {
