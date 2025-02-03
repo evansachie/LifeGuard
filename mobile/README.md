@@ -1,6 +1,6 @@
-# mobilef
+# LifeGuard mobile a
 
-A new Flutter project.
+Wearable Health & Environmental Monitoring System.
 
 ## Getting Started
 
