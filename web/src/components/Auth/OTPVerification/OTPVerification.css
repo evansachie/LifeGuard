@@ -1,0 +1,104 @@
+.otp-container {
+    display: flex;
+    min-height: 100vh;
+    padding: 0;
+    transition: all 0.3s ease;
+}
+
+.otp-illustration {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e8eef7;
+    height: 100vh;
+}
+
+.otp-illustration img {
+    max-width: 80%;
+    height: auto;
+}
+
+.dark-mode .otp-illustration {
+    background-color: #2d3748;
+}
+
+.otp-form-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.otp-form-card {
+    width: 100%;
+    max-width: 400px;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: white;
+}
+
+.otp-input-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 30px 0;
+}
+
+.otp-input-container input {
+    width: 45px;
+    height: 45px;
+    padding: 10px;
+    border: 2px solid #e1e1e1;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0 4px;
+}
+
+.otp-input-container input:focus {
+    border-color: #407CE2;
+    outline: none;
+}
+
+.resend-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.resend-button {
+    color: #407CE2;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.resend-button:disabled {
+    color: #999;
+    cursor: not-allowed;
+}
+
+/* Dark mode styles */
+.dark-mode .otp-form-card {
+    background: #2d2d2d;
+    color: white;
+}
+
+.dark-mode .otp-input-container input {
+    background: #3d3d3d;
+    color: white;
+    border-color: #4d4d4d;
+}
+
+@media (max-width: 768px) {
+    .otp-container {
+        flex-direction: column;
+    }
+
+    .otp-illustration {
+        display: none;
+    }
+}

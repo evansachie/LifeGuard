@@ -83,9 +83,9 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
           <div className="flex items-center gap-3 mb-4">
             <FaUser className="text-xl text-blue-500" />
             <div className="flex-1">
-              <label className={`block text-sm mb-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              <div className={`block text-sm mb-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                 Username
-              </label>
+              </div>
               <input
                 type="text"
                 value={settings.username}
@@ -101,9 +101,9 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
           <div className="flex items-center gap-3">
             <FaEnvelope className="text-xl text-green-500" />
             <div className="flex-1">
-              <label className={`block text-sm mb-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              <div className={`block text-sm mb-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                 Email
-              </label>
+              </div>
               <input
                 type="email"
                 value={settings.email}

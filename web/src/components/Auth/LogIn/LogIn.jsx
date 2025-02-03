@@ -2,8 +2,14 @@ import * as React from "react";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { FaEnvelope, FaLock, FaMoon, FaSun } from "react-icons/fa";
-import loginIllustration from '../../../assets/auth/login-page-2.svg';
+import Button from "../../button/button";
+import loginIllustration from '../../../assets/auth/loginIllustration.svg';
+import loginIllustration2 from '../../../assets/auth/loginIllustration2.svg';
+import loginIllustration3 from '../../../assets/auth/loginIllustration3.svg';
+import ImageSlider from '../../ImageSlider/ImageSlider';
 import "./LogIn.css";
+import { API_BASE_URL, API_ENDPOINTS, fetchWithAuth } from '../../../utils/api';
+import { toast } from 'react-toastify';
 
 export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
     const [formData, setFormData] = useState({
@@ -11,7 +17,6 @@ export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
         password: ""
     });
 
-    const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -27,30 +32,27 @@ export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const response = await fetch('https://lighthouse-portal.onrender.com/api/auth/login', {
+            const data = await fetchWithAuth(API_ENDPOINTS.LOGIN, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(formData)
             });
-
-            if (response.ok) {
-                const data = await response.json();
-                localStorage.setItem('token', data.token);
-                onAuthSuccess();
-                navigate('/dashboard');
-            } else {
-                const errorData = await response.json();
-                setError(errorData.error || 'An error occurred while logging in. Please try again later.');
-            }
+            
+            localStorage.setItem('token', data.token);
+            toast.success('Login successful!');
+            onAuthSuccess();
+            navigate('/dashboard');
         } catch (error) {
-            console.error('Error logging in:', error);
-            setError('An error occurred while logging in. Please try again later.');
+            toast.error(error.message || 'Failed to login');
         } finally {
             setIsLoading(false);
         }
     };
+
+    const sliderImages = [
+        loginIllustration,
+        loginIllustration2,
+        loginIllustration3
+    ];
 
     return (
         <div className={`login-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
@@ -58,7 +60,7 @@ export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
                 {isDarkMode ? <FaSun /> : <FaMoon />}
             </button>
             <div className="login-illustration">
-                <img src={loginIllustration} alt="Welcome back" />
+                <ImageSlider images={sliderImages} />
             </div>
             <div className="login-form-container">
                 <div className="login-form-card">
@@ -95,11 +97,12 @@ export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
                                 <label htmlFor="password">Password</label>
                             </div>
                         </div>
-                        <button type="submit" className="btn-primary" disabled={isLoading}>
-                            {isLoading ? <div className="spinner"></div> : "Log In"}
-                        </button>
+
+                        <Button 
+                            text="Log in" 
+                            isLoading={isLoading}
+                        />
                     </form>
-                    {error && <div className="error-message">{error}</div>}
                     <p className="already">Don't have an account? <Link to="/" className="link">Sign Up</Link></p>
                 </div>
             </div>
