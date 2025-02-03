@@ -7,8 +7,10 @@ class OnboardingScreen2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: isDark ? const Color(0xFF121212) : Colors.white,
       body: SafeArea(
         child: Stack(
           children: [
@@ -24,10 +26,10 @@ class OnboardingScreen2 extends StatelessWidget {
                         builder: (context) => const WelcomeScreen()),
                   );
                 },
-                child: const Text(
+                child: Text(
                   'Skip',
                   style: TextStyle(
-                    color: Color(0xFF666666),
+                    color: isDark ? Colors.white70 : const Color(0xFF666666),
                     fontSize: 16,
                   ),
                 ),
@@ -53,13 +55,14 @@ class OnboardingScreen2 extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Column(
                       children: [
-                        const Text(
+                        Text(
                           'Get notified for any\nanomalies in\nyour health',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF333333),
+                            color:
+                                isDark ? Colors.white : const Color(0xFF333333),
                           ),
                         ),
                         const SizedBox(height: 30),
@@ -72,7 +75,9 @@ class OnboardingScreen2 extends StatelessWidget {
                               width: 8,
                               height: 8,
                               decoration: BoxDecoration(
-                                color: const Color(0xFFDDDDDD),
+                                color: isDark
+                                    ? Colors.white24
+                                    : const Color(0xFFDDDDDD),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                             ),
