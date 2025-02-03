@@ -204,5 +204,22 @@ namespace Identity.Services
 
 
         }
+
+        public async Task<GetUserResponse> GetUserById(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                throw new Exception("User does not exist.");
+            }
+
+            return new GetUserResponse
+            {
+                UserName = user.Name,
+                Email = user.Email
+            };
+            
+        }
     }
 }
