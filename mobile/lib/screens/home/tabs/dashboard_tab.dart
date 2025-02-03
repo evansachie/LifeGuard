@@ -1,11 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:lifeguard/providers/quote_provider.dart';
 
-class DashboardTab extends StatelessWidget {
+class DashboardTab extends StatefulWidget {
   const DashboardTab({super.key});
 
   @override
+  State<DashboardTab> createState() => _DashboardTabState();
+}
+
+class _DashboardTabState extends State<DashboardTab> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch quote when dashboard loads
+    Future.microtask(
+      () => context.read<QuoteProvider>().fetchQuote(),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final quoteProvider = context.watch<QuoteProvider>();
+
     return SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -15,24 +34,18 @@ class DashboardTab extends StatelessWidget {
             // Header
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Hello, Evans!',
+                      'Hi, Evans!',
                       style:
                           Theme.of(context).textTheme.headlineSmall?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: const Color(0xFF4285F4),
                               ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'How are you feeling today?',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.grey[600],
-                          ),
                     ),
                   ],
                 ),
@@ -41,10 +54,12 @@ class DashboardTab extends StatelessWidget {
                     PopupMenuButton(
                       offset: const Offset(0, 40),
                       child: Container(
-                        padding: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(5),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.grey[100],
+                          color: isDark
+                              ? const Color(0xFF1E1E1E)
+                              : Colors.grey[100],
                           border: Border.all(
                             color: const Color(0xFF4285F4),
                             width: 2,
@@ -54,6 +69,10 @@ class DashboardTab extends StatelessWidget {
                           'assets/images/account.svg',
                           width: 24,
                           height: 24,
+                          colorFilter: ColorFilter.mode(
+                            isDark ? Colors.white70 : Colors.grey[600]!,
+                            BlendMode.srcIn,
+                          ),
                         ),
                       ),
                       itemBuilder: (context) => [
@@ -107,32 +126,68 @@ class DashboardTab extends StatelessWidget {
                         // Handle notifications
                       },
                       icon: Container(
-                        padding: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(5),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.grey[100],
+                          color: isDark
+                              ? const Color(0xFF1E1E1E)
+                              : Colors.grey[100],
                           border: Border.all(
                             color: const Color(0xFF4285F4),
                             width: 2,
                           ),
                         ),
-                        child: const Icon(Icons.notifications_outlined),
+                        child: Icon(
+                          Icons.notifications_outlined,
+                          color: isDark ? Colors.white70 : Colors.grey[600],
+                        ),
                       ),
-                      color: Colors.grey[600],
                     ),
                   ],
                 ),
               ],
             ),
+            const SizedBox(height: 2),
+            if (quoteProvider.isLoading)
+              Text(
+                'Loading inspiration...',
+                style: TextStyle(
+                  fontStyle: FontStyle.italic,
+                  color: isDark ? Colors.white70 : Colors.grey[600],
+                ),
+              )
+            else if (quoteProvider.quote != null)
+              Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: '"${quoteProvider.quote!.text}"\n',
+                      style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        color: isDark ? Colors.white70 : Colors.grey[600],
+                      ),
+                    ),
+                    TextSpan(
+                      text: '- ${quoteProvider.quote!.author}',
+                      style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        color: isDark ? Colors.white60 : Colors.grey[500],
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
 
             const SizedBox(height: 24),
 
-            // Environmental Stats
-            const Text(
-              'Environmental Stats',
+            // Environmental Metrics
+            Text(
+              'Environmental Metrics',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black,
               ),
             ),
             const SizedBox(height: 16),
@@ -144,58 +199,60 @@ class DashboardTab extends StatelessWidget {
               crossAxisSpacing: 16,
               childAspectRatio: 1.5,
               children: [
-                _buildStatCard(
+                _buildMetricCard(
+                  context: context,
                   icon: 'assets/images/temperature.svg',
                   title: 'Temperature',
-                  value: '28.5',
-                  unit: '°C',
-                  color: Colors.orange[400]!,
+                  value: '28.5°',
+                  unit: 'Celsius',
                 ),
-                _buildStatCard(
+                _buildMetricCard(
+                  context: context,
                   icon: 'assets/images/humidity.svg',
                   title: 'Humidity',
-                  value: '65',
-                  unit: '%',
-                  color: Colors.blue[400]!,
+                  value: '65%',
+                  unit: 'Relative',
                 ),
-                _buildStatCard(
-                  icon: 'assets/images/atm-pressure.svg',
-                  title: 'Pressure',
-                  value: '1013',
-                  unit: 'hPa',
-                  color: Colors.purple[400]!,
-                ),
-                _buildStatCard(
+                _buildMetricCard(
+                  context: context,
                   icon: 'assets/images/reminder.svg',
                   title: 'Reminders',
                   value: '3',
                   unit: 'Active',
-                  color: Colors.red[400]!,
                 ),
-                _buildStatCard(
+                _buildMetricCard(
+                  context: context,
                   icon: 'assets/images/air-quality.svg',
                   title: 'Air Quality',
                   value: '75',
                   unit: 'AQI',
-                  color: Colors.green[400]!,
                 ),
-                _buildStatCard(
-                  icon: 'assets/images/co2.svg',
-                  title: 'CO₂',
-                  value: '412',
-                  unit: 'ppm',
-                  color: Colors.teal[400]!,
+                _buildMetricCard(
+                  context: context,
+                  icon: 'assets/images/steps.svg',
+                  title: 'Activities',
+                  value: '6,248',
+                  unit: 'steps today',
+                ),
+                _buildMetricCard(
+                  context: context,
+                  icon: 'assets/images/atm-pressure.svg',
+                  title: 'Pressure',
+                  value: '1013',
+                  unit: 'hPa',
                 ),
               ],
             ),
+
             const SizedBox(height: 24),
 
             // Quick Actions
-            const Text(
-              'Quick Actions Tabs',
+            Text(
+              'Quick Actions Tab',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black,
               ),
             ),
             const SizedBox(height: 16),
@@ -206,30 +263,32 @@ class DashboardTab extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard({
+  Widget _buildMetricCard({
+    required BuildContext context,
     required String icon,
     required String title,
     required String value,
     required String unit,
-    required Color color,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
+            color: isDark
+                ? Colors.black.withOpacity(0.3)
+                : Colors.black.withOpacity(0.05),
             blurRadius: 10,
-            offset: const Offset(0, 2),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
@@ -237,40 +296,36 @@ class DashboardTab extends StatelessWidget {
                 icon,
                 width: 24,
                 height: 24,
-                colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(
+                  isDark ? Colors.white70 : const Color(0xFF4285F4),
+                  BlendMode.srcIn,
+                ),
               ),
               const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 14,
-                  ),
+              Text(
+                title,
+                style: TextStyle(
+                  color: isDark ? Colors.white70 : Colors.grey[600],
+                  fontSize: 14,
                 ),
               ),
             ],
           ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                value,
-                style: TextStyle(
-                  color: color,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                unit,
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 12,
-                ),
-              ),
-            ],
+          const SizedBox(height: 12),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black,
+            ),
+          ),
+          Text(
+            unit,
+            style: TextStyle(
+              color: isDark ? Colors.white60 : Colors.grey[600],
+              fontSize: 12,
+            ),
           ),
         ],
       ),
