@@ -1,6 +1,6 @@
 {
-    "name": "mobilef",
-    "short_name": "mobilef",
+    "name": "mobile",
+    "short_name": "mobile",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
