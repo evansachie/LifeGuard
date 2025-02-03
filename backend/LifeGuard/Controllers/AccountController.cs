@@ -114,5 +114,13 @@ namespace LifeGuard_API.Controllers
             }
             return StatusCode((int)result.StatusCode, result);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUserById(string id)
+        {
+            return Ok(await _authService.GetUserById(id));
+
+            
+        }
     }
 }
