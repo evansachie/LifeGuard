@@ -54,7 +54,7 @@ class OnboardingScreen2 extends StatelessWidget {
                     child: Column(
                       children: [
                         const Text(
-                          'Get notified instantly for any\nemergencies or changes in\nyour health',
+                          'Get notified instantly for any\nemergencies in\nyour health',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 24,
