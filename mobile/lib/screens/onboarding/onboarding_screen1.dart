@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lifeguard/screens/onboarding/onboarding_screen2.dart';
+import 'package:lifeguard/screens/auth/welcome_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class OnboardingScreen1 extends StatelessWidget {
@@ -7,8 +8,10 @@ class OnboardingScreen1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: isDark ? const Color(0xFF121212) : Colors.white,
       body: SafeArea(
         child: Stack(
           children: [
@@ -18,12 +21,16 @@ class OnboardingScreen1 extends StatelessWidget {
               right: 16,
               child: TextButton(
                 onPressed: () {
-                  // TODO: Navigate to tabs
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const WelcomeScreen()),
+                  );
                 },
-                child: const Text(
+                child: Text(
                   'Skip',
                   style: TextStyle(
-                    color: Color(0xFF666666),
+                    color: isDark ? Colors.white70 : const Color(0xFF666666),
                     fontSize: 16,
                   ),
                 ),
@@ -39,6 +46,12 @@ class OnboardingScreen1 extends StatelessWidget {
                   child: SvgPicture.asset(
                     'assets/images/fitness-1.svg',
                     fit: BoxFit.contain,
+                    // colorFilter: isDark
+                        // ? const ColorFilter.mode(
+                        //     Colors.white,
+                        //     BlendMode.srcIn,
+                        //   )
+                        // : null,
                   ),
                 ),
 
@@ -49,13 +62,14 @@ class OnboardingScreen1 extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Column(
                       children: [
-                        const Text(
+                        Text(
                           'Monitor your health and\nenvironment in real-time',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF333333),
+                            color:
+                                isDark ? Colors.white : const Color(0xFF333333),
                           ),
                         ),
                         const SizedBox(height: 30),
@@ -79,7 +93,9 @@ class OnboardingScreen1 extends StatelessWidget {
                                 height: 8,
                                 margin: const EdgeInsets.only(left: 8),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFDDDDDD),
+                                  color: isDark
+                                      ? Colors.white24
+                                      : const Color(0xFFDDDDDD),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                               ),
