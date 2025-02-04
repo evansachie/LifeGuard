@@ -84,6 +84,15 @@ class _PollutionTrackerState extends State<PollutionTracker> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Pollution Tracker',
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF4285F4),
+              ),
+        ),
+      ),
       body: Stack(
         children: [
           FlutterMap(
