@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lifeguard/screens/bmr_calculator/bmr_calculator.dart';
+import 'package:lifeguard/screens/exercise_routines/exercise_routines.dart';
+import 'package:lifeguard/screens/health_tips/health_tips.dart';
+import 'package:lifeguard/screens/wellness_hub/wellness_hub.dart';
 import 'package:provider/provider.dart';
 import 'package:lifeguard/providers/quote_provider.dart';
 
@@ -333,35 +337,62 @@ class _DashboardTabState extends State<DashboardTab> {
   }
 
   Widget _buildQuickActions() {
-    return GridView.count(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 2,
-      mainAxisSpacing: 16,
-      crossAxisSpacing: 16,
-      childAspectRatio: 2.5,
-      children: [
-        _buildActionButton(
-          icon: 'assets/images/health-tips.svg',
-          title: 'Health Tips',
-          color: const Color(0xFF4285F4),
-        ),
-        _buildActionButton(
-          icon: 'assets/images/calculator.svg',
-          title: 'BMR Calculator',
-          color: Colors.green,
-        ),
-        _buildActionButton(
-          icon: 'assets/images/exercise.svg',
-          title: 'Exercise Routines',
-          color: Colors.orange,
-        ),
-        _buildActionButton(
-          icon: 'assets/images/wellness.svg',
-          title: 'Wellness Hub',
-          color: Colors.purple,
-        ),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final crossAxisCount = constraints.maxWidth > 600 ? 4 : 2;
+        final childAspectRatio = constraints.maxWidth > 600 ? 3.0 : 2.5;
+
+        return GridView.count(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisCount: crossAxisCount,
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 16,
+          childAspectRatio: childAspectRatio,
+          children: [
+            _buildActionButton(
+              icon: 'assets/images/health-tips.svg',
+              title: 'Health Tips',
+              color: const Color(0xFF4285F4),
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const HealthTips(),
+                ));
+              },
+            ),
+            _buildActionButton(
+              icon: 'assets/images/calculator.svg',
+              title: 'BMR Calculator',
+              color: Colors.green,
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const BMRCalculator(),
+                ));
+              },
+            ),
+            _buildActionButton(
+              icon: 'assets/images/exercise.svg',
+              title: 'Exercise Routines',
+              color: Colors.orange,
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const ExerciseRoutines(),
+                ));
+              },
+            ),
+            _buildActionButton(
+              icon: 'assets/images/wellness.svg',
+              title: 'Wellness Hub',
+              color: Colors.purple,
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const WellnessHub(),
+                ));
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -369,6 +400,7 @@ class _DashboardTabState extends State<DashboardTab> {
     required String icon,
     required String title,
     required Color color,
+    VoidCallback? onTap,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -378,7 +410,7 @@ class _DashboardTabState extends State<DashboardTab> {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {},
+          onTap: onTap,
           borderRadius: BorderRadius.circular(12),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
