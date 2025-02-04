@@ -1,4 +1,4 @@
-# LifeGuard mobile a
+# LifeGuard
 
 Wearable Health & Environmental Monitoring System.
 
