@@ -1,0 +1,2 @@
+include ':flutter_inappwebview'
+project(':flutter_inappwebview').projectDir = new File(rootProject.projectDir, '.android/Flutter/flutter_inappwebview') 

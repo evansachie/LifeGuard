@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
+import 'package:lifeguard/data/sound_data.dart';
 import 'dart:async';
+import 'package:lifeguard/data/breathing_data.dart';
 
 class WellnessHub extends StatefulWidget {
   const WellnessHub({super.key});
@@ -16,35 +20,11 @@ class _WellnessHubState extends State<WellnessHub> {
   Timer? meditationTimer;
   int currentTime = 600; // 10 minutes default
   bool isTimerRunning = false;
-  String? currentSound;
+  late AudioPlayer audioPlayer;
+  Sound? currentSound;
   double volume = 0.5;
-
-  final breathingPatterns = [
-    {
-      'name': 'Box Breathing',
-      'description': 'Equal duration for inhale, hold, exhale, and hold',
-      'inhale': 4,
-      'hold': 4,
-      'exhale': 4,
-      'holdAfterExhale': 4,
-    },
-    {
-      'name': '4-7-8 Breathing',
-      'description': 'Inhale for 4, hold for 7, exhale for 8',
-      'inhale': 4,
-      'hold': 10,
-      'exhale': 8,
-      'holdAfterExhale': 0,
-    },
-    {
-      'name': 'Deep Breathing',
-      'description': 'Deep breathing for relaxation and stress relief',
-      'inhale': 4,
-      'hold': 7,
-      'exhale': 12,
-      'holdAfterExhale': 0,
-    },
-  ];
+  BreathingPattern? activePattern;
+  String selectedCategory = 'all';
 
   final meditationPresets = [
     {'time': 300, 'label': '5 minutes'},
@@ -54,21 +34,53 @@ class _WellnessHubState extends State<WellnessHub> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    audioPlayer = AudioPlayer();
+
+    // Set up looping
+    audioPlayer.setLoopMode(LoopMode.one);
+
+    // Handle completion
+    audioPlayer.playerStateStream.listen((state) {
+      if (state.processingState == ProcessingState.completed) {
+        audioPlayer.seek(Duration.zero);
+        audioPlayer.play();
+      }
+    });
+  }
+
+  @override
   void dispose() {
     breathingTimer?.cancel();
     meditationTimer?.cancel();
+    audioPlayer.dispose();
     super.dispose();
   }
 
-  void startBreathing(Map<String, dynamic> pattern) {
+  void startBreathing() {
     setState(() {
       isBreathing = true;
       breathingPhase = 'inhale';
     });
 
+    breathingTimer =
+        Timer.periodic(const Duration(milliseconds: 4000), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      setState(() {
+        breathingPhase = breathingPhase == 'inhale' ? 'exhale' : 'inhale';
+      });
+    });
+  }
+
+  void stopBreathing() {
     breathingTimer?.cancel();
-    breathingTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      // Implement breathing cycle logic
+    setState(() {
+      isBreathing = false;
+      breathingPhase = 'inhale';
     });
   }
 
@@ -99,6 +111,35 @@ class _WellnessHubState extends State<WellnessHub> {
     final minutes = seconds ~/ 60;
     final remainingSeconds = seconds % 60;
     return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+  }
+
+  Future<void> _playSound(Sound sound) async {
+    try {
+      await audioPlayer.stop();
+      print('Loading URL: ${sound.audioURL}');
+
+      // Create an AudioSource
+      final audioSource = AudioSource.uri(
+        Uri.parse(sound.audioURL),
+        tag: MediaItem(
+          id: sound.title,
+          title: sound.title,
+          artist: sound.location,
+        ),
+      );
+
+      await audioPlayer.setAudioSource(audioSource);
+      await audioPlayer.setVolume(volume);
+      await audioPlayer.play();
+      setState(() => currentSound = sound);
+    } catch (e) {
+      print('Error playing sound: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error playing sound: ${e.toString()}')),
+        );
+      }
+    }
   }
 
   @override
@@ -139,8 +180,15 @@ class _WellnessHubState extends State<WellnessHub> {
                 ),
               ],
               selected: {activeSection},
-              onSelectionChanged: (Set<String> newSelection) {
-                setState(() => activeSection = newSelection.first);
+              onSelectionChanged: (selection) {
+                setState(() => activeSection = selection.first);
+                if (activeSection != 'breathing') {
+                  stopBreathing();
+                }
+                if (activeSection != 'sounds') {
+                  audioPlayer.stop();
+                  setState(() => currentSound = null);
+                }
               },
             ),
           ),
@@ -164,13 +212,69 @@ class _WellnessHubState extends State<WellnessHub> {
       case 'meditation':
         return _buildMeditationSection();
       case 'sounds':
-        return _buildSoundsSection();
+        return _buildSoundSection();
       default:
         return const SizedBox.shrink();
     }
   }
 
   Widget _buildBreathingSection() {
+    if (isBreathing && activePattern != null) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            activePattern!.name,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 32),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 4000),
+            curve: Curves.easeInOut,
+            width: breathingPhase == 'inhale' ? 250 : 150,
+            height: breathingPhase == 'inhale' ? 250 : 150,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: activePattern!.color.withOpacity(0.2),
+            ),
+            child: Center(
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 4000),
+                curve: Curves.easeInOut,
+                width: breathingPhase == 'inhale' ? 200 : 100,
+                height: breathingPhase == 'inhale' ? 200 : 100,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: activePattern!.color.withOpacity(0.3),
+                ),
+                child: Center(
+                  child: Text(
+                    breathingPhase.toUpperCase(),
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 32),
+          FilledButton.icon(
+            onPressed: stopBreathing,
+            icon: const Icon(Icons.stop),
+            label: const Text('Stop'),
+            style: FilledButton.styleFrom(
+              backgroundColor: activePattern!.color,
+            ),
+          ),
+        ],
+      );
+    }
+
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: breathingPatterns.length,
@@ -179,10 +283,20 @@ class _WellnessHubState extends State<WellnessHub> {
         return Card(
           margin: const EdgeInsets.only(bottom: 16),
           child: ListTile(
-            title: Text(pattern['name'] as String),
-            subtitle: Text(pattern['description'] as String),
+            leading: CircleAvatar(
+              backgroundColor: pattern.color,
+              child: Icon(pattern.icon, color: Colors.white),
+            ),
+            title: Text(pattern.name),
+            subtitle: Text(pattern.description),
             trailing: FilledButton(
-              onPressed: () => startBreathing(pattern),
+              onPressed: () {
+                setState(() => activePattern = pattern);
+                startBreathing();
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: pattern.color,
+              ),
               child: const Text('Start'),
             ),
           ),
@@ -229,37 +343,171 @@ class _WellnessHubState extends State<WellnessHub> {
     );
   }
 
-  Widget _buildSoundsSection() {
-    return GridView.builder(
-      padding: const EdgeInsets.all(16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 16,
-        crossAxisSpacing: 16,
-        childAspectRatio: 1,
-      ),
-      itemCount: 8, // Number of sound options
-      itemBuilder: (context, index) {
-        return Card(
-          child: InkWell(
-            onTap: () {
-              // Handle sound selection
-            },
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+  Widget _buildSoundSection() {
+    return Column(
+      children: [
+        // Category Filter
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            children: [
+              FilterChip(
+                label: const Text('All'),
+                selected: selectedCategory == 'all',
+                onSelected: (selected) {
+                  setState(() => selectedCategory = 'all');
+                },
+              ),
+              const SizedBox(width: 8),
+              ...SoundCategory.values.map((category) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: FilterChip(
+                    label: Text(category.name.toUpperCase()),
+                    selected: selectedCategory == category.name,
+                    onSelected: (selected) {
+                      setState(() => selectedCategory = category.name);
+                    },
+                  ),
+                );
+              }),
+            ],
+          ),
+        ),
+
+        // Now Playing Bar
+        if (currentSound != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
               children: [
-                Icon(
-                  Icons.music_note,
-                  size: 48,
-                  color: Theme.of(context).primaryColor,
+                Text(
+                  currentSound!.title,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 8),
-                Text('Sound ${index + 1}'),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Slider(
+                    value: volume,
+                    onChanged: (value) {
+                      setState(() => volume = value);
+                      audioPlayer.setVolume(value);
+                    },
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () {
+                    audioPlayer.stop();
+                    setState(() => currentSound = null);
+                  },
+                ),
               ],
             ),
           ),
-        );
-      },
+
+        // Sound Grid
+        Expanded(
+          child: GridView.builder(
+            padding: const EdgeInsets.all(16),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 1,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+            ),
+            itemCount: soundData
+                .where((sound) =>
+                    selectedCategory == 'all' ||
+                    sound.category.name == selectedCategory)
+                .length,
+            itemBuilder: (context, index) {
+              final filteredSounds = soundData
+                  .where((sound) =>
+                      selectedCategory == 'all' ||
+                      sound.category.name == selectedCategory)
+                  .toList();
+              final sound = filteredSounds[index];
+              final isPlaying = currentSound?.title == sound.title;
+
+              return Card(
+                clipBehavior: Clip.antiAlias,
+                child: InkWell(
+                  onTap: () async {
+                    if (isPlaying) {
+                      await audioPlayer.pause();
+                      setState(() => currentSound = null);
+                    } else {
+                      await _playSound(sound);
+                    }
+                  },
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Image.asset(
+                        'assets/sounds/${sound.imageName}.jpg',
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: Colors.grey[300],
+                            child: const Icon(Icons.music_note, size: 48),
+                          );
+                        },
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withOpacity(0.7),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 16,
+                        left: 16,
+                        right: 16,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              sound.title,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              sound.location,
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.8),
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      if (isPlaying)
+                        const Center(
+                          child: Icon(
+                            Icons.pause_circle_filled,
+                            color: Colors.white,
+                            size: 48,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

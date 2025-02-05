@@ -6,11 +6,25 @@ allprojects {
 }
 
 rootProject.buildDir = "../build"
+
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
-subprojects {
+    
+    // Ensure evaluation dependencies
     project.evaluationDependsOn(":app")
+    
+    // Configure Android projects
+    if (project.hasProperty('android')) {
+        android {
+            if (namespace == null) {
+                if (project.name == "flutter_inappwebview") {
+                    namespace "com.pichillilorenzo.flutter_inappwebview"
+                } else {
+                    namespace project.group
+                }
+            }
+        }
+    }
 }
 
 tasks.register("clean", Delete) {

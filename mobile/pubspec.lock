@@ -17,6 +17,38 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.0"
+  audio_service:
+    dependency: "direct main"
+    description:
+      name: audio_service
+      sha256: "887ddf15fce31fd12aa8044c3bffd14c58929fb20e31d96284fe3aaf48315ac6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.18.17"
+  audio_service_platform_interface:
+    dependency: transitive
+    description:
+      name: audio_service_platform_interface
+      sha256: "6283782851f6c8b501b60904a32fc7199dc631172da0629d7301e66f672ab777"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.3"
+  audio_service_web:
+    dependency: transitive
+    description:
+      name: audio_service_web
+      sha256: b8ea9243201ee53383157fbccf13d5d2a866b5dda922ec19d866d1d5d70424df
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.4"
+  audio_session:
+    dependency: "direct main"
+    description:
+      name: audio_session
+      sha256: "2b7fff16a552486d078bfc09a8cde19f426dc6d6329262b684182597bec5b1ac"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.25"
   boolean_selector:
     dependency: transitive
     description:
@@ -118,6 +150,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_cache_manager:
+    dependency: transitive
+    description:
+      name: flutter_cache_manager
+      sha256: "400b6592f16a4409a7f2bb929a9a7e38c72cceb8ffb99ee57bbf2cb2cecf8386"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.4.1"
   flutter_dotenv:
     dependency: "direct main"
     description:
@@ -130,10 +170,10 @@ packages:
     dependency: "direct dev"
     description:
       name: flutter_lints
-      sha256: a25a15ebbdfc33ab1cd26c63a6ee519df92338a9c10f122adda92938253bef04
+      sha256: "5398f14efa795ffb7a33e9b6a08798b26a180edac4ad7db3f231e40f82ce11e1"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.3"
+    version: "5.0.0"
   flutter_map:
     dependency: "direct main"
     description:
@@ -240,6 +280,46 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.19.0"
+  js:
+    dependency: transitive
+    description:
+      name: js
+      sha256: c1b2e9b5ea78c45e1a0788d29606ba27dc5f71f019f32ca5140f61ef071838cf
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.1"
+  just_audio:
+    dependency: "direct main"
+    description:
+      name: just_audio
+      sha256: f978d5b4ccea08f267dae0232ec5405c1b05d3f3cd63f82097ea46c015d5c09e
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.9.46"
+  just_audio_background:
+    dependency: "direct main"
+    description:
+      name: just_audio_background
+      sha256: "387d83145879bd6943af3fac9d4509dc32b9fb52e08fd15d1193cf4d08a85f93"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.1-beta.15"
+  just_audio_platform_interface:
+    dependency: transitive
+    description:
+      name: just_audio_platform_interface
+      sha256: "271b93b484c6f494ecd72a107fffbdb26b425f170c665b9777a0a24a726f2f24"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.4.0"
+  just_audio_web:
+    dependency: transitive
+    description:
+      name: just_audio_web
+      sha256: "58915be64509a7683c44bf11cd1a23c15a48de104927bee116e3c63c8eeea0d4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.14"
   latlong2:
     dependency: "direct main"
     description:
@@ -276,10 +356,10 @@ packages:
     dependency: transitive
     description:
       name: lints
-      sha256: "0a217c6c989d21039f1498c3ed9f3ed71b354e69873f13a8dfc3c9fe76f1b452"
+      sha256: c35bb79562d980e9a453fc715854e1ed39e24e7d0297a880ef54e17f9874a9d7
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.1"
+    version: "5.1.1"
   lists:
     dependency: transitive
     description:
@@ -448,6 +528,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.2"
+  rxdart:
+    dependency: transitive
+    description:
+      name: rxdart
+      sha256: "5c3004a4a8dbb94bd4bf5412a4def4acdaa12e12f269737a5751369e12d1a962"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.28.0"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -525,6 +613,46 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.0"
+  sqflite:
+    dependency: transitive
+    description:
+      name: sqflite
+      sha256: "2d7299468485dca85efeeadf5d38986909c5eb0cd71fd3db2c2f000e6c9454bb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.1"
+  sqflite_android:
+    dependency: transitive
+    description:
+      name: sqflite_android
+      sha256: "78f489aab276260cdd26676d2169446c7ecd3484bbd5fead4ca14f3ed4dd9ee3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.0"
+  sqflite_common:
+    dependency: transitive
+    description:
+      name: sqflite_common
+      sha256: "761b9740ecbd4d3e66b8916d784e581861fd3c3553eda85e167bc49fdb68f709"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.4+6"
+  sqflite_darwin:
+    dependency: transitive
+    description:
+      name: sqflite_darwin
+      sha256: "22adfd9a2c7d634041e96d6241e6e1c8138ca6817018afc5d443fef91dcefa9c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.1+1"
+  sqflite_platform_interface:
+    dependency: transitive
+    description:
+      name: sqflite_platform_interface
+      sha256: "8dd4515c7bdcae0a785b0062859336de775e8c65db81ae33dd5445f35be61920"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.0"
   stack_trace:
     dependency: transitive
     description:
@@ -549,6 +677,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.0"
+  synchronized:
+    dependency: transitive
+    description:
+      name: synchronized
+      sha256: "69fe30f3a8b04a0be0c15ae6490fc859a78ef4c43ae2dd5e8a623d45bfcf9225"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.3.0+3"
   term_glyph:
     dependency: transitive
     description:
@@ -593,10 +729,10 @@ packages:
     dependency: transitive
     description:
       name: vector_graphics
-      sha256: a1870d398158844fe5db12441611ed9a2222ff4340258b539eaf3590c1b4bd7e
+      sha256: "44cc7104ff32563122a929e4620cf3efd584194eec6d1d913eb5ba593dbcf6de"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.17"
+    version: "1.1.18"
   vector_graphics_codec:
     dependency: transitive
     description:
@@ -662,5 +798,5 @@ packages:
     source: hosted
     version: "6.5.0"
 sdks:
-  dart: ">=3.5.0 <4.0.0"
+  dart: ">=3.6.0 <4.0.0"
   flutter: ">=3.24.0"
