@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:lifeguard/data/exercise_data.dart';
 
 class ExerciseRoutines extends StatefulWidget {
@@ -17,7 +16,6 @@ class _ExerciseRoutinesState extends State<ExerciseRoutines> {
   bool isLoading = true;
   int workoutTimer = 0;
   bool isTimerRunning = false;
-  YoutubePlayerController? _controller;
   Exercise? activeExercise;
 
   final fitnessLevels = [
@@ -43,7 +41,6 @@ class _ExerciseRoutinesState extends State<ExerciseRoutines> {
   @override
   void dispose() {
     _timer?.cancel();
-    _controller?.dispose();
     super.dispose();
   }
 
@@ -67,17 +64,6 @@ class _ExerciseRoutinesState extends State<ExerciseRoutines> {
       isTimerRunning = true;
     });
 
-    // Initialize video player
-    _controller?.dispose();
-    _controller = YoutubePlayerController(
-      initialVideoId: YoutubePlayer.convertUrlToId(exercise.videoUrl) ?? '',
-      flags: const YoutubePlayerFlags(
-        autoPlay: true,
-        mute: false,
-        enableCaption: true,
-      ),
-    );
-
     startTimer();
   }
 
@@ -98,8 +84,6 @@ class _ExerciseRoutinesState extends State<ExerciseRoutines> {
           timer.cancel();
           isTimerRunning = false;
           activeExercise = null;
-          _controller?.dispose();
-          _controller = null;
         }
       });
     });
@@ -338,31 +322,11 @@ class _ExerciseRoutinesState extends State<ExerciseRoutines> {
   }
 
   Widget _buildExerciseCard(Exercise exercise, bool isDark) {
-    final videoId = YoutubePlayer.convertUrlToId(exercise.videoUrl) ?? '';
-
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Video Player
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-            child: AspectRatio(
-              aspectRatio: 16 / 9,
-              child: YoutubePlayer(
-                controller: YoutubePlayerController(
-                  initialVideoId: videoId,
-                  flags: const YoutubePlayerFlags(
-                    autoPlay: false,
-                    mute: true,
-                    showLiveFullscreenButton: false,
-                  ),
-                ),
-                showVideoProgressIndicator: true,
-              ),
-            ),
-          ),
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -464,10 +428,8 @@ class _ExerciseRoutinesState extends State<ExerciseRoutines> {
                 setState(() {
                   isTimerRunning = !isTimerRunning;
                   if (isTimerRunning) {
-                    _controller?.play();
                     startTimer();
                   } else {
-                    _controller?.pause();
                     _timer?.cancel();
                   }
                 });
@@ -480,8 +442,6 @@ class _ExerciseRoutinesState extends State<ExerciseRoutines> {
                   isTimerRunning = false;
                   activeExercise = null;
                   _timer?.cancel();
-                  _controller?.dispose();
-                  _controller = null;
                 });
               },
             ),
