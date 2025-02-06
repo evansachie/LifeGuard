@@ -36,12 +36,14 @@ function Sidebar({ toggleTheme, isDarkMode }) {
         // Get username from localStorage (set during login/dashboard fetch)
         const storedName = localStorage.getItem('userName');
         if (storedName) {
-            // If it's an email, show just the first part
+            // If it's an email, show just the first part capitalized
             if (storedName.includes('@')) {
-                setUsername(storedName.split('@')[0]);
+                const name = storedName.split('@')[0];
+                setUsername(name.charAt(0).toUpperCase() + name.slice(1).toLowerCase());
             } else {
-                // If it's a full name, show just the first name
-                setUsername(storedName.split(' ')[0]);
+                // If it's a full name, show just the first name capitalized
+                const firstName = storedName.split(' ')[0];
+                setUsername(firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase());
             }
         }
     }, []);

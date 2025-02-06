@@ -110,12 +110,12 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
               <input
                 type="text"
                 value={settings.username}
-                onChange={(e) => handleSettingChange('username', e.target.value)}
+                readOnly
                 className={`w-full p-2 rounded border ${
                   isDarkMode 
                     ? 'bg-gray-700 border-gray-600' 
-                    : 'bg-white border-gray-300'
-                }`}
+                    : 'bg-gray-200 border-gray-300'
+                } cursor-not-allowed`}
               />
             </div>
           </div>
@@ -128,12 +128,12 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
               <input
                 type="email"
                 value={settings.email}
-                onChange={(e) => handleSettingChange('email', e.target.value)}
+                readOnly
                 className={`w-full p-2 rounded border ${
                   isDarkMode 
                     ? 'bg-gray-700 border-gray-600' 
-                    : 'bg-white border-gray-300'
-                }`}
+                    : 'bg-gray-200 border-gray-300'
+                } cursor-not-allowed`}
               />
             </div>
           </div>

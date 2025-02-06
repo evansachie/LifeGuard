@@ -121,10 +121,14 @@ function Dashboard({ isDarkMode }) {
         return '#7e0023';
     };
 
+    const capitalizeFirstLetter = (string) => {
+        return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+    };
+
     return (
         <div className={`dashboard ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
             <header className="dashboard-header">
-                <h1>Welcome {isLoading ? '...' : (userData?.userName?.split(' ')[0] || 'User')}!</h1>
+                <h1>Welcome {isLoading ? '...' : (userData?.userName ? capitalizeFirstLetter(userData.userName.split(' ')[0]) : 'User')}!</h1>
                 <p className="date">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
             </header>
 
