@@ -7,7 +7,7 @@ import { MdCo2 } from "react-icons/md";
 import { WiBarometer, WiHumidity, WiDust } from "react-icons/wi";
 import { MdAir } from "react-icons/md";
 import { toast } from 'react-toastify';
-import { fetchWithAuth } from '../../utils/api';
+import { fetchWithAuth, API_ENDPOINTS } from '../../utils/api';
 import './Dashboard.css';
 import QuickAccess from '../../components/QuickAccess/QuickAccess';
 
@@ -46,13 +46,14 @@ function Dashboard({ isDarkMode }) {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await fetchWithAuth('/api/Account/user-profile', {
+                const response = await fetchWithAuth(`${API_ENDPOINTS.GET_USER}?id=${localStorage.getItem('userId')}`, {
                     method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
                 });
                 setUserData(response);
+                // Store the name for use across components
+                // Split the name to get first name
+                const firstName = response.userName.split(' ')[0];
+                localStorage.setItem('userName', firstName);
             } catch (error) {
                 toast.error('Failed to fetch user data');
                 console.error('Error fetching user data:', error);
@@ -123,7 +124,7 @@ function Dashboard({ isDarkMode }) {
     return (
         <div className={`dashboard ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
             <header className="dashboard-header">
-                <h1>Welcome {isLoading ? '...' : (userData?.name || 'User')}!</h1>
+                <h1>Welcome {isLoading ? '...' : (userData?.userName?.split(' ')[0] || 'User')}!</h1>
                 <p className="date">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
             </header>
 
