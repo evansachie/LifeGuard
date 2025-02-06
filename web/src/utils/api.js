@@ -7,7 +7,8 @@ export const API_ENDPOINTS = {
     REGISTER: '/api/Account/register',
     FORGOT_PASSWORD: '/api/Account/forgot-password',
     VERIFY_OTP: '/api/Account/VerifyOTP',
-    RESEND_OTP: '/api/Account/ResendOTP'
+    RESEND_OTP: '/api/Account/ResendOTP',
+    GET_USER: '/api/Account/id'
 };
 
 export const fetchWithAuth = async (endpoint, options = {}) => {
