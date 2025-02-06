@@ -38,6 +38,9 @@ export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
             });
             
             localStorage.setItem('token', data.token);
+            localStorage.setItem('userId', data.id);
+            localStorage.setItem('userName', data.userName);
+            
             toast.success('Login successful!');
             onAuthSuccess();
             navigate('/dashboard');

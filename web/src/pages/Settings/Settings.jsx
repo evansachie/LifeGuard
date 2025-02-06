@@ -1,19 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaArrowLeft, FaMoon, FaSun, FaBell, FaUser, FaEnvelope, FaClock, FaRuler } from 'react-icons/fa';
 import { IoMdNotifications, IoMdNotificationsOff } from 'react-icons/io';
 import { toast } from 'react-toastify';
+import { fetchWithAuth, API_ENDPOINTS } from '../../utils/api';
 
 const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
   const [settings, setSettings] = useState({
     notifications: true,
-    email: 'evansachie01@gmail.com',
-    username: 'Evans',
+    email: '',
+    username: '',
     units: 'metric',
     language: 'english',
     workoutReminders: true,
     emergencyContacts: true
   });
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetchWithAuth(`${API_ENDPOINTS.GET_USER}?id=${localStorage.getItem('userId')}`, {
+          method: 'GET',
+        });
+        
+        setSettings(prev => ({
+          ...prev,
+          email: response.email,
+          username: response.userName
+        }));
+      } catch (error) {
+        toast.error('Failed to fetch user data');
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleSettingChange = (key, value) => {
     setSettings(prev => ({
@@ -25,7 +47,6 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
     console.log(`Updating setting: ${key} to ${value}`);
     toast.success('Settings updated successfully!');
   };
-
 
   const SettingSection = ({ title, children }) => (
     <motion.div
