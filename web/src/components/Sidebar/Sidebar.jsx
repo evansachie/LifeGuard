@@ -32,9 +32,19 @@ function Sidebar({ toggleTheme, isDarkMode }) {
         setIsMobileMenuOpen(false);
     }, [location.pathname]);
 
-    // useEffect(() => {
-    //     fetchUserDetails();
-    // }, []);
+    useEffect(() => {
+        // Get username from localStorage (set during login/dashboard fetch)
+        const storedName = localStorage.getItem('userName');
+        if (storedName) {
+            // If it's an email, show just the first part
+            if (storedName.includes('@')) {
+                setUsername(storedName.split('@')[0]);
+            } else {
+                // If it's a full name, show just the first name
+                setUsername(storedName.split(' ')[0]);
+            }
+        }
+    }, []);
 
     const handleClickOutside = (event) => {
         if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
@@ -122,8 +132,7 @@ function Sidebar({ toggleTheme, isDarkMode }) {
                         <div className="profile-picture-container">
                             <img src={profilePictureUrl || DefaultUser} alt="Profile" className="profile-picture" />
                         </div>
-                        {/* <span className="username">{username}</span> */}
-                        <span className="username">Evans</span>
+                        <span className="username">{username || 'User'}</span>
                     </div>
                     <button className="theme-toggle" onClick={toggleTheme}> 
                         {isDarkMode ? <FaSun /> : <FaMoon />}
@@ -188,7 +197,7 @@ function Sidebar({ toggleTheme, isDarkMode }) {
                             <div className="profile-picture-container">
                                 <img src={profilePictureUrl || DefaultUser} alt="Profile" className="profile-picture" />
                             </div>
-                            <span className="username">{username}</span>
+                            <span className="username">{username || 'User'}</span>
                         </div>
                         <button className="theme-toggle" onClick={toggleTheme}>
                             {isDarkMode ? <FaSun /> : <FaMoon />}
