@@ -30,7 +30,7 @@
 }
 
 .calories-icon-container {
-    background-color: #e67e00;
+    background-color: #407CE2;
     border-radius: 50%;
     width: 48px;
     height: 48px;
@@ -93,7 +93,7 @@
 
 .input-field:focus {
     outline: none;
-    border-color: #e67e00;
+    border-color: #407CE2;
 }
 
 .calories-overview {
@@ -129,7 +129,7 @@
 }
 
 .btn-primary {
-    background-color: #e67e00;
+    background-color: #407CE2;
     color: #fff;
     border: none;
     border-radius: 6px;
@@ -168,7 +168,7 @@
 
 .info-icon {
     font-size: 24px;
-    color: #e67e00;
+    color: #407CE2;
     margin-bottom: 10px;
 }
 
@@ -193,7 +193,7 @@
 }
 
 .btn-primary:hover {
-    background-color: #d67200;
+    background-color: #407CE2;
     transform: translateY(-2px);
 }
 
@@ -225,15 +225,15 @@
 }
 
 .dark-mode .input-field:focus {
-    border-color: #e67e00;
+    border-color: #407CE2;
 }
 
 .dark-mode .btn-primary {
-    background-color: #e67e00;
+    background-color: #407CE2;
 }
 
 .dark-mode .btn-primary:hover {
-    background-color: #d67200;
+    background-color: #407CE2;
 }
 
 @media (max-width: 480px) {
