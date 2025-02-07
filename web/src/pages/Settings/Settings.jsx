@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FaArrowLeft, FaMoon, FaSun, FaBell, FaUser, FaEnvelope, FaClock, FaRuler } from 'react-icons/fa';
+import { FaMoon, FaSun, FaBell, FaUser, FaEnvelope, FaRuler } from 'react-icons/fa';
 import { IoMdNotifications, IoMdNotificationsOff } from 'react-icons/io';
 import { toast } from 'react-toastify';
 import { fetchWithAuth, API_ENDPOINTS } from '../../utils/api';
+import Spinner from '../../components/Spinner/Spinner';
 
 const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
   const [settings, setSettings] = useState({
@@ -15,9 +16,11 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
     workoutReminders: true,
     emergencyContacts: true
   });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserData = async () => {
+      setIsLoading(true);
       try {
         const response = await fetchWithAuth(`${API_ENDPOINTS.GET_USER}?id=${localStorage.getItem('userId')}`, {
           method: 'GET',
@@ -31,11 +34,20 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
       } catch (error) {
         toast.error('Failed to fetch user data');
         console.error('Error fetching user data:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchUserData();
   }, []);
+
+  const handleThemeToggle = () => {
+    toggleDarkMode();
+    // Save theme preference to localStorage
+    localStorage.setItem('theme', !isDarkMode ? 'dark' : 'light');
+    toast.success(`Switched to ${!isDarkMode ? 'dark' : 'light'} mode`);
+  };
 
   const handleSettingChange = (key, value) => {
     setSettings(prev => ({
@@ -91,14 +103,17 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
       <SettingSection title="Appearance">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            {isDarkMode ? <FaMoon className="text-xl" /> : <FaSun className="text-xl text-yellow-500" />}
+            {isDarkMode ? <FaMoon className="text-xl text-yellow-500" /> : <FaSun className="text-xl text-yellow-500" />}
             <span>Dark Mode</span>
           </div>
-          <ToggleSwitch enabled={isDarkMode} onChange={toggleDarkMode} />
+          <ToggleSwitch
+            enabled={isDarkMode}
+            onChange={handleThemeToggle}
+          />
         </div>
       </SettingSection>
 
-      {/* Profile Settings */}
+      {/* Profile Section */}
       <SettingSection title="Profile">
         <div className="space-y-4">
           <div className="flex items-center gap-3 mb-4">
@@ -107,16 +122,22 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
               <div className={`block text-sm mb-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                 Username
               </div>
-              <input
-                type="text"
-                value={settings.username}
-                readOnly
-                className={`w-full p-2 rounded border ${
-                  isDarkMode 
-                    ? 'bg-gray-700 border-gray-600' 
-                    : 'bg-gray-200 border-gray-300'
-                } cursor-not-allowed`}
-              />
+              {isLoading ? (
+                <div className="flex justify-center py-2">
+                  <Spinner size="small" color={isDarkMode ? '#4285F4' : '#4285F4'} />
+                </div>
+              ) : (
+                <input
+                  type="text"
+                  value={settings.username}
+                  readOnly
+                  className={`w-full p-2 rounded border ${
+                    isDarkMode 
+                      ? 'bg-gray-700 border-gray-600' 
+                      : 'bg-gray-200 border-gray-300'
+                  } cursor-not-allowed`}
+                />
+              )}
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -125,16 +146,22 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
               <div className={`block text-sm mb-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                 Email
               </div>
-              <input
-                type="email"
-                value={settings.email}
-                readOnly
-                className={`w-full p-2 rounded border ${
-                  isDarkMode 
-                    ? 'bg-gray-700 border-gray-600' 
-                    : 'bg-gray-200 border-gray-300'
-                } cursor-not-allowed`}
-              />
+              {isLoading ? (
+                <div className="flex justify-center py-2">
+                  <Spinner size="small" color={isDarkMode ? '#4285F4' : '#4285F4'} />
+                </div>
+              ) : (
+                <input
+                  type="email"
+                  value={settings.email}
+                  readOnly
+                  className={`w-full p-2 rounded border ${
+                    isDarkMode 
+                      ? 'bg-gray-700 border-gray-600' 
+                      : 'bg-gray-200 border-gray-300'
+                  } cursor-not-allowed`}
+                />
+              )}
             </div>
           </div>
         </div>
