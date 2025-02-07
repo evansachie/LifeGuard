@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { FaStickyNote, FaSearch, FaFilter, FaBold, FaItalic, FaListUl, FaLink, FaTags } from 'react-icons/fa';
 import './PrivateMemos.css';
 import { toast } from 'react-hot-toast';
+import Spinner from '../../components/Spinner/Spinner';
 
 const PrivateMemos = ({ isDarkMode }) => {
     const [memo, setMemo] = useState('');
@@ -15,6 +16,8 @@ const PrivateMemos = ({ isDarkMode }) => {
     const [filter, setFilter] = useState('all'); // 'all', 'active', 'completed'
     const [searchTerm, setSearchTerm] = useState('');
     const [tags, setTags] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
 
     const API_BASE_URL = 'https://lifeguard-node.onrender.com';
 
@@ -50,6 +53,8 @@ const PrivateMemos = ({ isDarkMode }) => {
                 console.error('Error fetching memos:', error);
                 toast.error('Failed to load memos. Please try again.');
                 setError('An error occurred while fetching memos. Please try again later.');
+            } finally {
+                setIsLoading(false);
             }
         };
         fetchMemos();
@@ -61,6 +66,7 @@ const PrivateMemos = ({ isDarkMode }) => {
 
     const handleSaveMemo = async () => {
         if (memo.trim() !== '') {
+            setSaving(true);
             try {
                 const token = localStorage.getItem('token');
                 if (!token) {
@@ -87,6 +93,8 @@ const PrivateMemos = ({ isDarkMode }) => {
                 }
             } catch (error) {
                 console.error('Error saving memo:', error);
+            } finally {
+                setSaving(false);
             }
         }
     };
@@ -230,62 +238,74 @@ const PrivateMemos = ({ isDarkMode }) => {
                     onChange={handleMemoChange}
                     placeholder="Write your personal notes here..."
                 />
-                <button className="save-memo-button" onClick={handleSaveMemo}>
-                    Save Note
+                <button 
+                    className="save-memo-button" 
+                    onClick={handleSaveMemo}
+                    disabled={saving}
+                >
+                    {saving ? <Spinner size="small" color="white" /> : 'Save Note'}
                 </button>
             </div>
 
             <div className="saved-memos-container">
-                {filteredMemos.map(({ id, memo, done, created_at }) => (
-                    <div key={id} className={`saved-memo ${done ? 'done' : ''}`}>
-                        {editingMemoId === id ? (
-                            <div className="edit-memo-container">
-                                <textarea
-                                    className="edit-memo-input"
-                                    defaultValue={memo}
-                                />
-                                <div className="edit-actions">
-                                    <button 
-                                        className="memo-button edit-button"
-                                        onClick={(e) => handleUpdateMemo(id, e)}
-                                    >
-                                        Save
-                                    </button>
-                                    <button 
-                                        className="memo-button cancel-button"
-                                        onClick={handleCancelEdit}
-                                    >
-                                        Cancel
-                                    </button>
-                                </div>
-                            </div>
-                        ) : (
-                            <>
-                                <div className="memo-content">{memo}</div>
-                                <div className="memo-actions">
-                                    <button 
-                                        className="memo-button edit-button" 
-                                        onClick={() => handleEditMemo(id)}
-                                    >
-                                        Edit
-                                    </button>
-                                    <button 
-                                        className="memo-button delete-button" 
-                                        onClick={() => handleDeleteMemo(id)}
-                                    >
-                                        Delete
-                                    </button>
-                                    <button 
-                                        className="memo-button done-button"
-                                        onClick={() => done ? handleUndoneMemo(id) : handleDoneMemo(id)}
-                                    >
-                                        {done ? 'Undone' : 'Done'}
-                                    </button>
-                                </div>
-                            </>
-                        )}
+                {isLoading ? (
+                    <Spinner size="large" color={isDarkMode ? '#4285F4' : '#4285F4'} />
+                ) : filteredMemos.length === 0 ? (
+                    <div className="no-memos">
+                        <p>No notes found</p>
                     </div>
-                ))}
+                ) : (
+                    filteredMemos.map(({ id, memo, done, created_at }) => (
+                        <div key={id} className={`saved-memo ${done ? 'done' : ''}`}>
+                            {editingMemoId === id ? (
+                                <div className="edit-memo-container">
+                                    <textarea
+                                        className="edit-memo-input"
+                                        defaultValue={memo}
+                                    />
+                                    <div className="edit-actions">
+                                        <button 
+                                            className="memo-button edit-button"
+                                            onClick={(e) => handleUpdateMemo(id, e)}
+                                        >
+                                            Save
+                                        </button>
+                                        <button 
+                                            className="memo-button cancel-button"
+                                            onClick={handleCancelEdit}
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="memo-content">{memo}</div>
+                                    <div className="memo-actions">
+                                        <button 
+                                            className="memo-button edit-button" 
+                                            onClick={() => handleEditMemo(id)}
+                                        >
+                                            Edit
+                                        </button>
+                                        <button 
+                                            className="memo-button delete-button" 
+                                            onClick={() => handleDeleteMemo(id)}
+                                        >
+                                            Delete
+                                        </button>
+                                        <button 
+                                            className="memo-button done-button"
+                                            onClick={() => done ? handleUndoneMemo(id) : handleDoneMemo(id)}
+                                        >
+                                            {done ? 'Undone' : 'Done'}
+                                        </button>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    ))
+                )}
             </div>
         </div>
     );

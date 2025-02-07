@@ -10,12 +10,16 @@ import { toast } from 'react-toastify';
 import { fetchWithAuth, API_ENDPOINTS } from '../../utils/api';
 import './Dashboard.css';
 import QuickAccess from '../../components/QuickAccess/QuickAccess';
+import Spinner from '../../components/Spinner/Spinner';
 
 function Dashboard({ isDarkMode }) {
     const [quote, setQuote] = useState(null);
     const [userData, setUserData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [savedMemos, setSavedMemos] = useState([]);
+    const [memosLoading, setMemosLoading] = useState(true);
+    const [quotesLoading, setQuotesLoading] = useState(true);
+    const [dataLoading, setDataLoading] = useState(true);
 
     const [pollutionData, setPollutionData] = useState({
         temperature: 28.5,
@@ -46,34 +50,38 @@ function Dashboard({ isDarkMode }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Fetch user data
-                const response = await fetchWithAuth(`${API_ENDPOINTS.GET_USER}?id=${localStorage.getItem('userId')}`, {
-                    method: 'GET',
-                });
-                setUserData(response);
-                const firstName = response.userName.split(' ')[0];
-                localStorage.setItem('userName', firstName);
+                setDataLoading(true);
+                setMemosLoading(true);
+                setQuotesLoading(true);
 
-                // Fetch memos
-                const memosResponse = await fetch(API_ENDPOINTS.MEMOS, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
+                // Fetch user data and memos
+                const [userData, memosData] = await Promise.all([
+                    fetchWithAuth(`${API_ENDPOINTS.GET_USER}?id=${localStorage.getItem('userId')}`),
+                    fetch(API_ENDPOINTS.MEMOS, {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(res => res.json())
+                ]);
 
-                if (!memosResponse.ok) {
-                    throw new Error('Failed to fetch memos');
-                }
-                const memos = await memosResponse.json();
-                setSavedMemos(memos);
-
+                setUserData(userData);
+                setSavedMemos(memosData);
             } catch (error) {
                 console.error('Error fetching data:', error);
                 toast.error('Failed to fetch data');
             } finally {
-                setIsLoading(false);
+                setDataLoading(false);
+                setMemosLoading(false);
+            }
+        };
+
+        const fetchQuoteData = async () => {
+            try {
+                const quote = await fetchQuote();
+                setQuote(quote);
+            } finally {
+                setQuotesLoading(false);
             }
         };
 
@@ -108,6 +116,8 @@ function Dashboard({ isDarkMode }) {
             });
         } catch (error) {
             console.error('Error fetching quote data:', error);
+        } finally {
+            setQuotesLoading(false);
         }
     };
 
@@ -170,35 +180,51 @@ function Dashboard({ isDarkMode }) {
 
                 <div className="dashboard-card quote-card">
                     <h2><FaChartLine /> Daily Inspiration</h2>
-                    {quote ? `"${quote.quote}"` : 'Loading quote...'}
-                    <br/>
-                    {quote && `– ${quote.author}`}
+                    {quotesLoading ? (
+                        <Spinner size="medium" color={isDarkMode ? '#4285F4' : '#4285F4'} />
+                    ) : (
+                        <>
+                            {quote ? `"${quote.quote}"` : 'Loading quote...'}
+                            <br/>
+                            {quote && `– ${quote.author}`}
+                        </>
+                    )}
                 </div>
 
                 <div className="dashboard-card reminders-card">
                     <h2><FaStickyNote /> Reminders</h2>
-                    <ul className="reminders-list">
-                        {savedMemos.length === 0 ? (
-                            <li>No reminders at the moment</li>
+                    <div className="reminders-content">
+                        {memosLoading ? (
+                            <Spinner size="medium" color={isDarkMode ? '#4285F4' : '#4285F4'} />
                         ) : (
-                            savedMemos.slice(0, 3).map((memo, index) => (
-                                <li 
-                                    key={index} 
-                                    className={memo.done ? 'done' : ''}
-                                >
-                                    {memo.memo}
-                                </li>
-                            ))
+                            <ul className="reminders-list">
+                                {savedMemos.length === 0 ? (
+                                    <li>No reminders at the moment</li>
+                                ) : (
+                                    savedMemos.slice(0, 3).map((memo, index) => (
+                                        <li 
+                                            key={index} 
+                                            className={memo.done ? 'done' : ''}
+                                        >
+                                            {memo.memo}
+                                        </li>
+                                    ))
+                                )}
+                            </ul>
                         )}
-                    </ul>
+                    </div>
                     <Link to="/sticky-notes" className="card-link">View All</Link>
                 </div>
 
                 <div className="dashboard-card aqi-card">
                     <h2><MdAir /> Air Quality Index</h2>
-                    <div className="card-value" style={{ color: getAQIColor(pollutionData.aqi) }}>
-                        {Math.round(pollutionData.aqi)} ppm
-                    </div>
+                    {dataLoading ? (
+                        <Spinner size="medium" color={isDarkMode ? '#4285F4' : '#4285F4'} />
+                    ) : (
+                        <div className="card-value" style={{ color: getAQIColor(pollutionData.aqi) }}>
+                            {Math.round(pollutionData.aqi)} ppm
+                        </div>
+                    )}
                 </div>
 
                 <div className="dashboard-card pressure-card">
