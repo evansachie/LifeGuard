@@ -15,6 +15,7 @@ function Dashboard({ isDarkMode }) {
     const [quote, setQuote] = useState(null);
     const [userData, setUserData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [savedMemos, setSavedMemos] = useState([]);
 
     const [pollutionData, setPollutionData] = useState({
         temperature: 28.5,
@@ -26,8 +27,7 @@ function Dashboard({ isDarkMode }) {
         pm10: 45.8,
         no2: 25.4
     });
-    // const [username, setUsername] = useState('');
-    const firstname = 'Evans' // up until we fetch from backend
+
     const [alerts, setAlerts] = useState([
         {
             id: 1,
@@ -44,25 +44,40 @@ function Dashboard({ isDarkMode }) {
     ]);
 
     useEffect(() => {
-        const fetchUserData = async () => {
+        const fetchData = async () => {
             try {
+                // Fetch user data
                 const response = await fetchWithAuth(`${API_ENDPOINTS.GET_USER}?id=${localStorage.getItem('userId')}`, {
                     method: 'GET',
                 });
                 setUserData(response);
-                // Store the name for use across components
-                // Split the name to get first name
                 const firstName = response.userName.split(' ')[0];
                 localStorage.setItem('userName', firstName);
+
+                // Fetch memos
+                const memosResponse = await fetch(API_ENDPOINTS.MEMOS, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!memosResponse.ok) {
+                    throw new Error('Failed to fetch memos');
+                }
+                const memos = await memosResponse.json();
+                setSavedMemos(memos);
+
             } catch (error) {
-                toast.error('Failed to fetch user data');
-                console.error('Error fetching user data:', error);
+                console.error('Error fetching data:', error);
+                toast.error('Failed to fetch data');
             } finally {
                 setIsLoading(false);
             }
         };
 
-        fetchUserData();
+        fetchData();
         fetchQuoteData();
         // Mock data updates every 5 minutes
         const interval = setInterval(() => {
@@ -163,14 +178,18 @@ function Dashboard({ isDarkMode }) {
                 <div className="dashboard-card reminders-card">
                     <h2><FaStickyNote /> Reminders</h2>
                     <ul className="reminders-list">
-                        {/* {savedMemos.length === 0 ? (
+                        {savedMemos.length === 0 ? (
                             <li>No reminders at the moment</li>
                         ) : (
                             savedMemos.slice(0, 3).map((memo, index) => (
-                                <li key={index} className={memo.done ? 'done' : ''}>{memo.memo}</li>
+                                <li 
+                                    key={index} 
+                                    className={memo.done ? 'done' : ''}
+                                >
+                                    {memo.memo}
+                                </li>
                             ))
-                        )} */}
-                        <li>No reminders at the moment</li>
+                        )}
                     </ul>
                     <Link to="/sticky-notes" className="card-link">View All</Link>
                 </div>

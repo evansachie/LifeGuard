@@ -1,6 +1,7 @@
 import { toast } from 'react-toastify';
 
 export const API_BASE_URL = 'https://lifeguard-hiij.onrender.com';
+export const NODE_API_URL = 'https://lifeguard-node.onrender.com';
 
 export const API_ENDPOINTS = {
     LOGIN: '/api/Account/login',
@@ -8,7 +9,8 @@ export const API_ENDPOINTS = {
     FORGOT_PASSWORD: '/api/Account/forgot-password',
     VERIFY_OTP: '/api/Account/VerifyOTP',
     RESEND_OTP: '/api/Account/ResendOTP',
-    GET_USER: '/api/Account/id'
+    GET_USER: '/api/Account/id',
+    MEMOS: `${NODE_API_URL}/api/memos`
 };
 
 export const fetchWithAuth = async (endpoint, options = {}) => {
