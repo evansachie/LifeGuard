@@ -1,7 +1,7 @@
 {
-  "name": "lighthouse-portal-server",
+  "name": "lifeguard-node-server",
   "version": "1.0.0",
-  "description": "Backend server for Lighthouse Portal",
+  "description": "Backend server for Lifeguard",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
