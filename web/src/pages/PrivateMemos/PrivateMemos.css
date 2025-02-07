@@ -1,290 +1,285 @@
+/* Base Layout */
 .private-memos {
-    padding: 20px;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+    padding: 2rem;
+    min-height: 100vh;
     background-color: #f8f9fa;
-    color: #212529;
+    color: #2D3748;
 }
 
-.private-memos h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-weight: bold;
+.dark-mode.private-memos {
+    background-color: #1a1a1a;
+    color: #e2e8f0;
 }
 
-.memo-input-container {
+/* Header Section */
+.header-section {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-bottom: 20px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e2e8f0;
 }
 
-.memo-input {
+.dark-mode .header-section {
+    border-bottom-color: #4a5568;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-left .icon {
+    color: #4285F4;
+    font-size: 1.5rem;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin: 0;
+}
+
+.dark-mode .page-title {
+    color: #e2e8f0;
+}
+
+/* Search Bar */
+.search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 30px;
+    padding: 0.75rem 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    width: 300px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+
+.search-bar:focus-within {
+    box-shadow: 0 0 0 2px #4285F4;
+}
+
+.dark-mode .search-bar {
+    background: #2d3745;
+    border-color: #4a5568;
+}
+
+.search-bar svg {
+    color: #718096;
+    font-size: 1.1rem;
+}
+
+.search-bar input {
+    border: none;
+    background: none;
+    padding: 0 0.75rem;
     width: 100%;
-    height: 200px;
-    padding: 10px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    resize: none;
-    font-size: 16px;
-    background-color: #fff;
-    color: #212529;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: #2d3748;
+    font-size: 0.95rem;
 }
 
-.save-memo-button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    align-self: flex-end;
-    margin-top: 10px;
-    background-color: #007bff;
-    color: #fff;
-    font-size: 14px;
+.dark-mode .search-bar input {
+    color: #e2e8f0;
 }
 
-.save-memo-button:hover {
-    background-color: #0056b3;
+.search-bar input::placeholder {
+    color: #a0aec0;
 }
 
-.saved-memos-container {
-    flex-grow: 1;
-    overflow-y: auto;
-    max-height: calc(100% - 280px);
-    padding-right: 10px;
+.search-bar input:focus {
+    outline: none;
 }
 
-.saved-memos-list {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.saved-memo {
-    padding: 15px;
-    border-radius: 4px;
-    margin-bottom: 15px;
-    word-wrap: break-word;
-    max-width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.done-memo-button,
-.undone-memo-button {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    font-size: 14px;
-    color: #fff;
-}
-
-.done-memo-button {
-    background-color: #007bff;
-}
-
-.done-memo-button:hover {
-    background-color: #0056b3;
-}
-
-.undone-memo-button {
-    background-color: #6c757d;
-}
-
-.undone-memo-button:hover {
-    background-color: #5a6268;
-}
-
-.dark-mode .done-memo-button {
-    background-color: #007bff;
-}
-
-.dark-mode .done-memo-button:hover {
-    background-color: #0056b3;
-}
-
-.dark-mode .undone-memo-button {
-    background-color: #6c757d;
-}
-
-.dark-mode .undone-memo-button:hover {
-    background-color: #5a6268;
-}
-
-
-.memo-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.edit-memo-button {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    background-color: #28a745;
-    color: #fff;
-    font-size: 14px;
-}
-
-.edit-memo-button:hover {
-    background-color: #1e7e34;
-}
-
-.delete-memo-button {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    background-color: #dc3545;
-    color: #fff;
-    font-size: 14px;
-}
-
-.delete-memo-button:hover {
-    background-color: #c82333;
-}
-
+/* Edit Mode Styles */
 .edit-memo-container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
     width: 100%;
 }
 
 .edit-memo-input {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    resize: none;
-    font-size: 16px;
-    background-color: #fff;
-    color: #212529;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 10px;
+    min-height: 100px;
+    padding: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    resize: vertical;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    background: white;
+    color: #2D2D2D;
 }
 
-.edit-memo-actions {
+.dark-mode .edit-memo-input {
+    background: #1a202c;
+    border-color: #4a5568;
+    color: #e2e8f0;
+}
+
+.edit-actions {
     display: flex;
-    gap: 10px;
-    align-self: flex-end;
+    gap: 0.75rem;
+    justify-content: flex-end;
 }
 
-.save-edit-button {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    background-color: #28a745;
-    color: #fff;
-    font-size: 14px;
+.cancel-button {
+    background: #718096;
+    color: white;
 }
 
-.save-edit-button:hover {
-    background-color: #1e7e34;
+.cancel-button:hover {
+    background: #4a5568;
 }
 
-.cancel-edit-button {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    background-color: #6c757d;
-    color: #fff;
-    font-size: 14px;
+/* Ensure page title is white in dark mode */
+.private-memos.dark-mode .header-section .header-left .page-title {
+    color: #fff !important;
 }
 
-.cancel-edit-button:hover {
-    background-color: #5a6268;
+/* Input Section */
+.memo-input-container {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.dark-mode {
-    background-color: #212529;
-    color: #fff;
+.dark-mode .memo-input-container {
+    background: #2D3748;
+}
+
+.memo-input {
+    width: 100%;
+    min-height: 120px;
+    padding: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    resize: vertical;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    background: white;
+    color: #2D3748;
 }
 
 .dark-mode .memo-input {
-    background-color: #343a40;
-    color: #fff;
-    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+    background: #2D2D2D;
+    border-color: #4a5568;
+    color: #e2e8f0;
 }
 
-.dark-mode .save-memo-button,
-.dark-mode .edit-memo-button,
-.dark-mode .save-edit-button {
-    background-color: #28a745;
-    color: #fff;
+.save-memo-button {
+    background: #407CE2;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.dark-mode .save-memo-button:hover,
-.dark-mode .edit-memo-button:hover,
-.dark-mode .save-edit-button:hover {
-    background-color: #1e7e34;
+.save-memo-button:hover {
+    background: #2b6cb0;
 }
 
-.dark-mode .delete-memo-button:hover {
-    background-color: #c82333;
+/* Memo Cards */
+.saved-memos-container {
+    display: grid;
+    gap: 1rem;
 }
 
-.dark-mode .cancel-edit-button {
-    background-color: #6c757d;
-    color: #fff;
-}
-
-.dark-mode .cancel-edit-button:hover {
-    background-color: #5a6268;
+.saved-memo {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
 }
 
 .dark-mode .saved-memo {
-    background-color: #343a40;
-    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+    background: #2D2D2D;
 }
 
+.saved-memo:hover {
+    transform: translateY(-2px);
+}
+
+.memo-content {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.memo-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+}
+
+.memo-button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.edit-button {
+    background: #48bb78;
+    color: white;
+}
+
+.edit-button:hover {
+    background: #38a169;
+}
+
+.delete-button {
+    background: #f56565;
+    color: white;
+}
+
+.delete-button:hover {
+    background: #e53e3e;
+}
+
+.done-button {
+    background: #4299e1;
+    color: white;
+}
+
+.done-button:hover {
+    background: #3182ce;
+}
+
+.saved-memo.done .memo-content {
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
     .private-memos {
-        padding: 10px;
-        height: auto;
-        min-height: 100vh;
+        padding: 1rem;
     }
 
-    .memo-input-container {
-        margin-bottom: 10px;
-    }
-
-    .memo-input {
-        height: 150px;
-    }
-
-    .saved-memos-container {
-        max-height: none;
-        flex-grow: 1;
-    }
-
-    .saved-memo {
-        padding: 10px;
+    .header-section {
         flex-direction: column;
-        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .search-bar {
+        width: 100%;
     }
 
     .memo-actions {
-        margin-top: 10px;
-    }
-
-    .edit-memo-input {
-        font-size: 14px;
+        flex-wrap: wrap;
     }
 }
