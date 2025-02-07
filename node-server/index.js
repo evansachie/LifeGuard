@@ -17,18 +17,21 @@ app.use((req, res, next) => {
     next();
 });
 
-// Middleware to enable CORS
 app.use(cors({
-    origin: ['*'],
-    credentials: true,
+    origin: [
+        'http://localhost:3000',
+        'https://lifeguard-vq69.onrender.com',
+        'https://lifeguard-vert.vercel.app'
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+    optionsSuccessStatus: 200
 }));
-
 
 app.use(express.json());
 
-// PostgreSQL pool using the connection string
+// PostgreSQL pool configuration
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: {
@@ -38,7 +41,6 @@ const pool = new Pool({
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 10000,
 });
-
 
 // Test db connection
 pool.connect((err, client, release) => {
@@ -50,13 +52,18 @@ pool.connect((err, client, release) => {
     }
 });
 
-
 app.use('/api/memos', memoRoutes(pool));
 app.use('/api/calories', bmrCalculatorRoutes(pool));
 app.use('/api/settings', settingsRoutes(pool));
 
 app.get('/', (req, res) => {
-    res.send('Hello from Express server!');
+    res.send('LifeGuard API is running!');
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ error: 'Something broke!' });
 });
 
 app.listen(PORT, () => {
