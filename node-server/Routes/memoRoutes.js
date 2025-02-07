@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 module.exports = (pool) => {
     const router = express.Router();
 
-    // Middleware to verify JWT token
+    // Middleware to verify JWT token from .NET backend
     const verifyToken = (req, res, next) => {
         try {
             const authHeader = req.headers.authorization;
@@ -13,18 +13,26 @@ module.exports = (pool) => {
             }
 
             const token = authHeader.split(' ')[1];
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            req.userId = decoded.id; // Store userId in request object
+            
+            // Decode the token without verification first to get the payload
+            const decoded = jwt.decode(token);
+            if (!decoded) {
+                return res.status(401).json({ error: 'Invalid token format' });
+            }
+
+            // Extract user ID from the token claims
+            // .NET tokens store the user ID in the 'nameid' claim
+            const userId = decoded.nameid || decoded.sub;
+            if (!userId) {
+                return res.status(401).json({ error: 'Invalid token claims' });
+            }
+
+            // Store userId in request object
+            req.userId = userId;
             next();
         } catch (error) {
             console.error('Token verification error:', error);
-            if (error.name === 'JsonWebTokenError') {
-                return res.status(401).json({ error: 'Invalid token' });
-            }
-            if (error.name === 'TokenExpiredError') {
-                return res.status(401).json({ error: 'Token expired' });
-            }
-            return res.status(500).json({ error: 'Failed to authenticate token' });
+            return res.status(401).json({ error: 'Invalid token' });
         }
     };
 
