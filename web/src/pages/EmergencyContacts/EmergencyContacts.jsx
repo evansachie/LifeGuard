@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaUserPlus, FaEdit, FaTrash, FaArrowLeft, FaPhone, FaEnvelope, FaBell } from 'react-icons/fa';
+import { FaUserPlus, FaEdit, FaTrash, FaPhone, FaEnvelope, FaBell } from 'react-icons/fa';
 import { IoMdAlert } from 'react-icons/io';
 import { toast } from 'react-toastify';
 
@@ -128,7 +128,7 @@ function EmergencyContacts({ isDarkMode }) {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
-          <h1 className="text-2xl font-bold">Emergency Contacts</h1>
+          <h1 className="text-3xl font-bold mb-4">Emergency Contacts</h1>
         </div>
         <button
           onClick={handleEmergencyAlert}
@@ -161,7 +161,7 @@ function EmergencyContacts({ isDarkMode }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             className={`p-6 rounded-lg shadow-lg ${
-              isDarkMode ? 'bg-gray-800' : 'bg-white'
+              isDarkMode ? 'bg-[#2d2d2d]' : 'bg-white'
             }`}
           >
             <div className="flex justify-between items-start mb-4">

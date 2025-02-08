@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaUserEdit, FaSave, FaTimesCircle, FaCamera } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaUserEdit, FaSave, FaTimesCircle, FaCamera, FaPlus, FaUserPlus } from 'react-icons/fa';
+import { FaPerson } from "react-icons/fa6";
 import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
 import './Profile.css';
 
 function Profile({ isDarkMode }) {
@@ -126,9 +128,10 @@ function Profile({ isDarkMode }) {
                         <form onSubmit={handleSubmit}>
                             <div className="form-grid">
                                 <div className="form-group">
-                                    <label>
-                                        <FaUser /> Full Name
-                                    </label>
+                                <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                                    <FaUser />
+                                    <span>Full Name</span>
+                                </div>
                                     <input
                                         type="text"
                                         name="fullName"
@@ -139,22 +142,24 @@ function Profile({ isDarkMode }) {
                                 </div>
 
                                 <div className="form-group">
-                                    <label>
-                                        <FaEnvelope /> Email
-                                    </label>
+                                    <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                                        <FaEnvelope />
+                                        <span>Email</span>
+                                    </div>
                                     <input
                                         type="email"
                                         name="email"
                                         value={profileData.email}
                                         onChange={handleInputChange}
-                                        disabled={!editMode}
+                                        disabled={true}
                                     />
                                 </div>
 
                                 <div className="form-group">
-                                    <label>
-                                        <FaPhone /> Phone
-                                    </label>
+                                    <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                                        <FaPhone />
+                                        <span>Phone</span>
+                                    </div>
                                     <input
                                         type="tel"
                                         name="phone"
@@ -166,9 +171,10 @@ function Profile({ isDarkMode }) {
                                 </div>
 
                                 <div className="form-group">
-                                    <label>
-                                        <FaMapMarkerAlt /> Location
-                                    </label>
+                                    <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                                        <FaMapMarkerAlt />
+                                        <span>Location</span>
+                                    </div>
                                     <input
                                         type="text"
                                         name="location"
@@ -181,7 +187,10 @@ function Profile({ isDarkMode }) {
                             </div>
 
                             <div className="form-group full-width">
-                                <label>Bio</label>
+                                <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                                    <FaPerson />
+                                    <span>Bio</span>
+                                </div>
                                 <textarea
                                     name="bio"
                                     value={profileData.bio}
@@ -196,7 +205,7 @@ function Profile({ isDarkMode }) {
                                 <h3>Physical Information</h3>
                                 <div className="form-grid">
                                     <div className="form-group">
-                                        <label>Age</label>
+                                        <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Age</div>
                                         <input
                                             type="date"
                                             name="birthDate"
@@ -208,7 +217,7 @@ function Profile({ isDarkMode }) {
                                     </div>
 
                                     <div className="form-group">
-                                        <label>Gender</label>
+                                        <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Gender</div>
                                         <select
                                             name="gender"
                                             value={profileData.gender}
@@ -223,7 +232,7 @@ function Profile({ isDarkMode }) {
                                     </div>
 
                                     <div className="form-group">
-                                        <label>Weight (kg)</label>
+                                        <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Weight (kg)</div>
                                         <input
                                             type="number"
                                             name="weight"
@@ -237,7 +246,7 @@ function Profile({ isDarkMode }) {
                                     </div>
 
                                     <div className="form-group">
-                                        <label>Height (cm)</label>
+                                        <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Height (cm)</div>
                                         <input
                                             type="number"
                                             name="height"
@@ -271,19 +280,34 @@ function Profile({ isDarkMode }) {
                 </motion.div>
 
                 <div className="emergency-contacts-section">
-                    <h3>Emergency Contacts</h3>
-                    <div className="contacts-list">
+                    <div className="section-header">
+                        <h2 className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Emergency Contacts</h2>
+                        <Link to="/emergency-contacts" className="add-contacts-button">
+                            <FaPlus /> Add Contacts
+                        </Link>
+                    </div>
+                    <div className="contacts-card">
                         {profileData.emergencyContacts.length > 0 ? (
                             profileData.emergencyContacts.map((contact, index) => (
                                 <div key={index} className="contact-item">
                                     <div className="contact-info">
-                                        <strong>{contact.name}</strong>
-                                        <span>{contact.phone}</span>
+                                        <div className="contact-name">
+                                            <FaUser className="contact-icon" />
+                                            <strong>{contact.name}</strong>
+                                        </div>
+                                        <div className="contact-phone">
+                                            <FaPhone className="contact-icon" />
+                                            <span>{contact.phone}</span>
+                                        </div>
                                     </div>
                                 </div>
                             ))
                         ) : (
-                            <p className="no-contacts">No emergency contacts added. Add them in the Emergency Contacts section.</p>
+                            <div className="no-contacts">
+                                <FaUserPlus className="no-contacts-icon" />
+                                <p>No emergency contacts added.</p>
+                                <p>Add them in the Emergency Contacts section.</p>
+                            </div>
                         )}
                     </div>
                 </div>

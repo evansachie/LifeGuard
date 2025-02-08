@@ -65,7 +65,7 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className={`p-6 rounded-lg shadow-lg mb-6 ${
-        isDarkMode ? 'bg-gray-800' : 'bg-white'
+        isDarkMode ? 'bg-[#2d2d2d]' : 'bg-white'
       }`}
     >
       <h2 className="text-xl font-semibold mb-4">{title}</h2>
@@ -96,7 +96,7 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
     <div className={`min-h-screen p-6 ${isDarkMode ? 'dark-mode' : 'bg-gray-50 text-gray-900'}`}>
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">
-        <h1 className="text-2xl font-bold">Settings</h1>
+        <h1 className="text-3xl font-bold mb-4">Settings</h1>
       </div>
 
       {/* Theme Settings */}
