@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaSearch, FaHeart, FaRunning, FaDumbbell, FaBell, FaQuestion, FaBook, FaUserMd } from 'react-icons/fa';
-import { IoMdFitness } from 'react-icons/io';
-import './Help.css';
+import { FaSearch, FaHeart, FaDumbbell, FaQuestion, FaBook, FaUserMd } from 'react-icons/fa';
 
 const helpCategories = [
   {
@@ -137,7 +135,7 @@ const HelpPage = ({ isDarkMode }) => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               className={`p-6 rounded-lg shadow-lg cursor-pointer ${
-                isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50'
+                isDarkMode ? 'bg-[#2d2d2d] hover:bg-gray-700' : 'bg-white hover:bg-gray-50'
               } transition-all duration-300`}
               onClick={() => setActiveCategory(activeCategory === category.id ? null : category.id)}
             >

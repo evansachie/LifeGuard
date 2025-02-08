@@ -28,7 +28,7 @@ body {
 }
 
 .profile-page.dark {
-    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    background: #1C1C1C;
     color: #e2e8f0;
 }
 
@@ -47,7 +47,7 @@ body {
 }
 
 .dark .profile-header {
-    background: rgba(45, 55, 72, 0.9);
+    background: #2D2D2D;
 }
 
 .profile-avatar {
@@ -87,7 +87,7 @@ body {
 }
 
 .dark .profile-content {
-    background: rgba(45, 55, 72, 0.9);
+    background: #2D2D2D;
 }
 
 .section-header {
@@ -151,31 +151,38 @@ body {
 }
 
 .form-group input,
-.form-group textarea {
+.form-group textarea,
+.form-group select {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid #e2e8f0;
     border-radius: 0.5rem;
     background-color: white;
+    color: #2d3748;
     transition: all 0.3s ease;
 }
 
+.form-group input:disabled,
+.form-group textarea:disabled,
+.form-group select:disabled {
+    background-color: #f7fafc;
+    cursor: not-allowed;
+    color: #4a5568;
+}
+
 .dark .form-group input,
-.dark .form-group textarea {
+.dark .form-group textarea,
+.dark .form-group select {
     background-color: #2d3748;
     border-color: #4a5568;
     color: #e2e8f0;
 }
 
-.form-group input:disabled,
-.form-group textarea:disabled {
-    background-color: #f7fafc;
-    cursor: not-allowed;
-}
-
 .dark .form-group input:disabled,
-.dark .form-group textarea:disabled {
+.dark .form-group textarea:disabled,
+.dark .form-group select:disabled {
     background-color: #1a202c;
+    color: #e2e8f0;
 }
 
 .form-actions {
@@ -318,19 +325,14 @@ body {
     color: #e2e8f0;
 }
 
-.form-group select {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 0.5rem;
-    background-color: white;
-    transition: all 0.3s ease;
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #a0aec0;
 }
 
-.dark .form-group select {
-    background-color: #2d3748;
-    border-color: #4a5568;
-    color: #e2e8f0;
+.dark .form-group input::placeholder,
+.dark .form-group textarea::placeholder {
+    color: #718096;
 }
 
 .emergency-contacts-section {
@@ -370,4 +372,156 @@ body {
 
 .dark .no-contacts {
     color: #a0aec0;
+}
+
+/* Dark mode text fixes */
+.dark .form-group label,
+.dark .form-group input,
+.dark .form-group textarea,
+.dark .form-group select,
+.dark .section-header h2,
+.dark .section-header h3,
+.dark .physical-info-section h3,
+.dark .emergency-contacts-section h3 {
+    color: #e2e8f0;
+}
+
+/* Emergency contacts styling */
+.emergency-contacts-section {
+    margin-top: 2rem;
+}
+
+.contacts-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 1rem;
+}
+
+.dark .contacts-card {
+    background: #2D2D2D;
+}
+
+.contact-item {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background: rgba(255, 255, 255, 0.5);
+    margin-bottom: 1rem;
+}
+
+.dark .contact-item {
+    background: rgba(45, 55, 72, 0.5);
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.contact-name,
+.contact-phone {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.contact-icon {
+    color: #4285F4;
+}
+
+.no-contacts {
+    text-align: center;
+    padding: 2rem;
+    color: #718096;
+}
+
+.dark .no-contacts {
+    color: #a0aec0;
+}
+
+.no-contacts-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #4285F4;
+}
+
+.add-contacts-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #4285F4;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.add-contacts-button:hover {
+    background-color: #3367d6;
+}
+
+/* Mobile responsiveness improvements */
+@media (max-width: 768px) {
+    .profile-page {
+        padding: 1rem;
+    }
+
+    .profile-header,
+    .profile-content,
+    .contacts-card {
+        padding: 1rem;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        font-size: 16px; /* Prevents zoom on mobile */
+    }
+
+    .section-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .edit-button,
+    .add-contacts-button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .contact-item {
+        padding: 0.75rem;
+    }
+
+    .contact-info {
+        font-size: 0.9rem;
+    }
+}
+
+/* Additional dark mode fixes */
+.dark .form-group input:disabled,
+.dark .form-group textarea:disabled,
+.dark .form-group select:disabled {
+    background-color: #1a202c;
+    color: #718096;
+}
+
+.dark .profile-header h1,
+.dark .profile-header p {
+    color: #e2e8f0;
+}
+
+.dark .contact-name strong,
+.dark .contact-phone span {
+    color: #e2e8f0;
 }
