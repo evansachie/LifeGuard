@@ -11,8 +11,10 @@ namespace Identity.Features.CompleteProfile
     public class CompleteProfileCommand : IRequest<Result>
     {
         public string Email { get; set; }
-        public string? Gender { get; set; }
-        public int? Weight { get; set; }
-        public int? Height { get; set; }
+        
+        public int Age { get; set;}
+        public string Gender { get; set; }
+        public int Weight { get; set; }
+        public int Height { get; set; }
     }
 }
