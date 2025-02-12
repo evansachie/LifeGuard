@@ -35,6 +35,10 @@ final List<Map<String, String>> muscleGroups = [
   {'id': 'glutes', 'name': 'Glutes'},
 ];
 
+String getYouTubeUrl(String videoId) {
+  return 'https://www.youtube.com/watch?v=$videoId';
+}
+
 final workoutData = {
   'beginner': {
     'warmup': [
@@ -43,7 +47,7 @@ final workoutData = {
         title: 'Dynamic Stretching',
         description: 'Full body dynamic stretches to prepare for workout',
         duration: 300, // 5 mins
-        videoUrl: 'https://www.youtube.com/watch?v=uW3-Ue07H0M',
+        videoUrl: getYouTubeUrl('uW3-Ue07H0M'),
         calories: 25,
         targetMuscles: ['Full Body'],
         category: 'warmup',
@@ -56,7 +60,7 @@ final workoutData = {
         title: 'Light Jogging',
         description: 'Easy-paced jogging to build endurance',
         duration: 600, // 10 mins
-        videoUrl: 'https://www.youtube.com/watch?v=3XbfW90grUk',
+        videoUrl: getYouTubeUrl('3XbfW90grUk'),
         calories: 100,
         targetMuscles: ['Legs', 'Core'],
         category: 'cardio',
@@ -69,7 +73,7 @@ final workoutData = {
         title: 'Basic Strength Training',
         description: 'Beginner-friendly strength training routine',
         duration: 1020, // 17 mins
-        videoUrl: 'https://www.youtube.com/watch?v=WIHy-ZnSndA',
+        videoUrl: getYouTubeUrl('WIHy-ZnSndA'),
         calories: 150,
         targetMuscles: ['Full Body'],
         category: 'strength',
@@ -82,7 +86,7 @@ final workoutData = {
         title: 'Basic HIIT Circuit',
         description: 'High-intensity interval training for beginners',
         duration: 1200, // 20 mins
-        videoUrl: 'https://www.youtube.com/watch?v=M0uO8X3_tEA',
+        videoUrl: getYouTubeUrl('M0uO8X3_tEA'),
         calories: 200,
         targetMuscles: ['Full Body'],
         category: 'hiit',
@@ -95,7 +99,7 @@ final workoutData = {
         title: 'Cool Down Stretches',
         description: 'Essential post-workout stretching routine',
         duration: 300, // 5 mins
-        videoUrl: 'https://www.youtube.com/watch?v=3w1szPuqY8I',
+        videoUrl: getYouTubeUrl('3w1szPuqY8I'),
         calories: 20,
         targetMuscles: ['Full Body'],
         category: 'cooldown',
@@ -110,7 +114,7 @@ final workoutData = {
         title: 'Intermediate Dynamic Stretching',
         description: 'Full body dynamic stretches to prepare for workout',
         duration: 1020, // 17 mins
-        videoUrl: 'https://www.youtube.com/watch?v=h1AxL1Qp9eA',
+        videoUrl: getYouTubeUrl('h1AxL1Qp9eA'),
         calories: 50,
         targetMuscles: ['Full Body'],
         category: 'warmup',
@@ -123,7 +127,7 @@ final workoutData = {
         title: 'Intermediate Light Jogging',
         description: 'Medium-paced jogging to build endurance',
         duration: 1800, // 30 mins
-        videoUrl: 'https://www.youtube.com/watch?v=c1mBu4tK90k',
+        videoUrl: getYouTubeUrl('c1mBu4tK90k'),
         calories: 120,
         targetMuscles: ['Legs', 'Core'],
         category: 'cardio',
@@ -136,7 +140,7 @@ final workoutData = {
         title: 'Intermediate Strength Training',
         description: 'Intermediate strength training routine',
         duration: 1020, // 17 mins
-        videoUrl: 'https://www.youtube.com/watch?v=uM9iFSHUIgU',
+        videoUrl: getYouTubeUrl('uM9iFSHUIgU'),
         calories: 150,
         targetMuscles: ['Full Body'],
         category: 'strength',
@@ -149,7 +153,7 @@ final workoutData = {
         title: 'Intermediate HIIT Circuit',
         description: 'High-intensity interval training for intermediates',
         duration: 1800, // 30 mins
-        videoUrl: 'https://www.youtube.com/watch?v=uearF2Iorng',
+        videoUrl: getYouTubeUrl('uearF2Iorng'),
         calories: 250,
         targetMuscles: ['Full Body'],
         category: 'hiit',
@@ -162,7 +166,7 @@ final workoutData = {
         title: 'Intermediate Cool Down Stretches',
         description: 'Essential post-workout stretching routine',
         duration: 1800, // 30 mins
-        videoUrl: 'https://www.youtube.com/watch?v=3w1szPuqY8I',
+        videoUrl: getYouTubeUrl('3w1szPuqY8I'),
         calories: 20,
         targetMuscles: ['Full Body'],
         category: 'cooldown',
@@ -177,7 +181,7 @@ final workoutData = {
         title: 'Advanced Dynamic Stretching',
         description: 'Intensive full body dynamic stretches',
         duration: 900, // 15 mins
-        videoUrl: 'https://www.youtube.com/watch?v=HDfvWrGUkC8',
+        videoUrl: getYouTubeUrl('HDfvWrGUkC8'),
         calories: 75,
         targetMuscles: ['Full Body'],
         category: 'warmup',
@@ -190,7 +194,7 @@ final workoutData = {
         title: 'Advanced Cardio Training',
         description: 'High-intensity cardio workout',
         duration: 2400, // 40 mins
-        videoUrl: 'https://www.youtube.com/watch?v=ml6cT4AZdqI',
+        videoUrl: getYouTubeUrl('ml6cT4AZdqI'),
         calories: 400,
         targetMuscles: ['Full Body', 'Core'],
         category: 'cardio',
@@ -203,7 +207,7 @@ final workoutData = {
         title: 'Advanced Strength Training',
         description: 'Challenging strength training routine',
         duration: 2700, // 45 mins
-        videoUrl: 'https://www.youtube.com/watch?v=oWu9TFJjHaM',
+        videoUrl: getYouTubeUrl('oWu9TFJjHaM'),
         calories: 350,
         targetMuscles: ['Full Body'],
         category: 'strength',
@@ -216,7 +220,7 @@ final workoutData = {
         title: 'Advanced HIIT Circuit',
         description: 'Intense interval training for advanced fitness levels',
         duration: 1800, // 30 mins
-        videoUrl: 'https://www.youtube.com/watch?v=Mvo2snJGhtM',
+        videoUrl: getYouTubeUrl('Mvo2snJGhtM'),
         calories: 450,
         targetMuscles: ['Full Body'],
         category: 'hiit',
@@ -229,7 +233,7 @@ final workoutData = {
         title: 'Advanced Cool Down Routine',
         description: 'Comprehensive post-workout recovery routine',
         duration: 1200, // 20 mins
-        videoUrl: 'https://www.youtube.com/watch?v=qULTwquOuT4',
+        videoUrl: getYouTubeUrl('qULTwquOuT4'),
         calories: 50,
         targetMuscles: ['Full Body'],
         category: 'cooldown',

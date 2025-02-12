@@ -52,9 +52,10 @@ class _WellnessHubState extends State<WellnessHub> {
 
   @override
   void dispose() {
+    audioPlayer.stop();
+    audioPlayer.dispose();
     breathingTimer?.cancel();
     meditationTimer?.cancel();
-    audioPlayer.dispose();
     super.dispose();
   }
 
@@ -115,25 +116,26 @@ class _WellnessHubState extends State<WellnessHub> {
 
   Future<void> _playSound(Sound sound) async {
     try {
+      // Stop any currently playing audio first
       await audioPlayer.stop();
-      print('Loading URL: ${sound.audioURL}');
 
-      // Create an AudioSource
+      // Create the audio source
       final audioSource = AudioSource.uri(
         Uri.parse(sound.audioURL),
         tag: MediaItem(
-          id: sound.title,
+          id: sound.title, // Use a unique identifier
           title: sound.title,
           artist: sound.location,
+          artUri: Uri.parse(sound.imageName), // If you have artwork URL
         ),
       );
 
+      // Set the audio source and play
       await audioPlayer.setAudioSource(audioSource);
-      await audioPlayer.setVolume(volume);
       await audioPlayer.play();
       setState(() => currentSound = sound);
     } catch (e) {
-      print('Error playing sound: $e');
+      debugPrint('Error playing sound: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error playing sound: ${e.toString()}')),
