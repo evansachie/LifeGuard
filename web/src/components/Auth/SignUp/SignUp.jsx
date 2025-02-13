@@ -53,7 +53,11 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
 
                 if (data.userId) {
                     localStorage.setItem('userId', data.userId);
-                    navigate('/verify-otp', { state: { email: formData.email } });
+                    navigate('/verify-otp', { 
+                        state: { 
+                            email: formData.email 
+                        } 
+                    });
                 } else {
                     setErrors(prev => ({
                         ...prev,
