@@ -8,6 +8,7 @@ import { MdContactEmergency, MdHealthAndSafety } from "react-icons/md";
 import { FaMap } from "react-icons/fa";
 import DefaultUser from '../../assets/lifeguard/user.png';
 import './Sidebar.css';
+import { toast } from 'react-toastify';
 
 function Sidebar({ toggleTheme, isDarkMode }) {
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -83,6 +84,7 @@ function Sidebar({ toggleTheme, isDarkMode }) {
     const handleLogout = () => {
         localStorage.removeItem('token');
         navigate('/');
+        toast.success('Logged out successfully');
     };
 
     const toggleProfileMenu = (e) => {

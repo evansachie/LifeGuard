@@ -8,6 +8,8 @@ import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import LogIn from "./components/Auth/LogIn/LogIn";
 import SignUp from "./components/Auth/SignUp/SignUp";
 import OTPVerification from './components/Auth/OTPVerification/OTPVerification';
+import ForgotPassword from './components/Auth/ForgotPassword/ForgotPassword';
+import ResetPassword from './components/Auth/ResetPassword/ResetPassword';
 
 import Sidebar from './components/Sidebar/Sidebar';
 import Dashboard from './pages/Dashboard/Dashboard'
@@ -64,6 +66,8 @@ function App() {
                     <Route path="/" element={<SignUp isDarkMode={isDarkMode} toggleTheme={toggleTheme} onAuthSuccess={handleAuthSuccess} />} />
                     <Route path="/log-in" element={<LogIn isDarkMode={isDarkMode} toggleTheme={toggleTheme} onAuthSuccess={handleAuthSuccess} />} />
                     <Route path="/verify-otp" element={<OTPVerification isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
+                    <Route path="/forgot-password" element={<ForgotPassword isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
+                    <Route path="/reset-password" element={<ResetPassword isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
 
                     {/* Protected Routes */}
                     <Route path="/dashboard" element={
@@ -79,52 +83,65 @@ function App() {
                             <AppLayout><PrivateMemos isDarkMode={isDarkMode} /></AppLayout>
                         </ProtectedRoute>
                     } />
+
                     <Route path="/health-report" element={
                         <ProtectedRoute>
                             <AppLayout><HealthReport isDarkMode={isDarkMode} /></AppLayout>
                         </ProtectedRoute>
                     } />
+
                     <Route path="/bmr-calculator" element={
                             <AppLayout><Calories isDarkMode={isDarkMode} /></AppLayout>
                     } />
+
                     <Route path="/pollution-tracker" element={
                         <ProtectedRoute>
                             <AppLayout><PollutionTracker isDarkMode={isDarkMode} /></AppLayout>
                         </ProtectedRoute>
                     } />
+
                     <Route path="/health-tips" element={
                             <AppLayout><HealthTips isDarkMode={isDarkMode} /></AppLayout>
                     } />
+
                     <Route path="/exercise-routines" element={
                             <AppLayout><ExerciseRoutines isDarkMode={isDarkMode} /></AppLayout>
                     } />
+
                     <Route path="/wellness-hub" element={
                             <AppLayout><WellnessHub isDarkMode={isDarkMode} /></AppLayout>
                     } />
+
                     <Route path="/emergency-contacts" element={
                         <ProtectedRoute>
                             <AppLayout><EmergencyContacts isDarkMode={isDarkMode} /></AppLayout>
                         </ProtectedRoute>
                     } />
+
                     <Route path="/profile" element={
                         <ProtectedRoute>
                             <AppLayout><Profile isDarkMode={isDarkMode} /></AppLayout>
                         </ProtectedRoute>
                     } />
+
                     <Route path="/settings" element={
                         <ProtectedRoute>
                             <AppLayout><Settings isDarkMode={isDarkMode} /></AppLayout>
                         </ProtectedRoute>
                     } />
+
                     <Route path="/help" element={
                             <AppLayout><Help isDarkMode={isDarkMode} /></AppLayout>
                     } />
+
                     <Route path="/terms-of-use" element={
                             <AppLayout><TermsOfUse isDarkMode={isDarkMode} /></AppLayout>
                     } />
+
                     <Route path="/privacy-policy" element={
                             <AppLayout><PrivacyPolicy isDarkMode={isDarkMode} /></AppLayout>
                     } />
+                    
                     <Route path="/analytics" element={
                         <ProtectedRoute>
                             <AppLayout><Analytics isDarkMode={isDarkMode} /></AppLayout>
