@@ -15,7 +15,7 @@ namespace Identity
     {
         public LifeGuardIdentityDbContext CreateDbContext(string[] args)
         {
-            var apiProjectPath = Path.Combine(Directory.GetCurrentDirectory(), "../LifeGuard_API");
+            var apiProjectPath = Path.Combine(Directory.GetCurrentDirectory(), "../LifeGuard");
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(apiProjectPath)
                 .AddJsonFile("appsettings.json")
