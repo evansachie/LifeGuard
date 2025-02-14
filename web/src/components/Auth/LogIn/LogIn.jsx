@@ -45,6 +45,7 @@ export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
             onAuthSuccess();
             navigate('/dashboard');
         } catch (error) {
+            console.error('Login failed:', error);
             toast.error(error.message || 'Failed to login');
         } finally {
             setIsLoading(false);

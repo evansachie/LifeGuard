@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { FaTemperatureHigh, FaExclamationTriangle, FaChartLine, FaStickyNote } from 'react-icons/fa';
@@ -11,6 +11,8 @@ import { fetchWithAuth, API_ENDPOINTS } from '../../utils/api';
 import './Dashboard.css';
 import QuickAccess from '../../components/QuickAccess/QuickAccess';
 import Spinner from '../../components/Spinner/Spinner';
+import { Steps } from 'intro.js-react';
+import { dashboardSteps } from '../../utils/tourSteps';
 
 function Dashboard({ isDarkMode }) {
     const [quote, setQuote] = useState(null);
@@ -20,6 +22,8 @@ function Dashboard({ isDarkMode }) {
     const [memosLoading, setMemosLoading] = useState(true);
     const [quotesLoading, setQuotesLoading] = useState(true);
     const [dataLoading, setDataLoading] = useState(true);
+    const [showDashboardTour, setShowDashboardTour] = useState(false);
+    const dashboardRef = useRef(null);
 
     const [pollutionData, setPollutionData] = useState({
         temperature: 28.5,
@@ -47,80 +51,77 @@ function Dashboard({ isDarkMode }) {
         }
     ]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setDataLoading(true);
-                setMemosLoading(true);
-                setQuotesLoading(true);
+    // Fetch data function
+    const fetchData = async () => {
+        try {
+            setDataLoading(true);
+            setMemosLoading(true);
 
-                // Fetch user data and memos
-                const [userData, memosData] = await Promise.all([
-                    fetchWithAuth(`${API_ENDPOINTS.GET_USER}?id=${localStorage.getItem('userId')}`),
-                    fetch(API_ENDPOINTS.MEMOS, {
-                        headers: {
-                            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                            'Content-Type': 'application/json'
-                        }
-                    }).then(res => res.json())
-                ]);
+            // Fetch user data and memos
+            const [userData, memosData] = await Promise.all([
+                fetchWithAuth(`${API_ENDPOINTS.GET_USER}?id=${localStorage.getItem('userId')}`),
+                fetch(API_ENDPOINTS.MEMOS, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                }).then(res => res.json())
+            ]);
 
-                if (userData) {
-                    setUserData({
-                        userName: userData.userName,
-                        email: userData.email
-                    });
-                    // Also store in localStorage for other components
-                    localStorage.setItem('userName', userData.userName);
-                }
-                setSavedMemos(memosData);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                toast.error('Failed to fetch user data');
-            } finally {
-                setDataLoading(false);
-                setMemosLoading(false);
-            }
-        };
-
-        const fetchQuoteData = async () => {
-            try {
-                setQuotesLoading(true);
-                const response = await axios.get('https://api.allorigins.win/raw?url=https://zenquotes.io/api/random');
-                const quoteData = response.data[0];
-                setQuote({
-                    quote: quoteData.q,
-                    author: quoteData.a
+            if (userData) {
+                setUserData({
+                    userName: userData.userName,
+                    email: userData.email
                 });
-            } catch (error) {
-                console.error('Error fetching quote:', error);
-                toast.error('Failed to fetch quote');
-            } finally {
-                setQuotesLoading(false);
+                localStorage.setItem('userName', userData.userName);
             }
-        };
+            setSavedMemos(memosData);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            toast.error('Failed to fetch user data');
+        } finally {
+            setDataLoading(false);
+            setMemosLoading(false);
+        }
+    };
 
+    // Fetch quote function
+    const fetchQuoteData = async () => {
+        try {
+            setQuotesLoading(true);
+            const response = await axios.get('https://api.allorigins.win/raw?url=https://zenquotes.io/api/random');
+            const quoteData = response.data[0];
+            setQuote({
+                quote: quoteData.q,
+                author: quoteData.a
+            });
+        } catch (error) {
+            console.error('Error fetching quote:', error);
+            toast.error('Failed to fetch quote');
+        } finally {
+            setQuotesLoading(false);
+        }
+    };
+
+    // Initial data fetch
+    useEffect(() => {
         fetchData();
         fetchQuoteData();
-        
-        // Mock data updates every 5 minutes
-        const interval = setInterval(() => {
-            updateMockData();
-        }, 300000);
-        
-        return () => clearInterval(interval);
     }, []);
 
-    const fetchSavedMemos = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('https://lighthouse-portal.onrender.com/api/memos', {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            setSavedMemos(response.data);
-        } catch (error) {
-            console.error('Error fetching saved memos:', error);
+    // Tour initialization
+    useEffect(() => {
+        const shouldShowTour = localStorage.getItem('showTour') === 'true';
+        if (shouldShowTour) {
+            setTimeout(() => {
+                setShowDashboardTour(true);
+            }, 1000);
         }
+    }, []);
+
+    const handleTourExit = () => {
+        setShowDashboardTour(false);
+        localStorage.removeItem('showTour');
     };
 
     const updateMockData = () => {
@@ -160,7 +161,7 @@ function Dashboard({ isDarkMode }) {
     };
 
     return (
-        <div className={`dashboard ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+        <div ref={dashboardRef} className={`dashboard ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
             <header className="dashboard-header">
                 <h1>Welcome {dataLoading ? '...' : getFirstName(userData?.userName)}!</h1>
                 <p className="date">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
@@ -273,6 +274,32 @@ function Dashboard({ isDarkMode }) {
             </div>
 
             <QuickAccess isDarkMode={isDarkMode} />
+
+            <Steps
+                enabled={showDashboardTour}
+                steps={dashboardSteps}
+                initialStep={0}
+                onExit={handleTourExit}
+                options={{
+                    dontShowAgain: false,
+                    tooltipClass: isDarkMode ? 'dark-mode' : '',
+                    nextLabel: 'Next →',
+                    prevLabel: '← Back',
+                    doneLabel: 'Got it!',
+                    showProgress: true,
+                    showBullets: true,
+                    overlayOpacity: isDarkMode ? 0.5 : 0.3,
+                    exitOnOverlayClick: false,
+                    exitOnEsc: false,
+                    scrollToElement: true,
+                    disableInteraction: false,
+                    scrollPadding: 100,
+                    positionPrecedence: ['bottom', 'top', 'right', 'left'],
+                    highlightClass: isDarkMode ? 'introjs-highlight-dark' : 'introjs-highlight',
+                    tooltipPosition: 'auto',
+                    showStepNumbers: false
+                }}
+            />
         </div>
     );
 }

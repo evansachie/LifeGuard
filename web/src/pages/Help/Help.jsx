@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaSearch, FaHeart, FaDumbbell, FaQuestion, FaBook, FaUserMd } from 'react-icons/fa';
+import { FaSearch, FaHeart, FaDumbbell, FaQuestion, FaBook, FaUserMd, FaPlay } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const helpCategories = [
   {
@@ -89,6 +90,7 @@ const HelpPage = ({ isDarkMode }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState(null);
   const [showSearchResults, setShowSearchResults] = useState(false);
+  const navigate = useNavigate();
 
   const handleSearch = (query) => {
     setSearchQuery(query);
@@ -102,6 +104,12 @@ const HelpPage = ({ isDarkMode }) => {
       section.content.toLowerCase().includes(searchQuery.toLowerCase())
     )
   );
+
+  const handleStartTour = () => {
+    localStorage.setItem('showTour', 'true');
+    localStorage.setItem('tourInitialized', 'false');
+    navigate('/dashboard');
+  };
 
   return (
     <div className={`min-h-screen ${isDarkMode ? 'dark-mode' : 'bg-gray-50 text-gray-900'}`}>
@@ -175,29 +183,23 @@ const HelpPage = ({ isDarkMode }) => {
           animate={{ opacity: 1 }}
           className="mt-8 p-6 rounded-lg shadow-lg text-center"
         >
-          <h2 className="text-xl font-semibold mb-4">Need More Help?</h2>
+          <h2 className="text-xl font-semibold mb-4">Interactive Guide</h2>
           <div className="flex flex-wrap justify-center gap-4">
             <button
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+              onClick={handleStartTour}
+              className={`flex items-center gap-2 px-6 py-3 rounded-lg ${
                 isDarkMode
                   ? 'bg-custom-blue hover:bg-custom-blue-hover'
                   : 'bg-custom-blue hover:bg-custom-blue-hover'
-              } text-white transition-colors`}
+              } text-white transition-colors transform hover:scale-105 duration-200 shadow-lg`}
             >
-              <FaQuestion />
-              <span>Contact Support</span>
-            </button>
-            <button
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
-                isDarkMode
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-green-500 hover:bg-green-600'
-              } text-white transition-colors`}
-            >
-              <FaBook />
-              <span>View Tutorials</span>
+              <FaPlay className="text-lg" />
+              <span className="font-medium">Start Interactive Tour</span>
             </button>
           </div>
+          <p className="mt-3 text-sm text-gray-500 dark:text-gray-400">
+            Take a guided tour of the dashboard and its features
+          </p>
         </motion.div>
       </div>
     </div>
