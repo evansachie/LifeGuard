@@ -40,6 +40,7 @@ export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
             localStorage.setItem('token', data.token);
             localStorage.setItem('userId', data.id);
             localStorage.setItem('userName', data.userName);
+            localStorage.removeItem('showTour');
             
             toast.success('Login successful!');
             onAuthSuccess();
