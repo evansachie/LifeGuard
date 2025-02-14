@@ -9,8 +9,6 @@ import { FaMap } from "react-icons/fa";
 import DefaultUser from '../../assets/lifeguard/user.png';
 import './Sidebar.css';
 import { toast } from 'react-toastify';
-import { Steps } from 'intro.js-react';
-import { sidebarSteps } from '../../utils/tourSteps';
 
 function Sidebar({ toggleTheme, isDarkMode }) {
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -22,7 +20,6 @@ function Sidebar({ toggleTheme, isDarkMode }) {
     const location = useLocation();
     const sidebarRef = useRef(null);
     const profileMenuRef = useRef(null);
-    const [showSidebarTour, setShowSidebarTour] = useState(true);
 
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside);
@@ -136,7 +133,6 @@ function Sidebar({ toggleTheme, isDarkMode }) {
             to={item.path}
             className={`nav-link ${location.pathname === item.path ? 'active' : ''}`}
             onClick={() => setIsMobileMenuOpen(false)}
-            data-tour={item.id}
         >
             <span className="nav-icon">{item.icon}</span>
             <span className="nav-label">{item.label}</span>
@@ -196,28 +192,6 @@ function Sidebar({ toggleTheme, isDarkMode }) {
                     <FaSignOutAlt />
                     <span>Log Out</span>
                 </button>
-
-                <Steps
-                    enabled={showSidebarTour}
-                    steps={sidebarSteps}
-                    initialStep={0}
-                    onExit={() => setShowSidebarTour(false)}
-                    options={{
-                        dontShowAgain: true,
-                        dontShowAgainLabel: "Don't show this guide again",
-                        tooltipClass: isDarkMode ? 'introjs-tooltip-dark' : '',
-                        nextLabel: 'Next →',
-                        prevLabel: '← Back',
-                        doneLabel: 'Got it!',
-                        showProgress: true,
-                        showBullets: true,
-                        overlayOpacity: 0.7,
-                        exitOnOverlayClick: false,
-                        exitOnEsc: true,
-                        scrollToElement: true,
-                        disableInteraction: false
-                    }}
-                />
             </div>
 
             <div className="mobile-menu-toggle" onClick={toggleMobileMenu}>
