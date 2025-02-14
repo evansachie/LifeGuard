@@ -4,27 +4,31 @@
   <img src="docs/images/lifeguard-logo.png" alt="LifeGuard Logo" width="200"/>
 </p>
 
-LifeGuard is an innovative wearable health and environmental monitoring system built around the Nicla Sense ME board. By combining advanced motion detection with environmental sensing, it provides real-time monitoring and alerts for various safety scenarios, from fall detection to air quality warnings.
-
 ## Table of Contents
+
 - [Overview](#overview)
-- [Features](#features)
-- [System Architecture](#system-architecture)
-- [Technology Stack](#technology-stack)
+- [Target Audience](#target-audience)
+- [Key Features](#key-features)
+- [Technical Specifications](#technical-specifications)
+  - [Hardware](#hardware)
+  - [Software Stack](#software-stack)
+    - [Web Platform](#web-platform)
+    - [Mobile Application](#mobile-application)
 - [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Project Structure](#project-structure)
+- [System Architecture](#system-architecture)
 - [API Documentation](#api-documentation)
-- [Mobile App](#mobile-app)
-- [Contributing](#contributing)
-- [Documentation](#documentation)
+- [Real World Applications](#real-world-applications)
+- [Team](#team)
+- [Screenshots](#screenshots)
+- [Support & Contact](#support--contact)
+
 
 ## Overview
 
-LifeGuard addresses critical gaps in personal safety, accessibility, and preventive healthcare through:
-- Real-time health and environmental monitoring
-- Advanced fall detection and activity recognition
-- Comprehensive air quality analysis
-- Emergency alert system
-- Cost-effective design for accessibility
+LifeGuard is an innovative health and environmental monitoring system that addresses critical gaps in personal safety, accessibility, and preventive healthcare. By integrating advanced sensors with machine learning, it delivers real-time data on health metrics and environmental parameters.
 
 ### Target Audience
 - Aging population (55+ years)
@@ -32,75 +36,61 @@ LifeGuard addresses critical gaps in personal safety, accessibility, and prevent
 - Industrial workers
 - Healthcare providers
 
-## Features
-
-### Health Monitoring
+### Key Features
+- Real-time health monitoring
 - Fall detection using ML algorithms
 - Activity recognition (walking, running, cycling)
-- Heart rate monitoring
+- Environmental monitoring (temperature, humidity, air quality)
 - Emergency alert system
+- Cost-effective design for accessibility
 
-### Environmental Monitoring
-- Temperature and humidity sensing
-- Air quality analysis (CO2, VOCs)
-- Atmospheric pressure monitoring
-- Real-time pollution mapping
+## Technical Specifications
 
-### Technical Specifications
+### Hardware
+- **Board**: Arduino Nicla Sense ME
 - **Battery**: LiPo 3.7V, 400mAh
 - **Water Resistance**: IP67
-- **Connectivity**: BLE/USB
-- **Sensors**: 9 integrated sensors
-- **Processing**: Edge computing with ML capabilities
-
-## System Architecture
-
-![System Architecture](docs/images/system-architecture.PNG)
-
-### Hardware Components
-- Arduino Nicla Sense ME board
-- Custom-designed enclosure
-- Integrated sensor array
+- **Sensors**: 9 integrated sensors including:
+  - Accelerometer & Gyroscope
+  - Temperature & Humidity sensors
+  - Barometric pressure sensor
+  - Magnetometer
+  - Gas sensors for VOCs, CO2, etc.
 
 ### Software Stack
-#### Frontend
-- React (Web Dashboard)
-- React Native (Mobile App)
-- TypeScript
-- Tailwind CSS
-- Redux
 
-#### Backend
-- .NET Core 8.0
-- PostgreSQL
-- JWT Authentication
-- SendGrid (Email)
+#### Web Platform
+- **Frontend**
+  - React
+  - TypeScript
+  - Tailwind CSS
+  - Redux
+  - MapBox API
 
-## API Documentation
+- **Backend**
+  - .NET Core 8.0
+  - PostgreSQL
+  - JWT Authentication
+  - SendGrid Email Service
 
-### Authentication Endpoints
-```http
-POST /api/Account/register
-POST /api/Account/login
-POST /api/Account/verify-otp
-POST /api/Account/resend-otp
-```
-
-### User Management
-```http
-GET /api/Account/user-profile
-PUT /api/Account/update-profile
-POST /api/Account/forgot-password
-```
-
-### Health Monitoring
-```http
-GET /api/Health/vitals
-POST /api/Health/record
-GET /api/Health/history
-```
+#### Mobile Application
+- **Framework**: Flutter
+- **Features**:
+  - Real-time monitoring
+  - Activity tracking
+  - Environmental alerts
+  - Emergency contacts
+  - Dark/Light theme
 
 ## Getting Started
+
+### Prerequisites
+- Node.js 18+
+- .NET SDK 8.0
+- Flutter SDK
+- PostgreSQL
+
+### Installation
 
 1. Clone the repository:
 ```bash
@@ -108,7 +98,7 @@ git clone https://github.com/AWESOME04/LifeGuard.git
 cd LifeGuard
 ```
 
-2. Frontend Setup:
+2. Web Platform Setup:
 ```bash
 cd web
 npm install
@@ -122,20 +112,11 @@ dotnet restore
 dotnet run
 ```
 
-## Environment Variables
-
-### Frontend (.env)
-```env
-VITE_MAPBOX_API_KEY=your_mapbox_key
-VITE_MODEL_URL=your_model_url
-```
-
-
-### Backend (.env)
-```env
-CONNECTION_STRING=your_db_connection
-JWT_KEY=your_jwt_secret
-SENDGRID_API_KEY=your_sendgrid_key
+4. Mobile App Setup:
+```bash
+cd mobile
+flutter pub get
+flutter run
 ```
 
 ## Project Structure
@@ -144,14 +125,56 @@ lifeguard/
 ├── hardware/         # PCB & enclosure designs
 ├── firmware/         # Arduino/C++ code
 ├── web/             # React dashboard
-├── mobile/          # React Native app
+├── mobile/          # Flutter mobile app
 ├── backend/         # .NET Core API
 └── docs/            # Documentation
 ```
 
-## Documentation
-- [Full Documentation (PDF)](docs/LifeGuard_V2.3.pdf)
-- [API Documentation](docs/lifeGuard.json)
+- **Connectivity**: BLE/USB
+- **Sensors**: 9 integrated sensors
+- **Processing**: Edge computing with ML capabilities
+
+## System Architecture
+
+![System Architecture](docs/images/system-architecture.PNG)
+
+### Hardware Components
+- Arduino Nicla Sense ME board
+- Custom-designed enclosure
+- Integrated sensor array
+
+
+## API Documentation
+
+### Authentication Endpoints
+```http
+POST /api/Account/register
+POST /api/Account/login
+POST /api/Account/verify-otp
+POST /api/Account/resend-otp
+POST /api/Account/forgot-password
+POST /api/Account/reset-password
+GET /api/Account/id
+```
+
+### Other routes coming soon...
+
+## Real World Applications
+
+- **Healthcare**
+  - Remote patient monitoring
+  - Fall prevention for elderly
+  - Emergency response automation
+
+- **Industrial Safety**
+  - Worker safety monitoring
+  - Air quality monitoring
+  - Environmental hazard alerts
+
+- **Personal Wellness**
+  - Activity tracking
+  - Environmental impact monitoring
+  - Weather-related health warnings
 
 ## Team
 
@@ -171,6 +194,24 @@ lifeguard/
 - Chiratidzo Matowe - Advisor
 - Marvin Rotermund - Ambassador, Embedded Learning Challenge
 
+## Screenshots
 
-## Support
-For support, email evansachie01@gmail.com or michaeladugyamfi76@gmail.com.
+<p align="center">
+  <img src="docs/images/signup.PNG" alt="Signup" width="400"/>
+</p>
+
+<p align="center">
+  <img src="docs/images/login.PNG" alt="Login" width="400"/>
+</p>
+
+<p align="center">
+  <img src="docs/images/dashboard.PNG" alt="Dashboard" width="400"/>
+</p>
+
+## Support & Contact
+
+For support or inquiries:
+- Email: evansachie01@gmail.com or michaeladugyamfi76@gmail.com
+- Deployed frontend: [https://lifeguard-vq69.onrender.com](https://lifeguard-vq69.onrender.com)
+- Deployed backend: [https://lifeguard-hiij.onrender.com/api](https://lifeguard-hiij.onrender.com/api)
+- Deployed node server: [https://lifeguard-node.onrender.com](https://lifeguard-node.onrender.com)

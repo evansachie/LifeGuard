@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Identity.Features.ResendOTP;
 using Identity.Features.VerifyOTP;
+using Identity.Features.CompleteProfile;
 
 namespace LifeGuard_API.Controllers
 {
@@ -127,6 +128,18 @@ namespace LifeGuard_API.Controllers
             return Ok(await _authService.GetUserById(id));
 
             
+        }
+
+        [HttpPost("CompleteProfile")]
+        public async Task<IActionResult> CompleteProfile(CompleteProfileCommand request)
+        {
+            var result = await mediator.Send(request);
+
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            return StatusCode((int)result.StatusCode, result);
         }
     }
 }

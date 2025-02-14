@@ -12,7 +12,7 @@ namespace Infrastructure.OTPService
     public class OTPService : IOTPService
     {
         private readonly IEmailService _emailService;
-        private const int TotpStep = 30;
+        private const int TotpStep = 60;
         private static readonly VerificationWindow VerificationWindow = new VerificationWindow(previous: 1, future: 1);
 
         public OTPService(IEmailService emailService)
