@@ -1,15 +1,17 @@
 import { toast } from 'react-toastify';
 
-export const API_BASE_URL = 'https://lifeguard-hiij.onrender.com';
+export const FRONTEND_URL = window.location.origin; // Gets the current frontend URL
+export const API_BASE_URL = 'https://lifeguard-hiij.onrender.com/api';
 export const NODE_API_URL = 'https://lifeguard-node.onrender.com';
 
 export const API_ENDPOINTS = {
-    LOGIN: '/api/Account/login',
-    REGISTER: '/api/Account/register',
-    FORGOT_PASSWORD: '/api/Account/forgot-password',
-    VERIFY_OTP: '/api/Account/VerifyOTP',
-    RESEND_OTP: '/api/Account/ResendOTP',
-    GET_USER: '/api/Account/id',
+    LOGIN: '/Account/login',
+    REGISTER: '/Account/register',
+    VERIFY_OTP: '/Account/verify-otp',
+    RESEND_OTP: '/Account/ResendOTP',
+    FORGOT_PASSWORD: '/Account/forgot-password',
+    RESET_PASSWORD: '/Account/reset-password',
+    GET_USER: '/Account/id',
     MEMOS: `${NODE_API_URL}/api/memos`
 };
 
@@ -76,4 +78,8 @@ export const handleApiResponse = async (response) => {
     }
     
     return data;
+};
+
+export const getResetPasswordUrl = (email, token) => {
+    return `${FRONTEND_URL}/reset-password?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`;
 }; 

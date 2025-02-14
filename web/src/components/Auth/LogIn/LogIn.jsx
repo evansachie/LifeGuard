@@ -99,6 +99,11 @@ export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
                                 />
                                 <label htmlFor="password">Password</label>
                             </div>
+                            <div className="forgot-password">
+                                <Link to="/forgot-password" className="link">
+                                    Forgot Password?
+                                </Link>
+                            </div>
                         </div>
 
                         <Button 

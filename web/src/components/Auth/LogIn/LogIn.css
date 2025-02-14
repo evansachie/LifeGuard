@@ -215,3 +215,19 @@ input:not(:placeholder-shown) + label {
         padding: 1rem;
     }
 }
+
+.forgot-password {
+    text-align: right;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.forgot-password .link {
+    color: #4f46e5;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.dark-mode .forgot-password .link {
+    color: #63b3ed;
+}
