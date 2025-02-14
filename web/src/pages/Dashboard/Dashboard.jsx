@@ -109,10 +109,12 @@ function Dashboard({ isDarkMode }) {
         fetchQuoteData();
     }, []);
 
-    // Tour initialization
+    // Tour initialization - only when coming from Help page
     useEffect(() => {
         const shouldShowTour = localStorage.getItem('showTour') === 'true';
-        if (shouldShowTour) {
+        // Only show tour if explicitly set from Help page
+        if (shouldShowTour && window.location.pathname === '/dashboard') {
+            console.log('Starting tour from Help page redirect');
             setTimeout(() => {
                 setShowDashboardTour(true);
             }, 1000);
@@ -120,6 +122,7 @@ function Dashboard({ isDarkMode }) {
     }, []);
 
     const handleTourExit = () => {
+        console.log('Tour exited');
         setShowDashboardTour(false);
         localStorage.removeItem('showTour');
     };

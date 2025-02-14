@@ -23,22 +23,4 @@ export const dashboardSteps = [
         position: 'top',
         tooltipPosition: 'top'
     }
-];
-
-export const sidebarSteps = [
-    {
-        element: '.user-info',
-        intro: 'Access your profile settings and preferences here.',
-        position: 'right'
-    },
-    {
-        element: '[data-tour="dashboard"]',
-        intro: 'View your health and environmental data overview.',
-        position: 'right'
-    },
-    {
-        element: '[data-tour="pollution-tracker"]',
-        intro: 'Track real-time pollution levels in your area.',
-        position: 'right'
-    }
 ]; 
