@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import 'intro.js/introjs.css';
 
 import LogIn from "./components/Auth/LogIn/LogIn";
 import SignUp from "./components/Auth/SignUp/SignUp";
