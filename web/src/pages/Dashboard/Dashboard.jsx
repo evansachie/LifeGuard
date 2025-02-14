@@ -65,11 +65,18 @@ function Dashboard({ isDarkMode }) {
                     }).then(res => res.json())
                 ]);
 
-                setUserData(userData);
+                if (userData) {
+                    setUserData({
+                        userName: userData.userName,
+                        email: userData.email
+                    });
+                    // Also store in localStorage for other components
+                    localStorage.setItem('userName', userData.userName);
+                }
                 setSavedMemos(memosData);
             } catch (error) {
                 console.error('Error fetching data:', error);
-                toast.error('Failed to fetch data');
+                toast.error('Failed to fetch user data');
             } finally {
                 setDataLoading(false);
                 setMemosLoading(false);
@@ -78,8 +85,16 @@ function Dashboard({ isDarkMode }) {
 
         const fetchQuoteData = async () => {
             try {
-                const quote = await fetchQuote();
-                setQuote(quote);
+                setQuotesLoading(true);
+                const response = await axios.get('https://api.allorigins.win/raw?url=https://zenquotes.io/api/random');
+                const quoteData = response.data[0];
+                setQuote({
+                    quote: quoteData.q,
+                    author: quoteData.a
+                });
+            } catch (error) {
+                console.error('Error fetching quote:', error);
+                toast.error('Failed to fetch quote');
             } finally {
                 setQuotesLoading(false);
             }
@@ -87,10 +102,12 @@ function Dashboard({ isDarkMode }) {
 
         fetchData();
         fetchQuoteData();
+        
         // Mock data updates every 5 minutes
         const interval = setInterval(() => {
             updateMockData();
         }, 300000);
+        
         return () => clearInterval(interval);
     }, []);
 
@@ -105,22 +122,6 @@ function Dashboard({ isDarkMode }) {
             console.error('Error fetching saved memos:', error);
         }
     };
-
-    const fetchQuoteData = async () => {
-        try {
-            const response = await axios.get('https://api.allorigins.win/raw?url=https://zenquotes.io/api/random');
-            const quoteData = response.data[0];
-            setQuote({
-                quote: quoteData.q,
-                author: quoteData.a
-            });
-        } catch (error) {
-            console.error('Error fetching quote data:', error);
-        } finally {
-            setQuotesLoading(false);
-        }
-    };
-
 
     const updateMockData = () => {
         // Simulate real-time data changes
@@ -146,14 +147,22 @@ function Dashboard({ isDarkMode }) {
         return '#7e0023';
     };
 
-    const capitalizeFirstLetter = (string) => {
-        return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+    const getFirstName = (fullName) => {
+        if (!fullName) return 'User';
+        // If it's an email, show just the first part
+        if (fullName.includes('@')) {
+            return fullName.split('@')[0].charAt(0).toUpperCase() + 
+                   fullName.split('@')[0].slice(1).toLowerCase();
+        }
+        // If it's a full name, show just the first name
+        return fullName.split(' ')[0].charAt(0).toUpperCase() + 
+               fullName.split(' ')[0].slice(1).toLowerCase();
     };
 
     return (
         <div className={`dashboard ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
             <header className="dashboard-header">
-                <h1>Welcome {isLoading ? '...' : (userData?.userName ? capitalizeFirstLetter(userData.userName.split(' ')[0]) : 'User')}!</h1>
+                <h1>Welcome {dataLoading ? '...' : getFirstName(userData?.userName)}!</h1>
                 <p className="date">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
             </header>
 
