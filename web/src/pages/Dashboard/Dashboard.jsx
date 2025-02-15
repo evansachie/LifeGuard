@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { FaTemperatureHigh, FaExclamationTriangle, FaChartLine, FaStickyNote } from 'react-icons/fa';
@@ -7,14 +7,23 @@ import { MdCo2 } from "react-icons/md";
 import { WiBarometer, WiHumidity, WiDust } from "react-icons/wi";
 import { MdAir } from "react-icons/md";
 import { toast } from 'react-toastify';
-import { fetchWithAuth } from '../../utils/api';
+import { fetchWithAuth, API_ENDPOINTS } from '../../utils/api';
 import './Dashboard.css';
 import QuickAccess from '../../components/QuickAccess/QuickAccess';
+import Spinner from '../../components/Spinner/Spinner';
+import { Steps } from 'intro.js-react';
+import { dashboardSteps } from '../../utils/tourSteps';
 
 function Dashboard({ isDarkMode }) {
     const [quote, setQuote] = useState(null);
     const [userData, setUserData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [savedMemos, setSavedMemos] = useState([]);
+    const [memosLoading, setMemosLoading] = useState(true);
+    const [quotesLoading, setQuotesLoading] = useState(true);
+    const [dataLoading, setDataLoading] = useState(true);
+    const [showDashboardTour, setShowDashboardTour] = useState(false);
+    const dashboardRef = useRef(null);
 
     const [pollutionData, setPollutionData] = useState({
         temperature: 28.5,
@@ -26,8 +35,7 @@ function Dashboard({ isDarkMode }) {
         pm10: 45.8,
         no2: 25.4
     });
-    // const [username, setUsername] = useState('');
-    const firstname = 'Evans' // up until we fetch from backend
+
     const [alerts, setAlerts] = useState([
         {
             id: 1,
@@ -43,47 +51,44 @@ function Dashboard({ isDarkMode }) {
         }
     ]);
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const response = await fetchWithAuth('/api/Account/user-profile', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-                setUserData(response);
-            } catch (error) {
-                toast.error('Failed to fetch user data');
-                console.error('Error fetching user data:', error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchUserData();
-        fetchQuoteData();
-        // Mock data updates every 5 minutes
-        const interval = setInterval(() => {
-            updateMockData();
-        }, 300000);
-        return () => clearInterval(interval);
-    }, []);
-
-    const fetchSavedMemos = async () => {
+    // Fetch data function
+    const fetchData = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('https://lighthouse-portal.onrender.com/api/memos', {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            setSavedMemos(response.data);
+            setDataLoading(true);
+            setMemosLoading(true);
+
+            // Fetch user data and memos
+            const [userData, memosData] = await Promise.all([
+                fetchWithAuth(`${API_ENDPOINTS.GET_USER}?id=${localStorage.getItem('userId')}`),
+                fetch(API_ENDPOINTS.MEMOS, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                }).then(res => res.json())
+            ]);
+
+            if (userData) {
+                setUserData({
+                    userName: userData.userName,
+                    email: userData.email
+                });
+                localStorage.setItem('userName', userData.userName);
+            }
+            setSavedMemos(memosData);
         } catch (error) {
-            console.error('Error fetching saved memos:', error);
+            console.error('Error fetching data:', error);
+            toast.error('Failed to fetch user data');
+        } finally {
+            setDataLoading(false);
+            setMemosLoading(false);
         }
     };
 
+    // Fetch quote function
     const fetchQuoteData = async () => {
         try {
+            setQuotesLoading(true);
             const response = await axios.get('https://api.allorigins.win/raw?url=https://zenquotes.io/api/random');
             const quoteData = response.data[0];
             setQuote({
@@ -91,10 +96,36 @@ function Dashboard({ isDarkMode }) {
                 author: quoteData.a
             });
         } catch (error) {
-            console.error('Error fetching quote data:', error);
+            console.error('Error fetching quote:', error);
+            toast.error('Failed to fetch quote');
+        } finally {
+            setQuotesLoading(false);
         }
     };
 
+    // Initial data fetch
+    useEffect(() => {
+        fetchData();
+        fetchQuoteData();
+    }, []);
+
+    // Tour initialization - only when coming from Help page
+    useEffect(() => {
+        const shouldShowTour = localStorage.getItem('showTour') === 'true';
+        // Only show tour if explicitly set from Help page
+        if (shouldShowTour && window.location.pathname === '/dashboard') {
+            console.log('Starting tour from Help page redirect');
+            setTimeout(() => {
+                setShowDashboardTour(true);
+            }, 1000);
+        }
+    }, []);
+
+    const handleTourExit = () => {
+        console.log('Tour exited');
+        setShowDashboardTour(false);
+        localStorage.removeItem('showTour');
+    };
 
     const updateMockData = () => {
         // Simulate real-time data changes
@@ -120,10 +151,22 @@ function Dashboard({ isDarkMode }) {
         return '#7e0023';
     };
 
+    const getFirstName = (fullName) => {
+        if (!fullName) return 'User';
+        // If it's an email, show just the first part
+        if (fullName.includes('@')) {
+            return fullName.split('@')[0].charAt(0).toUpperCase() + 
+                   fullName.split('@')[0].slice(1).toLowerCase();
+        }
+        // If it's a full name, show just the first name
+        return fullName.split(' ')[0].charAt(0).toUpperCase() + 
+               fullName.split(' ')[0].slice(1).toLowerCase();
+    };
+
     return (
-        <div className={`dashboard ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+        <div ref={dashboardRef} className={`dashboard ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
             <header className="dashboard-header">
-                <h1>Welcome {isLoading ? '...' : (userData?.name || 'User')}!</h1>
+                <h1>Welcome {dataLoading ? '...' : getFirstName(userData?.userName)}!</h1>
                 <p className="date">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
             </header>
 
@@ -150,31 +193,51 @@ function Dashboard({ isDarkMode }) {
 
                 <div className="dashboard-card quote-card">
                     <h2><FaChartLine /> Daily Inspiration</h2>
-                    {quote ? `"${quote.quote}"` : 'Loading quote...'}
-                    <br/>
-                    {quote && `– ${quote.author}`}
+                    {quotesLoading ? (
+                        <Spinner size="medium" color={isDarkMode ? '#4285F4' : '#4285F4'} />
+                    ) : (
+                        <>
+                            {quote ? `"${quote.quote}"` : 'Loading quote...'}
+                            <br/>
+                            {quote && `– ${quote.author}`}
+                        </>
+                    )}
                 </div>
 
                 <div className="dashboard-card reminders-card">
                     <h2><FaStickyNote /> Reminders</h2>
-                    <ul className="reminders-list">
-                        {/* {savedMemos.length === 0 ? (
-                            <li>No reminders at the moment</li>
+                    <div className="reminders-content">
+                        {memosLoading ? (
+                            <Spinner size="medium" color={isDarkMode ? '#4285F4' : '#4285F4'} />
                         ) : (
-                            savedMemos.slice(0, 3).map((memo, index) => (
-                                <li key={index} className={memo.done ? 'done' : ''}>{memo.memo}</li>
-                            ))
-                        )} */}
-                        <li>No reminders at the moment</li>
-                    </ul>
+                            <ul className="reminders-list">
+                                {savedMemos.length === 0 ? (
+                                    <li>No reminders at the moment</li>
+                                ) : (
+                                    savedMemos.slice(0, 3).map((memo, index) => (
+                                        <li 
+                                            key={index} 
+                                            className={memo.done ? 'done' : ''}
+                                        >
+                                            {memo.memo}
+                                        </li>
+                                    ))
+                                )}
+                            </ul>
+                        )}
+                    </div>
                     <Link to="/sticky-notes" className="card-link">View All</Link>
                 </div>
 
                 <div className="dashboard-card aqi-card">
                     <h2><MdAir /> Air Quality Index</h2>
-                    <div className="card-value" style={{ color: getAQIColor(pollutionData.aqi) }}>
-                        {Math.round(pollutionData.aqi)} ppm
-                    </div>
+                    {dataLoading ? (
+                        <Spinner size="medium" color={isDarkMode ? '#4285F4' : '#4285F4'} />
+                    ) : (
+                        <div className="card-value" style={{ color: getAQIColor(pollutionData.aqi) }}>
+                            {Math.round(pollutionData.aqi)} ppm
+                        </div>
+                    )}
                 </div>
 
                 <div className="dashboard-card pressure-card">
@@ -214,6 +277,32 @@ function Dashboard({ isDarkMode }) {
             </div>
 
             <QuickAccess isDarkMode={isDarkMode} />
+
+            <Steps
+                enabled={showDashboardTour}
+                steps={dashboardSteps}
+                initialStep={0}
+                onExit={handleTourExit}
+                options={{
+                    dontShowAgain: false,
+                    tooltipClass: isDarkMode ? 'dark-mode' : '',
+                    nextLabel: 'Next →',
+                    prevLabel: '← Back',
+                    doneLabel: 'Got it!',
+                    showProgress: true,
+                    showBullets: true,
+                    overlayOpacity: isDarkMode ? 0.5 : 0.3,
+                    exitOnOverlayClick: false,
+                    exitOnEsc: false,
+                    scrollToElement: true,
+                    disableInteraction: false,
+                    scrollPadding: 100,
+                    positionPrecedence: ['bottom', 'top', 'right', 'left'],
+                    highlightClass: isDarkMode ? 'introjs-highlight-dark' : 'introjs-highlight',
+                    tooltipPosition: 'auto',
+                    showStepNumbers: false
+                }}
+            />
         </div>
     );
 }

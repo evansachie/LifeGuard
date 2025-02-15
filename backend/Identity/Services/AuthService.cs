@@ -10,6 +10,7 @@ using Application.Models;
 using Application.Models.ApiResult;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Configuration;
 //using Microsoft.IdentityModel.Tokens;
 
 namespace Identity.Services
@@ -20,14 +21,16 @@ namespace Identity.Services
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailService _emailService;
         private readonly IOTPService _oTPService;
+        private readonly IConfiguration _configuration;
 
 
-        public AuthService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailService emailService, IOTPService oTPService)
+        public AuthService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailService emailService, IOTPService oTPService, IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailService = emailService;
             _oTPService = oTPService;
+            _configuration = configuration;
         }
 
         public async Task<AuthResponse> Login(AuthRequest request)
@@ -161,19 +164,24 @@ namespace Identity.Services
         public async Task<Result<string>> ForgotPasswordAsync(ForgotPasswordRequest request)
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
-
-            if (user == null || !await _userManager.IsEmailConfirmedAsync(user))
+            if (user == null)
             {
-                return new Result<string>(false, ResultStatusCode.NotFound, string.Empty, "User not found or email not confirmed.");
+                return new Result<string>(false, ResultStatusCode.NotFound, "User not found");
             }
+
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            Console.WriteLine("token " + token);
+            
+            // Create reset password link with frontend URL
+            var frontendUrl = _configuration["AppSettings:FrontendUrl"]; // Add this to your configuration
+            var resetLink = $"{frontendUrl}/reset-password?email={Uri.EscapeDataString(request.Email)}&token={Uri.EscapeDataString(token)}";
 
-            var mainResetUrl = Environment.GetEnvironmentVariable("RESET_URL");
-            var resetUrl = $"{mainResetUrl}/reset-password?email={user.Email}&token={WebUtility.UrlEncode(token)}";
+            var emailBody = $@"
+                <h2>Reset Your Password</h2>
+                <p>Please click the link below to reset your password:</p>
+                <a href='{resetLink}'>Reset Password</a>
+                <p>If you didn't request this, please ignore this email.</p>";
 
-            var message = $"<p>Please reset your password by clicking <a href='{resetUrl}'>here</a>.</p>";
-            await _emailService.SendEmailAsync(user.Email, "Reset Password", message);
+            await _emailService.SendEmailAsync(request.Email, "Reset Your Password", emailBody);
 
             return new Result<string>(true, ResultStatusCode.Success, token, "Password reset email sent");
         }
@@ -203,6 +211,23 @@ namespace Identity.Services
 
 
 
+        }
+
+        public async Task<GetUserResponse> GetUserById(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                throw new Exception("User does not exist.");
+            }
+
+            return new GetUserResponse
+            {
+                UserName = user.Name,
+                Email = user.Email
+            };
+            
         }
     }
 }

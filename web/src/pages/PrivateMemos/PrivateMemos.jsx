@@ -1,6 +1,10 @@
 import * as React from "react";
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FaStickyNote } from 'react-icons/fa';
+import { NODE_API_URL } from "../../utils/api";
+import { toast } from 'react-toastify';
+import Spinner from '../../components/Spinner/Spinner';
 import './PrivateMemos.css';
 
 const PrivateMemos = ({ isDarkMode }) => {
@@ -10,249 +14,297 @@ const PrivateMemos = ({ isDarkMode }) => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
     const [doneMemos, setDoneMemos] = useState([]);
+    const [filter, setFilter] = useState('all'); // 'all', 'active', 'completed'
+    const [searchTerm, setSearchTerm] = useState('');
+    const [tags, setTags] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
 
-    // useEffect(() => {
-    //     const token = localStorage.getItem('token');
-    //     if (!token) {
-    //         navigate('/log-in');
-    //         return;
-    //     }
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/log-in');
+            return;
+        }
 
-    //     const fetchMemos = async () => {
-    //         try {
-    //             const response = await fetch('https://lighthouse-portal.onrender.com/api/memos', {
-    //                 headers: {
-    //                     'Authorization': `Bearer ${token}`,
-    //                 },
-    //             });
-    //             if (response.ok) {
-    //                 const memos = await response.json();
-    //                 setSavedMemos(memos);
-    //             } else {
-    //                 setError('Error fetching memos. Please try again later.');
-    //             }
-    //         } catch (error) {
-    //             console.error('Error fetching memos:', error);
-    //             setError('An error occurred while fetching memos. Please try again later.');
-    //         }
-    //     };
-    //     fetchMemos();
-    // }, [navigate]);
+        const fetchMemos = async () => {
+            try {
+                const response = await fetch(`${NODE_API_URL}/api/memos`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
 
-    // const handleMemoChange = (e) => {
-    //     setMemo(e.target.value);
-    // };
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.removeItem('token');
+                        navigate('/log-in');
+                        toast.error('Session expired. Please login again.');
+                        return;
+                    }
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
 
-    // const handleSaveMemo = async () => {
-    //     if (memo.trim() !== '') {
-    //         try {
-    //             const token = localStorage.getItem('token');
-    //             if (!token) {
-    //                 navigate('/log-in');
-    //                 return;
-    //             }
+                const memos = await response.json();
+                setSavedMemos(memos);
+            } catch (error) {
+                console.error('Error fetching memos:', error);
+                toast.error('Failed to load memos. Please try again.');
+                setError('An error occurred while fetching memos. Please try again later.');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchMemos();
+    }, [navigate]);
 
-    //             // Fetch the user's email from the server
-    //             const userResponse = await fetch('https://lighthouse-portal.onrender.com/api/users', {
-    //                 headers: {
-    //                     'Authorization': `Bearer ${token}`,
-    //                 },
-    //             });
+    const handleMemoChange = (e) => {
+        setMemo(e.target.value);
+    };
 
-    //             if (userResponse.ok) {
-    //                 const { email } = await userResponse.json();
-    //                 const response = await fetch('https://lighthouse-portal.onrender.com/api/memos', {
-    //                     method: 'POST',
-    //                     headers: {
-    //                         'Content-Type': 'application/json',
-    //                         'Authorization': `Bearer ${token}`,
-    //                     },
-    //                     body: JSON.stringify({ email, memo }),
-    //                 });
+    const handleSaveMemo = async () => {
+        if (memo.trim() !== '') {
+            setSaving(true);
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    navigate('/log-in');
+                    return;
+                }
 
-    //                 if (response.ok) {
-    //                     const newMemo = await response.json();
-    //                     console.log('New memo saved:', newMemo);
-    //                     setSavedMemos([...savedMemos, newMemo]);
-    //                     // Reset the memo input field after a successful save
-    //                     setMemo('');
-    //                 } else {
-    //                     console.error('Error saving memo:', response.status);
-    //                 }
-    //             } else {
-    //                 console.error('Error fetching user email:', userResponse.status);
-    //             }
-    //         } catch (error) {
-    //             console.error('Error saving memo:', error);
-    //         }
-    //     }
-    // };
+                const response = await fetch(`${NODE_API_URL}/api/memos`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ memo }),
+                });
 
-    // const handleDeleteMemo = async (id) => {
-    //     try {
-    //         const token = localStorage.getItem('token');
-    //         await fetch(`https://lighthouse-portal.onrender.com/api/memos/${id}`, {
-    //             method: 'DELETE',
-    //             headers: {
-    //                 'Authorization': `Bearer ${token}`,
-    //             },
-    //         });
-    //         setSavedMemos(savedMemos.filter((m) => m.id !== id));
-    //     } catch (error) {
-    //         console.error('Error deleting memo:', error);
-    //     }
-    // };
+                if (response.ok) {
+                    const newMemo = await response.json();
+                    console.log('New memo saved:', newMemo);
+                    setSavedMemos([...savedMemos, newMemo]);
+                    setMemo('');
+                } else {
+                    console.error('Error saving memo:', response.status);
+                }
+            } catch (error) {
+                console.error('Error saving memo:', error);
+            } finally {
+                setSaving(false);
+            }
+        }
+    };
 
-    // const handleEditMemo = (id) => {
-    //     setEditingMemoId(id);
-    // };
+    const handleDeleteMemo = async (id) => {
+        try {
+            const token = localStorage.getItem('token');
+            await fetch(`${NODE_API_URL}/api/memos/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+            setSavedMemos(savedMemos.filter((m) => m.id !== id));
+        } catch (error) {
+            console.error('Error deleting memo:', error);
+        }
+    };
 
-    // const handleCancelEdit = () => {
-    //     setEditingMemoId(null);
-    //     setMemo(''); // Clear the memo input when canceling edit
-    // };
+    const handleEditMemo = (id) => {
+        setEditingMemoId(id);
+    };
 
-    // const handleDoneChange = async (id, done) => {
-    //     try {
-    //         const token = localStorage.getItem('token');
-    //         if (!token) {
-    //             navigate('/log-in');
-    //             return;
-    //         }
+    const handleCancelEdit = () => {
+        setEditingMemoId(null);
+        setMemo('');
+    };
 
-    //         const response = await fetch(`https://lighthouse-portal.onrender.com/api/memos/${id}/done`, {
-    //             method: 'PUT',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //                 'Authorization': `Bearer ${token}`,
-    //             },
-    //             body: JSON.stringify({ done }),
-    //         });
+    const handleDoneChange = async (id, done) => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                navigate('/log-in');
+                return;
+            }
 
-    //         if (response.ok) {
-    //             const updatedMemo = await response.json();
-    //             setSavedMemos(
-    //                 savedMemos.map((m) => (m.id === id ? updatedMemo : m))
-    //             );
-    //         } else {
-    //             const errorData = await response.json();
-    //             console.error('Error updating memo done state:', errorData.error);
-    //             setError(`Error updating memo done state: ${errorData.error}`);
-    //         }
-    //     } catch (error) {
-    //         console.error('Error updating memo done state:', error);
-    //         setError('An error occurred while updating the memo done state. Please try again later.');
-    //     }
-    // };
+            const response = await fetch(`${NODE_API_URL}/api/memos/${id}/done`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ done }),
+            });
 
-    // const handleDoneMemo = (id) => {
-    //     handleDoneChange(id, true);
-    // };
+            if (response.ok) {
+                const updatedMemo = await response.json();
+                setSavedMemos(
+                    savedMemos.map((m) => (m.id === id ? updatedMemo : m))
+                );
+            } else {
+                const errorData = await response.json();
+                console.error('Error updating memo done state:', errorData.error);
+                setError(`Error updating memo done state: ${errorData.error}`);
+            }
+        } catch (error) {
+            console.error('Error updating memo done state:', error);
+            setError('An error occurred while updating the memo done state. Please try again later.');
+        }
+    };
 
-    // const handleUndoneMemo = (id) => {
-    //     handleDoneChange(id, false);
-    // };
+    const handleDoneMemo = (id) => {
+        handleDoneChange(id, true);
+    };
 
-    // const handleUpdateMemo = async (id, event) => {
-    //     const updatedMemo = event.target.parentElement.parentElement.querySelector('.edit-memo-input').value;
+    const handleUndoneMemo = (id) => {
+        handleDoneChange(id, false);
+    };
 
-    //     try {
-    //         const token = localStorage.getItem('token');
-    //         if (!token) {
-    //             navigate('/log-in'); // Redirect to the login page if the user is not logged in
-    //             return;
-    //         }
+    const handleUpdateMemo = async (id, event) => {
+        const updatedMemo = event.target.parentElement.parentElement.querySelector('.edit-memo-input').value;
 
-    //         const response = await fetch(`https://lighthouse-portal.onrender.com/api/memos/${id}`, {
-    //             method: 'PUT',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //                 'Authorization': `Bearer ${token}`,
-    //             },
-    //             body: JSON.stringify({ memo: updatedMemo }),
-    //         });
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                navigate('/log-in');
+                return;
+            }
 
-    //         if (response.ok) {
-    //             const updatedMemoData = await response.json();
+            const response = await fetch(`${NODE_API_URL}/api/memos/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ memo: updatedMemo }),
+            });
 
-    //             setSavedMemos(
-    //                 savedMemos.map((m) => (m.id === id ? updatedMemoData : m))
-    //             );
+            if (response.ok) {
+                const updatedMemoData = await response.json();
 
-    //             setEditingMemoId(null);
-    //         } else {
-    //             const errorData = await response.json();
-    //             console.error('Error updating memo:', errorData.error);
-    //             setError(`Error updating memo: ${errorData.error}`);
-    //         }
-    //     } catch (error) {
-    //         console.error('Error updating memo:', error);
-    //         setError('An error occurred while updating the memo. Please try again later.');
-    //     }
-    // };
+                setSavedMemos(
+                    savedMemos.map((m) => (m.id === id ? updatedMemoData : m))
+                );
+
+                setEditingMemoId(null);
+            } else {
+                const errorData = await response.json();
+                console.error('Error updating memo:', errorData.error);
+                setError(`Error updating memo: ${errorData.error}`);
+            }
+        } catch (error) {
+            console.error('Error updating memo:', error);
+            setError('An error occurred while updating the memo. Please try again later.');
+        }
+    };
+
+    // Filter memos based on current filter and search term
+    const filteredMemos = savedMemos.filter(memo => {
+        const matchesFilter = 
+            filter === 'all' ? true :
+            filter === 'active' ? !memo.done :
+            filter === 'completed' ? memo.done : true;
+
+        const matchesSearch = memo.memo.toLowerCase().includes(searchTerm.toLowerCase());
+        
+        return matchesFilter && matchesSearch;
+    });
 
     return (
-        <div className={`private-memos ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
-            <h2>Sticky Notes</h2>
+        <div className={`private-memos ${isDarkMode ? 'dark-mode' : ''}`}>
+            <div className="header-section">
+                <div className="header-left">
+                    <FaStickyNote className="icon" />
+                    <h1 className="page-title">Sticky Notes</h1>
+                </div>
+                <div className="search-bar">
+                    <input
+                        type="text"
+                        placeholder="🔍 Search notes..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+            </div>
+
             <div className="memo-input-container">
                 <textarea
-                    className={`memo-input ${isDarkMode ? 'dark-mode' : 'light-mode'}`}
+                    className="memo-input"
                     value={memo}
-                    // onChange={handleMemoChange}
-                    placeholder="Write your private memo..."
+                    onChange={handleMemoChange}
+                    placeholder="Write your personal notes here..."
                 />
-                <button
-                    className={`save-memo-button ${isDarkMode ? 'dark-mode' : 'light-mode'}`}
-                    // onClick={handleSaveMemo}
+                <button 
+                    className="save-memo-button" 
+                    onClick={handleSaveMemo}
+                    disabled={saving}
                 >
-                    Save Note
+                    {saving ? <Spinner size="small" color="white" /> : 'Save Note'}
                 </button>
             </div>
+
             <div className="saved-memos-container">
-                <h3>Saved Notes</h3>
-                <div className="saved-memos-list">
-                    {savedMemos.map(({id, memo, done}) => (
-                        <div key={id} className={`saved-memo ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+                {isLoading ? (
+                    <Spinner size="large" color={isDarkMode ? '#4285F4' : '#4285F4'} />
+                ) : filteredMemos.length === 0 ? (
+                    <div className="no-memos">
+                        <p>No notes found</p>
+                    </div>
+                ) : (
+                    filteredMemos.map(({ id, memo, done, created_at }) => (
+                        <div key={id} className={`saved-memo ${done ? 'done' : ''}`}>
                             {editingMemoId === id ? (
                                 <div className="edit-memo-container">
                                     <textarea
-                                        className={`edit-memo-input ${isDarkMode ? 'dark-mode' : 'light-mode'}`}
+                                        className="edit-memo-input"
                                         defaultValue={memo}
                                     />
-                                    <div className="edit-memo-actions">
-                                        <button className="save-edit-button" onClick={(e) => handleUpdateMemo(id, e)}>
+                                    <div className="edit-actions">
+                                        <button 
+                                            className="memo-button edit-button"
+                                            onClick={(e) => handleUpdateMemo(id, e)}
+                                        >
                                             Save
                                         </button>
-                                        <button className="cancel-edit-button" onClick={handleCancelEdit}>
+                                        <button 
+                                            className="memo-button cancel-button"
+                                            onClick={handleCancelEdit}
+                                        >
                                             Cancel
                                         </button>
                                     </div>
                                 </div>
                             ) : (
                                 <>
-                                    <p style={{textDecoration: done ? 'line-through' : 'none'}}>{memo}</p>
+                                    <div className="memo-content">{memo}</div>
                                     <div className="memo-actions">
-                                    <button className="edit-memo-button" onClick={() => handleEditMemo(id)}>
+                                        <button 
+                                            className="memo-button edit-button" 
+                                            onClick={() => handleEditMemo(id)}
+                                        >
                                             Edit
                                         </button>
-                                        <button className="delete-memo-button" onClick={() => handleDeleteMemo(id)}>
+                                        <button 
+                                            className="memo-button delete-button" 
+                                            onClick={() => handleDeleteMemo(id)}
+                                        >
                                             Delete
                                         </button>
-                                        {done ? (
-                                            <button className="undone-memo-button" onClick={() => handleUndoneMemo(id)}>
-                                                Undone
-                                            </button>
-                                        ) : (
-                                            <button className="done-memo-button" onClick={() => handleDoneMemo(id)}>
-                                                Done
-                                            </button>
-                                        )}
+                                        <button 
+                                            className="memo-button done-button"
+                                            onClick={() => done ? handleUndoneMemo(id) : handleDoneMemo(id)}
+                                        >
+                                            {done ? 'Undone' : 'Done'}
+                                        </button>
                                     </div>
                                 </>
                             )}
                         </div>
-                    ))}
-                </div>
+                    ))
+                )}
             </div>
         </div>
     );

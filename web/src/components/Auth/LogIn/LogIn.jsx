@@ -38,10 +38,15 @@ export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
             });
             
             localStorage.setItem('token', data.token);
+            localStorage.setItem('userId', data.id);
+            localStorage.setItem('userName', data.userName);
+            localStorage.removeItem('showTour');
+            
             toast.success('Login successful!');
             onAuthSuccess();
             navigate('/dashboard');
         } catch (error) {
+            console.error('Login failed:', error);
             toast.error(error.message || 'Failed to login');
         } finally {
             setIsLoading(false);
@@ -95,6 +100,11 @@ export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
                                     required
                                 />
                                 <label htmlFor="password">Password</label>
+                            </div>
+                            <div className="forgot-password">
+                                <Link to="/forgot-password" className="link">
+                                    Forgot Password?
+                                </Link>
                             </div>
                         </div>
 

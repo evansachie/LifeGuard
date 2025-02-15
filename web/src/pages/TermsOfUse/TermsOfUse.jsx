@@ -1,8 +1,8 @@
 import * as React from "react";
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './TermsOfUse.css';
 import {ArrowLeft} from "lucide-react";
+import './TermsOfUse.css';
 
 const TermsOfUse = ({ isDarkMode }) => {
     const [termsAccepted, setTermsAccepted] = useState(false);
