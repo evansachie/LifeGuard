@@ -18,13 +18,14 @@ import PrivateMemos from './pages/PrivateMemos/PrivateMemos';
 import HealthReport from "./pages/HealthReport/HealthReport";
 
 import PollutionTracker from './pages/PollutionTracker/PollutionTracker';
-import Calories from "./pages/Calories/Calories";
-import Profile from "./pages/Profile/Profile";
 import HealthTips from "./pages/HealthTips/HealthTips";
-import ExerciseRoutines from "./pages/ExerciseRoutines/ExerciseRoutines";
-import WellnessHub from "./pages/WellnessHub/WellnessHub";
 import EmergencyContacts from "./pages/EmergencyContacts/EmergencyContacts";
 
+import Calories from "./pages/Calories/Calories";
+import ExerciseRoutines from "./pages/ExerciseRoutines/ExerciseRoutines";
+import WellnessHub from "./pages/WellnessHub/WellnessHub";
+
+import Profile from "./pages/Profile/Profile";
 import Settings from "./pages/Settings/Settings";
 import Help from './pages/Help/Help';
 import TermsOfUse from './pages/TermsOfUse/TermsOfUse';
