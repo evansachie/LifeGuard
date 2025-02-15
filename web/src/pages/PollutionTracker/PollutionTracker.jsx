@@ -84,6 +84,43 @@ export default function PollutionTracker({ isDarkMode }) {
     }
   }, []);
 
+  const renderPollutionZones = () => {
+    return pollutionZones.map(zone => (
+      <Source
+        key={zone.id}
+        type="geojson"
+        data={{
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [zone.coordinates[1], zone.coordinates[0]]
+          },
+          properties: {
+            level: zone.level
+          }
+        }}
+      >
+        <Layer
+          id={`zone-${zone.id}`}
+          type="circle"
+          paint={{
+            'circle-radius': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              10, zone.radius / 100,
+              15, zone.radius / 50
+            ],
+            'circle-color': getPollutionColor(zone.level),
+            'circle-opacity': 0.6,
+            'circle-blur': 0.5,
+          }}
+          onClick={() => setSelectedZone(zone)}
+        />
+      </Source>
+    ));
+  };
+
   return (
     <div className={`pollution-tracker ${isDarkMode ? 'dark-mode' : ''}`}>
       <div className="map-container">
@@ -93,39 +130,12 @@ export default function PollutionTracker({ isDarkMode }) {
           style={{ width: '100%', height: '100%' }}
           mapStyle={isDarkMode ? "mapbox://styles/mapbox/dark-v10" : "mapbox://styles/mapbox/light-v10"}
           mapboxAccessToken={MAPBOX_API_KEY}
+          onClick={() => setSelectedZone(null)}
         >
           <NavigationControl position="top-right" />
           
-          {/* Render pollution zones */}
-          {pollutionZones.map(zone => (
-            <Source
-              key={zone.id}
-              type="geojson"
-              data={{
-                type: 'Feature',
-                geometry: {
-                  type: 'Point',
-                  coordinates: [zone.coordinates[1], zone.coordinates[0]]
-                },
-                properties: {
-                  level: zone.level
-                }
-              }}
-            >
-              <Layer
-                type="circle"
-                paint={{
-                  'circle-radius': zone.radius / 50,
-                  'circle-color': getPollutionColor(zone.level),
-                  'circle-opacity': 0.6,
-                  'circle-blur': 0.5,
-                }}
-                onClick={() => setSelectedZone(zone)}
-              />
-            </Source>
-          ))}
+          {renderPollutionZones()}
 
-          {/* User location marker */}
           {userLocation && (
             <Marker
               longitude={userLocation.longitude}
