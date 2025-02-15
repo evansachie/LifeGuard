@@ -1,7 +1,7 @@
 export const pollutionZones = [
     {
       id: '1',
-      coordinates: [40.6935, -73.9866],
+      coordinates: [5.6505, -0.1870], // University of Ghana, Legon
       level: 'high',
       radius: 500,
       data: {
@@ -12,7 +12,7 @@ export const pollutionZones = [
     },
     {
       id: '2',
-      coordinates: [40.6895, -73.9845],
+      coordinates: [5.6478, -0.1864], // UG Business School area
       level: 'medium',
       radius: 300,
       data: {
@@ -23,7 +23,7 @@ export const pollutionZones = [
     },
     {
       id: '3',
-      coordinates: [40.6915, -73.9825],
+      coordinates: [5.6525, -0.1875], // Legon Hall area
       level: 'low',
       radius: 400,
       data: {
@@ -32,4 +32,15 @@ export const pollutionZones = [
         pm10: 38.5,
       }
     },
-  ];
+    {
+      id: '4',
+      coordinates: [5.6498, -0.1882], // Athletic Oval area
+      level: 'medium',
+      radius: 400,
+      data: {
+        aqi: 95,
+        pm25: 42.3,
+        pm10: 88.7,
+      }
+    }
+];
