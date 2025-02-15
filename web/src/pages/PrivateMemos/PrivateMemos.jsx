@@ -1,10 +1,11 @@
 import * as React from "react";
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaStickyNote, FaSearch, FaFilter, FaBold, FaItalic, FaListUl, FaLink, FaTags } from 'react-icons/fa';
-import './PrivateMemos.css';
-import { toast } from 'react-hot-toast';
+import { FaStickyNote } from 'react-icons/fa';
+import { NODE_API_URL } from "../../utils/api";
+import { toast } from 'react-toastify';
 import Spinner from '../../components/Spinner/Spinner';
+import './PrivateMemos.css';
 
 const PrivateMemos = ({ isDarkMode }) => {
     const [memo, setMemo] = useState('');
@@ -19,8 +20,6 @@ const PrivateMemos = ({ isDarkMode }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
-    const API_BASE_URL = 'https://lifeguard-node.onrender.com';
-
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -30,7 +29,7 @@ const PrivateMemos = ({ isDarkMode }) => {
 
         const fetchMemos = async () => {
             try {
-                const response = await fetch(`${API_BASE_URL}/api/memos`, {
+                const response = await fetch(`${NODE_API_URL}/api/memos`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -74,7 +73,7 @@ const PrivateMemos = ({ isDarkMode }) => {
                     return;
                 }
 
-                const response = await fetch(`${API_BASE_URL}/api/memos`, {
+                const response = await fetch(`${NODE_API_URL}/api/memos`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -102,7 +101,7 @@ const PrivateMemos = ({ isDarkMode }) => {
     const handleDeleteMemo = async (id) => {
         try {
             const token = localStorage.getItem('token');
-            await fetch(`${API_BASE_URL}/api/memos/${id}`, {
+            await fetch(`${NODE_API_URL}/api/memos/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -131,7 +130,7 @@ const PrivateMemos = ({ isDarkMode }) => {
                 return;
             }
 
-            const response = await fetch(`${API_BASE_URL}/api/memos/${id}/done`, {
+            const response = await fetch(`${NODE_API_URL}/api/memos/${id}/done`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -174,7 +173,7 @@ const PrivateMemos = ({ isDarkMode }) => {
                 return;
             }
 
-            const response = await fetch(`${API_BASE_URL}/api/memos/${id}`, {
+            const response = await fetch(`${NODE_API_URL}/api/memos/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

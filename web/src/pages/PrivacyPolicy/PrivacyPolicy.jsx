@@ -73,7 +73,8 @@ const PrivacyPolicy = ({ isDarkMode }) => {
 
             <h2><strong>Contact Us</strong></h2>
             <p>
-                If you have any questions or concerns about this Privacy Policy or how your information is handled, please contact us at <strong>evansachie0101@gmail.com</strong>.
+                If you have any questions or concerns about this Privacy Policy or how your information is handled, please contact us at <strong>evansachie0101@gmail.com</strong>
+                or <strong>michaeladugyamfi76@gmail.com</strong>.
             </p>
         </div>
 

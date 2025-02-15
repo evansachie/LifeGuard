@@ -36,6 +36,7 @@ function Sidebar({ toggleTheme, isDarkMode }) {
     useEffect(() => {
         // Get username from localStorage (set during login/dashboard fetch)
         const storedName = localStorage.getItem('userName');
+        console.log(storedName);
         if (storedName) {
             // If it's an email, show just the first part capitalized
             if (storedName.includes('@')) {
@@ -55,19 +56,6 @@ function Sidebar({ toggleTheme, isDarkMode }) {
         }
         if (isProfileMenuOpen && profileMenuRef.current && !profileMenuRef.current.contains(event.target) && !event.target.closest('.user-info')) {
             setIsProfileMenuOpen(false);
-        }
-    };
-
-    const fetchUserDetails = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('https://lighthouse-portal.onrender.com/api/users/details', {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            setUsername(response.data.username);
-            setProfilePictureUrl(response.data.profilePictureUrl);
-        } catch (error) {
-            console.error('Error fetching user details:', error);
         }
     };
 
