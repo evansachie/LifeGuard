@@ -1,6 +1,6 @@
 import * as React from "react";
-import { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
@@ -41,6 +41,12 @@ function App() {
         return savedTheme ? savedTheme === 'dark' : false;
     });
 
+    const isAuthenticated = () => {
+        const token = localStorage.getItem('token');
+        const userId = localStorage.getItem('userId');
+        return !!(token && userId);
+    };
+
     const toggleTheme = () => {
         const newTheme = !isDarkMode;
         setIsDarkMode(newTheme);
@@ -63,14 +69,40 @@ function App() {
         <>
             <Router>
                 <Routes>
-                    {/* Public Routes */}
-                    <Route path="/" element={<SignUp isDarkMode={isDarkMode} toggleTheme={toggleTheme} onAuthSuccess={handleAuthSuccess} />} />
-                    <Route path="/log-in" element={<LogIn isDarkMode={isDarkMode} toggleTheme={toggleTheme} onAuthSuccess={handleAuthSuccess} />} />
+                    <Route 
+                        path="/" 
+                        element={
+                            isAuthenticated() ? (
+                                <Navigate to="/dashboard" replace />
+                            ) : (
+                                <SignUp 
+                                    isDarkMode={isDarkMode} 
+                                    toggleTheme={toggleTheme} 
+                                    onAuthSuccess={handleAuthSuccess} 
+                                />
+                            )
+                        } 
+                    />
+
+                    <Route 
+                        path="/log-in" 
+                        element={
+                            isAuthenticated() ? (
+                                <Navigate to="/dashboard" replace />
+                            ) : (
+                                <LogIn 
+                                    isDarkMode={isDarkMode} 
+                                    toggleTheme={toggleTheme} 
+                                    onAuthSuccess={handleAuthSuccess} 
+                                />
+                            )
+                        } 
+                    />
+
                     <Route path="/verify-otp" element={<OTPVerification isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
                     <Route path="/forgot-password" element={<ForgotPassword isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
                     <Route path="/reset-password" element={<ResetPassword isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
 
-                    {/* Protected Routes */}
                     <Route path="/dashboard" element={
                         <ProtectedRoute>
                             <AppLayout>
@@ -149,7 +181,6 @@ function App() {
                         </ProtectedRoute>
                     } />
 
-                    {/* 404 Route*/}
                     <Route path="*" element={<NotFound isDarkMode={isDarkMode} />} />
                 </Routes>
             </Router>
