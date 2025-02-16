@@ -7,7 +7,7 @@ import { MdCo2 } from "react-icons/md";
 import { WiBarometer, WiHumidity, WiDust } from "react-icons/wi";
 import { MdAir } from "react-icons/md";
 import { toast } from 'react-toastify';
-import { fetchWithAuth, API_ENDPOINTS } from '../../utils/api';
+import { fetchWithAuth, API_ENDPOINTS, QUOTE_API_URL } from '../../utils/api';
 import './Dashboard.css';
 import QuickAccess from '../../components/QuickAccess/QuickAccess';
 import Spinner from '../../components/Spinner/Spinner';
@@ -89,7 +89,7 @@ function Dashboard({ isDarkMode }) {
     const fetchQuoteData = async () => {
         try {
             setQuotesLoading(true);
-            const response = await axios.get('https://api.allorigins.win/raw?url=https://zenquotes.io/api/random');
+            const response = await axios.get(QUOTE_API_URL);
             const quoteData = response.data[0];
             setQuote({
                 quote: quoteData.q,
