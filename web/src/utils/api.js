@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 export const FRONTEND_URL = window.location.origin; // Gets the current frontend URL
 export const API_BASE_URL = 'https://lifeguard-hiij.onrender.com/api';
 export const NODE_API_URL = 'https://lifeguard-node.onrender.com';
+export const QUOTE_API_URL = 'https://api.allorigins.win/raw?url=https://zenquotes.io/api/random';
 
 export const API_ENDPOINTS = {
     LOGIN: '/Account/login',

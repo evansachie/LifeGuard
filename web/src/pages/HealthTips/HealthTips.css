@@ -174,22 +174,30 @@
 }
 
 .tip-card {
-  background-color: white;
-  border-radius: 15px;
-  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  padding: 0;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  position: relative;
+  transition: transform 0.2s ease;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
-.dark-mode .tip-card {
-  background-color: #2d2d2d;
+.tip-card-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
 }
 
-.tip-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+.tip-card-content {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .type-icon {
@@ -207,7 +215,7 @@
 }
 
 .dark-mode .tip-card h3 {
-  color: #e0e0e0;
+  color: #fff;
 }
 
 .tip-card p {
@@ -217,7 +225,7 @@
 }
 
 .dark-mode .tip-card p {
-  color: #b0b0b0;
+  color: #e0e0e0;
 }
 
 .tip-footer {
@@ -237,7 +245,7 @@
 .tip-category.fitness { background-color: #E5FFE5; color: #44FF44; }
 .tip-category.nutrition { background-color: #FFE5FF; color: #FF44FF; }
 .tip-category.mental { background-color: #E5E5FF; color: #4444FF; }
-.tip-category.prevention { background-color: #FFFFE5; color: #FFFF44; }
+.tip-category.prevention { background-color: #FFFFE5; color: black; }
 .tip-category.resources { background-color: #E5FFFF; color: #44FFFF; }
 
 .dark-mode .tip-category {
@@ -254,7 +262,7 @@
 
 /* Video Section */
 .video-section {
-  margin-top: 3rem;
+  margin-top: 2rem;
 }
 
 .video-section h2 {
@@ -271,32 +279,28 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
+  margin-top: 1rem;
 }
 
 .video-card {
-  background-color: white;
+  background: white;
   border-radius: 12px;
   overflow: hidden;
-  transition: transform 0.3s ease;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.dark-mode .video-card {
-  background-color: #2d2d2d;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
 }
 
 .video-card:hover {
   transform: translateY(-5px);
 }
 
-.video-iframe-container {
+.video-thumbnail {
   position: relative;
-  width: 100%;
   padding-top: 56.25%; /* 16:9 aspect ratio */
-  overflow: hidden;
+  background: #f0f0f0;
 }
 
-.video-iframe-container iframe {
+.video-thumbnail iframe {
   position: absolute;
   top: 0;
   left: 0;
@@ -305,16 +309,44 @@
   border: none;
 }
 
-.video-card h4 {
-  padding: 1rem;
-  margin: 0;
-  font-size: 1rem;
-  color: #333;
-  text-align: center;
+.video-duration {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  z-index: 1;
 }
 
-.dark-mode .video-card h4 {
-  color: #e0e0e0;
+.video-info {
+  padding: 1rem;
+}
+
+.video-info h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.video-info p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Dark mode styles */
+.dark-mode .video-card {
+  background: #2d2d2d;
+}
+
+.dark-mode .video-info h3 {
+  color: #fff;
+}
+
+.dark-mode .video-info p {
+  color: #ccc;
 }
 
 /* Responsive Design */
@@ -362,4 +394,168 @@
   .tips-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Add these styles */
+.health-tips-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  padding: 2rem;
+  text-align: center;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin: 2rem;
+}
+
+.health-tips-error h2 {
+  color: #e53935;
+  margin-bottom: 1rem;
+}
+
+.health-tips-error button {
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: #407CE2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.health-tips-error button:hover {
+  background: #3367d6;
+}
+
+.dark-mode .health-tips-error {
+  background: #2d3748;
+  color: #e0e0e0;
+}
+
+/* Add to existing CSS */
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem 0;
+  gap: 0.5rem;
+}
+
+.pagination-button {
+  padding: 0.5rem 1rem;
+  border: none;
+  background: white;
+  color: #333;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pagination-button.active {
+  background: #407CE2;
+  color: white;
+}
+
+.pagination-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dark-mode .pagination-button {
+  background: #2d2d2d;
+  color: #e0e0e0;
+}
+
+.dark-mode .pagination-button.active {
+  background: #407CE2;
+  color: white;
+}
+
+.pagination-ellipsis {
+  color: #666;
+  padding: 0 0.5rem;
+}
+
+.api-loading-indicator {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.75rem 1.5rem;
+  background: rgba(66, 133, 244, 0.9);
+  color: white;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  animation: fadeInOut 2s ease infinite;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+/* Category-specific colors */
+.tip-category.emergency { background-color: #FFE5E5; color: black; }
+.tip-category.fitness { background-color: #E5FFE5; color: black; }
+.tip-category.nutrition { background-color: #FFE5FF; color: black; }
+.tip-category.mental { background-color: #E5E5FF; color: black; }
+.tip-category.prevention { background-color: #FFFFE5; color: black; }
+.tip-category.resources { background-color: #E5FFFF; color: black; }
+
+.dark-mode .tip-category {
+  opacity: 0.9;
+}
+
+/* Add to your existing CSS */
+.error-banner {
+  background-color: rgba(255, 68, 68, 0.1);
+  color: #ff4444;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.dark-mode .error-banner {
+  background-color: rgba(255, 68, 68, 0.2);
+  color: #ff6b6b;
+}
+
+.tip-card {
+  background: white;
+  border-radius: 12px;
+  padding: 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.dark-mode .tip-card {
+  background: #2d2d2d;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .tip-card h3 {
+  color: #fff;
+}
+
+.dark-mode .tip-card p {
+  color: #e0e0e0;
+}
+
+.tip-card:hover {
+  transform: translateY(-5px);
 }
