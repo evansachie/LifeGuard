@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, Outlet } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -40,8 +40,13 @@ import './App.css';
 function App() {
     const [isDarkMode, setIsDarkMode] = useState(() => {
         const savedTheme = localStorage.getItem('theme');
-        return savedTheme ? savedTheme === 'dark' : false;
+        return savedTheme === 'dark';
     });
+
+    useEffect(() => {
+        localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+        document.body.classList.toggle('dark-mode', isDarkMode);
+    }, [isDarkMode]);
 
     const isAuthenticated = () => {
         const token = localStorage.getItem('token');
@@ -50,12 +55,7 @@ function App() {
     };
 
     const toggleTheme = () => {
-        const newTheme = !isDarkMode;
-        setIsDarkMode(newTheme);
-        localStorage.setItem('theme', newTheme ? 'dark' : 'light');
-    };
-
-    const handleAuthSuccess = () => {
+        setIsDarkMode(prevMode => !prevMode);
     };
 
     const AppLayout = ({ children }) => (
