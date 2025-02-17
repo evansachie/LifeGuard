@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate, Outlet } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
@@ -76,45 +76,32 @@ function App() {
                         theme={isDarkMode ? 'dark' : 'light'}
                     />
                     <Routes>
+                        {/* Public routes */}
                         <Route 
                             path="/" 
                             element={
                                 isAuthenticated() ? (
                                     <Navigate to="/dashboard" replace />
                                 ) : (
-                                    <SignUp 
-                                        isDarkMode={isDarkMode} 
-                                        toggleTheme={toggleTheme} 
-                                        onAuthSuccess={handleAuthSuccess} 
-                                    />
+                                    <SignUp isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
                                 )
                             } 
                         />
-
-                        <Route 
-                            path="/log-in" 
-                            element={
-                                isAuthenticated() ? (
-                                    <Navigate to="/dashboard" replace />
-                                ) : (
-                                    <LogIn 
-                                        isDarkMode={isDarkMode} 
-                                        toggleTheme={toggleTheme} 
-                                        onAuthSuccess={handleAuthSuccess} 
-                                    />
-                                )
-                            } 
-                        />
-
+                        <Route path="/log-in" element={<LogIn isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
                         <Route path="/verify-otp" element={<OTPVerification isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
                         <Route path="/forgot-password" element={<ForgotPassword isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
                         <Route path="/reset-password" element={<ResetPassword isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
 
-                        <Route element={<ProtectedRoute>
-                            <AppLayout>
-                                <Dashboard isDarkMode={isDarkMode} />
-                            </AppLayout>
-                        </ProtectedRoute>}>
+                        {/* Protected routes */}
+                        <Route
+                            element={
+                                <ProtectedRoute>
+                                    <AppLayout isDarkMode={isDarkMode}>
+                                        <Outlet /> {/* This will render the child routes */}
+                                    </AppLayout>
+                                </ProtectedRoute>
+                            }
+                        >
                             <Route path="/dashboard" element={<Dashboard isDarkMode={isDarkMode} />} />
                             <Route path="/sticky-notes" element={<PrivateMemos isDarkMode={isDarkMode} />} />
                             <Route path="/health-report" element={<HealthReport isDarkMode={isDarkMode} />} />
