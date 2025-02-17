@@ -6,6 +6,8 @@ import { NODE_API_URL } from "../../utils/api";
 import { toast } from 'react-toastify';
 import Spinner from '../../components/Spinner/Spinner';
 import './PrivateMemos.css';
+import EmptyState from '../../assets/empty-state.svg';
+import DeleteConfirmationModal from '../../components/DeleteConfirmationModal/DeleteConfirmationModal';
 
 const PrivateMemos = ({ isDarkMode }) => {
     const [memo, setMemo] = useState('');
@@ -19,6 +21,9 @@ const PrivateMemos = ({ isDarkMode }) => {
     const [tags, setTags] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [deletingMemo, setDeletingMemo] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -98,18 +103,32 @@ const PrivateMemos = ({ isDarkMode }) => {
         }
     };
 
-    const handleDeleteMemo = async (id) => {
+    const handleDeleteMemo = (memo) => {
+        setDeletingMemo(memo);
+        setDeleteModalOpen(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!deletingMemo) return;
+        
+        setIsDeleting(true);
         try {
             const token = localStorage.getItem('token');
-            await fetch(`${NODE_API_URL}/api/memos/${id}`, {
+            await fetch(`${NODE_API_URL}/api/memos/${deletingMemo.id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
             });
-            setSavedMemos(savedMemos.filter((m) => m.id !== id));
+            setSavedMemos(savedMemos.filter((m) => m.id !== deletingMemo.id));
+            toast.success('Note deleted successfully!');
+            setDeleteModalOpen(false);
         } catch (error) {
             console.error('Error deleting memo:', error);
+            toast.error('Failed to delete note');
+        } finally {
+            setIsDeleting(false);
+            setDeletingMemo(null);
         }
     };
 
@@ -248,10 +267,13 @@ const PrivateMemos = ({ isDarkMode }) => {
 
             <div className="saved-memos-container">
                 {isLoading ? (
-                    <Spinner size="large" color={isDarkMode ? '#4285F4' : '#4285F4'} />
+                    <div className="flex justify-center items-center h-64">
+                        <Spinner size="large" color={isDarkMode ? '#fff' : '#4285F4'} />
+                    </div>
                 ) : filteredMemos.length === 0 ? (
-                    <div className="no-memos">
-                        <p>No notes found</p>
+                    <div className="flex flex-col items-center justify-center h-64">
+                        <img src={EmptyState} alt="No memos" className="w-64 mb-4" />
+                        <p className="text-lg text-gray-500">No notes found</p>
                     </div>
                 ) : (
                     filteredMemos.map(({ id, memo, done, created_at }) => (
@@ -289,7 +311,7 @@ const PrivateMemos = ({ isDarkMode }) => {
                                         </button>
                                         <button 
                                             className="memo-button delete-button" 
-                                            onClick={() => handleDeleteMemo(id)}
+                                            onClick={() => handleDeleteMemo({ id, memo })}
                                         >
                                             Delete
                                         </button>
@@ -306,6 +328,17 @@ const PrivateMemos = ({ isDarkMode }) => {
                     ))
                 )}
             </div>
+
+            <DeleteConfirmationModal 
+                isOpen={deleteModalOpen}
+                onClose={() => setDeleteModalOpen(false)}
+                onConfirm={confirmDelete}
+                title="Delete Note"
+                message="Are you sure you want to delete this note?"
+                itemName={deletingMemo?.memo}
+                isLoading={isDeleting}
+                isDarkMode={isDarkMode}
+            />
         </div>
     );
 }
