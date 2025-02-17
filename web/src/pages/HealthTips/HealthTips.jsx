@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { SiSmartthings } from "react-icons/si";
 import { FaRunning, FaBrain, FaYoutube, FaBookMedical, FaSearch, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { MdHealthAndSafety } from 'react-icons/md';
 import { fetchHealthTips } from '../../services/healthTipsService';
@@ -194,6 +195,7 @@ function HealthTips({ isDarkMode }) {
             className={`category-btn ${selectedCategory === 'all' ? 'active' : ''}`}
             onClick={() => setSelectedCategory('all')}
           >
+            <SiSmartthings />
             All
           </button>
           {categories.map(category => (
@@ -269,7 +271,6 @@ function HealthTips({ isDarkMode }) {
                 variants={itemVariants}
               >
                 <div className="video-thumbnail">
-                  <div className="video-duration">{video.duration}</div>
                   <iframe
                     src={video.videoUrl}
                     title={video.title}

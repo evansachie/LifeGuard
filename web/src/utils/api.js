@@ -13,7 +13,8 @@ export const API_ENDPOINTS = {
     FORGOT_PASSWORD: '/Account/forgot-password',
     RESET_PASSWORD: '/Account/reset-password',
     GET_USER: '/Account/id',
-    MEMOS: `${NODE_API_URL}/api/memos`
+    MEMOS: `${NODE_API_URL}/api/memos`,
+    EMERGENCY_CONTACTS: `${NODE_API_URL}/api/emergency-contacts`
 };
 
 export const fetchWithAuth = async (endpoint, options = {}) => {
@@ -29,10 +30,14 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
     }
 
     try {
-        console.log('Making request to:', `${API_BASE_URL}${endpoint}`);
+        // Determine if the endpoint is a full URL (Node endpoints) or relative (C# endpoints)
+        const baseUrl = endpoint.startsWith('http') ? '' : API_BASE_URL;
+        const url = `${baseUrl}${endpoint}`;
+        
+        console.log('Making request to:', url);
         console.log('Request payload:', options.body);
 
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        const response = await fetch(url, {
             ...options,
             headers: {
                 ...defaultHeaders,
@@ -55,7 +60,6 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
         console.log('Response:', data);
 
         if (!response.ok) {
-            // If unauthorized, clear token and redirect to login
             if (response.status === 401) {
                 localStorage.removeItem('token');
                 window.location.href = '/log-in';

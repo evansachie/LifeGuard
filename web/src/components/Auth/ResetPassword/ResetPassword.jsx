@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FaLock, FaMoon, FaSun } from 'react-icons/fa';
 import Button from '../../button/button';
 import resetPasswordIllustration from '../../../assets/auth/reset-password.svg';

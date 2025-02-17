@@ -5,6 +5,7 @@ import { FaPerson } from "react-icons/fa6";
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import './Profile.css';
+import { API_ENDPOINTS, fetchWithAuth } from '../../utils/api';
 
 function Profile({ isDarkMode }) {
     const [editMode, setEditMode] = useState(false);
@@ -37,6 +38,22 @@ function Profile({ isDarkMode }) {
             email: storedEmail || 'user@example.com',
             emergencyContacts: contacts
         }));
+    }, []);
+
+    useEffect(() => {
+        const fetchEmergencyContacts = async () => {
+            try {
+                const data = await fetchWithAuth(API_ENDPOINTS.EMERGENCY_CONTACTS);
+                setProfileData(prev => ({
+                    ...prev,
+                    emergencyContacts: data
+                }));
+            } catch (error) {
+                console.error('Error fetching emergency contacts:', error);
+            }
+        };
+
+        fetchEmergencyContacts();
     }, []);
 
     const handleInputChange = (e) => {

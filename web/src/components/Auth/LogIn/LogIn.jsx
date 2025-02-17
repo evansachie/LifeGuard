@@ -8,7 +8,7 @@ import loginIllustration2 from '../../../assets/auth/loginIllustration2.svg';
 import loginIllustration3 from '../../../assets/auth/loginIllustration3.svg';
 import ImageSlider from '../../ImageSlider/ImageSlider';
 import "./LogIn.css";
-import { API_BASE_URL, API_ENDPOINTS, fetchWithAuth } from '../../../utils/api';
+import { API_ENDPOINTS, fetchWithAuth } from '../../../utils/api';
 import { toast } from 'react-toastify';
 
 export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
