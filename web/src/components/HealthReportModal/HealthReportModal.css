@@ -1,0 +1,257 @@
+.health-report-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Light Mode Styles */
+.health-report-modal {
+  background: white;
+  color: #333;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  border-radius: 8px;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modal-header {
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 1;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.close-button {
+  background: #333 !important;
+  color: white;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.close-button:hover {
+  background: #333;
+}
+
+.download-button {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.download-button.pdf {
+  background: #4285F4;
+  color: white;
+}
+
+.download-button.csv {
+  background: #34D399;
+  color: white;
+}
+
+.download-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.download-button.pdf:hover {
+  background: #3b7de2;
+}
+
+.download-button.csv:hover {
+  background: #2fbf8a;
+}
+
+.report-content {
+  padding: 2rem;
+}
+
+.report-header h1 {
+  color: #333;
+}
+
+.report-logo {
+  width: 120px;
+  margin-bottom: 1rem;
+}
+
+.report-meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin: 1rem 0;
+}
+
+.metric-card {
+  padding: 1.5rem;
+  border-radius: 8px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+}
+
+.metric-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2d3436;
+  margin: 0.5rem 0;
+}
+
+.metric-status {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.metric-status.normal {
+  background: #d4edda;
+  color: #155724;
+}
+
+.metric-status.low {
+  background: #f8d7da;
+  color: #842029;
+}
+
+.metric-status.moderate {
+  background: #fff3cd;
+  color: #856404;
+}
+
+/* Dark Mode Styles */
+.dark-mode .health-report-modal {
+  background: #1a1a1a;
+  color: #fff;
+  border: 1px solid #333;
+}
+
+.dark-mode .modal-header {
+  background: #1a1a1a;
+  border-bottom: 1px solid #333;
+}
+
+.dark-mode .close-button {
+  background: #4a5568;
+  color: #e2e8f0;
+}
+
+.dark-mode .close-button:hover {
+  background: #2d3748;
+}
+
+.dark-mode .download-button.pdf {
+  background: #4285F4;
+}
+
+.dark-mode .download-button.csv {
+  background: #34D399;
+}
+
+.dark-mode .download-button.pdf:hover {
+  background: #3b7de2;
+}
+
+.dark-mode .download-button.csv:hover {
+  background: #2fbf8a;
+}
+
+.dark-mode .report-header h1 {
+  color: #fff;
+}
+
+.dark-mode .report-meta p {
+  color: #ccc;
+}
+
+.dark-mode .metric-card {
+  background: #2d2d2d;
+  border: 1px solid #404040;
+}
+
+.dark-mode .metric-value {
+  color: #fff;
+}
+
+.dark-mode .metric-status.normal {
+  background: rgba(21, 87, 36, 0.3);
+  color: #4CAF50;
+}
+
+.dark-mode .metric-status.moderate {
+  background: rgba(133, 100, 4, 0.3);
+  color: #FFC107;
+}
+
+.dark-mode .recommendations-list li {
+  color: #ddd;
+}
+
+.dark-mode h2, .dark-mode h3 {
+  color: #fff;
+}
+
+/* Common styles for both modes */
+.report-section {
+  margin-bottom: 2rem;
+}
+
+.recommendations-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.recommendations-list li {
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 6px;
+  background: rgba(66, 133, 244, 0.1);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .health-report-modal {
+    width: 95%;
+    margin: 1rem;
+  }
+  
+  .report-meta {
+    grid-template-columns: 1fr;
+  }
+}

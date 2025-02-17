@@ -1,22 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { FaMoon, FaSun } from 'react-icons/fa';
 import Button from '../../button/button';
 import otpIllustration from '../../../assets/auth/otp.svg';
 import { API_ENDPOINTS, fetchWithAuth } from '../../../utils/api';
 import './OTPVerification.css';
 
-export default function OTPVerification({ isDarkMode, toggleTheme, email }) {
+export default function OTPVerification({ isDarkMode, toggleTheme }) {
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [timeLeft, setTimeLeft] = useState(30);
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const email = location.state?.email;
 
     useEffect(() => {
+        if (!email) {
+            navigate('/');
+            return;
+        }
         const timer = timeLeft > 0 && setInterval(() => setTimeLeft(prev => prev - 1), 1000);
         return () => clearInterval(timer);
-    }, [timeLeft]);
+    }, [timeLeft, email, navigate]);
 
     const handleChange = (element, index) => {
         if (isNaN(element.value)) return;
@@ -61,7 +68,7 @@ export default function OTPVerification({ isDarkMode, toggleTheme, email }) {
                     otp: otpValue
                 })
             });
-            navigate('/dashboard');
+            navigate('/log-in');
         } catch (error) {
             setError(error.message || 'Invalid OTP');
         } finally {

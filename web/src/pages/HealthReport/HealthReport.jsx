@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HealthReport.css';
 import { FaTemperatureHigh, FaTint, FaWalking, FaFileAlt, FaChartLine, FaCalendarAlt } from 'react-icons/fa';
 import { WiBarometer } from "react-icons/wi";
 import { MdAir } from "react-icons/md";
+import HealthReportModal from '../../components/HealthReportModal/HealthReportModal';
 
 const StatCard = ({ icon: Icon, label, value, color }) => (
   <div className="stat-card" style={{ '--card-color': color }}>
@@ -36,6 +37,7 @@ const ReportCard = ({ date, type, status }) => (
 
 export default function HealthReport({ isDarkMode }) {
   const navigate = useNavigate();
+  const [showReportModal, setShowReportModal] = useState(false);
   
   // Mock data
   const healthData = {
@@ -82,7 +84,12 @@ export default function HealthReport({ isDarkMode }) {
         <div className="reports-container">
           <div className="reports-header">
             <h2>Recent Reports</h2>
-            <button className="generate-button">Generate New Report</button>
+            <button 
+              className="generate-button" 
+              onClick={() => setShowReportModal(true)}
+            >
+              Generate New Report
+            </button>
           </div>
           <div className="reports-list">
             {healthData.reports.map(report => (
@@ -91,6 +98,13 @@ export default function HealthReport({ isDarkMode }) {
           </div>
         </div>
       </div>
+
+      <HealthReportModal 
+        isOpen={showReportModal}
+        onClose={() => setShowReportModal(false)}
+        userData={healthData}
+        isDarkMode={isDarkMode}
+      />
     </div>
   );
 }

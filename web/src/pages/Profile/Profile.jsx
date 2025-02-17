@@ -1,273 +1,334 @@
-import * as React from "react";
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import Modal from 'react-modal';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaUserEdit, FaSave, FaTimesCircle, FaCamera, FaPlus, FaUserPlus } from 'react-icons/fa';
+import { FaPerson } from "react-icons/fa6";
+import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
 import './Profile.css';
-import { FaUserEdit, FaUpload, FaTimesCircle, FaSave } from 'react-icons/fa';
+import { API_ENDPOINTS, fetchWithAuth } from '../../utils/api';
 
-function Profile() {
-    const [userDetails, setUserDetails] = useState({});
-    const [loading, setLoading] = useState(true);
-    const [imageUploadLoading, setImageUploadLoading] = useState(false);
+function Profile({ isDarkMode }) {
     const [editMode, setEditMode] = useState(false);
-    const [formData, setFormData] = useState({});
-    const [profilePicture, setProfilePicture] = useState(null);
-    const [showUploadModal, setShowUploadModal] = useState(false);
-    const [isPasswordChange, setIsPasswordChange] = useState(false);
-    const [error, setError] = useState('');
+    const [profileData, setProfileData] = useState({
+        fullName: '',
+        email: '',
+        phone: '',
+        location: '',
+        bio: '',
+        age: '',
+        weight: '',
+        height: '',
+        gender: '',
+        emergencyContacts: []
+    });
+    const [imageFile, setImageFile] = useState(null);
+    const fileInputRef = useRef(null);
 
-    const fetchUserDetails = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('https://lighthouse-portal.onrender.com/api/users/details', {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            const { username, email, profilePictureUrl } = response.data;
-            setUserDetails({ username, email, profilePictureUrl });
-            setFormData({ username, email });
-        } catch (error) {
-            console.error('Error fetching user details:', error);
-            setError('Failed to fetch user details. Please try again.');
-        } finally {
-            setLoading(false);
-        }
-    };
+    useEffect(() => {
+        // Load user data from localStorage
+        const storedName = localStorage.getItem('userName');
+        const storedEmail = localStorage.getItem('email') || localStorage.getItem('userName');
+        
+        // Load emergency contacts (if any)
+        const contacts = JSON.parse(localStorage.getItem('emergencyContacts')) || [];
+        
+        setProfileData(prev => ({
+            ...prev,
+            fullName: storedName || 'User',
+            email: storedEmail || 'user@example.com',
+            emergencyContacts: contacts
+        }));
+    }, []);
 
-    // useEffect(() => {
-    //     fetchUserDetails();
-    // }, []);
+    useEffect(() => {
+        const fetchEmergencyContacts = async () => {
+            try {
+                const data = await fetchWithAuth(API_ENDPOINTS.EMERGENCY_CONTACTS);
+                setProfileData(prev => ({
+                    ...prev,
+                    emergencyContacts: data
+                }));
+            } catch (error) {
+                console.error('Error fetching emergency contacts:', error);
+            }
+        };
+
+        fetchEmergencyContacts();
+    }, []);
 
     const handleInputChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setProfileData(prev => ({
+            ...prev,
+            [name]: value
+        }));
     };
 
-    const handleProfilePictureChange = (e) => {
-        setProfilePicture(e.target.files[0]);
+    const handleImageClick = () => {
+        fileInputRef.current?.click();
     };
 
-    const handleChangePasswordClick = () => {
-        setIsPasswordChange(true);
-        setEditMode(true);
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError('');
-        try {
-            const token = localStorage.getItem('token');
-            if (isPasswordChange) {
-                const { currentPassword, newPassword } = formData;
-                const response = await axios.put(
-                    'https://lighthouse-portal.onrender.com/api/users/change-password',
-                    { currentPassword, newPassword },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                );
-                alert(response.data.message || 'Password changed successfully');
-                setFormData({ username: userDetails.username, email: userDetails.email });
-                setIsPasswordChange(false);
-                setEditMode(false);
-            } else {
-                const { username, email } = formData;
-                const formDataObj = new FormData();
-                formDataObj.append('username', username);
-                formDataObj.append('email', email);
-                if (profilePicture) {
-                    setImageUploadLoading(true);
-                    formDataObj.append('profilePicture', profilePicture);
-                }
-
-                const response = await axios.put('https://lighthouse-portal.onrender.com/api/users/details', formDataObj, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'multipart/form-data',
-                    },
-                });
-                if (response.data) {
-                    setUserDetails((prevUserDetails) => ({
-                        ...prevUserDetails,
-                        ...response.data,
-                        profilePictureUrl: response.data.profilepic,
-                    }));
-                    setEditMode(false);
-                    setShowUploadModal(false);
-                    setProfilePicture(null);
-                } else {
-                    throw new Error('Failed to update user details');
-                }
-                setImageUploadLoading(false);
-            }
-        } catch (error) {
-            console.error('Error updating user details:', error);
-            setError(error.response?.data?.error || 'An error occurred. Please try again.');
-            setImageUploadLoading(false) // In case of an error
+    const handleImageChange = (e) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setImageFile(file);
+            // Create preview URL
+            const imageUrl = URL.createObjectURL(file);
+            setProfileData(prev => ({
+                ...prev,
+                imageUrl
+            }));
         }
     };
 
-    const handleCancelPasswordChange = () => {
-        setIsPasswordChange(false);
-        setEditMode(false);
-    };
-
-    const handleUploadPictureClick = () => {
-        setShowUploadModal(true);
-    };
-
-    const handleCloseModal = () => {
-        setShowUploadModal(false);
-        setProfilePicture(null);
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        // Frontend only - simulate API call
+        setTimeout(() => {
+            toast.success('Profile updated successfully!');
+            setEditMode(false);
+        }, 1000);
     };
 
     return (
-        <div className="profile-container">
-            <div className="profile-card">
-                <div className="profile-header">
-                    <h1>Your Profile</h1>
-                </div>
-                {loading ? (
-                    <div className="loading-spinner">
-                        <div className="spinner"></div>
-                        <p>Loading app...</p>
-                    </div>
-                ) : (
-                    <div className="profile-content">
-                        <div className="profile-info">
-                            <h2>Personal Information</h2>
-                            {error && <p className="error-message">{error}</p>}
-                            {editMode ? (
-                                <form onSubmit={handleSubmit} className="profile-form">
-                                    {isPasswordChange ? (
-                                        <>
-                                            <div className="form-group">
-                                                <label htmlFor="currentPassword">Current Password:</label>
-                                                <input
-                                                    type="password"
-                                                    id="currentPassword"
-                                                    name="currentPassword"
-                                                    value={formData.currentPassword || ''}
-                                                    onChange={handleInputChange}
-                                                    required
-                                                />
-                                            </div>
-                                            <div className="form-group">
-                                                <label htmlFor="newPassword">New Password:</label>
-                                                <input
-                                                    type="password"
-                                                    id="newPassword"
-                                                    name="newPassword"
-                                                    value={formData.newPassword || ''}
-                                                    onChange={handleInputChange}
-                                                    required
-                                                />
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <div className="form-group">
-                                                <label htmlFor="username">Username:</label>
-                                                <input
-                                                    type="text"
-                                                    id="username"
-                                                    name="username"
-                                                    value={formData.username || userDetails.username}
-                                                    onChange={handleInputChange}
-                                                    required
-                                                />
-                                            </div>
-                                            <div className="form-group">
-                                                <label htmlFor="profilePicture">Profile Picture:</label>
-                                                <input
-                                                    type="file"
-                                                    id="profilePicture"
-                                                    name="profilePicture"
-                                                    accept="image/*"
-                                                    onChange={handleProfilePictureChange}
-                                                />
-                                            </div>
-                                        </>
-                                    )}
-                                    <div className="form-actions">
-                                        <button type="submit" className="save-button" disabled={imageUploadLoading}>
-                                            {imageUploadLoading ? (
-                                                <>
-                                                    <div className="spinner"></div>
-                                                    Saving..
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <FaSave/> Save
-                                                </>
-                                            )}
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="cancel-button"
-                                            onClick={handleCancelPasswordChange}
-                                            disabled={imageUploadLoading}
-                                        >
-                                            <FaTimesCircle/> Cancel
-                                        </button>
-                                    </div>
-                                </form>
-                            ) : (
-                                <>
-                                    <p>Username: {userDetails.username}</p>
-                                    <p>Email: {userDetails.email}</p>
-                                    <button className="edit-button" onClick={() => setEditMode(true)}>
-                                        <FaUserEdit/> Edit
-                                    </button>
-                                </>
-                            )}
+        <div className={`profile-page ${isDarkMode ? 'dark' : ''}`}>
+            <div className="profile-container">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="profile-header"
+                >
+                    <div className="profile-avatar-container">
+                        <div className="profile-avatar">
+                            <img 
+                                src={profileData.imageUrl || `https://ui-avatars.com/api/?name=${profileData.fullName}&background=random`} 
+                                alt="Profile" 
+                            />
                         </div>
-                        <div className="profile-settings">
-                            <h2>Account Settings</h2>
-                            <button onClick={handleChangePasswordClick} className="change-password-button">
-                                Change Password
-                            </button>
-                            <button onClick={handleUploadPictureClick} className="upload-picture-button">
-                                <FaUpload/> Update Profile Picture
-                            </button>
-                        </div>
-                    </div>
-                )}
-            </div>
-            <Modal
-                isOpen={showUploadModal}
-                onRequestClose={handleCloseModal}
-                contentLabel="Upload Profile Picture"
-                className="upload-modal"
-                overlayClassName="upload-modal-overlay"
-            >
-                <h2>Upload Profile Picture</h2>
-                {imageUploadLoading ? (
-                    <div className="loading-spinner">
-                        <div className="spinner"></div>
-                        <p>Uploading image...</p>
-                    </div>
-                ) : (
-                    <>
+                        <button 
+                            className="edit-image-button"
+                            onClick={handleImageClick}
+                        >
+                            <FaCamera />
+                        </button>
                         <input
                             type="file"
-                            name="profilePicture"
+                            ref={fileInputRef}
+                            onChange={handleImageChange}
                             accept="image/*"
-                            onChange={handleProfilePictureChange}
+                            className="hidden"
                         />
-                        <div className="modal-actions">
-                            <button onClick={handleSubmit} className="upload-picture-button">
-                                <FaUpload/> Upload Picture
-                            </button>
-                            <button onClick={handleCloseModal} className="cancel-button">
-                                <FaTimesCircle/> Cancel
-                            </button>
+                    </div>
+                    <h1>{profileData.fullName}</h1>
+                    <p>{profileData.email}</p>
+                </motion.div>
+
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="profile-content"
+                >
+                    <div className="profile-section">
+                        <div className="section-header">
+                            <h2>Personal Information</h2>
+                            {!editMode && (
+                                <button 
+                                    className="edit-button"
+                                    onClick={() => setEditMode(true)}
+                                >
+                                    <FaUserEdit /> Edit Profile
+                                </button>
+                            )}
                         </div>
-                    </>
-                )}
-            </Modal>
+
+                        <form onSubmit={handleSubmit}>
+                            <div className="form-grid">
+                                <div className="form-group">
+                                <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                                    <FaUser />
+                                    <span>Full Name</span>
+                                </div>
+                                    <input
+                                        type="text"
+                                        name="fullName"
+                                        value={profileData.fullName}
+                                        onChange={handleInputChange}
+                                        disabled={!editMode}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                                        <FaEnvelope />
+                                        <span>Email</span>
+                                    </div>
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        value={profileData.email}
+                                        onChange={handleInputChange}
+                                        disabled={true}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                                        <FaPhone />
+                                        <span>Phone</span>
+                                    </div>
+                                    <input
+                                        type="tel"
+                                        name="phone"
+                                        value={profileData.phone}
+                                        onChange={handleInputChange}
+                                        disabled={!editMode}
+                                        placeholder="Enter phone number"
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                                        <FaMapMarkerAlt />
+                                        <span>Location</span>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        name="location"
+                                        value={profileData.location}
+                                        onChange={handleInputChange}
+                                        disabled={!editMode}
+                                        placeholder="Enter location"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="form-group full-width">
+                                <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                                    <FaPerson />
+                                    <span>Bio</span>
+                                </div>
+                                <textarea
+                                    name="bio"
+                                    value={profileData.bio}
+                                    onChange={handleInputChange}
+                                    disabled={!editMode}
+                                    placeholder="Tell us about yourself"
+                                    rows={4}
+                                />
+                            </div>
+
+                            <div className="physical-info-section">
+                                <h3>Physical Information</h3>
+                                <div className="form-grid">
+                                    <div className="form-group">
+                                        <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Age</div>
+                                        <input
+                                            type="date"
+                                            name="birthDate"
+                                            value={profileData.birthDate}
+                                            onChange={handleInputChange}
+                                            disabled={!editMode}
+                                            max={new Date().toISOString().split('T')[0]}
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Gender</div>
+                                        <select
+                                            name="gender"
+                                            value={profileData.gender}
+                                            onChange={handleInputChange}
+                                            disabled={!editMode}
+                                        >
+                                            <option value="">Select Gender</option>
+                                            <option value="male">Male</option>
+                                            <option value="female">Female</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+
+                                    <div className="form-group">
+                                        <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Weight (kg)</div>
+                                        <input
+                                            type="number"
+                                            name="weight"
+                                            value={profileData.weight}
+                                            onChange={handleInputChange}
+                                            disabled={!editMode}
+                                            placeholder="Enter weight"
+                                            min="0"
+                                            step="0.1"
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Height (cm)</div>
+                                        <input
+                                            type="number"
+                                            name="height"
+                                            value={profileData.height}
+                                            onChange={handleInputChange}
+                                            disabled={!editMode}
+                                            placeholder="Enter height"
+                                            min="0"
+                                            step="0.1"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {editMode && (
+                                <div className="form-actions">
+                                    <button type="submit" className="save-button">
+                                        <FaSave /> Save Changes
+                                    </button>
+                                    <button 
+                                        type="button" 
+                                        className="cancel-button"
+                                        onClick={() => setEditMode(false)}
+                                    >
+                                        <FaTimesCircle /> Cancel
+                                    </button>
+                                </div>
+                            )}
+                        </form>
+                    </div>
+                </motion.div>
+
+                <div className="emergency-contacts-section">
+                    <div className="section-header">
+                        <h2 className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Emergency Contacts</h2>
+                        <Link to="/emergency-contacts" className="add-contacts-button">
+                            <FaPlus /> Add Contacts
+                        </Link>
+                    </div>
+                    <div className="contacts-card">
+                        {profileData.emergencyContacts.length > 0 ? (
+                            profileData.emergencyContacts.map((contact, index) => (
+                                <div key={index} className="contact-item">
+                                    <div className="contact-info">
+                                        <div className="contact-name">
+                                            <FaUser className="contact-icon" />
+                                            <strong>{contact.name}</strong>
+                                        </div>
+                                        <div className="contact-phone">
+                                            <FaPhone className="contact-icon" />
+                                            <span>{contact.phone}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="no-contacts">
+                                <FaUserPlus className="no-contacts-icon" />
+                                <p>No emergency contacts added.</p>
+                                <p>Add them in the Emergency Contacts section.</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }

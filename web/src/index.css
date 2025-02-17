@@ -33,3 +33,384 @@
     }
   }
 }
+
+
+.introjs-tooltiptext {
+    color: #333 !important;
+}
+
+.introjs-tooltip-title {
+    color: #2d3748 !important;
+}
+
+.introjs-button {
+    background-color: #4285F4 !important;
+    color: white !important;
+}
+
+/* Overlay - Light Mode */
+.introjs-overlay {
+    background-color: rgba(0, 0, 0, 0.3) !important; /* Lighter overlay */
+}
+
+/* Helper Layer - Light Mode */
+.introjs-helperLayer {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: 2px solid #4285F4 !important;
+    box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.3) !important; /* Lighter shadow */
+}
+
+/* Dark Mode Styles */
+.dark-mode .introjs-tooltip {
+    background-color: #1a1a1a !important;
+    color: #ffffff !important;
+    border: 1px solid #333333 !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark-mode .introjs-tooltiptext {
+    color: #ffffff !important;
+}
+
+.dark-mode .introjs-tooltip-title {
+    color: #ffffff !important;
+}
+
+.dark-mode .introjs-button {
+    background-color: #4285F4 !important;
+    color: white !important;
+    border: none !important;
+    padding: 8px 16px !important;
+    border-radius: 6px !important;
+}
+
+.dark-mode .introjs-button:hover {
+    background-color: #3367d6 !important;
+}
+
+.dark-mode .introjs-skipbutton {
+    background-color: transparent !important;
+    border: 1px solid #4285F4 !important;
+    color: #4285F4 !important;
+}
+
+.dark-mode .introjs-skipbutton:hover {
+    background-color: rgba(66, 133, 244, 0.1) !important;
+}
+
+/* Overlay - Dark Mode */
+.dark-mode .introjs-overlay {
+    background-color: rgba(0, 0, 0, 0.5) !important; /* Darker but not too dark */
+}
+
+/* Helper Layer - Dark Mode */
+.dark-mode .introjs-helperLayer {
+    background-color: rgba(66, 133, 244, 0.12) !important;
+    border: 2px solid #4285F4 !important;
+    box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5) !important; /* Darker but not too dark */
+}
+
+/* Ensure elements are visible during tour */
+.dashboard > * {
+    position: relative;
+    z-index: 1;
+}
+
+.introjs-showElement {
+    z-index: 9999 !important;
+}
+
+/* Base Intro.js Styles */
+.introjs-tooltip {
+    background-color: white;
+    color: #333;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    padding: 15px;
+    max-width: 300px;
+    z-index: 9999;
+}
+
+.introjs-tooltiptext {
+    padding: 15px;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.introjs-tooltip-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #2d3748;
+}
+
+.introjs-button:hover {
+    background: #3367d6;
+    color: white;
+}
+
+.introjs-skipbutton {
+    color: #718096;
+    background: transparent;
+    border: 1px solid #e2e8f0;
+}
+
+.introjs-skipbutton:hover {
+    background: #f7fafc;
+    color: #4a5568;
+}
+
+.introjs-prevbutton {
+    background: #718096;
+}
+
+.introjs-prevbutton:hover {
+    background: #4a5568;
+}
+
+.introjs-bullets {
+    margin-top: 10px;
+}
+
+.introjs-bullets ul li a {
+    background: #e2e8f0;
+    width: 8px;
+    height: 8px;
+}
+
+.introjs-bullets ul li a.active {
+    background: #4285F4;
+}
+
+/* Dark Mode Styles */
+.introjs-tooltip-dark {
+    background-color: #1a1a1a !important;
+    color: #ffffff !important;
+    border: 1px solid #333333 !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+.introjs-tooltip-dark .introjs-tooltiptext {
+    color: #ffffff !important;
+    font-size: 0.95rem !important;
+    line-height: 1.6 !important;
+}
+
+.introjs-tooltip-dark .introjs-tooltip-title {
+    color: #ffffff !important;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.75rem !important;
+}
+
+.introjs-tooltip-dark .introjs-button {
+    background-color: #4285F4 !important;
+    color: white !important;
+    border: none !important;
+    padding: 8px 16px !important;
+    border-radius: 6px !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease !important;
+}
+
+.introjs-tooltip-dark .introjs-button:hover {
+    background-color: #3367d6 !important;
+    transform: translateY(-1px) !important;
+}
+
+.introjs-tooltip-dark .introjs-skipbutton {
+    background-color: transparent !important;
+    border: 1px solid #4285F4 !important;
+    color: #4285F4 !important;
+}
+
+.introjs-tooltip-dark .introjs-skipbutton:hover {
+    background-color: rgba(66, 133, 244, 0.1) !important;
+}
+
+.introjs-tooltip-dark .introjs-bullets ul li a {
+    background-color: #333333 !important;
+    border: 2px solid #4285F4 !important;
+}
+
+.introjs-tooltip-dark .introjs-bullets ul li a.active {
+    background-color: #4285F4 !important;
+}
+
+/* Progress bar */
+.introjs-progress {
+    background-color: #e2e8f0;
+    height: 4px;
+    margin: 10px 0;
+}
+
+.introjs-progressbar {
+    background-color: #4285F4;
+}
+
+.introjs-tooltip-dark .introjs-progress {
+    background-color: #333333 !important;
+}
+
+.introjs-tooltip-dark .introjs-progressbar {
+    background-color: #4285F4 !important;
+}
+
+/* Don't show again checkbox */
+.introjs-dontShowAgain {
+    margin-top: 10px;
+    padding: 8px;
+}
+
+.introjs-dontShowAgain input {
+    margin-right: 8px;
+}
+
+.introjs-tooltip-dark .introjs-dontShowAgain {
+    color: #ffffff !important;
+    margin-top: 1rem !important;
+}
+
+.introjs-tooltip-dark .introjs-dontShowAgain input {
+    margin-right: 8px !important;
+}
+
+/* Ensure tooltips stay in viewport */
+.introjs-tooltip.introjs-floating {
+    position: fixed !important;
+    max-width: 350px !important;
+}
+
+/* Tooltip positioning fixes */
+.introjs-tooltip {
+    min-width: 250px;
+    max-width: 300px;
+    position: fixed;
+}
+
+/* Prevent tooltip overflow */
+.introjs-tooltip.introjs-bottom {
+    transform: translateY(20px);
+}
+
+.introjs-tooltip.introjs-top {
+    transform: translateY(-20px);
+}
+
+.introjs-tooltip.introjs-right {
+    transform: translateX(20px);
+}
+
+.introjs-tooltip.introjs-left {
+    transform: translateX(-20px);
+}
+
+/* Dark mode content */
+.dark-mode .introjs-tooltip-dark {
+    background-color: #2d3748;
+}
+
+.dark-mode .introjs-tooltip-dark .introjs-tooltiptext,
+.dark-mode .introjs-tooltip-dark .introjs-tooltip-title,
+.dark-mode .introjs-tooltip-dark .introjs-dontShowAgain {
+    color: #ffffff;
+}
+
+/* Highlight effect */
+.introjs-highlight {
+    background-color: rgba(66, 133, 244, 0.1) !important;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.dark-mode .introjs-highlight {
+    background-color: rgba(66, 133, 244, 0.15) !important;
+}
+
+/* Button styles in dark mode */
+.dark-mode .introjs-button {
+    background-color: #4285F4;
+    color: white;
+    border: none;
+    text-shadow: none;
+}
+
+.dark-mode .introjs-button:hover {
+    background-color: #3367d6;
+}
+
+/* Overlay styles */
+.introjs-overlay {
+    opacity: 0.5;
+    background-color: #000;
+}
+
+.dark-mode .introjs-overlay {
+    opacity: 0.7;
+}
+
+/* Add these styles */
+.introjs-showElement {
+    z-index: 9999 !important;
+}
+
+.introjs-tooltip {
+    z-index: 10000 !important;
+}
+
+.introjs-helperLayer {
+    z-index: 9998 !important;
+}
+
+.introjs-overlay {
+    z-index: 9998 !important;
+    opacity: 0.8 !important;
+}
+
+/* When element is being highlighted */
+.introjs-helperLayer + .dashboard-header,
+.introjs-helperLayer + .temperature-card,
+.introjs-helperLayer + .reminders-card,
+.introjs-helperLayer + .alerts-section {
+    z-index: 9999;
+}
+
+/* Target specific elements */
+.dashboard .dashboard-header,
+.dashboard .temperature-card,
+.dashboard .reminders-card,
+.dashboard .alerts-section {
+    position: relative !important;
+    z-index: auto !important;
+}
+
+/* When highlighted */
+.introjs-showElement {
+    z-index: 9999 !important;
+    position: relative !important;
+}
+
+/* Progress bar in dark mode */
+.dark-mode .introjs-progress {
+    background-color: #333333 !important;
+}
+
+.dark-mode .introjs-progressbar {
+    background-color: #4285F4 !important;
+}
+
+/* Bullets in dark mode */
+.dark-mode .introjs-bullets ul li a {
+    background-color: #333333 !important;
+    border: 2px solid #4285F4 !important;
+}
+
+.dark-mode .introjs-bullets ul li a.active {
+    background-color: #4285F4 !important;
+}
+
+/* Don't show again in dark mode */
+.dark-mode .introjs-dontShowAgain {
+    color: #ffffff !important;
+}

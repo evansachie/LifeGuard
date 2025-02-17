@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
 import { FaHome, FaStickyNote,FaCog, FaQuestionCircle, FaSignOutAlt, FaMoon, FaSun, FaBars, FaTimes } from 'react-icons/fa';
 import { TbReportAnalytics } from "react-icons/tb";
 import { MdContactEmergency, MdHealthAndSafety } from "react-icons/md";
 
 import { FaMap } from "react-icons/fa";
-import DefaultUser from '../../assets/lifeguard/user.png';
+import DefaultUser from '../../assets/user.png';
 import './Sidebar.css';
+import { toast } from 'react-toastify';
+import { useAuth } from '../../contexts/AuthContext';
 
 function Sidebar({ toggleTheme, isDarkMode }) {
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -19,6 +20,7 @@ function Sidebar({ toggleTheme, isDarkMode }) {
     const location = useLocation();
     const sidebarRef = useRef(null);
     const profileMenuRef = useRef(null);
+    const { logout } = useAuth();
 
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside);
@@ -32,9 +34,22 @@ function Sidebar({ toggleTheme, isDarkMode }) {
         setIsMobileMenuOpen(false);
     }, [location.pathname]);
 
-    // useEffect(() => {
-    //     fetchUserDetails();
-    // }, []);
+    useEffect(() => {
+        // Get username from localStorage (set during login/dashboard fetch)
+        const storedName = localStorage.getItem('userName');
+        console.log(storedName);
+        if (storedName) {
+            // If it's an email, show just the first part capitalized
+            if (storedName.includes('@')) {
+                const name = storedName.split('@')[0];
+                setUsername(name.charAt(0).toUpperCase() + name.slice(1).toLowerCase());
+            } else {
+                // If it's a full name, show just the first name capitalized
+                const firstName = storedName.split(' ')[0];
+                setUsername(firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase());
+            }
+        }
+    }, []);
 
     const handleClickOutside = (event) => {
         if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
@@ -42,19 +57,6 @@ function Sidebar({ toggleTheme, isDarkMode }) {
         }
         if (isProfileMenuOpen && profileMenuRef.current && !profileMenuRef.current.contains(event.target) && !event.target.closest('.user-info')) {
             setIsProfileMenuOpen(false);
-        }
-    };
-
-    const fetchUserDetails = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('https://lighthouse-portal.onrender.com/api/users/details', {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            setUsername(response.data.username);
-            setProfilePictureUrl(response.data.profilePictureUrl);
-        } catch (error) {
-            console.error('Error fetching user details:', error);
         }
     };
 
@@ -69,8 +71,7 @@ function Sidebar({ toggleTheme, isDarkMode }) {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('token');
-        navigate('/');
+        logout();
     };
 
     const toggleProfileMenu = (e) => {
@@ -114,6 +115,17 @@ function Sidebar({ toggleTheme, isDarkMode }) {
         </div>
     );
 
+    const renderNavLink = (item) => (
+        <Link
+            to={item.path}
+            className={`nav-link ${location.pathname === item.path ? 'active' : ''}`}
+            onClick={() => setIsMobileMenuOpen(false)}
+        >
+            <span className="nav-icon">{item.icon}</span>
+            <span className="nav-label">{item.label}</span>
+        </Link>
+    );
+
     return (
         <>
             <div className={`sidebar ${isDarkMode ? 'dark-mode' : 'light-mode'}`} ref={sidebarRef}>
@@ -122,8 +134,7 @@ function Sidebar({ toggleTheme, isDarkMode }) {
                         <div className="profile-picture-container">
                             <img src={profilePictureUrl || DefaultUser} alt="Profile" className="profile-picture" />
                         </div>
-                        {/* <span className="username">{username}</span> */}
-                        <span className="username">Evans</span>
+                        <span className="username">{username || 'User'}</span>
                     </div>
                     <button className="theme-toggle" onClick={toggleTheme}> 
                         {isDarkMode ? <FaSun /> : <FaMoon />}
@@ -158,14 +169,7 @@ function Sidebar({ toggleTheme, isDarkMode }) {
                                 )}
                             </>
                         ) : (
-                            <Link
-                                to={item.path}
-                                className={`nav-link ${location.pathname === item.path ? 'active' : ''}`}
-                                onClick={() => setIsMobileMenuOpen(false)}
-                            >
-                                <span className="nav-icon">{item.icon}</span>
-                                <span className="nav-label">{item.label}</span>
-                            </Link>
+                            renderNavLink(item)
                         )}
                     </div>
                 ))}
@@ -188,7 +192,7 @@ function Sidebar({ toggleTheme, isDarkMode }) {
                             <div className="profile-picture-container">
                                 <img src={profilePictureUrl || DefaultUser} alt="Profile" className="profile-picture" />
                             </div>
-                            <span className="username">{username}</span>
+                            <span className="username">{username || 'User'}</span>
                         </div>
                         <button className="theme-toggle" onClick={toggleTheme}>
                             {isDarkMode ? <FaSun /> : <FaMoon />}
@@ -221,14 +225,7 @@ function Sidebar({ toggleTheme, isDarkMode }) {
                                         )}
                                     </>
                                 ) : (
-                                    <Link
-                                        to={item.path}
-                                        className={`nav-link ${location.pathname === item.path ? 'active' : ''}`}
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                    >
-                                        <span className="nav-icon">{item.icon}</span>
-                                        <span className="nav-label">{item.label}</span>
-                                    </Link>
+                                    renderNavLink(item)
                                 )}
                             </div>
                         ))}

@@ -1,13 +1,20 @@
 import { toast } from 'react-toastify';
 
-export const API_BASE_URL = 'https://lifeguard-hiij.onrender.com';
+export const FRONTEND_URL = window.location.origin; // Gets the current frontend URL
+export const API_BASE_URL = 'https://lifeguard-hiij.onrender.com/api';
+export const NODE_API_URL = 'https://lifeguard-node.onrender.com';
+export const QUOTE_API_URL = 'https://api.allorigins.win/raw?url=https://zenquotes.io/api/random';
 
 export const API_ENDPOINTS = {
-    LOGIN: '/api/Account/login',
-    REGISTER: '/api/Account/register',
-    FORGOT_PASSWORD: '/api/Account/forgot-password',
-    VERIFY_OTP: '/api/Account/VerifyOTP',
-    RESEND_OTP: '/api/Account/ResendOTP'
+    LOGIN: '/Account/login',
+    REGISTER: '/Account/register',
+    VERIFY_OTP: '/Account/verify-otp',
+    RESEND_OTP: '/Account/ResendOTP',
+    FORGOT_PASSWORD: '/Account/forgot-password',
+    RESET_PASSWORD: '/Account/reset-password',
+    GET_USER: '/Account/id',
+    MEMOS: `${NODE_API_URL}/api/memos`,
+    EMERGENCY_CONTACTS: `${NODE_API_URL}/api/emergency-contacts`
 };
 
 export const fetchWithAuth = async (endpoint, options = {}) => {
@@ -23,10 +30,14 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
     }
 
     try {
-        console.log('Making request to:', `${API_BASE_URL}${endpoint}`);
+        // Determine if the endpoint is a full URL (Node endpoints) or relative (C# endpoints)
+        const baseUrl = endpoint.startsWith('http') ? '' : API_BASE_URL;
+        const url = `${baseUrl}${endpoint}`;
+        
+        console.log('Making request to:', url);
         console.log('Request payload:', options.body);
 
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        const response = await fetch(url, {
             ...options,
             headers: {
                 ...defaultHeaders,
@@ -49,7 +60,6 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
         console.log('Response:', data);
 
         if (!response.ok) {
-            // If unauthorized, clear token and redirect to login
             if (response.status === 401) {
                 localStorage.removeItem('token');
                 window.location.href = '/log-in';
@@ -73,4 +83,8 @@ export const handleApiResponse = async (response) => {
     }
     
     return data;
+};
+
+export const getResetPasswordUrl = (email, token) => {
+    return `${FRONTEND_URL}/reset-password?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`;
 }; 

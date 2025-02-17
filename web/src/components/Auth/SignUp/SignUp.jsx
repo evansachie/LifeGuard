@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaUser, FaEnvelope, FaLock, FaMoon, FaSun, FaPhone } from "react-icons/fa";
+import { FaUser, FaEnvelope, FaLock, FaMoon, FaSun } from "react-icons/fa";
 import signupIllustration from '../../../assets/auth/signupIllustration.svg';
 import signupIllustration2 from '../../../assets/auth/signupIllustration2.svg';
 import signupIllustration3 from '../../../assets/auth/signupIllustration3.svg';
@@ -53,7 +53,11 @@ export default function SignUp({ onAuthSuccess, isDarkMode, toggleTheme }) {
 
                 if (data.userId) {
                     localStorage.setItem('userId', data.userId);
-                    navigate('/verify-otp', { state: { email: formData.email } });
+                    navigate('/verify-otp', { 
+                        state: { 
+                            email: formData.email 
+                        } 
+                    });
                 } else {
                     setErrors(prev => ({
                         ...prev,

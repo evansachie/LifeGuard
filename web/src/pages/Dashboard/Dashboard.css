@@ -225,3 +225,9 @@ test-button {
         grid-template-columns: 1fr;
     }
 }
+
+.reminders-list li.done {
+    text-decoration: line-through;
+    color: #888;
+    opacity: 0.7;
+}
