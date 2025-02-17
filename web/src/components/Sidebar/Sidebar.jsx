@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
 import { FaHome, FaStickyNote,FaCog, FaQuestionCircle, FaSignOutAlt, FaMoon, FaSun, FaBars, FaTimes } from 'react-icons/fa';
 import { TbReportAnalytics } from "react-icons/tb";
 import { MdContactEmergency, MdHealthAndSafety } from "react-icons/md";
 
 import { FaMap } from "react-icons/fa";
-import DefaultUser from '../../assets/lifeguard/user.png';
+import DefaultUser from '../../assets/user.png';
 import './Sidebar.css';
 import { toast } from 'react-toastify';
 

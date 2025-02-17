@@ -17,7 +17,6 @@ import { dashboardSteps } from '../../utils/tourSteps';
 function Dashboard({ isDarkMode }) {
     const [quote, setQuote] = useState(null);
     const [userData, setUserData] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
     const [savedMemos, setSavedMemos] = useState([]);
     const [memosLoading, setMemosLoading] = useState(true);
     const [quotesLoading, setQuotesLoading] = useState(true);
