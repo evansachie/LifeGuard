@@ -36,11 +36,11 @@ namespace Identity.Services
             _oTPService = oTPService;
 
             Env.Load("../.env.local");
-            var jwt_key = Environment.GetEnvironmentVariable("JWT_KEY");
-            var jwt_issuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
-            var jwt_audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
-            var jwt_duration_in_minutes = Environment.GetEnvironmentVariable("JWT_DURATIONINMINUTES");
-            var frontendEndUrl = Environment.GetEnvironmentVariable("FRONTENDURL");
+            _jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
+            _jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
+            _jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
+            _jwtDurationInMinutes = Environment.GetEnvironmentVariable("JWT_DURATIONINMINUTES");
+            _frontEndUrl = Environment.GetEnvironmentVariable("FRONTENDURL");
 
         }
 
