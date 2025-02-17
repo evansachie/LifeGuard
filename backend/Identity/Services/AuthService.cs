@@ -20,7 +20,13 @@ namespace Identity.Services
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailService _emailService;
         private readonly IOTPService _oTPService;
+        private readonly string _jwtKey;
+        private readonly string _jwtIssuer;
+        private readonly string _jwtAudience;
+        private readonly string _jwtDurationInMinutes;
+        private readonly string _frontEndUrl;
 
+        
 
         public AuthService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailService emailService, IOTPService oTPService)
         {
@@ -28,6 +34,14 @@ namespace Identity.Services
             _signInManager = signInManager;
             _emailService = emailService;
             _oTPService = oTPService;
+
+            Env.Load("../.env.local");
+            var jwt_key = Environment.GetEnvironmentVariable("JWT_KEY");
+            var jwt_issuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
+            var jwt_audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
+            var jwt_duration_in_minutes = Environment.GetEnvironmentVariable("JWT_DURATIONINMINUTES");
+            var frontendEndUrl = Environment.GetEnvironmentVariable("FRONTENDURL");
+
         }
 
         public async Task<AuthResponse> Login(AuthRequest request)
@@ -86,20 +100,16 @@ namespace Identity.Services
             }
             .Union(userClaims).Union(roleClaims);
 
-            Env.Load("../.env.local");
-            var jwt_key = Environment.GetEnvironmentVariable("JWT_KEY");
-            var jwt_issuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
-            var jwt_audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
-            var jwt_duration_in_minutes = Environment.GetEnvironmentVariable("JWT_DURATIONINMINUTES");
+            
 
-            var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt_key));
+            var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtKey));
             var signingCredentials = new Microsoft.IdentityModel.Tokens.SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
 
             var jwtSecurityToken = new JwtSecurityToken(
-               issuer: jwt_issuer,
-               audience: jwt_audience,
+               issuer: _jwtIssuer,
+               audience: _jwtAudience,
                claims: claims,
-               expires: DateTime.UtcNow.AddMinutes(int.Parse(jwt_duration_in_minutes)),
+               expires: DateTime.UtcNow.AddMinutes(int.Parse(_jwtDurationInMinutes)),
                signingCredentials: signingCredentials);
 
 
@@ -170,7 +180,7 @@ namespace Identity.Services
             Console.WriteLine("token " + token);
 
             var mainResetUrl = Environment.GetEnvironmentVariable("RESET_URL");
-            var resetUrl = $"{mainResetUrl}/reset-password?email={user.Email}&token={WebUtility.UrlEncode(token)}";
+            var resetUrl = $"{_frontEndUrl}/reset-password?email={user.Email}&token={WebUtility.UrlEncode(token)}";
 
             var message = $"<p>Please reset your password by clicking <a href='{resetUrl}'>here</a>.</p>";
             await _emailService.SendEmailAsync(user.Email, "Reset Password", message);
