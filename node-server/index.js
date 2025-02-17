@@ -6,6 +6,7 @@ const cors = require('cors');
 const memoRoutes = require('./Routes/memoRoutes');
 const bmrCalculatorRoutes = require('./Routes/bmrCalculatorRoutes')
 const settingsRoutes = require('./Routes/bmrCalculatorRoutes');
+const emergencyContactsRoutes = require('./Routes/emergencyContactsRoutes');
 const path = require('path');
 
 const app = express();
@@ -55,6 +56,7 @@ pool.connect((err, client, release) => {
 app.use('/api/memos', memoRoutes(pool));
 app.use('/api/calories', bmrCalculatorRoutes(pool));
 app.use('/api/settings', settingsRoutes(pool));
+app.use('/api/emergency-contacts', emergencyContactsRoutes(pool));
 
 app.get('/', (req, res) => {
     res.send('LifeGuard API is running!');
