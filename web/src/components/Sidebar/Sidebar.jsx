@@ -8,6 +8,7 @@ import { FaMap } from "react-icons/fa";
 import DefaultUser from '../../assets/user.png';
 import './Sidebar.css';
 import { toast } from 'react-toastify';
+import { useAuth } from '../../contexts/AuthContext';
 
 function Sidebar({ toggleTheme, isDarkMode }) {
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -19,6 +20,7 @@ function Sidebar({ toggleTheme, isDarkMode }) {
     const location = useLocation();
     const sidebarRef = useRef(null);
     const profileMenuRef = useRef(null);
+    const { logout } = useAuth();
 
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside);
@@ -69,9 +71,7 @@ function Sidebar({ toggleTheme, isDarkMode }) {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('token');
-        navigate('/');
-        toast.success('Logged out successfully');
+        logout();
     };
 
     const toggleProfileMenu = (e) => {
