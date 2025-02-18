@@ -8,11 +8,16 @@ export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
 
     const logout = useCallback(() => {
-        // Clear all auth data
-        localStorage.clear();
-        setIsAuthenticated(false);
+        // Save theme before clearing storage
+        const theme = localStorage.getItem('theme');
         
-        // Clean navigation
+        // Clear all auth data except theme
+        localStorage.clear();
+        
+        // Restore theme
+        localStorage.setItem('theme', theme);
+        
+        setIsAuthenticated(false);
         navigate('/log-in', { replace: true });
     }, [navigate]);
 
