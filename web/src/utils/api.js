@@ -8,10 +8,10 @@ export const QUOTE_API_URL = 'https://api.allorigins.win/raw?url=https://zenquot
 export const API_ENDPOINTS = {
     LOGIN: '/Account/login',
     REGISTER: '/Account/register',
-    VERIFY_OTP: '/Account/verify-otp',
+    VERIFY_OTP: '/Account/VerifyOTP',
     RESEND_OTP: '/Account/ResendOTP',
     FORGOT_PASSWORD: '/Account/forgot-password',
-    RESET_PASSWORD: '/Account/reset-password',
+    RESET_PASSWORD: '/Account/ResetPassword',
     GET_USER: '/Account/id',
     MEMOS: `${NODE_API_URL}/api/memos`,
     EMERGENCY_CONTACTS: `${NODE_API_URL}/api/emergency-contacts`
