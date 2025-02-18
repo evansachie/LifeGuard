@@ -8,10 +8,11 @@ import loginIllustration2 from '../../../assets/auth/loginIllustration2.svg';
 import loginIllustration3 from '../../../assets/auth/loginIllustration3.svg';
 import ImageSlider from '../../ImageSlider/ImageSlider';
 import "./LogIn.css";
-import { API_BASE_URL, API_ENDPOINTS, fetchWithAuth } from '../../../utils/api';
+import { API_ENDPOINTS, fetchWithAuth } from '../../../utils/api';
 import { toast } from 'react-toastify';
+import { useAuth } from '../../../contexts/AuthContext';
 
-export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
+export default function LogIn({ isDarkMode, toggleTheme }) {
     const [formData, setFormData] = useState({
         email: "",
         password: ""
@@ -19,6 +20,7 @@ export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
 
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -37,13 +39,18 @@ export default function LogIn({ onAuthSuccess, isDarkMode, toggleTheme }) {
                 body: JSON.stringify(formData)
             });
             
+            login(data.token, {
+                id: data.id,
+                userName: data.userName,
+                email: data.email
+            });
+
             localStorage.setItem('token', data.token);
             localStorage.setItem('userId', data.id);
             localStorage.setItem('userName', data.userName);
             localStorage.removeItem('showTour');
             
             toast.success('Login successful!');
-            onAuthSuccess();
             navigate('/dashboard');
         } catch (error) {
             console.error('Login failed:', error);

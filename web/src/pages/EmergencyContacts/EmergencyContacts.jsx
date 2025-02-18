@@ -3,34 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaUserPlus, FaEdit, FaTrash, FaPhone, FaEnvelope, FaBell } from 'react-icons/fa';
 import { IoMdAlert } from 'react-icons/io';
 import { toast } from 'react-toastify';
-
-// Mock data for initial contacts
-const initialContacts = [
-  {
-    id: 1,
-    name: 'John Doe',
-    phone: '+1 (555) 123-4567',
-    email: 'john.doe@example.com',
-    relationship: 'Family'
-  },
-  {
-    id: 2,
-    name: 'Jane Smith',
-    phone: '+1 (555) 987-6543',
-    email: 'jane.smith@example.com',
-    relationship: 'Friend'
-  },
-  {
-    id: 3,
-    name: 'Mark Smith',
-    phone: '+1 (555) 987-6543',
-    email: 'mark.smith@example.com',
-    relationship: 'Brother'
-  }
-];
+import { API_ENDPOINTS, fetchWithAuth } from '../../utils/api';
+import Spinner from '../../components/Spinner/Spinner';
+import EmptyState from '../../assets/empty-state.svg';
+import DeleteConfirmationModal from '../../components/DeleteConfirmationModal/DeleteConfirmationModal';
 
 function EmergencyContacts({ isDarkMode }) {
-  const [contacts, setContacts] = useState(initialContacts);
+  const [contacts, setContacts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingContact, setEditingContact] = useState(null);
   const [formData, setFormData] = useState({
@@ -40,6 +19,27 @@ function EmergencyContacts({ isDarkMode }) {
     relationship: ''
   });
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deletingContact, setDeletingContact] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    fetchContacts();
+  }, []);
+
+  const fetchContacts = async () => {
+    try {
+      const data = await fetchWithAuth(API_ENDPOINTS.EMERGENCY_CONTACTS);
+      setContacts(data);
+    } catch (error) {
+      console.error('Error fetching contacts:', error);
+      toast.error('Failed to fetch contacts');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Validate form data
   const validateForm = () => {
@@ -67,21 +67,42 @@ function EmergencyContacts({ isDarkMode }) {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    if (editingContact) {
-      setContacts(contacts.map(contact =>
-        contact.id === editingContact.id ? { ...formData, id: contact.id } : contact
-      ));
-      toast.success('Contact updated successfully!');
-    } else {
-      setContacts([...contacts, { ...formData, id: Date.now() }]);
-      toast.success('Contact added successfully!');
+    setIsSaving(true);
+    try {
+      if (editingContact) {
+        const updatedContact = await fetchWithAuth(
+          `${API_ENDPOINTS.EMERGENCY_CONTACTS}/${editingContact.id}`,
+          {
+            method: 'PUT',
+            body: JSON.stringify(formData)
+          }
+        );
+        setContacts(contacts.map(contact =>
+          contact.id === editingContact.id ? updatedContact : contact
+        ));
+        toast.success('Contact updated successfully!');
+      } else {
+        const newContact = await fetchWithAuth(
+          API_ENDPOINTS.EMERGENCY_CONTACTS,
+          {
+            method: 'POST',
+            body: JSON.stringify(formData)
+          }
+        );
+        setContacts([...contacts, newContact]);
+        toast.success('Contact added successfully!');
+      }
+      handleCloseModal();
+    } catch (error) {
+      console.error('Error saving contact:', error);
+      toast.error('Failed to save contact');
+    } finally {
+      setIsSaving(false);
     }
-
-    handleCloseModal();
   };
 
   // Handle emergency alert
@@ -116,10 +137,29 @@ function EmergencyContacts({ isDarkMode }) {
   };
 
   // Delete contact with confirmation
-  const handleDelete = (contactId) => {
-    if (window.confirm('Are you sure you want to delete this contact?')) {
-      setContacts(contacts.filter(c => c.id !== contactId));
-      toast.success('Contact deleted successfully!');
+  const handleDelete = (contact) => {
+    setDeletingContact(contact);
+    setDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!deletingContact) return;
+    
+    setIsDeleting(true);
+    try {
+        await fetchWithAuth(
+            `${API_ENDPOINTS.EMERGENCY_CONTACTS}/${deletingContact.id}`,
+            { method: 'DELETE' }
+        );
+        setContacts(contacts.filter(c => c.id !== deletingContact.id));
+        toast.success('Contact deleted successfully!');
+        setDeleteModalOpen(false);
+    } catch (error) {
+        console.error('Error deleting contact:', error);
+        toast.error('Failed to delete contact');
+    } finally {
+        setIsDeleting(false);
+        setDeletingContact(null);
     }
   };
 
@@ -152,57 +192,69 @@ function EmergencyContacts({ isDarkMode }) {
         <span>Add Contact</span>
       </button>
 
-      {/* Contacts Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {contacts.map(contact => (
-          <motion.div
-            key={contact.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className={`p-6 rounded-lg shadow-lg ${
-              isDarkMode ? 'bg-[#2d2d2d]' : 'bg-white'
-            }`}
-          >
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h3 className="text-xl font-semibold">{contact.name}</h3>
-                <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  {contact.relationship}
-                </p>
+      {/* Loading and Empty State */}
+      {isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <Spinner size="large" color={isDarkMode ? '#fff' : '#4285F4'} />
+        </div>
+      ) : contacts.length === 0 ? (
+        <div className="flex flex-col items-center justify-center h-64">
+          <img src={EmptyState} alt="No contacts" className="w-64 mb-4" />
+          <p className="text-lg text-gray-500">No emergency contacts added yet</p>
+        </div>
+      ) : (
+        /* Contacts Grid */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {contacts.map(contact => (
+            <motion.div
+              key={contact.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className={`p-6 rounded-lg shadow-lg ${
+                isDarkMode ? 'bg-[#2d2d2d]' : 'bg-white'
+              }`}
+            >
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="text-xl font-semibold">{contact.name}</h3>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    {contact.relationship}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleEdit(contact)}
+                    className={`p-2 rounded-full ${
+                      isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+                    }`}
+                  >
+                    <FaEdit />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(contact)}
+                    className={`p-2 rounded-full ${
+                      isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+                    }`}
+                  >
+                    <FaTrash className="text-red-500" />
+                  </button>
+                </div>
               </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleEdit(contact)}
-                  className={`p-2 rounded-full ${
-                    isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
-                  }`}
-                >
-                  <FaEdit />
-                </button>
-                <button
-                  onClick={() => handleDelete(contact.id)}
-                  className={`p-2 rounded-full ${
-                    isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
-                  }`}
-                >
-                  <FaTrash className="text-red-500" />
-                </button>
+              <div className={`space-y-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                <div className="flex items-center gap-2">
+                  <FaPhone className="text-green-500" />
+                  <span>{contact.phone}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FaEnvelope className="text-blue-500" />
+                  <span>{contact.email}</span>
+                </div>
               </div>
-            </div>
-            <div className={`space-y-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-              <div className="flex items-center gap-2">
-                <FaPhone className="text-green-500" />
-                <span>{contact.phone}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FaEnvelope className="text-blue-500" />
-                <span>{contact.email}</span>
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
 
       {/* Modal */}
       <AnimatePresence>
@@ -295,9 +347,10 @@ function EmergencyContacts({ isDarkMode }) {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center justify-center"
+                    disabled={isSaving}
                   >
-                    {editingContact ? 'Update' : 'Add'}
+                    {isSaving ? <Spinner size="small" color="white" /> : (editingContact ? 'Update' : 'Add')}
                   </button>
                 </div>
               </form>
@@ -305,6 +358,18 @@ function EmergencyContacts({ isDarkMode }) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal 
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={confirmDelete}
+        title="Delete Contact"
+        message="Are you sure you want to delete this contact?"
+        itemName={deletingContact?.name}
+        isLoading={isDeleting}
+        isDarkMode={isDarkMode}
+      />
     </div>
   );
 }

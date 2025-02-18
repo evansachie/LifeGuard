@@ -1,0 +1,97 @@
+.delete-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+.delete-modal {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.delete-modal.dark-mode {
+    background: #2d2d2d;
+    color: #e0e0e0;
+}
+
+.warning-icon {
+    color: #ff4444;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.delete-modal h2 {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.delete-modal p {
+    margin-bottom: 1.5rem;
+    color: #666;
+}
+
+.dark-mode .delete-modal p {
+    color: #b0b0b0;
+}
+
+.item-name {
+    font-style: italic;
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.delete-modal-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.delete-modal button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    min-width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-modal button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.cancel-button {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.dark-mode .cancel-button {
+    background: #404040;
+    color: #e0e0e0;
+}
+
+.delete-button {
+    background: #ff4444;
+    color: white;
+}
+
+.delete-button:hover:not(:disabled) {
+    background: #ff2020;
+} 

@@ -1,113 +1,139 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FaHeartbeat, FaRunning, FaAppleAlt, FaBrain, FaYoutube, FaBookMedical, FaSearch } from 'react-icons/fa';
-import { MdLocalHospital, MdHealthAndSafety } from 'react-icons/md';
-import MedImg1 from '../../assets/med-1.svg';
-import MedImg2 from '../../assets/med-2.svg'
+import { SiSmartthings } from "react-icons/si";
+import { FaRunning, FaBrain, FaYoutube, FaBookMedical, FaSearch, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { MdHealthAndSafety } from 'react-icons/md';
+import { fetchHealthTips } from '../../services/healthTipsService';
+import { localHealthTips } from '../../data/healthTipsData';
+import { featuredVideos } from '../../data/featured-videos-data';
+import HealthTipModal from '../../components/HealthTipModal/HealthTipModal';
 import './HealthTips.css';
 
 const categories = [
-  { id: 'emergency', icon: <MdLocalHospital />, label: 'Emergency Care' },
   { id: 'fitness', icon: <FaRunning />, label: 'Fitness' },
-  { id: 'nutrition', icon: <FaAppleAlt />, label: 'Nutrition' },
   { id: 'mental', icon: <FaBrain />, label: 'Mental Health' },
   { id: 'prevention', icon: <MdHealthAndSafety />, label: 'Prevention' },
-  { id: 'resources', icon: <FaBookMedical />, label: 'Resources' }
+  { id: 'resources', icon: <FaBookMedical />, label: 'Resources' },
+  { id: 'videos', icon: <FaYoutube />, label: 'Featured Videos' }
 ];
 
-// Simulated health tips data (replace with API call)
-const healthTipsData = {
-  featured: {
-    title: "Today's Health Highlight",
-    description: "Learn about air quality monitoring and its impact on your health",
-    image: MedImg1,
-    category: "prevention"
-  },
-  tips: [
-    {
-      id: 1,
-      category: 'emergency',
-      title: 'Recognizing Heart Attack Symptoms',
-      description: 'Learn the early warning signs of a heart attack and when to seek immediate medical attention.',
-      type: 'article'
-    },
-    {
-      id: 2,
-      category: 'fitness',
-      title: 'Quick 10-Minute Workouts',
-      description: 'Effective exercises you can do anywhere to maintain your fitness levels.',
-      type: 'video',
-      videoUrl: 'https://youtube.com/watch?v=example'
-    },
-    {
-      id: 3,
-      category: 'nutrition',
-      title: 'Foods That Boost Immunity',
-      description: 'Discover the best foods to strengthen your immune system.',
-      type: 'article'
-    },
-    {
-      id: 4,
-      category: 'mental',
-      title: 'Stress Management Techniques',
-      description: 'Simple but effective ways to manage daily stress and anxiety.',
-      type: 'interactive'
-    },
-    {
-      id: 5,
-      category: 'prevention',
-      title: 'Air Quality Safety Tips',
-      description: 'How to protect yourself during poor air quality days.',
-      type: 'article'
-    },
-    {
-      id: 6,
-      category: 'resources',
-      title: 'Local Health Resources',
-      description: 'Find healthcare facilities and emergency services near you.',
-      type: 'tool'
-    }
-  ],
-  videos: [
-    {
-      id: 'v1',
-      title: 'Emergency First Aid Basics',
-      videoUrl: 'https://www.youtube.com/embed/IisqrLOnqX8',
-      duration: '6:42'
-    },
-    {
-      id: 'v2',
-      title: 'Understanding Air Quality Index',
-      videoUrl: 'https://www.youtube.com/embed/rn9eUIbqCPU',
-      duration: '1:27'
-    },
-    {
-      id: 'v3',
-      title: 'Foods to Boost Your Immune System (and Kill Viruses)',
-      videoUrl: 'https://www.youtube.com/embed/WHQnxa3vVfk',
-      duration: '9:56'
-    }
-  ]
-};
+const ITEMS_PER_PAGE = 6;
 
 function HealthTips({ isDarkMode }) {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [healthData, setHealthData] = useState(localHealthTips);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isApiLoaded, setIsApiLoaded] = useState(false);
+  const [error, setError] = useState(null);
+  const [selectedTip, setSelectedTip] = useState(null);
 
   useEffect(() => {
-    // Simulate API loading
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
+    const loadHealthTips = async () => {
+      try {
+        const data = await fetchHealthTips();
+        setHealthData(data);
+        setIsApiLoaded(true);
+        setError(null);
+      } catch (err) {
+        console.error('Error loading health tips:', err);
+        setError('Failed to load additional health tips. Showing local content.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadHealthTips();
   }, []);
 
-  const filteredTips = healthTipsData.tips.filter(tip => 
+  const filteredTips = healthData?.tips.filter(tip => 
     (selectedCategory === 'all' || tip.category === selectedCategory) &&
     (tip.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
      tip.description.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  ) || [];
+
+  // Pagination
+  const totalPages = Math.ceil(filteredTips.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedTips = filteredTips.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleReadMore = (tip) => {
+    setSelectedTip(tip);
+  };
+
+  const renderPagination = () => {
+    const renderPageNumbers = () => {
+      const pages = [];
+      
+      if (totalPages <= 5) {
+        // If 5 or fewer pages, show all
+        for (let i = 1; i <= totalPages; i++) {
+          pages.push(i);
+        }
+      } else {
+        // Always show first page
+        pages.push(1);
+        
+        if (currentPage > 3) {
+          pages.push('...');
+        }
+        
+        // Show current page and one before/after
+        for (let i = Math.max(2, currentPage - 1); i <= Math.min(currentPage + 1, totalPages - 1); i++) {
+          pages.push(i);
+        }
+        
+        if (currentPage < totalPages - 2) {
+          pages.push('...');
+        }
+        
+        // Always show last page
+        pages.push(totalPages);
+      }
+      
+      return pages.map((page, index) => (
+        page === '...' ? (
+          <span key={`ellipsis-${index}`} className="pagination-ellipsis">...</span>
+        ) : (
+          <button
+            key={page}
+            onClick={() => handlePageChange(page)}
+            className={`pagination-button ${currentPage === page ? 'active' : ''}`}
+          >
+            {page}
+          </button>
+        )
+      ));
+    };
+
+    return (
+      <div className="pagination">
+        <button 
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="pagination-button"
+        >
+          <FaChevronLeft /> Prev
+        </button>
+        
+        {renderPageNumbers()}
+        
+        <button 
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="pagination-button"
+        >
+          Next <FaChevronRight />
+        </button>
+      </div>
+    );
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -127,7 +153,7 @@ function HealthTips({ isDarkMode }) {
     }
   };
 
-  if (isLoading) {
+  if (isLoading && !healthData) {
     return (
       <div className={`health-tips-loading ${isDarkMode ? 'dark-mode' : ''}`}>
         <div className="loader"></div>
@@ -137,14 +163,20 @@ function HealthTips({ isDarkMode }) {
 
   return (
     <div className={`health-tips-container ${isDarkMode ? 'dark-mode' : ''}`}>
-      {/* Featured Section */}
+      {error && (
+        <div className="error-banner">
+          {error}
+        </div>
+      )}
+
+      {/* Featured Section - Shows immediately with local data */}
       <section className="featured-tip">
         <div className="featured-content">
-          <h1>{healthTipsData.featured.title}</h1>
-          <p>{healthTipsData.featured.description}</p>
+          <h1>{healthData?.featured.title}</h1>
+          <p>{healthData?.featured.description}</p>
           <button className="learn-more-btn">Learn More</button>
         </div>
-        <div className="featured-image" style={{ backgroundImage: `url(${healthTipsData.featured.image})` }} />
+        <div className="featured-image" style={{ backgroundImage: `url(${healthData?.featured.image})` }} />
       </section>
 
       {/* Search and Categories */}
@@ -163,6 +195,7 @@ function HealthTips({ isDarkMode }) {
             className={`category-btn ${selectedCategory === 'all' ? 'active' : ''}`}
             onClick={() => setSelectedCategory('all')}
           >
+            <SiSmartthings />
             All
           </button>
           {categories.map(category => (
@@ -178,51 +211,89 @@ function HealthTips({ isDarkMode }) {
         </div>
       </section>
 
-      {/* Tips Grid */}
+      {/* Tips Grid with Pagination */}
       <motion.section 
         className="tips-grid"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
-        {filteredTips.map(tip => (
+        {paginatedTips.map(tip => (
           <motion.div
             key={tip.id}
             className={`tip-card ${tip.type}`}
             variants={itemVariants}
           >
-            {tip.type === 'video' && <FaYoutube className="type-icon" />}
-            <h3>{tip.title}</h3>
-            <p>{tip.description}</p>
-            <div className="tip-footer">
-              <span className={`tip-category ${tip.category}`}>
-                {categories.find(cat => cat.id === tip.category)?.label}
-              </span>
-              <button className="read-more">Read More</button>
+            <img 
+              src={tip.imageUrl} 
+              alt={tip.imageAlt}
+              className="tip-card-image"
+              onError={(e) => {
+                e.target.src = '/images/default-health.jpg';
+              }}
+            />
+            <div className="tip-card-content">
+              <h3>{tip.title}</h3>
+              <p>{tip.description}</p>
+              <div className="tip-footer">
+                <span className={`tip-category ${tip.category}`}>
+                  {categories.find(cat => cat.id === tip.category)?.label}
+                </span>
+                <button 
+                  className="read-more"
+                  onClick={() => handleReadMore(tip)}
+                >
+                  Read More
+                </button>
+              </div>
             </div>
           </motion.div>
         ))}
       </motion.section>
 
-      {/* Video Section */}
-      <section className="video-section">
-        <h2>Featured Videos</h2>
-        <div className="video-grid">
-          {healthTipsData.videos.map(video => (
-            <div key={video.id} className="video-card">
-              <div className="video-iframe-container">
-                <iframe
-                  src={video.videoUrl}
-                  title={video.title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
-              <h4>{video.title}</h4>
-            </div>
-          ))}
+      {/* Pagination */}
+      {filteredTips.length > ITEMS_PER_PAGE && renderPagination()}
+
+      {/* Loading indicator for API data */}
+      {isLoading && !isApiLoaded && (
+        <div className="api-loading-indicator">
+          Updating content...
         </div>
-      </section>
+      )}
+
+      {selectedCategory === 'videos' && (
+        <section className="video-section">
+          <div className="video-grid">
+            {featuredVideos.map(video => (
+              <motion.div
+                key={video.id}
+                className="video-card"
+                variants={itemVariants}
+              >
+                <div className="video-thumbnail">
+                  <iframe
+                    src={video.videoUrl}
+                    title={video.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+                <div className="video-info">
+                  <h3>{video.title}</h3>
+                  <p>{video.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <HealthTipModal 
+        tip={selectedTip}
+        isOpen={!!selectedTip}
+        onClose={() => setSelectedTip(null)}
+        isDarkMode={isDarkMode}
+      />
     </div>
   );
 }

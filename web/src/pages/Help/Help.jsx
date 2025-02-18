@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaSearch, FaHeart, FaDumbbell, FaQuestion, FaBook, FaUserMd, FaPlay } from 'react-icons/fa';
+import { FaSearch, FaHeart, FaDumbbell, FaBook, FaUserMd, FaPlay } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 const helpCategories = [
