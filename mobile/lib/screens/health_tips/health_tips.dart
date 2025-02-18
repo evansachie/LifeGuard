@@ -262,10 +262,10 @@ class _HealthTipsState extends State<HealthTips> {
             sliver: SliverGrid(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: MediaQuery.of(context).size.width > 600 ? 3 : 2,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
                 childAspectRatio:
-                    MediaQuery.of(context).size.width > 600 ? 0.8 : 0.7,
+                    MediaQuery.of(context).size.width > 600 ? 1.0 : 0.85,
               ),
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
@@ -287,8 +287,9 @@ class _HealthTipsState extends State<HealthTips> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
+      child: Container(
+        height: 250,
+        padding: const EdgeInsets.all(8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -296,14 +297,14 @@ class _HealthTipsState extends State<HealthTips> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: SizedBox(
-                  height: 120,
+                  height: 90,
                   width: double.infinity,
                   child: Image.network(
                     tip.imageUrl!,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
-                        height: 120,
+                        height: 90,
                         color: Colors.grey[300],
                         child: const Icon(Icons.image_not_supported),
                       );
@@ -311,46 +312,56 @@ class _HealthTipsState extends State<HealthTips> {
                   ),
                 ),
               ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             Text(
               tip.title,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 16,
+                fontSize: 13,
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 2),
             Expanded(
               child: Text(
                 tip.description,
                 style: TextStyle(
                   color: isDark ? Colors.white70 : Colors.black54,
-                  fontSize: 14,
+                  fontSize: 11,
                 ),
-                maxLines: 3,
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            const SizedBox(height: 8),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
                   child: Chip(
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    padding: const EdgeInsets.all(2),
                     label: Text(
                       categories.firstWhere(
                               (cat) => cat['id'] == tip.category)['label']
                           as String,
-                      style: const TextStyle(fontSize: 12),
+                      style: const TextStyle(fontSize: 9),
                     ),
                     backgroundColor: _getCategoryColor(tip.category),
                   ),
                 ),
                 if (tip.url != null)
                   TextButton(
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
                     onPressed: () => launchUrl(Uri.parse(tip.url!)),
-                    child: const Text('Read More'),
+                    child: const Text(
+                      'Read More',
+                      style: TextStyle(fontSize: 11),
+                    ),
                   ),
               ],
             ),
