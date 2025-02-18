@@ -48,15 +48,19 @@ class HealthTipsService {
         final healthData = json.decode(response.body);
         final resources = healthData['Result']?['Resources']?['Resource'] ?? [];
 
+        // Format and sort tips by date/relevance
+        final formattedTips = _formatHealthTips(resources);
+
         return {
           'featured': {
             'title': "Today's Health Highlight",
             'description':
                 "Learn about health and wellness tips for better living",
-            'image': 'assets/images/med.png',
+            'image':
+                'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800',
             'category': "prevention"
           },
-          'tips': _formatHealthTips(resources),
+          'tips': formattedTips,
         };
       } else {
         throw Exception('Failed to fetch health tips');

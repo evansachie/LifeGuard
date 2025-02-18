@@ -17,12 +17,12 @@ class _HealthTipsState extends State<HealthTips> {
   List<HealthTip> tips = [];
   Map<String, dynamic>? featuredTip;
 
+  // Pagination variables
+  static const int itemsPerPage = 6;
+  int currentPage = 1;
+  bool hasMorePages = true;
+
   final categories = [
-    {
-      'id': 'emergency',
-      'icon': Icons.local_hospital,
-      'label': 'Emergency Care'
-    },
     {'id': 'fitness', 'icon': Icons.directions_run, 'label': 'Fitness'},
     {'id': 'nutrition', 'icon': Icons.apple, 'label': 'Nutrition'},
     {'id': 'mental', 'icon': Icons.psychology, 'label': 'Mental Health'},
@@ -38,25 +38,54 @@ class _HealthTipsState extends State<HealthTips> {
     },
   ];
 
-  // Mock data for initial loading state
+  // Initial mock data with article links
   final mockTips = [
     HealthTip(
       id: '1',
-      category: 'emergency',
-      title: 'Recognizing Heart Attack Symptoms',
+      category: 'prevention',
+      title: 'Understanding Air Quality',
       description:
-          'Learn the early warning signs of a heart attack and when to seek immediate medical attention.',
+          'Learn how air quality affects your health and what you can do to protect yourself.',
       type: 'article',
+      imageUrl:
+          'https://images.unsplash.com/photo-1528823872057-9c018a7a7553?w=800',
+      url:
+          'https://www.epa.gov/indoor-air-quality-iaq/introduction-indoor-air-quality',
     ),
     HealthTip(
       id: '2',
       category: 'fitness',
-      title: 'Quick 10-Minute Workouts',
+      title: 'Daily Exercise Routine',
       description:
-          'Effective exercises you can do anywhere to maintain your fitness levels.',
+          'Simple exercises you can do at home to stay fit and healthy.',
       type: 'article',
+      imageUrl:
+          'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800',
+      url: 'https://www.cdc.gov/physicalactivity/basics/index.htm',
     ),
-    // Add a few more mock tips...
+    HealthTip(
+      id: '3',
+      category: 'mental',
+      title: 'Stress Management',
+      description:
+          'Effective techniques for managing daily stress and anxiety.',
+      type: 'article',
+      imageUrl:
+          'https://images.unsplash.com/photo-1493836512294-502baa1986e2?w=800',
+      url: 'https://www.nimh.nih.gov/health/publications/stress',
+    ),
+    HealthTip(
+      id: '4',
+      category: 'prevention',
+      title: 'Recognizing Heart Attack Symptoms',
+      description:
+          'Learn the early warning signs of a heart attack and when to seek immediate medical attention.',
+      type: 'article',
+      imageUrl:
+          'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800',
+      url:
+          'https://www.heart.org/en/health-topics/heart-attack/warning-signs-of-a-heart-attack',
+    ),
   ];
 
   @override
@@ -67,10 +96,12 @@ class _HealthTipsState extends State<HealthTips> {
     featuredTip = {
       'title': "Today's Health Highlight",
       'description': "Learn about health and wellness tips for better living",
-      'image': 'assets/images/med.png',
+      'image':
+          'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800',
       'category': "prevention"
     };
-    // Then load real data
+
+    // Then load real data in background
     _loadData();
   }
 
@@ -103,17 +134,42 @@ class _HealthTipsState extends State<HealthTips> {
     }).toList();
   }
 
+  List<HealthTip> get paginatedTips {
+    final filtered = filteredTips;
+    final startIndex = (currentPage - 1) * itemsPerPage;
+    final endIndex = startIndex + itemsPerPage;
+
+    if (startIndex >= filtered.length) {
+      return [];
+    }
+
+    hasMorePages = endIndex < filtered.length;
+    return filtered.sublist(startIndex, endIndex.clamp(0, filtered.length));
+  }
+
+  void loadNextPage() {
+    if (hasMorePages) {
+      setState(() {
+        currentPage++;
+      });
+    }
+  }
+
+  // Add this getter to check if there's a previous page
+  bool get hasPreviousPage => currentPage > 1;
+
+  // Add method to handle previous page
+  void loadPreviousPage() {
+    if (hasPreviousPage) {
+      setState(() {
+        currentPage--;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    if (isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(
-          color: Color(0xFF4285F4),
-        ),
-      );
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -133,7 +189,7 @@ class _HealthTipsState extends State<HealthTips> {
       ),
       body: CustomScrollView(
         slivers: [
-          // Featured Section
+          // Featured Section - Always show with mock data first
           SliverToBoxAdapter(
             child: Container(
               height: 200,
@@ -144,7 +200,14 @@ class _HealthTipsState extends State<HealthTips> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.blue.withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Stack(
                 children: [
@@ -204,50 +267,27 @@ class _HealthTipsState extends State<HealthTips> {
             ),
           ),
 
-          // Search Bar
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: TextField(
-                onChanged: (value) => setState(() => searchQuery = value),
-                decoration: InputDecoration(
-                  hintText: 'Search health tips...',
-                  prefixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  fillColor: isDark ? Colors.grey[800] : Colors.grey[200],
-                ),
-              ),
-            ),
-          ),
-
-          // Categories
+          // Categories - Always show
           SliverToBoxAdapter(
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 children: [
                   FilterChip(
-                    label: const Text('All'),
                     selected: selectedCategory == 'all',
-                    onSelected: (selected) {
-                      setState(() => selectedCategory = 'all');
-                    },
+                    label: const Text('All'),
+                    onSelected: (_) => setState(() => selectedCategory = 'all'),
+                    avatar: const Icon(Icons.all_inclusive),
                   ),
                   const SizedBox(width: 8),
                   ...categories.map((category) => Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: FilterChip(
-                          label: Text(category['label'] as String),
                           selected: selectedCategory == category['id'],
-                          onSelected: (selected) {
-                            setState(() =>
-                                selectedCategory = category['id'] as String);
-                          },
+                          label: Text(category['label'] as String),
+                          onSelected: (_) => setState(() =>
+                              selectedCategory = category['id'] as String),
                           avatar: Icon(category['icon'] as IconData),
                         ),
                       )),
@@ -256,7 +296,7 @@ class _HealthTipsState extends State<HealthTips> {
             ),
           ),
 
-          // Tips Grid
+          // Tips Grid with pagination
           SliverPadding(
             padding: const EdgeInsets.all(16),
             sliver: SliverGrid(
@@ -269,13 +309,102 @@ class _HealthTipsState extends State<HealthTips> {
               ),
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
-                  final tip = filteredTips[index];
+                  final tip = paginatedTips[index];
                   return _buildTipCard(tip, isDark);
                 },
-                childCount: filteredTips.length,
+                childCount: paginatedTips.length,
               ),
             ),
           ),
+
+          // Loading Indicator
+          if (isLoading)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 32.0),
+                child: Center(
+                  child: Column(
+                    children: [
+                      const CircularProgressIndicator(
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(Color(0xFF4285F4)),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Loading more health tips...',
+                        style: TextStyle(
+                          color: isDark ? Colors.white70 : Colors.black54,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+          // Pagination Controls
+          if (!isLoading && (hasMorePages || hasPreviousPage))
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Previous Button
+                    if (hasPreviousPage)
+                      ElevatedButton.icon(
+                        onPressed: loadPreviousPage,
+                        icon: const Icon(Icons.arrow_back, size: 16),
+                        label: const Text('Previous'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF4285F4),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                      ),
+
+                    // Page Indicator
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        'Page $currentPage',
+                        style: TextStyle(
+                          color: isDark ? Colors.white70 : Colors.black54,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+
+                    // Next Button
+                    if (hasMorePages)
+                      ElevatedButton.icon(
+                        onPressed: loadNextPage,
+                        label: const Text('Next'),
+                        icon: const Icon(Icons.arrow_forward, size: 16),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF4285F4),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -329,8 +458,9 @@ class _HealthTipsState extends State<HealthTips> {
                 style: TextStyle(
                   color: isDark ? Colors.white70 : Colors.black54,
                   fontSize: 11,
+                  height: 1.2,
                 ),
-                maxLines: 2,
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
