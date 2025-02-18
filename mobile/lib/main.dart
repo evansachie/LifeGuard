@@ -14,21 +14,22 @@ Future<void> main() async {
     // Initialize audio service with error handling
     await JustAudioBackground.init(
       androidNotificationChannelId: 'com.example.lifeguard.audio',
-      androidNotificationChannelName: 'LifeGuard Audio Service',
+      androidNotificationChannelName: 'LifeGuard Audio',
+      androidNotificationChannelDescription: 'Audio playback notification',
       androidNotificationOngoing: true,
       androidShowNotificationBadge: true,
       androidStopForegroundOnPause: true,
-      fastForwardInterval: const Duration(seconds: 10),
-      rewindInterval: const Duration(seconds: 10),
+      preloadArtwork: true,
+      artDownscaleWidth: 300,
+      artDownscaleHeight: 300,
     );
   } catch (e) {
     debugPrint('Error initializing audio service: $e');
-    // Continue app initialization even if audio fails
   }
 
   // Load environment variables
   await dotenv.load(fileName: ".env");
-  
+
   // Run the app
   runApp(const MyApp());
 }
@@ -48,7 +49,8 @@ class MyApp extends StatelessWidget {
           title: 'LifeGuard',
           themeMode: themeProvider.themeMode,
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF4285F4)),
+            colorScheme:
+                ColorScheme.fromSeed(seedColor: const Color(0xFF4285F4)),
             useMaterial3: true,
           ),
           darkTheme: ThemeData(

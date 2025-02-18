@@ -34,8 +34,6 @@ class _BMRCalculatorState extends State<BMRCalculator> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
