@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lifeguard/services/health_tips_service.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 class HealthTips extends StatefulWidget {
   const HealthTips({super.key});
 
@@ -10,6 +13,9 @@ class _HealthTipsState extends State<HealthTips> {
   String selectedCategory = 'all';
   String searchQuery = '';
   bool isLoading = true;
+  final HealthTipsService _healthTipsService = HealthTipsService();
+  List<HealthTip> tips = [];
+  Map<String, dynamic>? featuredTip;
 
   final categories = [
     {
@@ -32,98 +38,67 @@ class _HealthTipsState extends State<HealthTips> {
     },
   ];
 
-  // Define proper types for our data structures
-  final Map<String, dynamic> featuredTip = {
-    'title': "Today's Health Highlight",
-    'description':
-        "Learn about air quality monitoring and its impact on your health",
-    'image': 'assets/images/med.png',
-    'category': "prevention"
-  };
-
-  final List<Map<String, dynamic>> tips = [
-    {
-      'id': 1,
-      'category': 'emergency',
-      'title': 'Recognizing Heart Attack Symptoms',
-      'description':
+  // Mock data for initial loading state
+  final mockTips = [
+    HealthTip(
+      id: '1',
+      category: 'emergency',
+      title: 'Recognizing Heart Attack Symptoms',
+      description:
           'Learn the early warning signs of a heart attack and when to seek immediate medical attention.',
-      'type': 'article'
-    },
-    {
-      'id': 2,
-      'category': 'fitness',
-      'title': 'Quick 10-Minute Workouts',
-      'description':
+      type: 'article',
+    ),
+    HealthTip(
+      id: '2',
+      category: 'fitness',
+      title: 'Quick 10-Minute Workouts',
+      description:
           'Effective exercises you can do anywhere to maintain your fitness levels.',
-      'type': 'video',
-      'videoUrl': 'https://youtube.com/watch?v=example'
-    },
-    {
-      'id': 3,
-      'category': 'nutrition',
-      'title': 'Foods That Boost Immunity',
-      'description': 'Discover the best foods to strengthen your immune system.',
-      'type': 'article'
-    },
-    {
-      'id': 4,
-      'category': 'mental',
-      'title': 'Stress Management Techniques',
-      'description': 'Simple but effective ways to manage daily stress and anxiety.',
-      'type': 'interactive'
-    },
-    {
-      'id': 5,
-      'category': 'prevention',
-      'title': 'Air Quality Safety Tips',
-      'description': 'How to protect yourself during poor air quality days.',
-      'type': 'article'
-    },
-    {
-      'id': 6,
-      'category': 'resources',
-      'title': 'Local Health Resources',
-      'description': 'Find healthcare facilities and emergency services near you.',
-      'type': 'tool'
-    }
-  ];
-
-  final List<Map<String, String>> videos = [
-    {
-      'id': 'v1',
-      'title': 'Emergency First Aid Basics',
-      'videoUrl': 'https://www.youtube.com/embed/IisqrLOnqX8',
-      'duration': '6:42'
-    },
+      type: 'article',
+    ),
+    // Add a few more mock tips...
   ];
 
   @override
   void initState() {
     super.initState();
+    // Show mock data immediately
+    tips = mockTips;
+    featuredTip = {
+      'title': "Today's Health Highlight",
+      'description': "Learn about health and wellness tips for better living",
+      'image': 'assets/images/med.png',
+      'category': "prevention"
+    };
+    // Then load real data
     _loadData();
   }
 
   Future<void> _loadData() async {
-    await Future.delayed(const Duration(seconds: 1));
-    if (mounted) {
-      setState(() => isLoading = false);
+    try {
+      final data = await _healthTipsService.fetchHealthTips();
+      if (mounted) {
+        setState(() {
+          featuredTip = data['featured'];
+          tips = (data['tips'] as List).cast<HealthTip>();
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error loading health tips: $e');
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
     }
   }
 
-  List<Map<String, dynamic>> get filteredTips {
+  List<HealthTip> get filteredTips {
     return tips.where((tip) {
       final matchesCategory =
-          selectedCategory == 'all' || tip['category'] == selectedCategory;
+          selectedCategory == 'all' || tip.category == selectedCategory;
       final matchesSearch = searchQuery.isEmpty ||
-          tip['title']
-              .toString()
-              .toLowerCase()
-              .contains(searchQuery.toLowerCase()) ||
-          tip['description']
-              .toString()
-              .toLowerCase()
-              .contains(searchQuery.toLowerCase());
+          tip.title.toLowerCase().contains(searchQuery.toLowerCase()) ||
+          tip.description.toLowerCase().contains(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     }).toList();
   }
@@ -190,7 +165,7 @@ class _HealthTipsState extends State<HealthTips> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          featuredTip['title'],
+                          featuredTip?['title'] ?? '',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 24,
@@ -199,7 +174,7 @@ class _HealthTipsState extends State<HealthTips> {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          featuredTip['description'],
+                          featuredTip?['description'] ?? '',
                           style: const TextStyle(
                             color: Colors.white70,
                             fontSize: 16,
@@ -306,7 +281,7 @@ class _HealthTipsState extends State<HealthTips> {
     );
   }
 
-  Widget _buildTipCard(Map<String, dynamic> tip, bool isDark) {
+  Widget _buildTipCard(HealthTip tip, bool isDark) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(
@@ -317,11 +292,28 @@ class _HealthTipsState extends State<HealthTips> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (tip['type'] == 'video')
-              const Icon(Icons.play_circle_fill, color: Colors.red),
+            if (tip.imageUrl != null)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: SizedBox(
+                  height: 120,
+                  width: double.infinity,
+                  child: Image.network(
+                    tip.imageUrl!,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        height: 120,
+                        color: Colors.grey[300],
+                        child: const Icon(Icons.image_not_supported),
+                      );
+                    },
+                  ),
+                ),
+              ),
             const SizedBox(height: 8),
             Text(
-              tip['title'],
+              tip.title,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
@@ -332,7 +324,7 @@ class _HealthTipsState extends State<HealthTips> {
             const SizedBox(height: 8),
             Expanded(
               child: Text(
-                tip['description'],
+                tip.description,
                 style: TextStyle(
                   color: isDark ? Colors.white70 : Colors.black54,
                   fontSize: 14,
@@ -348,17 +340,18 @@ class _HealthTipsState extends State<HealthTips> {
                   child: Chip(
                     label: Text(
                       categories.firstWhere(
-                              (cat) => cat['id'] == tip['category'])['label']
+                              (cat) => cat['id'] == tip.category)['label']
                           as String,
                       style: const TextStyle(fontSize: 12),
                     ),
-                    backgroundColor: _getCategoryColor(tip['category']),
+                    backgroundColor: _getCategoryColor(tip.category),
                   ),
                 ),
-                TextButton(
-                  onPressed: () {},
-                  child: const Text('Read More'),
-                ),
+                if (tip.url != null)
+                  TextButton(
+                    onPressed: () => launchUrl(Uri.parse(tip.url!)),
+                    child: const Text('Read More'),
+                  ),
               ],
             ),
           ],
