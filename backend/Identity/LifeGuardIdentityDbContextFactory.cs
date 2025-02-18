@@ -33,7 +33,7 @@ namespace Identity
                 Env.Load("../.env");
 
             }
-            var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+            var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING_AUTH");
             builder.UseNpgsql(connectionString);
 
             return new LifeGuardIdentityDbContext(builder.Options);
