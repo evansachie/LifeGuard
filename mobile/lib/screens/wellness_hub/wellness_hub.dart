@@ -146,8 +146,6 @@ class _WellnessHubState extends State<WellnessHub> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
