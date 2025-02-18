@@ -76,7 +76,6 @@ function App() {
                         theme={isDarkMode ? 'dark' : 'light'}
                     />
                     <Routes>
-                        {/* Public routes */}
                         <Route 
                             path="/" 
                             element={
@@ -87,17 +86,28 @@ function App() {
                                 )
                             } 
                         />
-                        <Route path="/log-in" element={<LogIn isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
-                        <Route path="/verify-otp" element={<OTPVerification isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
-                        <Route path="/forgot-password" element={<ForgotPassword isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
-                        <Route path="/reset-password" element={<ResetPassword isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
+                        <Route 
+                            path="/log-in" 
+                            element={<LogIn isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
+                        />
+                        <Route 
+                            path="/verify-otp" 
+                            element={<OTPVerification isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
+                        />
+                        <Route 
+                            path="/forgot-password" 
+                            element={<ForgotPassword isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
+                        />
+                        <Route 
+                            path="/reset-password" 
+                            element={<ResetPassword isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
+                        />
 
-                        {/* Protected routes */}
                         <Route
                             element={
                                 <ProtectedRoute>
                                     <AppLayout isDarkMode={isDarkMode}>
-                                        <Outlet /> {/* This will render the child routes */}
+                                        <Outlet />
                                     </AppLayout>
                                 </ProtectedRoute>
                             }
