@@ -1,0 +1,34 @@
+.landing-page {
+    min-height: 100vh;
+    background-color: #ffffff;
+    transition: background-color 0.3s ease;
+}
+
+.landing-page.dark-mode {
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+.section {
+    padding: 4rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .section {
+        padding: 2rem 1rem;
+    }
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+html {
+    scroll-padding-top: 80px;
+}
+
+section {
+    scroll-margin-top: 80px;
+} 
