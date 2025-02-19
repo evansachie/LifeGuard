@@ -7,6 +7,8 @@ import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import 'intro.js/introjs.css';
 import { AuthProvider } from './contexts/AuthContext';
 
+import LandingPage from './pages/Landing/LandingPage';
+
 import LogIn from "./components/Auth/LogIn/LogIn";
 import SignUp from "./components/Auth/SignUp/SignUp";
 import OTPVerification from './components/Auth/OTPVerification/OTPVerification';
@@ -78,13 +80,11 @@ function App() {
                     <Routes>
                         <Route 
                             path="/" 
-                            element={
-                                isAuthenticated() ? (
-                                    <Navigate to="/dashboard" replace />
-                                ) : (
-                                    <SignUp isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
-                                )
-                            } 
+                            element={<LandingPage isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
+                        />
+                        <Route 
+                            path="/sign-up" 
+                            element={<SignUp isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
                         />
                         <Route 
                             path="/log-in" 
