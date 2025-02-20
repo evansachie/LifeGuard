@@ -305,16 +305,16 @@ function Profile({ isDarkMode }) {
                     </div>
                     <div className="contacts-card">
                         {profileData.emergencyContacts.length > 0 ? (
-                            profileData.emergencyContacts.map((contact, index) => (
-                                <div key={index} className="contact-item">
+                            profileData.emergencyContacts.map((contact) => (
+                                <div key={contact.Id} className="contact-item">
                                     <div className="contact-info">
                                         <div className="contact-name">
                                             <FaUser className="contact-icon" />
-                                            <strong>{contact.name}</strong>
+                                            <strong>{contact.Name}</strong>
                                         </div>
                                         <div className="contact-phone">
                                             <FaPhone className="contact-icon" />
-                                            <span>{contact.phone}</span>
+                                            <span>{contact.Phone}</span>
                                         </div>
                                     </div>
                                 </div>

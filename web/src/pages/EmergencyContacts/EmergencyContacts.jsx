@@ -75,14 +75,14 @@ function EmergencyContacts({ isDarkMode }) {
     try {
       if (editingContact) {
         const updatedContact = await fetchWithAuth(
-          `${API_ENDPOINTS.EMERGENCY_CONTACTS}/${editingContact.id}`,
+          `${API_ENDPOINTS.EMERGENCY_CONTACTS}/${editingContact.Id}`,
           {
             method: 'PUT',
             body: JSON.stringify(formData)
           }
         );
         setContacts(contacts.map(contact =>
-          contact.id === editingContact.id ? updatedContact : contact
+          contact.Id === editingContact.Id ? updatedContact : contact
         ));
         toast.success('Contact updated successfully!');
       } else {
@@ -98,7 +98,7 @@ function EmergencyContacts({ isDarkMode }) {
       }
       handleCloseModal();
     } catch (error) {
-      console.error('Error saving contact:', error);
+      console.error('Error details:', error);
       toast.error('Failed to save contact');
     } finally {
       setIsSaving(false);
@@ -131,27 +131,43 @@ function EmergencyContacts({ isDarkMode }) {
 
   // Open edit modal with contact data
   const handleEdit = (contact) => {
+    console.log("Editing contact:", contact); // Debug log
     setEditingContact(contact);
-    setFormData(contact);
+    setFormData({
+        name: contact.Name,
+        phone: contact.Phone,
+        email: contact.Email,
+        relationship: contact.Relationship
+    });
     setIsModalOpen(true);
   };
 
   // Delete contact with confirmation
   const handleDelete = (contact) => {
+    console.log("Deleting contact:", contact); // Debug log
+    if (!contact?.Id) {
+        toast.error('Invalid contact ID');
+        return;
+    }
     setDeletingContact(contact);
     setDeleteModalOpen(true);
   };
 
   const confirmDelete = async () => {
-    if (!deletingContact) return;
+    if (!deletingContact?.Id) {
+        toast.error('Invalid contact ID');
+        return;
+    }
     
     setIsDeleting(true);
     try {
         await fetchWithAuth(
-            `${API_ENDPOINTS.EMERGENCY_CONTACTS}/${deletingContact.id}`,
+            `${API_ENDPOINTS.EMERGENCY_CONTACTS}/${deletingContact.Id}`,
             { method: 'DELETE' }
         );
-        setContacts(contacts.filter(c => c.id !== deletingContact.id));
+        setContacts(prevContacts => 
+            prevContacts.filter(c => c.Id !== deletingContact.Id)
+        );
         toast.success('Contact deleted successfully!');
         setDeleteModalOpen(false);
     } catch (error) {
@@ -207,7 +223,7 @@ function EmergencyContacts({ isDarkMode }) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {contacts.map(contact => (
             <motion.div
-              key={contact.id}
+              key={contact.Id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
@@ -217,9 +233,9 @@ function EmergencyContacts({ isDarkMode }) {
             >
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="text-xl font-semibold">{contact.name}</h3>
+                  <h3 className="text-xl font-semibold">{contact.Name}</h3>
                   <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    {contact.relationship}
+                    {contact.Relationship}
                   </p>
                 </div>
                 <div className="flex gap-2">
@@ -244,11 +260,11 @@ function EmergencyContacts({ isDarkMode }) {
               <div className={`space-y-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                 <div className="flex items-center gap-2">
                   <FaPhone className="text-green-500" />
-                  <span>{contact.phone}</span>
+                  <span>{contact.Phone}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <FaEnvelope className="text-blue-500" />
-                  <span>{contact.email}</span>
+                  <span>{contact.Email}</span>
                 </div>
               </div>
             </motion.div>

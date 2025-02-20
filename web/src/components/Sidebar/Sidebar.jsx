@@ -1,25 +1,40 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { FaHome, FaStickyNote,FaCog, FaQuestionCircle, FaSignOutAlt, FaMoon, FaSun, FaBars, FaTimes } from 'react-icons/fa';
+import { FaHome, FaStickyNote, FaCog, FaQuestionCircle, FaSignOutAlt, FaMoon, FaSun, FaBars, FaTimes } from 'react-icons/fa';
 import { TbReportAnalytics } from "react-icons/tb";
 import { MdContactEmergency, MdHealthAndSafety } from "react-icons/md";
-
 import { FaMap } from "react-icons/fa";
-import DefaultUser from '../../assets/user.png';
+import { fetchWithAuth, API_ENDPOINTS } from '../../utils/api';
 import './Sidebar.css';
 import { useAuth } from '../../contexts/AuthContext';
 
 function Sidebar({ toggleTheme, isDarkMode }) {
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-    const [username, setUsername] = useState('');
+    const [userData, setUserData] = useState(null);
     const [isActivityDropdownOpen, setIsActivityDropdownOpen] = useState(false);
-    const [profilePictureUrl, setProfilePictureUrl] = useState(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
     const sidebarRef = useRef(null);
     const profileMenuRef = useRef(null);
     const { logout } = useAuth();
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const userId = localStorage.getItem('userId');
+                if (!userId) return;
+
+                const data = await fetchWithAuth(`${API_ENDPOINTS.GET_USER}?id=${userId}`);
+                setUserData(data);
+                localStorage.setItem('userName', data.userName);
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        };
+
+        fetchUserData();
+    }, []);
 
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside);
@@ -33,22 +48,10 @@ function Sidebar({ toggleTheme, isDarkMode }) {
         setIsMobileMenuOpen(false);
     }, [location.pathname]);
 
-    useEffect(() => {
-        // Get username from localStorage (set during login/dashboard fetch)
-        const storedName = localStorage.getItem('userName');
-        console.log(storedName);
-        if (storedName) {
-            // If it's an email, show just the first part capitalized
-            if (storedName.includes('@')) {
-                const name = storedName.split('@')[0];
-                setUsername(name.charAt(0).toUpperCase() + name.slice(1).toLowerCase());
-            } else {
-                // If it's a full name, show just the first name capitalized
-                const firstName = storedName.split(' ')[0];
-                setUsername(firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase());
-            }
-        }
-    }, []);
+    const getDisplayName = () => {
+        if (!userData?.userName) return 'User';
+        return userData.userName.split(' ')[0];
+    };
 
     const handleClickOutside = (event) => {
         if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
@@ -125,16 +128,24 @@ function Sidebar({ toggleTheme, isDarkMode }) {
         </Link>
     );
 
+    const renderUserInfo = () => (
+        <div className="user-info" onClick={toggleProfileMenu}>
+            <div className="profile-picture-container">
+                <img 
+                    src={`https://ui-avatars.com/api/?name=${getDisplayName()}&background=random`}
+                    alt="Profile" 
+                    className="profile-picture" 
+                />
+            </div>
+            <span className="username">{getDisplayName()}</span>
+        </div>
+    );
+
     return (
         <>
             <div className={`sidebar ${isDarkMode ? 'dark-mode' : 'light-mode'}`} ref={sidebarRef}>
                 <div className="sidebar-header">
-                    <div className="user-info" onClick={toggleProfileMenu}>
-                        <div className="profile-picture-container">
-                            <img src={profilePictureUrl || DefaultUser} alt="Profile" className="profile-picture" />
-                        </div>
-                        <span className="username">{username || 'User'}</span>
-                    </div>
+                    {renderUserInfo()}
                     <button className="theme-toggle" onClick={toggleTheme}> 
                         {isDarkMode ? <FaSun /> : <FaMoon />}
                     </button>
@@ -187,12 +198,7 @@ function Sidebar({ toggleTheme, isDarkMode }) {
             <div ref={sidebarRef} className={`mobile-sidebar ${isMobileMenuOpen ? 'open' : ''} ${isDarkMode ? 'dark-mode' : ''}`}>
                 <div className="sidebar-content">
                     <div className="sidebar-header">
-                        <div className="user-info" onClick={toggleProfileMenu}>
-                            <div className="profile-picture-container">
-                                <img src={profilePictureUrl || DefaultUser} alt="Profile" className="profile-picture" />
-                            </div>
-                            <span className="username">{username || 'User'}</span>
-                        </div>
+                        {renderUserInfo()}
                         <button className="theme-toggle" onClick={toggleTheme}>
                             {isDarkMode ? <FaSun /> : <FaMoon />}
                         </button>
