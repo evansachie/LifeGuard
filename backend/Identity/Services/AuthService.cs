@@ -10,7 +10,6 @@ using Application.Models;
 using Application.Models.ApiResult;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Extensions.Configuration;
 //using Microsoft.IdentityModel.Tokens;
 
 namespace Identity.Services
@@ -21,16 +20,28 @@ namespace Identity.Services
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailService _emailService;
         private readonly IOTPService _oTPService;
-        private readonly IConfiguration _configuration;
+        private readonly string _jwtKey;
+        private readonly string _jwtIssuer;
+        private readonly string _jwtAudience;
+        private readonly string _jwtDurationInMinutes;
+        private readonly string _frontEndUrl;
 
+        
 
-        public AuthService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailService emailService, IOTPService oTPService, IConfiguration configuration)
+        public AuthService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailService emailService, IOTPService oTPService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailService = emailService;
             _oTPService = oTPService;
-            _configuration = configuration;
+
+            Env.Load("../.env.local");
+            _jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
+            _jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
+            _jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
+            _jwtDurationInMinutes = Environment.GetEnvironmentVariable("JWT_DURATIONINMINUTES");
+            _frontEndUrl = Environment.GetEnvironmentVariable("FRONTEND_URL");
+
         }
 
         public async Task<AuthResponse> Login(AuthRequest request)
@@ -89,20 +100,16 @@ namespace Identity.Services
             }
             .Union(userClaims).Union(roleClaims);
 
-            Env.Load("../.env.local");
-            var jwt_key = Environment.GetEnvironmentVariable("JWT_KEY");
-            var jwt_issuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
-            var jwt_audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
-            var jwt_duration_in_minutes = Environment.GetEnvironmentVariable("JWT_DURATIONINMINUTES");
+            
 
-            var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt_key));
+            var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtKey));
             var signingCredentials = new Microsoft.IdentityModel.Tokens.SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
 
             var jwtSecurityToken = new JwtSecurityToken(
-               issuer: jwt_issuer,
-               audience: jwt_audience,
+               issuer: _jwtIssuer,
+               audience: _jwtAudience,
                claims: claims,
-               expires: DateTime.UtcNow.AddMinutes(int.Parse(jwt_duration_in_minutes)),
+               expires: DateTime.UtcNow.AddMinutes(int.Parse(_jwtDurationInMinutes)),
                signingCredentials: signingCredentials);
 
 
@@ -164,24 +171,19 @@ namespace Identity.Services
         public async Task<Result<string>> ForgotPasswordAsync(ForgotPasswordRequest request)
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
-            if (user == null)
+
+            if (user == null || !await _userManager.IsEmailConfirmedAsync(user))
             {
-                return new Result<string>(false, ResultStatusCode.NotFound, "User not found");
+                return new Result<string>(false, ResultStatusCode.NotFound, string.Empty, "User not found or email not confirmed.");
             }
-
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            
-            // Create reset password link with frontend URL
-            var frontendUrl = _configuration["AppSettings:FrontendUrl"]; // Add this to your configuration
-            var resetLink = $"{frontendUrl}/reset-password?email={Uri.EscapeDataString(request.Email)}&token={Uri.EscapeDataString(token)}";
+            Console.WriteLine("token " + token);
 
-            var emailBody = $@"
-                <h2>Reset Your Password</h2>
-                <p>Please click the link below to reset your password:</p>
-                <a href='{resetLink}'>Reset Password</a>
-                <p>If you didn't request this, please ignore this email.</p>";
+            var mainResetUrl = Environment.GetEnvironmentVariable("RESET_URL");
+            var resetUrl = $"{_frontEndUrl}/reset-password?email={user.Email}&token={WebUtility.UrlEncode(token)}";
 
-            await _emailService.SendEmailAsync(request.Email, "Reset Your Password", emailBody);
+            var message = $"<p>Please reset your password by clicking <a href='{resetUrl}'>here</a>.</p>";
+            await _emailService.SendEmailAsync(user.Email, "Reset Password", message);
 
             return new Result<string>(true, ResultStatusCode.Success, token, "Password reset email sent");
         }
