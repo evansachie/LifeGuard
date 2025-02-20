@@ -27,6 +27,9 @@ export const fetchApi = async (endpoint, options = {}) => {
         const baseUrl = endpoint.startsWith('http') ? '' : API_BASE_URL;
         const url = `${baseUrl}${endpoint}`;
         
+        console.log('Making request to:', url);
+        console.log('Request payload:', options.body);
+
         const response = await fetch(url, {
             ...options,
             headers: {
@@ -38,13 +41,19 @@ export const fetchApi = async (endpoint, options = {}) => {
         });
 
         const data = await response.json();
+        console.log('Response:', data);
 
         if (!response.ok) {
-            throw new Error(data.message || data.error || 'An error occurred');
+            throw new Error(data.message || data.error || `Error: ${response.statusText}`);
         }
 
         return data;
     } catch (error) {
+        console.error('API Error:', {
+            endpoint,
+            error,
+            requestBody: options.body
+        });
         toast.error(error.message || 'An error occurred');
         throw error;
     }

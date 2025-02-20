@@ -16,7 +16,7 @@ export default function ResetPassword({ isDarkMode, toggleTheme }) {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
 
-    // Get email and token from URL parameters instead of location state
+    // Get email and token from URL parameters
     const email = searchParams.get('email');
     const token = searchParams.get('token');
 
@@ -44,21 +44,32 @@ export default function ResetPassword({ isDarkMode, toggleTheme }) {
 
         setIsLoading(true);
         try {
-            await fetchApi(`${API_ENDPOINTS.RESET_PASSWORD}`, {
+            const decodedToken = decodeURIComponent(token);
+            const payload = {
+                Email: email,
+                Token: decodedToken,
+                NewPassword: formData.newPassword,
+                ConfirmPassword: formData.confirmPassword
+            };
+            
+            console.log('Reset password payload:', payload); // Debug log
+            
+            await fetchApi(API_ENDPOINTS.RESET_PASSWORD, {
                 method: 'POST',
-                body: JSON.stringify({
-                    email: searchParams.get('email'),
-                    token: searchParams.get('token'),
-                    newPassword: formData.newPassword,
-                    confirmPassword: formData.confirmPassword
-                })
+                body: JSON.stringify(payload)
             });
             
             toast.success('Password reset successful');
             navigate('/log-in');
         } catch (error) {
-            console.error('Error:', error);
-            toast.error(error.message || 'Failed to reset password');
+            // Log the full error
+            console.error('Reset password error:', {
+                error,
+                email,
+                token: decodedToken,
+                response: error.response
+            });
+            toast.error(error.message || 'Failed to reset password. Please try again.');
         } finally {
             setIsLoading(false);
         }
@@ -94,7 +105,7 @@ export default function ResetPassword({ isDarkMode, toggleTheme }) {
                                     onChange={handleChange}
                                     placeholder=" "
                                     required
-                                    minLength={6}
+                                    minLength="6"
                                 />
                                 <label htmlFor="newPassword">New Password</label>
                             </div>
@@ -111,7 +122,7 @@ export default function ResetPassword({ isDarkMode, toggleTheme }) {
                                     onChange={handleChange}
                                     placeholder=" "
                                     required
-                                    minLength={6}
+                                    minLength="6"
                                 />
                                 <label htmlFor="confirmPassword">Confirm Password</label>
                             </div>
