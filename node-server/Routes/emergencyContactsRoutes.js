@@ -8,12 +8,11 @@ module.exports = (pool) => {
     router.get('/', async (req, res) => {
         try {
             const token = req.headers.authorization.split(' ')[1];
-            // Decode the token without verification to get the email
             const decoded = jwt.decode(token);
-            const user_id = decoded.nameid || decoded.sub; // Get email from token
+            const user_id = decoded.nameid || decoded.sub;
 
             const { rows } = await pool.query(
-                'SELECT * FROM emergency_contacts WHERE user_id = $1 ORDER BY created_at DESC',
+                'SELECT Id, Name, Email, Phone, Relationship, UserId, CreatedAt, UpdatedAt FROM EmergencyContact WHERE UserId = $1 ORDER BY CreatedAt DESC',
                 [user_id]
             );
             res.json(rows);
@@ -32,8 +31,8 @@ module.exports = (pool) => {
             const { name, phone, email, relationship } = req.body;
 
             const { rows } = await pool.query(
-                'INSERT INTO emergency_contacts (user_id, name, phone, email, relationship) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-                [user_id, name, phone, email, relationship]
+                'INSERT INTO EmergencyContact (Name, Phone, Email, Relationship, UserId) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+                [name, phone, email, relationship, user_id]
             );
             res.status(201).json(rows[0]);
         } catch (error) {
@@ -52,7 +51,7 @@ module.exports = (pool) => {
             const { name, phone, email, relationship } = req.body;
 
             const { rows } = await pool.query(
-                'UPDATE emergency_contacts SET name = $1, phone = $2, email = $3, relationship = $4, updated_at = CURRENT_TIMESTAMP WHERE id = $5 AND user_id = $6 RETURNING *',
+                'UPDATE EmergencyContact SET Name = $1, Phone = $2, Email = $3, Relationship = $4, UpdatedAt = CURRENT_TIMESTAMP WHERE Id = $5 AND UserId = $6 RETURNING *',
                 [name, phone, email, relationship, id, user_id]
             );
 
@@ -75,7 +74,7 @@ module.exports = (pool) => {
             const { id } = req.params;
 
             const { rowCount } = await pool.query(
-                'DELETE FROM emergency_contacts WHERE id = $1 AND user_id = $2',
+                'DELETE FROM EmergencyContact WHERE Id = $1 AND UserId = $2',
                 [id, user_id]
             );
 
