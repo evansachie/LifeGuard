@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using Persistence;
 namespace LifeGuard
 {
     public class Program
@@ -35,6 +36,7 @@ namespace LifeGuard
             }
             //Add services to the container.
 
+            var connectionStringAuth = Environment.GetEnvironmentVariable("CONNECTION_STRING_AUTH");
             var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
             var jwt_key = Environment.GetEnvironmentVariable("JWT_KEY");
             var jwt_issuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
@@ -44,6 +46,8 @@ namespace LifeGuard
             // Add services to the container.
 
             builder.Services.AddDbContext<LifeGuardIdentityDbContext>(options => 
+            options.UseNpgsql(connectionStringAuth));
+            builder.Services.AddDbContext<LifeGuardDbContext>(options =>
             options.UseNpgsql(connectionString));
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<LifeGuardIdentityDbContext>().AddDefaultTokenProviders();
