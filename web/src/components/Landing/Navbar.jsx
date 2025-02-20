@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FaMoon, FaSun } from 'react-icons/fa';
+import { FaMoon, FaSun, FaBars, FaTimes } from 'react-icons/fa';
 import './Navbar.css';
 
 const Navbar = ({ isDarkMode, toggleTheme }) => {
     const [isScrolled, setIsScrolled] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -19,6 +20,7 @@ const Navbar = ({ isDarkMode, toggleTheme }) => {
         const element = document.getElementById(sectionId);
         if (element) {
             element.scrollIntoView({ behavior: 'smooth' });
+            setIsMobileMenuOpen(false);
         }
     };
 
@@ -30,14 +32,35 @@ const Navbar = ({ isDarkMode, toggleTheme }) => {
                 </Link>
 
                 <div className="navbar-right">
-                    <div className="nav-links">
+                    <button 
+                        className="mobile-menu-button"
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        aria-label="Toggle menu"
+                    >
+                        {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
+                    </button>
+
+                    <div className={`nav-links ${isMobileMenuOpen ? 'active' : ''}`}>
                         <button onClick={() => scrollToSection('features')}>Features</button>
                         <button onClick={() => scrollToSection('how-it-works')}>How It Works</button>
                         <button onClick={() => scrollToSection('benefits')}>Benefits</button>
                         <button onClick={() => scrollToSection('download')}>Download</button>
-                        <Link to="/log-in" className="nav-button login">Log In</Link>
-                        <Link to="/sign-up" className="nav-button signup">Get Started</Link>
+                        <Link 
+                            to="/log-in" 
+                            className="nav-button login"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            Log In
+                        </Link>
+                        <Link 
+                            to="/sign-up" 
+                            className="nav-button signup"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            Get Started
+                        </Link>
                     </div>
+
                     <button className="theme-toggle" onClick={toggleTheme}>
                         {isDarkMode ? <FaSun /> : <FaMoon />}
                     </button>

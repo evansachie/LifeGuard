@@ -6,6 +6,7 @@ import HowItWorks from '../../components/Landing/HowItWorks';
 import Benefits from '../../components/Landing/Benefits';
 import DownloadSection from '../../components/Landing/DownloadSection';
 import Footer from '../../components/Landing/Footer';
+import ScrollToTop from '../../components/ScrollToTop/ScrollToTop';
 import './LandingPage.css';
 
 const LandingPage = ({ isDarkMode, toggleTheme }) => {
@@ -28,6 +29,7 @@ const LandingPage = ({ isDarkMode, toggleTheme }) => {
                 <DownloadSection />
             </section>
             <Footer />
+            <ScrollToTop />
         </div>
     );
 };
