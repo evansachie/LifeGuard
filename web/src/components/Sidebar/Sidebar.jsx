@@ -7,7 +7,6 @@ import { MdContactEmergency, MdHealthAndSafety } from "react-icons/md";
 import { FaMap } from "react-icons/fa";
 import DefaultUser from '../../assets/user.png';
 import './Sidebar.css';
-import { toast } from 'react-toastify';
 import { useAuth } from '../../contexts/AuthContext';
 
 function Sidebar({ toggleTheme, isDarkMode }) {

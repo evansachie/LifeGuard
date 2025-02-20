@@ -80,7 +80,13 @@ function App() {
                     <Routes>
                         <Route 
                             path="/" 
-                            element={<LandingPage isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
+                            element={
+                                <LandingPage 
+                                    isDarkMode={isDarkMode} 
+                                    toggleTheme={toggleTheme}
+                                    isAuthenticated={isAuthenticated()}
+                                />
+                            } 
                         />
                         <Route 
                             path="/sign-up" 
