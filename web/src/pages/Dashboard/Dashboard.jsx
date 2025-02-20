@@ -59,12 +59,7 @@ function Dashboard({ isDarkMode }) {
             // Fetch user data and memos
             const [userData, memosData] = await Promise.all([
                 fetchWithAuth(`${API_ENDPOINTS.GET_USER}?id=${localStorage.getItem('userId')}`),
-                fetch(API_ENDPOINTS.MEMOS, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                        'Content-Type': 'application/json'
-                    }
-                }).then(res => res.json())
+                fetchWithAuth(API_ENDPOINTS.MEMOS)
             ]);
 
             if (userData) {
@@ -74,10 +69,13 @@ function Dashboard({ isDarkMode }) {
                 });
                 localStorage.setItem('userName', userData.userName);
             }
-            setSavedMemos(memosData);
+
+            // Ensure memosData is an array
+            setSavedMemos(Array.isArray(memosData) ? memosData : []);
         } catch (error) {
             console.error('Error fetching data:', error);
             toast.error('Failed to fetch user data');
+            setSavedMemos([]);
         } finally {
             setDataLoading(false);
             setMemosLoading(false);
@@ -210,15 +208,15 @@ function Dashboard({ isDarkMode }) {
                             <Spinner size="medium" color={isDarkMode ? '#4285F4' : '#4285F4'} />
                         ) : (
                             <ul className="reminders-list">
-                                {savedMemos.length === 0 ? (
+                                {savedMemos?.length === 0 ? (
                                     <li>No reminders at the moment</li>
                                 ) : (
-                                    savedMemos.slice(0, 3).map((memo, index) => (
+                                    savedMemos.slice(0, 3).map((memo) => (
                                         <li 
-                                            key={index} 
-                                            className={memo.done ? 'done' : ''}
+                                            key={memo.Id} 
+                                            className={memo.Done ? 'done' : ''}
                                         >
-                                            {memo.memo}
+                                            {memo.Text}
                                         </li>
                                     ))
                                 )}
