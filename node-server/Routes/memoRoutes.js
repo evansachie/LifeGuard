@@ -40,7 +40,7 @@ module.exports = (pool) => {
     router.get('/', verifyToken, async (req, res) => {
         try {
             const { rows } = await pool.query(
-                'SELECT "Id", "Text", "Done", "UserId", "CreatedAt", "UpdatedAt" FROM "Memos" WHERE "UserId" = $1 ORDER BY "CreatedAt" DESC',
+                'SELECT "Id", "Text", "Done", "UserId", "CreatedAt", "UpDatedAt" FROM "Memos" WHERE "UserId" = $1 ORDER BY "CreatedAt" DESC',
                 [req.userId]
             );
             res.json(rows);
@@ -76,7 +76,7 @@ module.exports = (pool) => {
             const { memo } = req.body;
 
             const { rows } = await pool.query(
-                'UPDATE "Memos" SET "Text" = $1, "UpdatedAt" = CURRENT_TIMESTAMP WHERE "Id" = $2 AND "UserId" = $3 RETURNING *',
+                'UPDATE "Memos" SET "Text" = $1, "UpDatedAt" = CURRENT_TIMESTAMP WHERE "Id" = $2 AND "UserId" = $3 RETURNING *',
                 [memo, id, req.userId]
             );
 
@@ -97,7 +97,7 @@ module.exports = (pool) => {
             const { done } = req.body;
 
             const { rows } = await pool.query(
-                'UPDATE "Memos" SET "Done" = $1, "UpdatedAt" = CURRENT_TIMESTAMP WHERE "Id" = $2 AND "UserId" = $3 RETURNING *',
+                'UPDATE "Memos" SET "Done" = $1, "UpDatedAt" = CURRENT_TIMESTAMP WHERE "Id" = $2 AND "UserId" = $3 RETURNING *',
                 [done, id, req.userId]
             );
 
@@ -116,7 +116,7 @@ module.exports = (pool) => {
         try {
             const { id } = req.params;
             const { rowCount } = await pool.query(
-                'DELETE FROM memos WHERE id = $1 AND user_id = $2',
+                'DELETE FROM "Memos" WHERE "Id" = $1 AND "UserId" = $2',
                 [id, req.userId]
             );
 

@@ -12,7 +12,7 @@ module.exports = (pool) => {
             const user_id = decoded.nameid || decoded.sub;
 
             const { rows } = await pool.query(
-                'SELECT "Id", "Name", "Email", "Phone", "Relationship", "UserId", "CreatedAt", "UpdatedAt" FROM "EmergencyContacts" WHERE "UserId" = $1 ORDER BY "CreatedAt" DESC',
+                'SELECT "Id", "Name", "Email", "Phone", "Relationship", "UserId", "CreatedAt", "UpDatedAt" FROM "EmergencyContacts" WHERE "UserId" = $1 ORDER BY "CreatedAt" DESC',
                 [user_id]
             );
             res.json(rows);
@@ -51,7 +51,7 @@ module.exports = (pool) => {
             const { name, phone, email, relationship } = req.body;
 
             const { rows } = await pool.query(
-                'UPDATE EmergencyContact SET Name = $1, Phone = $2, Email = $3, Relationship = $4, UpdatedAt = CURRENT_TIMESTAMP WHERE Id = $5 AND UserId = $6 RETURNING *',
+                'UPDATE "EmergencyContacts" SET "Name" = $1, "Phone" = $2, "Email" = $3, "Relationship" = $4, "UpDatedAt" = CURRENT_TIMESTAMP WHERE "Id" = $5 AND "UserId" = $6 RETURNING *',
                 [name, phone, email, relationship, id, user_id]
             );
 
@@ -74,7 +74,7 @@ module.exports = (pool) => {
             const { id } = req.params;
 
             const { rowCount } = await pool.query(
-                'DELETE FROM EmergencyContact WHERE Id = $1 AND UserId = $2',
+                'DELETE FROM "EmergencyContacts" WHERE "Id" = $1 AND "UserId" = $2',
                 [id, user_id]
             );
 
