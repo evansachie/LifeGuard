@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { FaMoon, FaSun, FaBars, FaTimes, FaUser, FaSignOutAlt, FaCog, FaChartLine } from 'react-icons/fa';
 import './Navbar.css';
 
@@ -8,7 +8,6 @@ const Navbar = ({ isDarkMode, toggleTheme, isAuthenticated }) => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -41,7 +40,7 @@ const Navbar = ({ isDarkMode, toggleTheme, isAuthenticated }) => {
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('userId');
-        navigate('/');
+        window.location.reload();
     };
 
     const AuthButtons = () => (
