@@ -9,11 +9,11 @@ module.exports = (pool) => {
         try {
             const token = req.headers.authorization.split(' ')[1];
             const decoded = jwt.decode(token);
-            const user_id = decoded.nameid || decoded.sub;
+            const userId = decoded.nameid;
 
             const { rows } = await pool.query(
                 'SELECT "Id", "Name", "Email", "Phone", "Relationship", "UserId", "CreatedAt", "UpDatedAt" FROM "EmergencyContacts" WHERE "UserId" = $1 ORDER BY "CreatedAt" DESC',
-                [user_id]
+                [userId]
             );
             res.json(rows);
         } catch (error) {
@@ -27,12 +27,12 @@ module.exports = (pool) => {
         try {
             const token = req.headers.authorization.split(' ')[1];
             const decoded = jwt.decode(token);
-            const user_id = decoded.nameid || decoded.sub;
+            const userId = decoded.nameid;
             const { name, phone, email, relationship } = req.body;
 
             const { rows } = await pool.query(
                 'INSERT INTO "EmergencyContacts" ("Name", "Phone", "Email", "Relationship", "UserId", "CreatedAt", "UpDatedAt") VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *',
-                [name, phone, email, relationship, user_id]
+                [name, phone, email, relationship, userId]
             );
             res.status(201).json(rows[0]);
         } catch (error) {
@@ -46,13 +46,13 @@ module.exports = (pool) => {
         try {
             const token = req.headers.authorization.split(' ')[1];
             const decoded = jwt.decode(token);
-            const user_id = decoded.nameid || decoded.sub;
+            const userId = decoded.nameid;
             const { id } = req.params;
             const { name, phone, email, relationship } = req.body;
 
             const { rows } = await pool.query(
                 'UPDATE "EmergencyContacts" SET "Name" = $1, "Phone" = $2, "Email" = $3, "Relationship" = $4, "UpDatedAt" = CURRENT_TIMESTAMP WHERE "Id" = $5 AND "UserId" = $6 RETURNING *',
-                [name, phone, email, relationship, id, user_id]
+                [name, phone, email, relationship, id, userId]
             );
 
             if (rows.length === 0) {
@@ -70,12 +70,12 @@ module.exports = (pool) => {
         try {
             const token = req.headers.authorization.split(' ')[1];
             const decoded = jwt.decode(token);
-            const user_id = decoded.nameid || decoded.sub;
+            const userId = decoded.nameid;
             const { id } = req.params;
 
             const { rowCount } = await pool.query(
                 'DELETE FROM "EmergencyContacts" WHERE "Id" = $1 AND "UserId" = $2',
-                [id, user_id]
+                [id, userId]
             );
 
             if (rowCount === 0) {

@@ -13,21 +13,14 @@ module.exports = (pool) => {
             }
 
             const token = authHeader.split(' ')[1];
-            
-            // Decode the token without verification first to get the payload
             const decoded = jwt.decode(token);
-            if (!decoded) {
-                return res.status(401).json({ error: 'Invalid token format' });
-            }
-
-            // Extract user ID from the token claims
-            // .NET tokens store the user ID in the 'nameid' claim
-            const userId = decoded.nameid || decoded.sub;
+            
+            // Get the correct ID claim from the token
+            const userId = decoded.nameid;
             if (!userId) {
                 return res.status(401).json({ error: 'Invalid token claims' });
             }
 
-            // Store userId in request object
             req.userId = userId;
             next();
         } catch (error) {
