@@ -8,13 +8,12 @@ module.exports = (pool) => {
     router.get('/', async (req, res) => {
         try {
             const token = req.headers.authorization.split(' ')[1];
-            // Decode the token without verification to get the email
             const decoded = jwt.decode(token);
-            const user_id = decoded.nameid || decoded.sub; // Get email from token
+            const userId = decoded.uid;
 
             const { rows } = await pool.query(
-                'SELECT * FROM emergency_contacts WHERE user_id = $1 ORDER BY created_at DESC',
-                [user_id]
+                'SELECT "Id", "Name", "Email", "Phone", "Relationship", "UserId", "CreatedAt", "UpDatedAt" FROM "EmergencyContacts" WHERE "UserId" = $1 ORDER BY "CreatedAt" DESC',
+                [userId]
             );
             res.json(rows);
         } catch (error) {
@@ -28,12 +27,17 @@ module.exports = (pool) => {
         try {
             const token = req.headers.authorization.split(' ')[1];
             const decoded = jwt.decode(token);
-            const user_id = decoded.nameid || decoded.sub;
+            console.log("Decoded token:", decoded);
+            
+            const userId = decoded.uid;
+            if (!userId) {
+                return res.status(401).json({ error: 'Invalid user ID in token' });
+            }
             const { name, phone, email, relationship } = req.body;
 
             const { rows } = await pool.query(
-                'INSERT INTO emergency_contacts (user_id, name, phone, email, relationship) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-                [user_id, name, phone, email, relationship]
+                'INSERT INTO "EmergencyContacts" ("Name", "Phone", "Email", "Relationship", "UserId", "CreatedAt", "UpDatedAt") VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *',
+                [name, phone, email, relationship, userId]
             );
             res.status(201).json(rows[0]);
         } catch (error) {
@@ -47,13 +51,13 @@ module.exports = (pool) => {
         try {
             const token = req.headers.authorization.split(' ')[1];
             const decoded = jwt.decode(token);
-            const user_id = decoded.nameid || decoded.sub;
+            const userId = decoded.uid;
             const { id } = req.params;
             const { name, phone, email, relationship } = req.body;
 
             const { rows } = await pool.query(
-                'UPDATE emergency_contacts SET name = $1, phone = $2, email = $3, relationship = $4, updated_at = CURRENT_TIMESTAMP WHERE id = $5 AND user_id = $6 RETURNING *',
-                [name, phone, email, relationship, id, user_id]
+                'UPDATE "EmergencyContacts" SET "Name" = $1, "Phone" = $2, "Email" = $3, "Relationship" = $4, "UpDatedAt" = CURRENT_TIMESTAMP WHERE "Id" = $5 AND "UserId" = $6 RETURNING *',
+                [name, phone, email, relationship, id, userId]
             );
 
             if (rows.length === 0) {
@@ -71,12 +75,12 @@ module.exports = (pool) => {
         try {
             const token = req.headers.authorization.split(' ')[1];
             const decoded = jwt.decode(token);
-            const user_id = decoded.nameid || decoded.sub;
+            const userId = decoded.uid;
             const { id } = req.params;
 
             const { rowCount } = await pool.query(
-                'DELETE FROM emergency_contacts WHERE id = $1 AND user_id = $2',
-                [id, user_id]
+                'DELETE FROM "EmergencyContacts" WHERE "Id" = $1 AND "UserId" = $2',
+                [id, userId]
             );
 
             if (rowCount === 0) {
