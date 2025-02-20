@@ -40,7 +40,7 @@ namespace Identity.Services
             _jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
             _jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
             _jwtDurationInMinutes = Environment.GetEnvironmentVariable("JWT_DURATIONINMINUTES");
-            _frontEndUrl = Environment.GetEnvironmentVariable("FRONTENDURL");
+            _frontEndUrl = Environment.GetEnvironmentVariable("FRONTEND_URL");
 
         }
 
