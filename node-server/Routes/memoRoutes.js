@@ -40,7 +40,7 @@ module.exports = (pool) => {
     router.get('/', verifyToken, async (req, res) => {
         try {
             const { rows } = await pool.query(
-                'SELECT Id, Text, Done, UserId, CreatedAt, UpdatedAt FROM Memo WHERE UserId = $1 ORDER BY CreatedAt DESC',
+                'SELECT "Id", "Text", "Done", "UserId", "CreatedAt", "UpdatedAt" FROM "Memos" WHERE "UserId" = $1 ORDER BY "CreatedAt" DESC',
                 [req.userId]
             );
             res.json(rows);
@@ -59,7 +59,7 @@ module.exports = (pool) => {
             }
 
             const { rows } = await pool.query(
-                'INSERT INTO Memo (Text, UserId, Done) VALUES ($1, $2, false) RETURNING *',
+                'INSERT INTO "Memos" ("Text", "UserId", "Done") VALUES ($1, $2, false) RETURNING *',
                 [memo, req.userId]
             );
             res.status(201).json(rows[0]);
@@ -76,7 +76,7 @@ module.exports = (pool) => {
             const { memo } = req.body;
 
             const { rows } = await pool.query(
-                'UPDATE Memo SET Text = $1, UpdatedAt = CURRENT_TIMESTAMP WHERE Id = $2 AND UserId = $3 RETURNING *',
+                'UPDATE "Memos" SET "Text" = $1, "UpdatedAt" = CURRENT_TIMESTAMP WHERE "Id" = $2 AND "UserId" = $3 RETURNING *',
                 [memo, id, req.userId]
             );
 
@@ -97,7 +97,7 @@ module.exports = (pool) => {
             const { done } = req.body;
 
             const { rows } = await pool.query(
-                'UPDATE Memo SET Done = $1, UpdatedAt = CURRENT_TIMESTAMP WHERE Id = $2 AND UserId = $3 RETURNING *',
+                'UPDATE "Memos" SET "Done" = $1, "UpdatedAt" = CURRENT_TIMESTAMP WHERE "Id" = $2 AND "UserId" = $3 RETURNING *',
                 [done, id, req.userId]
             );
 

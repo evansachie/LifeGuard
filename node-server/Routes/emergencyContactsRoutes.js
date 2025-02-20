@@ -12,7 +12,7 @@ module.exports = (pool) => {
             const user_id = decoded.nameid || decoded.sub;
 
             const { rows } = await pool.query(
-                'SELECT Id, Name, Email, Phone, Relationship, UserId, CreatedAt, UpdatedAt FROM EmergencyContact WHERE UserId = $1 ORDER BY CreatedAt DESC',
+                'SELECT "Id", "Name", "Email", "Phone", "Relationship", "UserId", "CreatedAt", "UpdatedAt" FROM "EmergencyContacts" WHERE "UserId" = $1 ORDER BY "CreatedAt" DESC',
                 [user_id]
             );
             res.json(rows);
@@ -31,7 +31,7 @@ module.exports = (pool) => {
             const { name, phone, email, relationship } = req.body;
 
             const { rows } = await pool.query(
-                'INSERT INTO EmergencyContact (Name, Phone, Email, Relationship, UserId) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+                'INSERT INTO "EmergencyContacts" ("Name", "Phone", "Email", "Relationship", "UserId") VALUES ($1, $2, $3, $4, $5) RETURNING *',
                 [name, phone, email, relationship, user_id]
             );
             res.status(201).json(rows[0]);
