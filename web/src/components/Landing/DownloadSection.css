@@ -1,9 +1,12 @@
 .download-section {
     padding: 6rem 5rem;
-    background: #1C2026;
-    color: white;
+    color: black;
     position: relative;
     overflow: hidden;
+}
+
+.dark-mode .download-section {
+    color: white;
 }
 
 .download-container {
@@ -42,26 +45,37 @@
     align-items: center;
     gap: 1rem;
     padding: 1rem 2rem;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 12px;
     text-decoration: none;
     color: white;
     transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .store-button:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
 .store-icon {
     font-size: 2.5rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    color: black;
+}
+
+.dark-mode .store-icon {
+    color: white;
 }
 
 .button-text {
     display: flex;
     flex-direction: column;
+    color: black;
 }
 
 .button-text span {
@@ -73,6 +87,38 @@
     font-size: 1.25rem;
     font-weight: 600;
 }
+
+.dark-mode .button-text span {
+    color: white;
+}
+
+.dark-mode .button-text strong {
+    color: white;
+}
+
+.dark-mode .store-button {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.dark-mode .store-button:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.dark-mode .store-icon {
+    filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.1));
+}
+
+.dark-mode .button-text span {
+    color: white;
+}
+
+.dark-mode .button-text strong {
+    color: white;
+}
+
+
 
 .preview-container {
     position: relative;
