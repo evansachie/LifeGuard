@@ -9,10 +9,14 @@ import Footer from '../../components/Landing/Footer';
 import ScrollToTop from '../../components/ScrollToTop/ScrollToTop';
 import './LandingPage.css';
 
-const LandingPage = ({ isDarkMode, toggleTheme }) => {
+const LandingPage = ({ isDarkMode, toggleTheme, isAuthenticated }) => {
     return (
         <div className={`landing-page ${isDarkMode ? 'dark-mode' : ''}`}>
-            <Navbar isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
+            <Navbar 
+                isDarkMode={isDarkMode} 
+                toggleTheme={toggleTheme}
+                isAuthenticated={isAuthenticated}
+            />
             <section id="hero">
                 <Hero />
             </section>
