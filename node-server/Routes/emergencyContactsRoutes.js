@@ -9,7 +9,7 @@ module.exports = (pool) => {
         try {
             const token = req.headers.authorization.split(' ')[1];
             const decoded = jwt.decode(token);
-            const userId = decoded.nameid;
+            const userId = decoded.uid;
 
             const { rows } = await pool.query(
                 'SELECT "Id", "Name", "Email", "Phone", "Relationship", "UserId", "CreatedAt", "UpDatedAt" FROM "EmergencyContacts" WHERE "UserId" = $1 ORDER BY "CreatedAt" DESC',
@@ -27,7 +27,12 @@ module.exports = (pool) => {
         try {
             const token = req.headers.authorization.split(' ')[1];
             const decoded = jwt.decode(token);
-            const userId = decoded.nameid;
+            console.log("Decoded token:", decoded);
+            
+            const userId = decoded.uid;
+            if (!userId) {
+                return res.status(401).json({ error: 'Invalid user ID in token' });
+            }
             const { name, phone, email, relationship } = req.body;
 
             const { rows } = await pool.query(
@@ -46,7 +51,7 @@ module.exports = (pool) => {
         try {
             const token = req.headers.authorization.split(' ')[1];
             const decoded = jwt.decode(token);
-            const userId = decoded.nameid;
+            const userId = decoded.uid;
             const { id } = req.params;
             const { name, phone, email, relationship } = req.body;
 
@@ -70,7 +75,7 @@ module.exports = (pool) => {
         try {
             const token = req.headers.authorization.split(' ')[1];
             const decoded = jwt.decode(token);
-            const userId = decoded.nameid;
+            const userId = decoded.uid;
             const { id } = req.params;
 
             const { rowCount } = await pool.query(

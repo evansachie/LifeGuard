@@ -16,7 +16,7 @@ module.exports = (pool) => {
             const decoded = jwt.decode(token);
             
             // Get the correct ID claim from the token
-            const userId = decoded.nameid;
+            const userId = decoded.uid;
             if (!userId) {
                 return res.status(401).json({ error: 'Invalid token claims' });
             }
