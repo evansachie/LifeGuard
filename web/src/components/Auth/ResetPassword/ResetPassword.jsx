@@ -15,6 +15,7 @@ export default function ResetPassword({ isDarkMode, toggleTheme }) {
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
+    const [passwordError, setPasswordError] = useState('');
 
     // Get email and token from URL parameters
     const email = searchParams.get('email');
@@ -35,24 +36,45 @@ export default function ResetPassword({ isDarkMode, toggleTheme }) {
         }));
     };
 
+    const validatePassword = (password) => {
+        const hasUpperCase = /[A-Z]/.test(password);
+        const hasNonAlphanumeric = /[^a-zA-Z0-9]/.test(password);
+        
+        if (!hasUpperCase) {
+            return 'Password must contain at least one uppercase letter';
+        }
+        if (!hasNonAlphanumeric) {
+            return 'Password must contain at least one special character';
+        }
+        return '';
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // Validate passwords match
         if (formData.newPassword !== formData.confirmPassword) {
             toast.error('Passwords do not match');
             return;
         }
 
+        // Validate password requirements
+        const passwordValidationError = validatePassword(formData.newPassword);
+        if (passwordValidationError) {
+            setPasswordError(passwordValidationError);
+            toast.error(passwordValidationError);
+            return;
+        }
+
         setIsLoading(true);
         try {
-            const decodedToken = decodeURIComponent(token);
+            const decodedToken = decodeURIComponent(token).replace(/ /g, '+');
             const payload = {
                 Email: email,
                 Token: decodedToken,
                 NewPassword: formData.newPassword,
                 ConfirmPassword: formData.confirmPassword
             };
-            
-            console.log('Reset password payload:', payload); // Debug log
             
             await fetchApi(API_ENDPOINTS.RESET_PASSWORD, {
                 method: 'POST',
@@ -62,11 +84,9 @@ export default function ResetPassword({ isDarkMode, toggleTheme }) {
             toast.success('Password reset successful');
             navigate('/log-in');
         } catch (error) {
-            // Log the full error
             console.error('Reset password error:', {
                 error,
                 email,
-                token: decodedToken,
                 response: error.response
             });
             toast.error(error.message || 'Failed to reset password. Please try again.');
@@ -109,6 +129,17 @@ export default function ResetPassword({ isDarkMode, toggleTheme }) {
                                 />
                                 <label htmlFor="newPassword">New Password</label>
                             </div>
+                            <div className="password-requirements">
+                                <p>Password must contain:</p>
+                                <ul>
+                                    <li>At least 6 characters</li>
+                                    <li>One uppercase letter (A-Z)</li>
+                                    <li>One special character (!@#$%^&* etc.)</li>
+                                </ul>
+                            </div>
+                            {passwordError && (
+                                <div className="error-message">{passwordError}</div>
+                            )}
                         </div>
 
                         <div className="form-group">
