@@ -31,7 +31,7 @@ module.exports = (pool) => {
             const { name, phone, email, relationship } = req.body;
 
             const { rows } = await pool.query(
-                'INSERT INTO "EmergencyContacts" ("Name", "Phone", "Email", "Relationship", "UserId") VALUES ($1, $2, $3, $4, $5) RETURNING *',
+                'INSERT INTO "EmergencyContacts" ("Name", "Phone", "Email", "Relationship", "UserId", "CreatedAt", "UpDatedAt") VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *',
                 [name, phone, email, relationship, user_id]
             );
             res.status(201).json(rows[0]);

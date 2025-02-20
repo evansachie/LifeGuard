@@ -59,7 +59,7 @@ module.exports = (pool) => {
             }
 
             const { rows } = await pool.query(
-                'INSERT INTO "Memos" ("Text", "UserId", "Done") VALUES ($1, $2, false) RETURNING *',
+                'INSERT INTO "Memos" ("Text", "UserId", "Done", "CreatedAt", "UpDatedAt") VALUES ($1, $2, false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *',
                 [memo, req.userId]
             );
             res.status(201).json(rows[0]);
