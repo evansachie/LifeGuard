@@ -1,0 +1,160 @@
+.benefits-section {
+    padding: 6rem 5rem;
+    background-color: #f8f9fa;
+    position: relative;
+    overflow: hidden;
+}
+
+.dark-mode .benefits-section {
+    background-color: #1a1a1a;
+}
+
+.benefits-container {
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 5rem;
+}
+
+.section-header h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: #1a1a1a;
+}
+
+.dark-mode .section-header h2 {
+    color: #ffffff;
+}
+
+.section-header p {
+    font-size: 1.25rem;
+    color: #666;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.dark-mode .section-header p {
+    color: #A0AEC0;
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem;
+}
+
+.benefit-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(64,124,226,0.1);
+}
+
+.dark-mode .benefit-card {
+    background: #2d2d2d;
+    border-color: rgba(64,124,226,0.2);
+}
+
+.benefit-card:hover {
+    box-shadow: 0 20px 40px rgba(64,124,226,0.1);
+}
+
+.benefit-image-container {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(64,124,226,0.1) 0%, rgba(64,124,226,0) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.benefit-image-container img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+    position: relative;
+    z-index: 2;
+}
+
+.image-backdrop {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 150px;
+    height: 150px;
+    background: rgba(64,124,226,0.1);
+    border-radius: 50%;
+    filter: blur(40px);
+}
+
+.benefit-content {
+    padding: 2rem;
+    text-align: center;
+}
+
+.benefit-content h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.dark-mode .benefit-content h3 {
+    color: #e2e8f0;
+}
+
+.benefit-content p {
+    color: #666;
+    line-height: 1.6;
+}
+
+.dark-mode .benefit-content p {
+    color: #A0AEC0;
+}
+
+@media (max-width: 1200px) {
+    .benefits-section {
+        padding: 5rem 3rem;
+    }
+}
+
+@media (max-width: 968px) {
+    .benefits-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .benefits-section {
+        padding: 4rem 1.5rem;
+    }
+
+    .section-header h2 {
+        font-size: 2rem;
+    }
+
+    .section-header p {
+        font-size: 1.125rem;
+    }
+
+    .benefits-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .benefit-image-container {
+        height: 180px;
+    }
+
+    .benefit-content {
+        padding: 1.5rem;
+    }
+}
