@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { FaMoon, FaSun, FaBars, FaTimes } from 'react-icons/fa';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { FaMoon, FaSun, FaBars, FaTimes, FaUser, FaSignOutAlt, FaCog, FaChartLine } from 'react-icons/fa';
 import './Navbar.css';
 
-const Navbar = ({ isDarkMode, toggleTheme }) => {
+const Navbar = ({ isDarkMode, toggleTheme, isAuthenticated }) => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -16,12 +19,77 @@ const Navbar = ({ isDarkMode, toggleTheme }) => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
     const scrollToSection = (sectionId) => {
         const element = document.getElementById(sectionId);
         if (element) {
             element.scrollIntoView({ behavior: 'smooth' });
             setIsMobileMenuOpen(false);
         }
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        navigate('/');
+    };
+
+    const AuthButtons = () => (
+        <>
+            <Link to="/log-in" className="nav-button login" onClick={() => setIsMobileMenuOpen(false)}>
+                Log In
+            </Link>
+            <Link to="/sign-up" className="nav-button signup" onClick={() => setIsMobileMenuOpen(false)}>
+                Get Started
+            </Link>
+        </>
+    );
+
+    const ProfileDropdown = () => {
+        const userName = localStorage.getItem('userName') || 'User';
+        
+        return (
+            <div className="profile-dropdown-container" ref={dropdownRef}>
+                <button 
+                    className="profile-button"
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    aria-label="Toggle profile menu"
+                >
+                    <img 
+                        src={`https://ui-avatars.com/api/?name=${userName}&background=random`}
+                        alt="Profile"
+                        className="w-10 h-10 rounded-full"
+                    />
+                </button>
+
+                {isDropdownOpen && (
+                    <div className="profile-dropdown">
+                        <Link to="/dashboard" className="dropdown-item">
+                            <FaChartLine /> Dashboard
+                        </Link>
+                        <Link to="/profile" className="dropdown-item">
+                            <FaUser /> Profile
+                        </Link>
+                        <Link to="/settings" className="dropdown-item">
+                            <FaCog /> Settings
+                        </Link>
+                        <button onClick={handleLogout} className="dropdown-item logout">
+                            <FaSignOutAlt /> Logout
+                        </button>
+                    </div>
+                )}
+            </div>
+        );
     };
 
     return (
@@ -45,20 +113,7 @@ const Navbar = ({ isDarkMode, toggleTheme }) => {
                         <button onClick={() => scrollToSection('how-it-works')}>How It Works</button>
                         <button onClick={() => scrollToSection('benefits')}>Benefits</button>
                         <button onClick={() => scrollToSection('download')}>Download</button>
-                        <Link 
-                            to="/log-in" 
-                            className="nav-button login"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                            Log In
-                        </Link>
-                        <Link 
-                            to="/sign-up" 
-                            className="nav-button signup"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                            Get Started
-                        </Link>
+                        {isAuthenticated ? <ProfileDropdown /> : <AuthButtons />}
                     </div>
 
                     <button className="theme-toggle" onClick={toggleTheme}>
