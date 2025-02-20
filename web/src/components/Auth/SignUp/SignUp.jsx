@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaUser, FaEnvelope, FaLock, FaMoon, FaSun, FaPhone } from "react-icons/fa";
+import { FaUser, FaEnvelope, FaLock, FaMoon, FaSun } from "react-icons/fa";
 import signupIllustration from '../../../assets/auth/signupIllustration.svg';
 import signupIllustration2 from '../../../assets/auth/signupIllustration2.svg';
 import signupIllustration3 from '../../../assets/auth/signupIllustration3.svg';

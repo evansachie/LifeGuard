@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { FaEnvelope, FaMoon, FaSun } from 'react-icons/fa';
 import Button from '../../button/button';
 import forgotPasswordIllustration from '../../../assets/auth/forgot-password.svg';
@@ -10,7 +10,6 @@ import './ForgotPassword.css';
 export default function ForgotPassword({ isDarkMode, toggleTheme }) {
     const [email, setEmail] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
