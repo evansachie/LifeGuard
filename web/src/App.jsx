@@ -33,7 +33,6 @@ import Settings from "./pages/Settings/Settings";
 import Help from './pages/Help/Help';
 import TermsOfUse from './pages/TermsOfUse/TermsOfUse';
 import PrivacyPolicy from './pages/PrivacyPolicy/PrivacyPolicy';
-import Analytics from './pages/Analytics/Analytics';
 
 import NotFound from './pages/NotFound/NotFound';
 
@@ -132,7 +131,6 @@ function App() {
                             <Route path="/help" element={<Help isDarkMode={isDarkMode} />} />
                             <Route path="/terms-of-use" element={<TermsOfUse isDarkMode={isDarkMode} />} />
                             <Route path="/privacy-policy" element={<PrivacyPolicy isDarkMode={isDarkMode} />} />
-                            <Route path="/analytics" element={<Analytics isDarkMode={isDarkMode} />} />
                         </Route>
 
                         <Route path="*" element={<NotFound isDarkMode={isDarkMode} />} />
