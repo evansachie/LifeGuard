@@ -13,8 +13,10 @@ import QuickAccess from '../../components/QuickAccess/QuickAccess';
 import Spinner from '../../components/Spinner/Spinner';
 import { Steps } from 'intro.js-react';
 import { dashboardSteps } from '../../utils/tourSteps';
+import { useBLE } from '../../contexts/BLEContext';
 
 function Dashboard({ isDarkMode }) {
+    const { bleDevice, isConnecting, sensorData, connectToDevice, disconnectDevice } = useBLE();
     const [quote, setQuote] = useState(null);
     const [userData, setUserData] = useState(null);
     const [savedMemos, setSavedMemos] = useState([]);
@@ -23,9 +25,6 @@ function Dashboard({ isDarkMode }) {
     const [dataLoading, setDataLoading] = useState(true);
     const [showDashboardTour, setShowDashboardTour] = useState(false);
     const dashboardRef = useRef(null);
-    const [bleDevice, setBleDevice] = useState(null);
-    const [isConnecting, setIsConnecting] = useState(false);
-    const [sensorData, setSensorData] = useState(null);
 
     const [pollutionData, setPollutionData] = useState({
         temperature: 28.5,
@@ -52,16 +51,6 @@ function Dashboard({ isDarkMode }) {
             time: '5 hours ago'
         }
     ]);
-
-    // BLE UUIDs from the Arduino code
-    const BLE_UUID = {
-        SERVICE: import.meta.env.VITE_SERVICE,
-        TEMPERATURE: import.meta.env.VITE_TEMPERATURE,
-        HUMIDITY: import.meta.env.VITE_HUMIDITY,
-        PRESSURE: import.meta.env.VITE_PRESSURE,
-        CO2: import.meta.env.VITE_CO2,
-        GAS: import.meta.env.VITE_GAS
-    };
 
     // Fetch data function
     const fetchData = async () => {
@@ -137,19 +126,23 @@ function Dashboard({ isDarkMode }) {
         localStorage.removeItem('showTour');
     };
 
-    const updateMockData = () => {
-        // Simulate real-time data changes
-        setPollutionData(prev => ({
-            ...prev,
-            temperature: prev.temperature + (Math.random() - 0.5),
-            humidity: Math.max(0, Math.min(100, prev.humidity + (Math.random() - 0.5) * 5)),
-            pressure: prev.pressure + (Math.random() - 0.5) * 2,
-            steps: Math.max(0, prev.steps + (Math.random() - 0.5)),
-            aqi: Math.max(0, Math.min(500, prev.aqi + (Math.random() - 0.5) * 10)),
-            pm25: Math.max(0, prev.pm25 + (Math.random() - 0.5) * 2),
-            pm10: Math.max(0, prev.pm10 + (Math.random() - 0.5) * 3),
-            no2: Math.max(0, prev.no2 + (Math.random() - 0.5) * 2)
-        }));
+    // Update pollutionData when sensorData changes
+    useEffect(() => {
+        if (sensorData) {
+            setPollutionData(prev => ({
+                ...prev,
+                temperature: sensorData.temperature || prev.temperature,
+                humidity: sensorData.humidity || prev.humidity,
+                pressure: sensorData.pressure || prev.pressure,
+                co2: sensorData.co2 || prev.co2,
+                gas: sensorData.gas || prev.gas
+            }));
+        }
+    }, [sensorData]);
+
+    // Safe value formatter
+    const formatValue = (value, decimals = 1) => {
+        return typeof value === 'number' ? value.toFixed(decimals) : '0.0';
     };
 
     const getAQIColor = (aqi) => {
@@ -173,97 +166,6 @@ function Dashboard({ isDarkMode }) {
                fullName.split(' ')[0].slice(1).toLowerCase();
     };
 
-    const connectToDevice = async () => {
-        try {
-            setIsConnecting(true);
-            
-            // Request device with specified service
-            const device = await navigator.bluetooth.requestDevice({
-                filters: [{ namePrefix: 'NiclaSenseME-' }],
-                optionalServices: [BLE_UUID.SERVICE]
-            });
-
-            // Connect to device
-            const server = await device.gatt.connect();
-            const service = await server.getPrimaryService(BLE_UUID.SERVICE);
-
-            // Get characteristics
-            const characteristics = await Promise.all([
-                service.getCharacteristic(BLE_UUID.TEMPERATURE),
-                service.getCharacteristic(BLE_UUID.HUMIDITY),
-                service.getCharacteristic(BLE_UUID.PRESSURE),
-                service.getCharacteristic(BLE_UUID.CO2),
-                service.getCharacteristic(BLE_UUID.GAS)
-            ]);
-
-            setBleDevice(device);
-            startDataReading(characteristics);
-            toast.success('Connected to Nicla Sense ME');
-
-        } catch (error) {
-            console.error('Bluetooth Error:', error);
-            toast.error('Failed to connect to device');
-        } finally {
-            setIsConnecting(false);
-        }
-    };
-
-    const startDataReading = async (characteristics) => {
-        const [tempChar, humChar, pressChar, co2Char, gasChar] = characteristics;
-
-        // Read initial values
-        const readData = async () => {
-            try {
-                const temp = await tempChar.readValue();
-                const hum = await humChar.readValue();
-                const press = await pressChar.readValue();
-                const co2 = await co2Char.readValue();
-                const gas = await gasChar.readValue();
-
-                setSensorData({
-                    temperature: temp.getFloat32(0, true),
-                    humidity: hum.getUint8(0),
-                    pressure: press.getFloat32(0, true),
-                    co2: co2.getInt32(0, true),
-                    gas: gas.getUint32(0, true)
-                });
-
-                // Update pollution data with real values
-                setPollutionData(prev => ({
-                    ...prev,
-                    temperature: temp.getFloat32(0, true),
-                    humidity: hum.getUint8(0),
-                    pressure: press.getFloat32(0, true),
-                    co2: co2.getInt32(0, true)
-                }));
-
-            } catch (error) {
-                console.error('Error reading sensor data:', error);
-            }
-        };
-
-        // Read values every second
-        const interval = setInterval(readData, 1000);
-        return () => clearInterval(interval);
-    };
-
-    // Add disconnect handler
-    const disconnectDevice = async () => {
-        if (bleDevice) {
-            await bleDevice.gatt.disconnect();
-            setBleDevice(null);
-            setSensorData(null);
-            toast.info('Device disconnected');
-        }
-    };
-
-    // Add cleanup on unmount
-    useEffect(() => {
-        return () => {
-            disconnectDevice();
-        };
-    }, []);
-
     return (
         <div ref={dashboardRef} className={`dashboard ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
             <header className="dashboard-header">
@@ -274,22 +176,30 @@ function Dashboard({ isDarkMode }) {
             <div className="dashboard-grid">
                 <div className="dashboard-card temperature-card">
                     <h2><FaTemperatureHigh />Atmospheric Temperature</h2>
-                    <div className="card-value">{pollutionData.temperature.toFixed(1)}°C</div>
+                    <div className="card-value">
+                        {formatValue(pollutionData.temperature)}°C
+                    </div>
                 </div>
 
                 <div className="dashboard-card humidity-card">
                     <h2><WiHumidity /> Humidity</h2>
-                    <div className="card-value">{Math.round(pollutionData.humidity)}%</div>
+                    <div className="card-value">
+                        {formatValue(pollutionData.humidity, 0)}%
+                    </div>
                 </div>
 
                 <div className="dashboard-card pressure-card">
                     <h2><WiBarometer /> Atmospheric Pressure</h2>
-                    <div className="card-value">{Math.round(pollutionData.pressure)} hPa</div>
+                    <div className="card-value">
+                        {formatValue(pollutionData.pressure, 0)} hPa
+                    </div>
                 </div>
 
                 <div className="dashboard-card wind-card">
                     <h2><IoFootstepsOutline /> Activities</h2>
-                    <div className="card-value">{pollutionData.steps.toFixed(1)} K steps</div>
+                    <div className="card-value">
+                        {formatValue(pollutionData.steps)} K steps
+                    </div>
                 </div>
 
                 <div className="dashboard-card quote-card">
@@ -336,14 +246,16 @@ function Dashboard({ isDarkMode }) {
                         <Spinner size="medium" color={isDarkMode ? '#4285F4' : '#4285F4'} />
                     ) : (
                         <div className="card-value" style={{ color: getAQIColor(pollutionData.aqi) }}>
-                            {Math.round(pollutionData.aqi)} ppm
+                            {formatValue(pollutionData.aqi, 0)} ppm
                         </div>
                     )}
                 </div>
 
                 <div className="dashboard-card pressure-card">
                     <h2><MdCo2 /> Carbon Dioxide (CO2)</h2>
-                    <div className="card-value">{Math.round(pollutionData.pressure)} ppm</div>
+                    <div className="card-value">
+                        {formatValue(pollutionData.co2, 0)} ppm
+                    </div>
                 </div>
 
                 <div className="dashboard-card pollutants-card">
@@ -351,15 +263,15 @@ function Dashboard({ isDarkMode }) {
                     <div className="pollutants-grid">
                         <div className="pollutant">
                             <span>PM2.5</span>
-                            <span>{pollutionData.pm25.toFixed(1)} µg/m³</span>
+                            <span>{formatValue(pollutionData.pm25)} µg/m³</span>
                         </div>
                         <div className="pollutant">
                             <span>PM10</span>
-                            <span>{pollutionData.pm10.toFixed(1)} µg/m³</span>
+                            <span>{formatValue(pollutionData.pm10)} µg/m³</span>
                         </div>
                         <div className="pollutant">
                             <span>NO₂</span>
-                            <span>{pollutionData.no2.toFixed(1)} ppb</span>
+                            <span>{formatValue(pollutionData.no2)} ppb</span>
                         </div>
                     </div>
                 </div>
