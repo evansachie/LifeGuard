@@ -26,7 +26,7 @@ import PollutionTracker from './pages/PollutionTracker/PollutionTracker';
 import HealthTips from "./pages/HealthTips/HealthTips";
 import EmergencyContacts from "./pages/EmergencyContacts/EmergencyContacts";
 
-import Calories from "./pages/Calories/Calories";
+import HealthMetrics from "./pages/Calories/HealthMetrics";
 import ExerciseRoutines from "./pages/ExerciseRoutines/ExerciseRoutines";
 import WellnessHub from "./pages/WellnessHub/WellnessHub";
 
@@ -125,7 +125,7 @@ function App() {
                                 <Route path="/dashboard" element={<Dashboard isDarkMode={isDarkMode} />} />
                                 <Route path="/sticky-notes" element={<PrivateMemos isDarkMode={isDarkMode} />} />
                                 <Route path="/health-report" element={<HealthReport isDarkMode={isDarkMode} />} />
-                                <Route path="/bmr-calculator" element={<Calories isDarkMode={isDarkMode} />} />
+                                <Route path="/health-metrics" element={<HealthMetrics isDarkMode={isDarkMode} />} />
                                 <Route path="/pollution-tracker" element={<PollutionTracker isDarkMode={isDarkMode} />} />
                                 <Route path="/health-tips" element={<HealthTips isDarkMode={isDarkMode} />} />
                                 <Route path="/exercise-routines" element={<ExerciseRoutines isDarkMode={isDarkMode} />} />
