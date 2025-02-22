@@ -11,12 +11,11 @@ import {
     Tooltip,
     Legend
 } from 'chart.js';
-import { TABS, DATE_RANGES } from './constants';
+import { TABS } from './constants';
 import EnvironmentCharts from '../../components/Analytics/EnvironmentCharts';
 import AirQualityCharts from '../../components/Analytics/AirQualityCharts';
 import ReportHeader from '../../components/Analytics/ReportHeader';
 import SummaryCards from '../../components/Analytics/SummaryCards';
-import { getStats } from '../../utils/airQualityUtils';
 import { exportToCSV } from '../../utils/exportUtils';
 
 ChartJS.register(

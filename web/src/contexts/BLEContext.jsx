@@ -24,7 +24,6 @@ export function BLEProvider({ children }) {
         try {
             setIsConnecting(true);
             
-            // Log UUIDs for debugging
             console.log('BLE UUIDs:', BLE_UUID);
 
             const device = await navigator.bluetooth.requestDevice({
@@ -35,7 +34,6 @@ export function BLEProvider({ children }) {
             const server = await device.gatt.connect();
             const service = await server.getPrimaryService(BLE_UUID.SERVICE);
 
-            // Validate UUIDs before getting characteristics
             const characteristicUUIDs = [
                 BLE_UUID.TEMPERATURE,
                 BLE_UUID.HUMIDITY,
@@ -47,7 +45,6 @@ export function BLEProvider({ children }) {
                 BLE_UUID.QUATERNION
             ];
 
-            // Check for undefined UUIDs
             const validUUIDs = characteristicUUIDs.filter(uuid => uuid !== undefined);
             if (validUUIDs.length !== characteristicUUIDs.length) {
                 console.error('Some UUIDs are undefined:', 
@@ -58,7 +55,6 @@ export function BLEProvider({ children }) {
                 throw new Error('Invalid UUIDs configuration');
             }
 
-            // Get characteristics
             const characteristics = await Promise.all(
                 validUUIDs.map(uuid => service.getCharacteristic(uuid))
             );
@@ -69,7 +65,7 @@ export function BLEProvider({ children }) {
 
         } catch (error) {
             console.error('Bluetooth Error:', error);
-            toast.error(error.message || 'Failed to connect to device');
+            toast.error('Failed to connect to device');
         } finally {
             setIsConnecting(false);
         }
@@ -78,12 +74,10 @@ export function BLEProvider({ children }) {
     const startDataReading = useCallback(async (characteristics) => {
         const [tempChar, humChar, pressChar, co2Char, gasChar, accChar, gyroChar, quatChar] = characteristics;
 
-        // Enable notifications for motion sensors
         await accChar.startNotifications();
         await gyroChar.startNotifications();
         await quatChar.startNotifications();
 
-        // Add event listeners for notifications
         accChar.addEventListener('characteristicvaluechanged', (event) => {
             const value = event.target.value;
             setSensorData(prev => ({
@@ -121,7 +115,6 @@ export function BLEProvider({ children }) {
             }));
         });
 
-        // Poll other sensors less frequently
         const pollEnvironmentalData = async () => {
             try {
                 const [temp, hum, press, co2, gas] = await Promise.all([
@@ -146,7 +139,7 @@ export function BLEProvider({ children }) {
         };
 
         const envInterval = setInterval(pollEnvironmentalData, 1000);
-        pollEnvironmentalData(); // Initial read
+        pollEnvironmentalData();
 
         return () => {
             clearInterval(envInterval);

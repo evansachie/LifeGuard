@@ -1,6 +1,6 @@
 .charts-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
     margin-top: 2rem;
 }
@@ -12,4 +12,13 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     height: 300px;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.chart-container h3 {
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    color: #333;
 }

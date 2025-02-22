@@ -51,6 +51,22 @@ const EnvironmentCharts = ({ historicalData, chartOptions }) => (
                 options={chartOptions}
             />
         </div>
+
+        <div className="chart-container">
+            <h3>Gas Composition Trend</h3>
+            <Line 
+                data={{
+                    labels: historicalData.timestamps,
+                    datasets: [{
+                        label: 'Gas (ppb)',
+                        data: historicalData.gas,
+                        borderColor: '#D65DB1',
+                        tension: 0.4
+                    }]
+                }}
+                options={chartOptions}
+            />
+        </div>
     </div>
 );
 

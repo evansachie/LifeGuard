@@ -1,0 +1,219 @@
+.health-metrics-container {
+    min-height: 100vh;
+    padding: 2rem;
+    background-color: #f8f9fa;
+    transition: background-color 0.3s ease;
+}
+
+.health-metrics-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.unit-toggle {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.unit-toggle button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #407CE2;
+    background: transparent;
+    color: #407CE2;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.unit-toggle button.active {
+    background: #407CE2;
+    color: white;
+}
+
+.input-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-group label {
+    font-weight: 500;
+    color: #333;
+}
+
+.input-group input,
+.input-group select {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.calculate-btn {
+    width: 100%;
+    padding: 1rem;
+    background: #407CE2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 2rem;
+}
+
+.calculate-btn:hover {
+    background: #2B5BBF;
+    transform: translateY(-2px);
+}
+
+.results-section {
+    animation: fadeIn 0.5s ease;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.metric-card {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.metric-icon {
+    font-size: 2rem;
+    color: #407CE2;
+    margin-bottom: 1rem;
+}
+
+.metric-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333;
+    margin: 0.5rem 0;
+}
+
+.metric-description {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.macros-section {
+    margin-bottom: 2rem;
+}
+
+.macros-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.macro-card {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.macro-card h4 {
+    color: #407CE2;
+    margin-bottom: 0.5rem;
+}
+
+.macro-card p {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.recommendations-section {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 12px;
+}
+
+.recommendations-section ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 1rem 0 0;
+}
+
+.recommendations-section li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.recommendations-section li:last-child {
+    border-bottom: none;
+}
+
+/* Dark mode styles */
+.dark-mode {
+    background-color: #1a1a1a;
+}
+
+.dark-mode .health-metrics-content {
+    background: #2d2d2d;
+}
+
+.dark-mode .input-group label,
+.dark-mode .metric-value,
+.dark-mode h3,
+.dark-mode h4 {
+    color: #fff;
+}
+
+.dark-mode .input-group input,
+.dark-mode .input-group select,
+.dark-mode .metric-card,
+.dark-mode .macro-card,
+.dark-mode .recommendations-section {
+    background: #333;
+    color: #fff;
+    border-color: #444;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+    .health-metrics-container {
+        padding: 1rem;
+    }
+
+    .header-section {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .macros-grid {
+        grid-template-columns: 1fr;
+    }
+} 
