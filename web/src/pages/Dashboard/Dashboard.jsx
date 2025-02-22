@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { FaTemperatureHigh, FaExclamationTriangle, FaChartLine, FaStickyNote } from 'react-icons/fa';
+import { FaTemperatureHigh, FaExclamationTriangle, FaChartLine, FaStickyNote, FaBluetooth, FaBluetoothB } from 'react-icons/fa';
 import { IoFootstepsOutline } from "react-icons/io5";
 import { MdCo2 } from "react-icons/md";
 import { WiBarometer, WiHumidity, WiDust } from "react-icons/wi";
@@ -13,8 +13,10 @@ import QuickAccess from '../../components/QuickAccess/QuickAccess';
 import Spinner from '../../components/Spinner/Spinner';
 import { Steps } from 'intro.js-react';
 import { dashboardSteps } from '../../utils/tourSteps';
+import { useBLE } from '../../contexts/BLEContext';
 
 function Dashboard({ isDarkMode }) {
+    const { bleDevice, isConnecting, sensorData, connectToDevice, disconnectDevice } = useBLE();
     const [quote, setQuote] = useState(null);
     const [userData, setUserData] = useState(null);
     const [savedMemos, setSavedMemos] = useState([]);
@@ -124,19 +126,23 @@ function Dashboard({ isDarkMode }) {
         localStorage.removeItem('showTour');
     };
 
-    const updateMockData = () => {
-        // Simulate real-time data changes
-        setPollutionData(prev => ({
-            ...prev,
-            temperature: prev.temperature + (Math.random() - 0.5),
-            humidity: Math.max(0, Math.min(100, prev.humidity + (Math.random() - 0.5) * 5)),
-            pressure: prev.pressure + (Math.random() - 0.5) * 2,
-            steps: Math.max(0, prev.steps + (Math.random() - 0.5)),
-            aqi: Math.max(0, Math.min(500, prev.aqi + (Math.random() - 0.5) * 10)),
-            pm25: Math.max(0, prev.pm25 + (Math.random() - 0.5) * 2),
-            pm10: Math.max(0, prev.pm10 + (Math.random() - 0.5) * 3),
-            no2: Math.max(0, prev.no2 + (Math.random() - 0.5) * 2)
-        }));
+    // Update pollutionData when sensorData changes
+    useEffect(() => {
+        if (sensorData) {
+            setPollutionData(prev => ({
+                ...prev,
+                temperature: sensorData.temperature || prev.temperature,
+                humidity: sensorData.humidity || prev.humidity,
+                pressure: sensorData.pressure || prev.pressure,
+                co2: sensorData.co2 || prev.co2,
+                gas: sensorData.gas || prev.gas
+            }));
+        }
+    }, [sensorData]);
+
+    // Safe value formatter
+    const formatValue = (value, decimals = 1) => {
+        return typeof value === 'number' ? value.toFixed(decimals) : '0.0';
     };
 
     const getAQIColor = (aqi) => {
@@ -170,22 +176,30 @@ function Dashboard({ isDarkMode }) {
             <div className="dashboard-grid">
                 <div className="dashboard-card temperature-card">
                     <h2><FaTemperatureHigh />Atmospheric Temperature</h2>
-                    <div className="card-value">{pollutionData.temperature.toFixed(1)}°C</div>
+                    <div className="card-value">
+                        {formatValue(pollutionData.temperature)}°C
+                    </div>
                 </div>
 
                 <div className="dashboard-card humidity-card">
                     <h2><WiHumidity /> Humidity</h2>
-                    <div className="card-value">{Math.round(pollutionData.humidity)}%</div>
+                    <div className="card-value">
+                        {formatValue(pollutionData.humidity, 0)}%
+                    </div>
                 </div>
 
                 <div className="dashboard-card pressure-card">
                     <h2><WiBarometer /> Atmospheric Pressure</h2>
-                    <div className="card-value">{Math.round(pollutionData.pressure)} hPa</div>
+                    <div className="card-value">
+                        {formatValue(pollutionData.pressure, 0)} hPa
+                    </div>
                 </div>
 
                 <div className="dashboard-card wind-card">
                     <h2><IoFootstepsOutline /> Activities</h2>
-                    <div className="card-value">{pollutionData.steps.toFixed(1)} K steps</div>
+                    <div className="card-value">
+                        {formatValue(pollutionData.steps)} K steps
+                    </div>
                 </div>
 
                 <div className="dashboard-card quote-card">
@@ -232,14 +246,16 @@ function Dashboard({ isDarkMode }) {
                         <Spinner size="medium" color={isDarkMode ? '#4285F4' : '#4285F4'} />
                     ) : (
                         <div className="card-value" style={{ color: getAQIColor(pollutionData.aqi) }}>
-                            {Math.round(pollutionData.aqi)} ppm
+                            {formatValue(pollutionData.aqi, 0)} ppm
                         </div>
                     )}
                 </div>
 
                 <div className="dashboard-card pressure-card">
                     <h2><MdCo2 /> Carbon Dioxide (CO2)</h2>
-                    <div className="card-value">{Math.round(pollutionData.pressure)} ppm</div>
+                    <div className="card-value">
+                        {formatValue(pollutionData.co2, 0)} ppm
+                    </div>
                 </div>
 
                 <div className="dashboard-card pollutants-card">
@@ -247,15 +263,15 @@ function Dashboard({ isDarkMode }) {
                     <div className="pollutants-grid">
                         <div className="pollutant">
                             <span>PM2.5</span>
-                            <span>{pollutionData.pm25.toFixed(1)} µg/m³</span>
+                            <span>{formatValue(pollutionData.pm25)} µg/m³</span>
                         </div>
                         <div className="pollutant">
                             <span>PM10</span>
-                            <span>{pollutionData.pm10.toFixed(1)} µg/m³</span>
+                            <span>{formatValue(pollutionData.pm10)} µg/m³</span>
                         </div>
                         <div className="pollutant">
                             <span>NO₂</span>
-                            <span>{pollutionData.no2.toFixed(1)} ppb</span>
+                            <span>{formatValue(pollutionData.no2)} ppb</span>
                         </div>
                     </div>
                 </div>
@@ -300,6 +316,31 @@ function Dashboard({ isDarkMode }) {
                     showStepNumbers: false
                 }}
             />
+
+            <div className="ble-connect-button">
+                {isConnecting ? (
+                    <button className="connect-btn loading" disabled>
+                        <Spinner size="small" color="#fff" />
+                        Connecting...
+                    </button>
+                ) : bleDevice ? (
+                    <button 
+                        className="connect-btn connected" 
+                        onClick={disconnectDevice}
+                    >
+                        <FaBluetoothB />
+                        Disconnect
+                    </button>
+                ) : (
+                    <button 
+                        className="connect-btn" 
+                        onClick={connectToDevice}
+                    >
+                        <FaBluetooth />
+                        Connect Device
+                    </button>
+                )}
+            </div>
         </div>
     );
 }

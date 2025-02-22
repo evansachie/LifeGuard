@@ -1,106 +1,389 @@
-.coming-soon-container {
+.analytics-container {
+    padding: 2rem;
     min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    background: #f5f7fa;
+    transition: all 0.3s ease;
 }
 
-.coming-soon-container.light-mode {
-    background-color: #ffffff;
-    color: #333333;
+.analytics-container.dark-mode {
+    background: #1a1a1a;
+    color: #fff;
 }
 
-.coming-soon-container.dark-mode {
-    background-color: #333333;
-    color: #ffffff;
+.analytics-header {
+    margin-bottom: 2rem;
 }
 
-.coming-soon-content {
-    text-align: center;
-    max-width: 600px;
-    padding: 20px;
+h1, h2, h3, h4, h5, p {
+    color: #333;
 }
 
-.coming-soon-content h1 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
+.dark-mode h1, .dark-mode h2, .dark-mode h3, .dark-mode h4, .dark-mode h5, .dark-mode p {
+    color: #fff;
 }
 
-.coming-soon-content p {
-    font-size: 1.2rem;
-    margin-bottom: 40px;
-}
 
-.countdown {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 40px;
-}
-
-.countdown-item {
-    margin: 0 20px;
-}
-
-.countdown-value {
+.analytics-header h1 {
     font-size: 2rem;
-    font-weight: bold;
-    display: block;
+    margin-bottom: 1.5rem;
+    color: #333;
 }
 
-.countdown-label {
-    font-size: 1rem;
-    text-transform: uppercase;
+.dark-mode .analytics-header h1 {
+    color: #fff;
 }
 
-.back-link {
-    display: inline-flex;
+.tabs {
+    display: flex;
+    gap: 1rem;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 0.5rem;
+}
+
+.dark-mode .tabs {
+    border-bottom-color: #2d3748;
+}
+
+.tab {
+    display: flex;
     align-items: center;
-    text-decoration: none;
-    color: inherit;
-    transition: color 0.3s ease;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    background: none;
+    color: #64748b;
+    cursor: pointer;
+    font-size: 1rem;
+    border-radius: 8px 8px 0 0;
+    transition: all 0.3s ease;
 }
 
-.back-link:hover {
-    color: #007bff;
+.tab:hover {
+    color: #407CE2;
+    background: rgba(64, 124, 226, 0.1);
 }
 
-.back-link i {
-    margin-right: 5px;
+.tab.active {
+    color: #407CE2;
+    border-bottom: 2px solid #407CE2;
+    margin-bottom: -2px;
 }
 
-/* Animations */
-@keyframes pulse {
-    0% {
-        transform: scale(1);
+.dark-mode .tab {
+    color: #a0aec0;
+}
+
+.dark-mode .tab:hover {
+    color: #60a5fa;
+    background: rgba(96, 165, 250, 0.1);
+}
+
+.dark-mode .tab.active {
+    color: #60a5fa;
+    border-bottom-color: #60a5fa;
+}
+
+.analytics-content {
+    margin-top: 2rem;
+}
+
+.motion-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.model-container {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    min-height: 400px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .model-container {
+    background: #2d2d2d;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.motion-data {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .motion-data {
+    background: #2d2d2d;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+    .motion-section {
+        grid-template-columns: 1fr;
     }
-    50% {
-        transform: scale(1.1);
-    }
-    100% {
-        transform: scale(1);
+
+    .tabs {
+        overflow-x: auto;
+        padding-bottom: 1rem;
     }
 }
 
-.countdown-value {
-    animation: pulse 2s infinite;
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
 }
 
-/* Responsive styles */
-@media (max-width: 600px) {
-    .coming-soon-content h1 {
-        font-size: 2rem;
-    }
-
-    .coming-soon-content p {
-        font-size: 1rem;
-    }
-
-    .countdown-value {
-        font-size: 1.5rem;
-    }
-
-    .countdown-label {
-        font-size: 0.8rem;
-    }
+.chart-container {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: 300px;
 }
+
+.dark-mode .chart-container {
+    background: #2d2d2d;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.chart-container h3 {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.dark-mode .chart-container h3 {
+    color: #fff;
+}
+
+.reports-section {
+    padding: 1.5rem;
+}
+
+.report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.date-range select {
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    color: #333;
+}
+
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.summary-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.card-header h3 {
+    font-size: 1.25rem;
+    color: #333;
+    margin: 0;
+}
+
+.value {
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin: 1rem 0;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 1rem 0;
+    padding: 1rem 0;
+    border-top: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.stat span:first-child {
+    font-size: 0.875rem;
+    color: #666;
+    margin-bottom: 0.25rem;
+}
+
+.stat span:last-child {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.trend {
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+.export-section {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.export-options {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.export-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    background: #407CE2;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.export-btn:hover {
+    background: #2B5BBF;
+}
+
+.insights-section {
+    margin-top: 2rem;
+}
+
+.insights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.insight-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.insight-icon {
+    font-size: 1.5rem;
+}
+
+.insight-content h4 {
+    margin: 0;
+    color: #333;
+}
+
+.insight-content p {
+    margin: 0.5rem 0 0;
+    color: #666;
+    font-size: 0.875rem;
+}
+
+/* Dark mode styles */
+.dark-mode .summary-card,
+.dark-mode .export-section,
+.dark-mode .insight-card {
+    background: #2d2d2d;
+}
+
+.dark-mode .card-header h3,
+.dark-mode .value,
+.dark-mode .insight-content h4 {
+    color: #fff;
+}
+
+.dark-mode .stat span:first-child,
+.dark-mode .insight-content p {
+    color: #a0aec0;
+}
+
+.dark-mode .stats-grid {
+    border-color: #4a5568;
+}
+
+.dark-mode .date-range select {
+    background: #2d2d2d;
+    border-color: #4a5568;
+    color: #fff;
+}
+
+.predictions-section {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.predictions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.prediction-card {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.prediction-card h4 {
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.prediction-card p {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.dark-mode .predictions-section {
+    background: #2d2d2d;
+}
+
+.dark-mode .prediction-card {
+    background: #1a1a1a;
+}
+
+.dark-mode .prediction-card h4 {
+    color: #a0aec0;
+}
+
+.dark-mode .prediction-card p {
+    color: #fff;
+} 

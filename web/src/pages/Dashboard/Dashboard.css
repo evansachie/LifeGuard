@@ -231,3 +231,57 @@ test-button {
     color: #888;
     opacity: 0.7;
 }
+
+.ble-connect-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+}
+
+.connect-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    background: #407CE2;
+    color: white;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.connect-btn:hover {
+    background: #2B5BBF;
+}
+
+.connect-btn.connected {
+    background: #22C55E;
+}
+
+.connect-btn.connected:hover {
+    background: #16A34A;
+}
+
+.connect-btn.loading {
+    background: #6B7280;
+    cursor: wait;
+}
+
+.dark-mode .connect-btn {
+    background: #4B5563;
+}
+
+.dark-mode .connect-btn:hover {
+    background: #374151;
+}
+
+.dark-mode .connect-btn.connected {
+    background: #059669;
+}
+
+.dark-mode .connect-btn.connected:hover {
+    background: #047857;
+}
