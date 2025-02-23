@@ -362,7 +362,7 @@ class _DashboardTabState extends State<DashboardTab> {
             ),
             _buildActionButton(
               icon: 'assets/images/calculator.svg',
-              title: 'BMR Calculator',
+              title: 'Health Metrics',
               color: Colors.green,
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
