@@ -1,4 +1,4 @@
-const calculateAge = (birthDate) => {
+export const calculateAge = (birthDate) => {
     if (!birthDate) return '';
     const today = new Date();
     const dob = new Date(birthDate);
