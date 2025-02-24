@@ -36,6 +36,8 @@ namespace Identity.Features.CompleteProfile
             user.Gender = request.Gender;
             user.Height = request.Height;
             user.Weight = request.Weight;
+            user.PhoneNumber = request.PhoneNumber;
+            user.Bio = request.Bio; 
 
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded) 
