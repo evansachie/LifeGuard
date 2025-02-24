@@ -1,5 +1,12 @@
 import React, { useRef, useEffect } from 'react';
 import { FaTimes, FaDownload, FaFileCsv } from 'react-icons/fa';
+import { 
+  FaTemperatureHigh, 
+  FaHeartbeat, 
+  FaHeart, 
+  FaWalking 
+} from 'react-icons/fa';
+
 import './HealthReportModal.css';
 import { generateHealthReport } from '../../data/health-report-data';
 
@@ -7,6 +14,13 @@ export default function HealthReportModal({ isOpen, onClose, userData, isDarkMod
   if (!isOpen) return null;
   const modalRef = useRef(null);
   const report = generateHealthReport(userData);
+
+  const iconMapping = {
+    temperature: <FaTemperatureHigh size={32}/>,
+    bloodPressure: <FaHeartbeat size={32} />,
+    heartRate: <FaHeart size={32}/>,
+    activityLevel: <FaWalking size={32}/>
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -81,7 +95,6 @@ export default function HealthReportModal({ isOpen, onClose, userData, isDarkMod
         <div className="report-content">
           <div className="report-header">
             <img src="/images/lifeguard-2.svg" alt="LifeGuard Logo" className="report-logo" />
-            <h1>Health & Environmental Report</h1>
             <div className="report-meta">
               <p>Report ID: {report.userInfo.reportId}</p>
               <p>Date: {report.userInfo.date}</p>
@@ -94,6 +107,7 @@ export default function HealthReportModal({ isOpen, onClose, userData, isDarkMod
             <div className="metrics-grid">
               {Object.entries(report.vitals).map(([key, value]) => (
                 <div key={key} className="metric-card">
+                  {iconMapping[key] || <FaTemperatureHigh />}
                   <h3>{key.replace(/([A-Z])/g, ' $1').trim()}</h3>
                   <div className="metric-value">{value.average}</div>
                   <div className={`metric-status ${value.status.toLowerCase()}`}>

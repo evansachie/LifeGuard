@@ -109,6 +109,7 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
   margin-top: 1rem;
+  margin-left: 3rem
 }
 
 .metrics-grid {
