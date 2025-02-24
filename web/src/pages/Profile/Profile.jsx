@@ -65,7 +65,7 @@ function Profile({ isDarkMode }) {
             const userId = localStorage.getItem('userId');
             if (!userId) return;
 
-            const userData = await fetchWithAuth(`${API_ENDPOINTS.GET_USER}/${userId}`);
+            const userData = await fetchWithAuth(`${API_ENDPOINTS.GET_USER}?id=${userId}`);
             
             // Update profile data with retrieved information
             setProfileData(prev => ({
