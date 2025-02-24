@@ -1,24 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaUserEdit, FaSave, FaTimesCircle, FaCamera, FaPlus, FaUserPlus } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaPhone, FaUserEdit, FaSave, FaTimesCircle, FaCamera, FaPlus, FaUserPlus } from 'react-icons/fa';
 import { FaPerson } from "react-icons/fa6";
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import './Profile.css';
 import { API_ENDPOINTS, fetchWithAuth } from '../../utils/api';
+import calculateAge from '../../utils/calculateAge';
 
 function Profile({ isDarkMode }) {
     const [editMode, setEditMode] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [profileData, setProfileData] = useState({
         fullName: '',
         email: '',
+        gender: '',
         phone: '',
-        location: '',
         bio: '',
-        age: '',
+        birthDate: '',
         weight: '',
         height: '',
-        gender: '',
         emergencyContacts: []
     });
     const [imageFile, setImageFile] = useState(null);
@@ -38,6 +39,9 @@ function Profile({ isDarkMode }) {
             email: storedEmail || 'user@example.com',
             emergencyContacts: contacts
         }));
+
+        // Fetch user profile data if available
+        fetchUserProfile();
     }, []);
 
     useEffect(() => {
@@ -55,6 +59,30 @@ function Profile({ isDarkMode }) {
 
         fetchEmergencyContacts();
     }, []);
+
+    const fetchUserProfile = async () => {
+        try {
+            const userId = localStorage.getItem('userId');
+            if (!userId) return;
+
+            const userData = await fetchWithAuth(`${API_ENDPOINTS.GET_USER}/${userId}`);
+            
+            // Update profile data with retrieved information
+            setProfileData(prev => ({
+                ...prev,
+                fullName: userData.fullName || prev.fullName,
+                email: userData.email || prev.email,
+                gender: userData.gender || '',
+                phone: userData.phoneNumber || '',
+                bio: userData.bio || '',
+                birthDate: userData.birthDate || '',
+                weight: userData.weight || '',
+                height: userData.height || '',
+            }));
+        } catch (error) {
+            console.error('Error fetching user profile:', error);
+        }
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -81,13 +109,38 @@ function Profile({ isDarkMode }) {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Frontend only - simulate API call
-        setTimeout(() => {
+        setIsLoading(true);
+        
+        try {
+            // Prepare data for API
+            const completeProfileData = {
+                email: profileData.email,
+                age: calculateAge(profileData.birthDate),
+                gender: profileData.gender,
+                weight: profileData.weight,
+                height: profileData.height,
+                phoneNumber: profileData.phone,
+                bio: profileData.bio
+            };
+            
+            console.log('Sending profile data:', completeProfileData);
+            
+            // Post to Complete Profile endpoint
+            await fetchWithAuth(API_ENDPOINTS.COMPLETE_PROFILE, {
+                method: 'POST',
+                body: JSON.stringify(completeProfileData)
+            });
+            
             toast.success('Profile updated successfully!');
             setEditMode(false);
-        }, 1000);
+        } catch (error) {
+            toast.error(error.message || 'Failed to update profile');
+            console.error('Error updating profile:', error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -186,21 +239,6 @@ function Profile({ isDarkMode }) {
                                         placeholder="Enter phone number"
                                     />
                                 </div>
-
-                                <div className="form-group">
-                                    <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                                        <FaMapMarkerAlt />
-                                        <span>Location</span>
-                                    </div>
-                                    <input
-                                        type="text"
-                                        name="location"
-                                        value={profileData.location}
-                                        onChange={handleInputChange}
-                                        disabled={!editMode}
-                                        placeholder="Enter location"
-                                    />
-                                </div>
                             </div>
 
                             <div className="form-group full-width">
@@ -222,7 +260,7 @@ function Profile({ isDarkMode }) {
                                 <h3>Physical Information</h3>
                                 <div className="form-grid">
                                     <div className="form-group">
-                                        <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Age</div>
+                                        <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Birth Date</div>
                                         <input
                                             type="date"
                                             name="birthDate"
@@ -280,13 +318,18 @@ function Profile({ isDarkMode }) {
 
                             {editMode && (
                                 <div className="form-actions">
-                                    <button type="submit" className="save-button">
-                                        <FaSave /> Save Changes
+                                    <button 
+                                        type="submit" 
+                                        className="save-button"
+                                        disabled={isLoading}
+                                    >
+                                        {isLoading ? 'Saving...' : <><FaSave /> Save Changes</>}
                                     </button>
                                     <button 
                                         type="button" 
                                         className="cancel-button"
                                         onClick={() => setEditMode(false)}
+                                        disabled={isLoading}
                                     >
                                         <FaTimesCircle /> Cancel
                                     </button>
