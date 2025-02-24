@@ -16,5 +16,7 @@ namespace Identity.Features.CompleteProfile
         public string Gender { get; set; }
         public int Weight { get; set; }
         public int Height { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Bio { get; set; }
     }
 }
