@@ -12,6 +12,7 @@ export const API_ENDPOINTS = {
     RESEND_OTP: '/Account/ResendOTP',
     FORGOT_PASSWORD: '/Account/forgot-password',
     RESET_PASSWORD: '/Account/ResetPassword',
+    COMPLETE_PROFILE: '/Account/CompleteProfile',
     GET_USER: '/Account/id',
     MEMOS: `${NODE_API_URL}/api/memos`,
     EMERGENCY_CONTACTS: `${NODE_API_URL}/api/emergency-contacts`
