@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import './Profile.css';
 import { API_ENDPOINTS, fetchWithAuth } from '../../utils/api';
-import calculateAge from '../../utils/calculateAge';
+import { calculateAge } from '../../utils/calculateAge';
 
 function Profile({ isDarkMode }) {
     const [editMode, setEditMode] = useState(false);
