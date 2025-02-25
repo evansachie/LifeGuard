@@ -147,26 +147,27 @@ const PrivateMemos = ({ isDarkMode }) => {
         setMemo('');
     };
 
-    const handleDoneMemo = async (id) => {
+    const handleDoneMemo = async (id, isDone) => {
         try {
             const response = await fetchWithAuth(`${NODE_API_URL}/api/memos/${id}/done`, {
                 method: 'PUT',
-                body: JSON.stringify({ done: true })
+                body: JSON.stringify({ done: isDone })
             });
             
             setSavedMemos(prevMemos => 
                 prevMemos.map(memo => 
-                    memo.Id === id ? response : memo
+                    memo.Id === id ? { ...memo, Done: isDone } : memo
                 )
             );
+            toast.success(isDone ? 'Note marked as done!' : 'Note marked as undone!');
         } catch (error) {
-            console.error('Error marking memo as done:', error);
-            toast.error('Failed to update memo status');
+            console.error('Error updating memo status:', error);
+            toast.error('Failed to update note status');
         }
     };
 
     const handleUndoneMemo = (id) => {
-        handleDoneMemo(id);
+        handleDoneMemo(id, false);
     };
 
     const handleUpdateMemo = async (id, event) => {
@@ -288,7 +289,7 @@ const PrivateMemos = ({ isDarkMode }) => {
                                         </button>
                                         <button 
                                             className="memo-button done-button"
-                                            onClick={() => Done ? handleUndoneMemo(Id) : handleDoneMemo(Id)}
+                                            onClick={() => Done ? handleUndoneMemo(Id) : handleDoneMemo(Id, true)}
                                         >
                                             {Done ? 'Undone' : 'Done'}
                                         </button>
