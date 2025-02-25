@@ -70,37 +70,40 @@ const PrivateMemos = ({ isDarkMode }) => {
     };
 
     const handleSaveMemo = async () => {
-        if (memo.trim() !== '') {
-            setSaving(true);
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    navigate('/log-in');
-                    return;
-                }
-
-                const response = await fetch(`${NODE_API_URL}/api/memos`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                    },
-                    body: JSON.stringify({ memo }),
-                });
-
-                if (response.ok) {
-                    const newMemo = await response.json();
-                    console.log('New memo saved:', newMemo);
-                    setSavedMemos([...savedMemos, newMemo]);
-                    setMemo('');
-                } else {
-                    console.error('Error saving memo:', response.status);
-                }
-            } catch (error) {
-                console.error('Error saving memo:', error);
-            } finally {
-                setSaving(false);
+        if (memo.trim() === '') {
+            toast.info('Please enter some text before saving');
+            return;
+        }
+        
+        setSaving(true);
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                navigate('/log-in');
+                return;
             }
+
+            const response = await fetch(`${NODE_API_URL}/api/memos`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ memo }),
+            });
+
+            if (response.ok) {
+                const newMemo = await response.json();
+                console.log('New memo saved:', newMemo);
+                setSavedMemos([...savedMemos, newMemo]);
+                setMemo('');
+            } else {
+                console.error('Error saving memo:', response.status);
+            }
+        } catch (error) {
+            console.error('Error saving memo:', error);
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -144,26 +147,27 @@ const PrivateMemos = ({ isDarkMode }) => {
         setMemo('');
     };
 
-    const handleDoneMemo = async (id) => {
+    const handleDoneMemo = async (id, isDone) => {
         try {
             const response = await fetchWithAuth(`${NODE_API_URL}/api/memos/${id}/done`, {
                 method: 'PUT',
-                body: JSON.stringify({ done: true })
+                body: JSON.stringify({ done: isDone })
             });
             
             setSavedMemos(prevMemos => 
                 prevMemos.map(memo => 
-                    memo.Id === id ? response : memo
+                    memo.Id === id ? { ...memo, Done: isDone } : memo
                 )
             );
+            toast.success(isDone ? 'Note marked as done!' : 'Note marked as undone!');
         } catch (error) {
-            console.error('Error marking memo as done:', error);
-            toast.error('Failed to update memo status');
+            console.error('Error updating memo status:', error);
+            toast.error('Failed to update note status');
         }
     };
 
     const handleUndoneMemo = (id) => {
-        handleDoneMemo(id);
+        handleDoneMemo(id, false);
     };
 
     const handleUpdateMemo = async (id, event) => {
@@ -285,7 +289,7 @@ const PrivateMemos = ({ isDarkMode }) => {
                                         </button>
                                         <button 
                                             className="memo-button done-button"
-                                            onClick={() => Done ? handleUndoneMemo(Id) : handleDoneMemo(Id)}
+                                            onClick={() => Done ? handleUndoneMemo(Id) : handleDoneMemo(Id, true)}
                                         >
                                             {Done ? 'Undone' : 'Done'}
                                         </button>
