@@ -13,7 +13,7 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@types/intro.js": "^5.1.5",
-    "axios": "^1.6.8",
+    "axios": "^1.7.9",
     "chart.js": "^4.4.8",
     "framer-motion": "^11.3.17",
     "intro.js": "^7.2.0",
