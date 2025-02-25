@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { FaUser, FaEnvelope, FaPhone, FaUserEdit, FaSave, FaTimesCircle, FaCamera, FaPlus, FaUserPlus } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaPhone, FaUserEdit, FaSave, FaTimesCircle, FaCamera, FaPlus, FaUserPlus, FaTrash } from 'react-icons/fa';
 import { FaPerson } from "react-icons/fa6";
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import './Profile.css';
 import { API_ENDPOINTS, fetchWithAuth } from '../../utils/api';
 import { calculateAge } from '../../utils/calculateAge';
+import { uploadToCloudinary } from '../../utils/cloudinary';
 
 function Profile({ isDarkMode }) {
     const [editMode, setEditMode] = useState(false);
@@ -20,9 +21,10 @@ function Profile({ isDarkMode }) {
         birthDate: '',
         weight: '',
         height: '',
+        profileImage: '',
         emergencyContacts: []
     });
-    const [imageFile, setImageFile] = useState(null);
+
     const fileInputRef = useRef(null);
 
     useEffect(() => {
@@ -96,16 +98,90 @@ function Profile({ isDarkMode }) {
         fileInputRef.current?.click();
     };
 
-    const handleImageChange = (e) => {
+    const handleImageChange = async (e) => {
         const file = e.target.files?.[0];
         if (file) {
-            setImageFile(file);
-            // Create preview URL
-            const imageUrl = URL.createObjectURL(file);
+            try {
+                setIsLoading(true);
+                
+                // Create preview URL for immediate display
+                const previewUrl = URL.createObjectURL(file);
+                setProfileData(prev => ({
+                    ...prev,
+                    imageUrl: previewUrl
+                }));
+
+                // First upload to backend
+                const formData = new FormData();
+                formData.append('file', file);
+
+                console.log('Uploading file:', file.name, 'size:', file.size);
+                console.log('FormData entries:', Array.from(formData.entries()));
+
+                const apiResponse = await fetchWithAuth(
+                    API_ENDPOINTS.UPLOAD_PHOTO(localStorage.getItem('userId')),
+                    {
+                        method: 'POST',
+                        body: formData
+                    }
+                );
+
+                if (!apiResponse) {
+                    throw new Error('Failed to update profile photo');
+                }
+
+                // Then upload to Cloudinary for storage
+                const cloudinaryUrl = await uploadToCloudinary(file);
+                console.log('Cloudinary URL:', cloudinaryUrl);
+
+                // Update profile data with Cloudinary URL
+                setProfileData(prev => ({
+                    ...prev,
+                    profileImage: cloudinaryUrl
+                }));
+
+                toast.success('Profile photo updated successfully!');
+            } catch (error) {
+                toast.error(error.message || 'Failed to update profile photo');
+                console.error('Error updating profile photo:', error);
+                
+                // Reset image on error
+                setProfileData(prev => ({
+                    ...prev,
+                    imageUrl: prev.profileImage || null
+                }));
+            } finally {
+                setIsLoading(false);
+            }
+        }
+    };
+
+    const handleDeletePhoto = async () => {
+        try {
+            setIsLoading(true);
+            
+            const response = await fetchWithAuth(
+                API_ENDPOINTS.DELETE_PHOTO(localStorage.getItem('userId')),
+                { method: 'DELETE' }
+            );
+
+            if (!response) {
+                throw new Error('Failed to delete profile photo');
+            }
+
+            // Reset profile image
             setProfileData(prev => ({
                 ...prev,
-                imageUrl
+                profileImage: null,
+                imageUrl: null
             }));
+
+            toast.success('Profile photo deleted successfully!');
+        } catch (error) {
+            toast.error(error.message || 'Failed to delete profile photo');
+            console.error('Error deleting profile photo:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -119,10 +195,11 @@ function Profile({ isDarkMode }) {
                 email: profileData.email,
                 age: calculateAge(profileData.birthDate),
                 gender: profileData.gender,
-                weight: profileData.weight,
-                height: profileData.height,
+                weight: parseInt(profileData.weight),
+                height: parseInt(profileData.height),
                 phoneNumber: profileData.phone,
-                bio: profileData.bio
+                bio: profileData.bio,
+                profileImage: profileData.profileImage // Add profile image URL
             };
             
             console.log('Sending profile data:', completeProfileData);
@@ -130,6 +207,9 @@ function Profile({ isDarkMode }) {
             // Post to Complete Profile endpoint
             await fetchWithAuth(API_ENDPOINTS.COMPLETE_PROFILE, {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify(completeProfileData)
             });
             
@@ -145,7 +225,7 @@ function Profile({ isDarkMode }) {
 
     return (
         <div className={`profile-page ${isDarkMode ? 'dark' : ''}`}>
-            <div className="profile-container">
+            <div className={`profile-container ${editMode ? 'edit-mode' : ''}`}>
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -154,23 +234,38 @@ function Profile({ isDarkMode }) {
                     <div className="profile-avatar-container">
                         <div className="profile-avatar">
                             <img 
-                                src={profileData.imageUrl || `https://ui-avatars.com/api/?name=${profileData.fullName}&background=random`} 
+                                src={profileData.imageUrl || profileData.profileImage || `https://ui-avatars.com/api/?name=${profileData.fullName}&background=random`} 
                                 alt="Profile" 
                             />
                         </div>
-                        <button 
-                            className="edit-image-button"
-                            onClick={handleImageClick}
-                        >
-                            <FaCamera />
-                        </button>
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            onChange={handleImageChange}
-                            accept="image/*"
-                            className="hidden"
-                        />
+                        {editMode && (
+                            <div className="avatar-actions">
+                                <button
+                                    className="edit-image-button"
+                                    onClick={() => document.getElementById('profilePhotoInput').click()}
+                                    disabled={isLoading}
+                                >
+                                    <FaCamera />
+                                </button>
+                                <input
+                                    id="profilePhotoInput"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                    className="hidden"
+                                    disabled={isLoading}
+                                />
+                                {(profileData.imageUrl || profileData.profileImage) && (
+                                    <button
+                                        className="delete-image-button"
+                                        onClick={handleDeletePhoto}
+                                        disabled={isLoading}
+                                    >
+                                        <FaTrash />
+                                    </button>
+                                )}
+                            </div>
+                        )}
                     </div>
                     <h1>{profileData.fullName}</h1>
                     <p>{profileData.email}</p>
