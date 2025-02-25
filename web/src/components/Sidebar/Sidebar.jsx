@@ -103,7 +103,7 @@ function Sidebar({ toggleTheme, isDarkMode }) {
             <button 
                 className="profile-menu-item" 
                 onMouseDown={() => handleProfileMenuItemClick('/profile')}>
-                Edit Profile
+                Profile
             </button>
             <button 
                 className="profile-menu-item" 

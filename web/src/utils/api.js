@@ -1,7 +1,8 @@
 import { toast } from 'react-toastify';
 
 export const FRONTEND_URL = window.location.origin; // Gets the current frontend URL
-export const API_BASE_URL = 'https://lifeguard-hiij.onrender.com/api';
+export const BASE_URL = 'https://lifeguard-hiij.onrender.com';
+export const API_BASE_URL = `${BASE_URL}/api`;
 export const NODE_API_URL = 'https://lifeguard-node.onrender.com';
 export const QUOTE_API_URL = 'https://api.allorigins.win/raw?url=https://zenquotes.io/api/random';
 
@@ -15,14 +16,18 @@ export const API_ENDPOINTS = {
     COMPLETE_PROFILE: '/Account/CompleteProfile',
     GET_USER: '/Account/id',
     MEMOS: `${NODE_API_URL}/api/memos`,
-    EMERGENCY_CONTACTS: `${NODE_API_URL}/api/emergency-contacts`
+    EMERGENCY_CONTACTS: `${NODE_API_URL}/api/emergency-contacts`,
+    UPLOAD_PHOTO: (id) => `${BASE_URL}/${id}/photo`,
+    DELETE_PHOTO: (id) => `${BASE_URL}/${id}/photo`
 };
 
 export const fetchApi = async (endpoint, options = {}) => {
-    const defaultHeaders = {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-    };
+    const defaultHeaders = options.body instanceof FormData
+        ? { 'Accept': 'application/json' }  // Don't set Content-Type for FormData
+        : {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        };
 
     try {
         const baseUrl = endpoint.startsWith('http') ? '' : API_BASE_URL;
@@ -41,11 +46,18 @@ export const fetchApi = async (endpoint, options = {}) => {
             credentials: 'omit'
         });
 
-        const data = await response.json();
+        let data;
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+        } else {
+            data = await response.text();
+        }
+        
         console.log('Response:', data);
 
         if (!response.ok) {
-            throw new Error(data.message || data.error || `Error: ${response.statusText}`);
+            throw new Error(typeof data === 'string' ? data : (data.message || data.error || `Error: ${response.statusText}`));
         }
 
         return data;
