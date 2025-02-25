@@ -70,37 +70,40 @@ const PrivateMemos = ({ isDarkMode }) => {
     };
 
     const handleSaveMemo = async () => {
-        if (memo.trim() !== '') {
-            setSaving(true);
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    navigate('/log-in');
-                    return;
-                }
-
-                const response = await fetch(`${NODE_API_URL}/api/memos`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                    },
-                    body: JSON.stringify({ memo }),
-                });
-
-                if (response.ok) {
-                    const newMemo = await response.json();
-                    console.log('New memo saved:', newMemo);
-                    setSavedMemos([...savedMemos, newMemo]);
-                    setMemo('');
-                } else {
-                    console.error('Error saving memo:', response.status);
-                }
-            } catch (error) {
-                console.error('Error saving memo:', error);
-            } finally {
-                setSaving(false);
+        if (memo.trim() === '') {
+            toast.info('Please enter some text before saving');
+            return;
+        }
+        
+        setSaving(true);
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                navigate('/log-in');
+                return;
             }
+
+            const response = await fetch(`${NODE_API_URL}/api/memos`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ memo }),
+            });
+
+            if (response.ok) {
+                const newMemo = await response.json();
+                console.log('New memo saved:', newMemo);
+                setSavedMemos([...savedMemos, newMemo]);
+                setMemo('');
+            } else {
+                console.error('Error saving memo:', response.status);
+            }
+        } catch (error) {
+            console.error('Error saving memo:', error);
+        } finally {
+            setSaving(false);
         }
     };
 
