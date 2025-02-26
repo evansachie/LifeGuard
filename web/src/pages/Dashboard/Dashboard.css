@@ -332,3 +332,317 @@ test-button {
 .dashboard.dark-mode .shadow-md {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
 }
+
+/* Floating Health Assistant Styles */
+.floating-health-assistant {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.floating-button {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #4285F4;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    font-size: 24px;
+}
+
+.floating-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.floating-button.hidden {
+    display: none;
+}
+
+.chat-window {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 350px;
+    height: 500px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    pointer-events: none;
+}
+
+.chat-window.open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: all;
+}
+
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #4285F4;
+    color: white;
+}
+
+.chat-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chat-body {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background-color: #f5f5f5;
+}
+
+.empty-chat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    color: #666;
+}
+
+.examples-title {
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.examples-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.examples-list li {
+    background-color: white;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background-color 0.2s;
+}
+
+.examples-list li:hover {
+    background-color: #e6e6e6;
+}
+
+.messages {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.message {
+    max-width: 80%;
+    padding: 10px 15px;
+    border-radius: 18px;
+    word-break: break-word;
+}
+
+.message.user {
+    align-self: flex-end;
+    background-color: #4285F4;
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.message.assistant {
+    align-self: flex-start;
+    background-color: white;
+    color: #333;
+    border-bottom-left-radius: 4px;
+}
+
+.message.error {
+    background-color: #ffebee;
+    color: #d32f2f;
+}
+
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    align-self: flex-start;
+    background-color: white;
+    padding: 12px 16px;
+    border-radius: 18px;
+    margin-top: 5px;
+}
+
+.typing-indicator span {
+    height: 8px;
+    width: 8px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 2px;
+    animation: typing 1.4s infinite both;
+}
+
+.typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+    100% { transform: translateY(0); }
+}
+
+.chat-input {
+    display: flex;
+    padding: 10px;
+    background-color: white;
+    border-top: 1px solid #eee;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    outline: none;
+    font-size: 14px;
+}
+
+.chat-input input:focus {
+    border-color: #4285F4;
+}
+
+.chat-input button {
+    background-color: #4285F4;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-left: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.chat-input button:hover {
+    background-color: #3367d6;
+}
+
+.chat-input button:disabled {
+    background-color: #b3b3b3;
+    cursor: not-allowed;
+}
+
+/* Dark Mode Styles for Floating Health Assistant */
+.floating-health-assistant.dark-mode .floating-button {
+    background-color: #3367d6;
+}
+
+.floating-health-assistant.dark-mode .chat-window {
+    background-color: #1a1a1a;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.floating-health-assistant.dark-mode .chat-header {
+    background-color: #3367d6;
+}
+
+.floating-health-assistant.dark-mode .chat-body {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+}
+
+.floating-health-assistant.dark-mode .empty-chat {
+    color: #b3b3b3;
+}
+
+.floating-health-assistant.dark-mode .examples-list li {
+    background-color: #3d3d3d;
+    color: #e0e0e0;
+}
+
+.floating-health-assistant.dark-mode .examples-list li:hover {
+    background-color: #4d4d4d;
+}
+
+.floating-health-assistant.dark-mode .message.assistant {
+    background-color: #3d3d3d;
+    color: #e0e0e0;
+}
+
+.floating-health-assistant.dark-mode .message.user {
+    background-color: #3367d6;
+}
+
+.floating-health-assistant.dark-mode .typing-indicator {
+    background-color: #3d3d3d;
+}
+
+.floating-health-assistant.dark-mode .typing-indicator span {
+    background-color: #b3b3b3;
+}
+
+.floating-health-assistant.dark-mode .chat-input {
+    background-color: #1a1a1a;
+    border-top: 1px solid #333;
+}
+
+.floating-health-assistant.dark-mode .chat-input input {
+    background-color: #2d2d2d;
+    border-color: #444;
+    color: #e0e0e0;
+}
+
+.floating-health-assistant.dark-mode .chat-input input::placeholder {
+    color: #999;
+}
+
+.floating-health-assistant.dark-mode .chat-input button {
+    background-color: #3367d6;
+}
+
+.floating-health-assistant.dark-mode .chat-input button:hover {
+    background-color: #4285F4;
+}
+
+.floating-health-assistant.dark-mode .chat-input button:disabled {
+    background-color: #555;
+}
