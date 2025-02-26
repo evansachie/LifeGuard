@@ -7,7 +7,7 @@ const memoRoutes = require('./Routes/memoRoutes');
 const bmrCalculatorRoutes = require('./Routes/bmrCalculatorRoutes')
 const settingsRoutes = require('./Routes/bmrCalculatorRoutes');
 const emergencyContactsRoutes = require('./Routes/emergencyContactsRoutes');
-const ragRoutes = require('./routes/ragRoutes');
+const ragRoutes = require('./Routes/ragRoutes');
 const { connectToDatabase } = require('./config/mongodb');
 const path = require('path');
 
