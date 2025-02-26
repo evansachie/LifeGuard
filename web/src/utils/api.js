@@ -18,7 +18,14 @@ export const API_ENDPOINTS = {
     MEMOS: `${NODE_API_URL}/api/memos`,
     EMERGENCY_CONTACTS: `${NODE_API_URL}/api/emergency-contacts`,
     UPLOAD_PHOTO: (id) => `${BASE_URL}/${id}/photo`,
-    DELETE_PHOTO: (id) => `${BASE_URL}/${id}/photo`
+    DELETE_PHOTO: (id) => `${BASE_URL}/${id}/photo`,
+    // RAG API Endpoints
+    RAG_QUERY: `${NODE_API_URL}/api/rag/query`,
+    RAG_INITIALIZE: `${NODE_API_URL}/api/rag/initialize`,
+    RAG_PROCESS_HEALTH: `${NODE_API_URL}/api/rag/process/health`,
+    RAG_PROCESS_ENVIRONMENTAL: `${NODE_API_URL}/api/rag/process/environmental`,
+    RAG_PROCESS_MEDICAL: `${NODE_API_URL}/api/rag/process/medical`,
+    RAG_PROCESS_PROFILES: `${NODE_API_URL}/api/rag/process/profiles`
 };
 
 export const fetchApi = async (endpoint, options = {}) => {
