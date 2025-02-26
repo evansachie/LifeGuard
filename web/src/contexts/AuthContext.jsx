@@ -8,13 +8,9 @@ export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
 
     const logout = useCallback(() => {
-        // Save theme before clearing storage
         const theme = localStorage.getItem('theme');
         
-        // Clear all auth data except theme
         localStorage.clear();
-        
-        // Restore theme
         localStorage.setItem('theme', theme);
         
         setIsAuthenticated(false);
@@ -23,7 +19,6 @@ export const AuthProvider = ({ children }) => {
 
     const login = useCallback((token, userData) => {
         localStorage.setItem('token', token);
-        // Set other user data...
         setIsAuthenticated(true);
     }, []);
 

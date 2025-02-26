@@ -7,6 +7,8 @@ const memoRoutes = require('./Routes/memoRoutes');
 const bmrCalculatorRoutes = require('./Routes/bmrCalculatorRoutes')
 const settingsRoutes = require('./Routes/bmrCalculatorRoutes');
 const emergencyContactsRoutes = require('./Routes/emergencyContactsRoutes');
+const ragRoutes = require('./routes/ragRoutes');
+const { connectToDatabase } = require('./config/mongodb');
 const path = require('path');
 
 const app = express();
@@ -53,10 +55,16 @@ pool.connect((err, client, release) => {
     }
 });
 
+// Connect to MongoDB for RAG functionality
+connectToDatabase()
+    .then(() => console.log('Connected to MongoDB for RAG'))
+    .catch(err => console.error('Failed to connect to MongoDB:', err));
+
 app.use('/api/memos', memoRoutes(pool));
 app.use('/api/calories', bmrCalculatorRoutes(pool));
 app.use('/api/settings', settingsRoutes(pool));
 app.use('/api/emergency-contacts', emergencyContactsRoutes(pool));
+app.use('/api/rag', ragRoutes);
 
 app.get('/', (req, res) => {
     res.send('LifeGuard API is running!');

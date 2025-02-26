@@ -8,7 +8,7 @@ import loginIllustration2 from '../../../assets/auth/loginIllustration2.svg';
 import loginIllustration3 from '../../../assets/auth/loginIllustration3.svg';
 import ImageSlider from '../../ImageSlider/ImageSlider';
 import "./LogIn.css";
-import { API_ENDPOINTS, fetchWithAuth } from '../../../utils/api';
+import { API_ENDPOINTS, API_BASE_URL } from '../../../utils/api';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../../contexts/AuthContext';
 
@@ -33,28 +33,36 @@ export default function LogIn({ isDarkMode, toggleTheme }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
+
         try {
-            const data = await fetchWithAuth(API_ENDPOINTS.LOGIN, {
+            // Use regular fetch for login, not fetchWithAuth
+            const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.LOGIN}`, {
                 method: 'POST',
-                body: JSON.stringify(formData)
-            });
-            
-            login(data.token, {
-                id: data.id,
-                userName: data.userName,
-                email: data.email
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: formData.email,
+                    password: formData.password,
+                }),
             });
 
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Login failed');
+            }
+
+            // Store the token and user ID
             localStorage.setItem('token', data.token);
             localStorage.setItem('userId', data.id);
             localStorage.setItem('userName', data.userName);
-            localStorage.removeItem('showTour');
-            
+
             toast.success('Login successful!');
             navigate('/dashboard');
         } catch (error) {
             console.error('Login failed:', error);
-            toast.error(error.message || 'Failed to login');
+            toast.error(error.message || 'Login failed');
         } finally {
             setIsLoading(false);
         }
@@ -120,7 +128,7 @@ export default function LogIn({ isDarkMode, toggleTheme }) {
                             isLoading={isLoading}
                         />
                     </form>
-                    <p className="already">Don't have an account? <Link to="/" className="link">Sign Up</Link></p>
+                    <p className="already">Don't have an account? <Link to="/sign-up" className="link">Sign Up</Link></p>
                 </div>
             </div>
         </div>

@@ -1,27 +1,30 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaUserEdit, FaSave, FaTimesCircle, FaCamera, FaPlus, FaUserPlus } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaPhone, FaUserEdit, FaSave, FaTimesCircle, FaCamera, FaPlus, FaUserPlus, FaTrash } from 'react-icons/fa';
 import { FaPerson } from "react-icons/fa6";
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import './Profile.css';
 import { API_ENDPOINTS, fetchWithAuth } from '../../utils/api';
+import { calculateAge } from '../../utils/calculateAge';
+import { uploadToCloudinary } from '../../utils/cloudinary';
 
 function Profile({ isDarkMode }) {
     const [editMode, setEditMode] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [profileData, setProfileData] = useState({
         fullName: '',
         email: '',
+        gender: '',
         phone: '',
-        location: '',
         bio: '',
-        age: '',
+        birthDate: '',
         weight: '',
         height: '',
-        gender: '',
+        profileImage: '',
         emergencyContacts: []
     });
-    const [imageFile, setImageFile] = useState(null);
+
     const fileInputRef = useRef(null);
 
     useEffect(() => {
@@ -38,6 +41,9 @@ function Profile({ isDarkMode }) {
             email: storedEmail || 'user@example.com',
             emergencyContacts: contacts
         }));
+
+        // Fetch user profile data if available
+        fetchUserProfile();
     }, []);
 
     useEffect(() => {
@@ -56,6 +62,30 @@ function Profile({ isDarkMode }) {
         fetchEmergencyContacts();
     }, []);
 
+    const fetchUserProfile = async () => {
+        try {
+            const userId = localStorage.getItem('userId');
+            if (!userId) return;
+
+            const userData = await fetchWithAuth(`${API_ENDPOINTS.GET_USER}?id=${userId}`);
+            
+            // Update profile data with retrieved information
+            setProfileData(prev => ({
+                ...prev,
+                fullName: userData.fullName || prev.fullName,
+                email: userData.email || prev.email,
+                gender: userData.gender || '',
+                phone: userData.phoneNumber || '',
+                bio: userData.bio || '',
+                birthDate: userData.birthDate || '',
+                weight: userData.weight || '',
+                height: userData.height || '',
+            }));
+        } catch (error) {
+            console.error('Error fetching user profile:', error);
+        }
+    };
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setProfileData(prev => ({
@@ -68,31 +98,134 @@ function Profile({ isDarkMode }) {
         fileInputRef.current?.click();
     };
 
-    const handleImageChange = (e) => {
+    const handleImageChange = async (e) => {
         const file = e.target.files?.[0];
         if (file) {
-            setImageFile(file);
-            // Create preview URL
-            const imageUrl = URL.createObjectURL(file);
-            setProfileData(prev => ({
-                ...prev,
-                imageUrl
-            }));
+            try {
+                setIsLoading(true);
+                
+                // Create preview URL for immediate display
+                const previewUrl = URL.createObjectURL(file);
+                setProfileData(prev => ({
+                    ...prev,
+                    imageUrl: previewUrl
+                }));
+
+                // First upload to backend
+                const formData = new FormData();
+                formData.append('file', file);
+
+                console.log('Uploading file:', file.name, 'size:', file.size);
+                console.log('FormData entries:', Array.from(formData.entries()));
+
+                const apiResponse = await fetchWithAuth(
+                    API_ENDPOINTS.UPLOAD_PHOTO(localStorage.getItem('userId')),
+                    {
+                        method: 'POST',
+                        body: formData
+                    }
+                );
+
+                if (!apiResponse) {
+                    throw new Error('Failed to update profile photo');
+                }
+
+                // Then upload to Cloudinary for storage
+                const cloudinaryUrl = await uploadToCloudinary(file);
+                console.log('Cloudinary URL:', cloudinaryUrl);
+
+                // Update profile data with Cloudinary URL
+                setProfileData(prev => ({
+                    ...prev,
+                    profileImage: cloudinaryUrl
+                }));
+
+                toast.success('Profile photo updated successfully!');
+            } catch (error) {
+                toast.error(error.message || 'Failed to update profile photo');
+                console.error('Error updating profile photo:', error);
+                
+                // Reset image on error
+                setProfileData(prev => ({
+                    ...prev,
+                    imageUrl: prev.profileImage || null
+                }));
+            } finally {
+                setIsLoading(false);
+            }
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleDeletePhoto = async () => {
+        try {
+            setIsLoading(true);
+            
+            const response = await fetchWithAuth(
+                API_ENDPOINTS.DELETE_PHOTO(localStorage.getItem('userId')),
+                { method: 'DELETE' }
+            );
+
+            if (!response) {
+                throw new Error('Failed to delete profile photo');
+            }
+
+            // Reset profile image
+            setProfileData(prev => ({
+                ...prev,
+                profileImage: null,
+                imageUrl: null
+            }));
+
+            toast.success('Profile photo deleted successfully!');
+        } catch (error) {
+            toast.error(error.message || 'Failed to delete profile photo');
+            console.error('Error deleting profile photo:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Frontend only - simulate API call
-        setTimeout(() => {
+        setIsLoading(true);
+        
+        try {
+            // Prepare data for API
+            const completeProfileData = {
+                email: profileData.email,
+                age: calculateAge(profileData.birthDate),
+                gender: profileData.gender,
+                weight: parseInt(profileData.weight),
+                height: parseInt(profileData.height),
+                phoneNumber: profileData.phone,
+                bio: profileData.bio,
+                profileImage: profileData.profileImage // Add profile image URL
+            };
+            
+            console.log('Sending profile data:', completeProfileData);
+            
+            // Post to Complete Profile endpoint
+            await fetchWithAuth(API_ENDPOINTS.COMPLETE_PROFILE, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(completeProfileData)
+            });
+            
             toast.success('Profile updated successfully!');
             setEditMode(false);
-        }, 1000);
+        } catch (error) {
+            toast.error(error.message || 'Failed to update profile');
+            console.error('Error updating profile:', error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
         <div className={`profile-page ${isDarkMode ? 'dark' : ''}`}>
-            <div className="profile-container">
+            <div className={`profile-container ${editMode ? 'edit-mode' : ''}`}>
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -101,23 +234,38 @@ function Profile({ isDarkMode }) {
                     <div className="profile-avatar-container">
                         <div className="profile-avatar">
                             <img 
-                                src={profileData.imageUrl || `https://ui-avatars.com/api/?name=${profileData.fullName}&background=random`} 
+                                src={profileData.imageUrl || profileData.profileImage || `https://ui-avatars.com/api/?name=${profileData.fullName}&background=random`} 
                                 alt="Profile" 
                             />
                         </div>
-                        <button 
-                            className="edit-image-button"
-                            onClick={handleImageClick}
-                        >
-                            <FaCamera />
-                        </button>
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            onChange={handleImageChange}
-                            accept="image/*"
-                            className="hidden"
-                        />
+                        {editMode && (
+                            <div className="avatar-actions">
+                                <button
+                                    className="edit-image-button"
+                                    onClick={() => document.getElementById('profilePhotoInput').click()}
+                                    disabled={isLoading}
+                                >
+                                    <FaCamera />
+                                </button>
+                                <input
+                                    id="profilePhotoInput"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                    className="hidden"
+                                    disabled={isLoading}
+                                />
+                                {(profileData.imageUrl || profileData.profileImage) && (
+                                    <button
+                                        className="delete-image-button"
+                                        onClick={handleDeletePhoto}
+                                        disabled={isLoading}
+                                    >
+                                        <FaTrash />
+                                    </button>
+                                )}
+                            </div>
+                        )}
                     </div>
                     <h1>{profileData.fullName}</h1>
                     <p>{profileData.email}</p>
@@ -186,21 +334,6 @@ function Profile({ isDarkMode }) {
                                         placeholder="Enter phone number"
                                     />
                                 </div>
-
-                                <div className="form-group">
-                                    <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                                        <FaMapMarkerAlt />
-                                        <span>Location</span>
-                                    </div>
-                                    <input
-                                        type="text"
-                                        name="location"
-                                        value={profileData.location}
-                                        onChange={handleInputChange}
-                                        disabled={!editMode}
-                                        placeholder="Enter location"
-                                    />
-                                </div>
                             </div>
 
                             <div className="form-group full-width">
@@ -222,7 +355,7 @@ function Profile({ isDarkMode }) {
                                 <h3>Physical Information</h3>
                                 <div className="form-grid">
                                     <div className="form-group">
-                                        <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Age</div>
+                                        <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Birth Date</div>
                                         <input
                                             type="date"
                                             name="birthDate"
@@ -280,13 +413,18 @@ function Profile({ isDarkMode }) {
 
                             {editMode && (
                                 <div className="form-actions">
-                                    <button type="submit" className="save-button">
-                                        <FaSave /> Save Changes
+                                    <button 
+                                        type="submit" 
+                                        className="save-button"
+                                        disabled={isLoading}
+                                    >
+                                        {isLoading ? 'Saving...' : <><FaSave /> Save Changes</>}
                                     </button>
                                     <button 
                                         type="button" 
                                         className="cancel-button"
                                         onClick={() => setEditMode(false)}
+                                        disabled={isLoading}
                                     >
                                         <FaTimesCircle /> Cancel
                                     </button>
@@ -305,16 +443,16 @@ function Profile({ isDarkMode }) {
                     </div>
                     <div className="contacts-card">
                         {profileData.emergencyContacts.length > 0 ? (
-                            profileData.emergencyContacts.map((contact, index) => (
-                                <div key={index} className="contact-item">
+                            profileData.emergencyContacts.map((contact) => (
+                                <div key={contact.Id} className="contact-item">
                                     <div className="contact-info">
                                         <div className="contact-name">
                                             <FaUser className="contact-icon" />
-                                            <strong>{contact.name}</strong>
+                                            <strong>{contact.Name}</strong>
                                         </div>
                                         <div className="contact-phone">
                                             <FaPhone className="contact-icon" />
-                                            <span>{contact.phone}</span>
+                                            <span>{contact.Phone}</span>
                                         </div>
                                     </div>
                                 </div>

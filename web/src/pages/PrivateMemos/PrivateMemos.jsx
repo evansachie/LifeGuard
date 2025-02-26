@@ -8,6 +8,7 @@ import Spinner from '../../components/Spinner/Spinner';
 import './PrivateMemos.css';
 import EmptyState from '../../assets/empty-state.svg';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal/DeleteConfirmationModal';
+import { fetchWithAuth } from '../../utils/api';
 
 const PrivateMemos = ({ isDarkMode }) => {
     const [memo, setMemo] = useState('');
@@ -69,58 +70,63 @@ const PrivateMemos = ({ isDarkMode }) => {
     };
 
     const handleSaveMemo = async () => {
-        if (memo.trim() !== '') {
-            setSaving(true);
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    navigate('/log-in');
-                    return;
-                }
-
-                const response = await fetch(`${NODE_API_URL}/api/memos`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                    },
-                    body: JSON.stringify({ memo }),
-                });
-
-                if (response.ok) {
-                    const newMemo = await response.json();
-                    console.log('New memo saved:', newMemo);
-                    setSavedMemos([...savedMemos, newMemo]);
-                    setMemo('');
-                } else {
-                    console.error('Error saving memo:', response.status);
-                }
-            } catch (error) {
-                console.error('Error saving memo:', error);
-            } finally {
-                setSaving(false);
+        if (memo.trim() === '') {
+            toast.info('Please enter some text before saving');
+            return;
+        }
+        
+        setSaving(true);
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                navigate('/log-in');
+                return;
             }
+
+            const response = await fetch(`${NODE_API_URL}/api/memos`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ memo }),
+            });
+
+            if (response.ok) {
+                const newMemo = await response.json();
+                console.log('New memo saved:', newMemo);
+                setSavedMemos([...savedMemos, newMemo]);
+                setMemo('');
+            } else {
+                console.error('Error saving memo:', response.status);
+            }
+        } catch (error) {
+            console.error('Error saving memo:', error);
+        } finally {
+            setSaving(false);
         }
     };
 
-    const handleDeleteMemo = (memo) => {
+    const handleDeleteMemo = async (memo) => {
+        if (!memo.Id) {
+            toast.error('Invalid memo ID');
+            return;
+        }
         setDeletingMemo(memo);
         setDeleteModalOpen(true);
     };
 
     const confirmDelete = async () => {
-        if (!deletingMemo) return;
+        if (!deletingMemo?.Id) return;
         
         setIsDeleting(true);
         try {
-            const token = localStorage.getItem('token');
-            await fetch(`${NODE_API_URL}/api/memos/${deletingMemo.id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
+            await fetchWithAuth(`${NODE_API_URL}/api/memos/${deletingMemo.Id}`, {
+                method: 'DELETE'
             });
-            setSavedMemos(savedMemos.filter((m) => m.id !== deletingMemo.id));
+            setSavedMemos(prevMemos => 
+                prevMemos.filter(m => m.Id !== deletingMemo.Id)
+            );
             toast.success('Note deleted successfully!');
             setDeleteModalOpen(false);
         } catch (error) {
@@ -141,82 +147,48 @@ const PrivateMemos = ({ isDarkMode }) => {
         setMemo('');
     };
 
-    const handleDoneChange = async (id, done) => {
+    const handleDoneMemo = async (id, isDone) => {
         try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                navigate('/log-in');
-                return;
-            }
-
-            const response = await fetch(`${NODE_API_URL}/api/memos/${id}/done`, {
+            const response = await fetchWithAuth(`${NODE_API_URL}/api/memos/${id}/done`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify({ done }),
+                body: JSON.stringify({ done: isDone })
             });
-
-            if (response.ok) {
-                const updatedMemo = await response.json();
-                setSavedMemos(
-                    savedMemos.map((m) => (m.id === id ? updatedMemo : m))
-                );
-            } else {
-                const errorData = await response.json();
-                console.error('Error updating memo done state:', errorData.error);
-                setError(`Error updating memo done state: ${errorData.error}`);
-            }
+            
+            setSavedMemos(prevMemos => 
+                prevMemos.map(memo => 
+                    memo.Id === id ? { ...memo, Done: isDone } : memo
+                )
+            );
+            toast.success(isDone ? 'Note marked as done!' : 'Note marked as undone!');
         } catch (error) {
-            console.error('Error updating memo done state:', error);
-            setError('An error occurred while updating the memo done state. Please try again later.');
+            console.error('Error updating memo status:', error);
+            toast.error('Failed to update note status');
         }
     };
 
-    const handleDoneMemo = (id) => {
-        handleDoneChange(id, true);
-    };
-
     const handleUndoneMemo = (id) => {
-        handleDoneChange(id, false);
+        handleDoneMemo(id, false);
     };
 
     const handleUpdateMemo = async (id, event) => {
         const updatedMemo = event.target.parentElement.parentElement.querySelector('.edit-memo-input').value;
 
         try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                navigate('/log-in');
-                return;
-            }
-
-            const response = await fetch(`${NODE_API_URL}/api/memos/${id}`, {
+            const response = await fetchWithAuth(`${NODE_API_URL}/api/memos/${id}`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify({ memo: updatedMemo }),
+                body: JSON.stringify({ memo: updatedMemo })
             });
 
-            if (response.ok) {
-                const updatedMemoData = await response.json();
-
-                setSavedMemos(
-                    savedMemos.map((m) => (m.id === id ? updatedMemoData : m))
-                );
-
-                setEditingMemoId(null);
-            } else {
-                const errorData = await response.json();
-                console.error('Error updating memo:', errorData.error);
-                setError(`Error updating memo: ${errorData.error}`);
-            }
+            setSavedMemos(prevMemos => 
+                prevMemos.map(memo => 
+                    memo.Id === id ? response : memo
+                )
+            );
+            setEditingMemoId(null);
+            toast.success('Memo updated successfully!');
         } catch (error) {
             console.error('Error updating memo:', error);
-            setError('An error occurred while updating the memo. Please try again later.');
+            toast.error('Failed to update memo');
         }
     };
 
@@ -224,10 +196,10 @@ const PrivateMemos = ({ isDarkMode }) => {
     const filteredMemos = savedMemos.filter(memo => {
         const matchesFilter = 
             filter === 'all' ? true :
-            filter === 'active' ? !memo.done :
-            filter === 'completed' ? memo.done : true;
+            filter === 'active' ? !memo.Done :
+            filter === 'completed' ? memo.Done : true;
 
-        const matchesSearch = memo.memo.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch = memo.Text.toLowerCase().includes(searchTerm.toLowerCase());
         
         return matchesFilter && matchesSearch;
     });
@@ -276,18 +248,18 @@ const PrivateMemos = ({ isDarkMode }) => {
                         <p className="text-lg text-gray-500">No notes found</p>
                     </div>
                 ) : (
-                    filteredMemos.map(({ id, memo, done, created_at }) => (
-                        <div key={id} className={`saved-memo ${done ? 'done' : ''}`}>
-                            {editingMemoId === id ? (
+                    filteredMemos.map(({ Id, Text, Done, CreatedAt }) => (
+                        <div key={Id} className={`saved-memo ${Done ? 'done' : ''}`}>
+                            {editingMemoId === Id ? (
                                 <div className="edit-memo-container">
                                     <textarea
                                         className="edit-memo-input"
-                                        defaultValue={memo}
+                                        defaultValue={Text}
                                     />
                                     <div className="edit-actions">
                                         <button 
                                             className="memo-button edit-button"
-                                            onClick={(e) => handleUpdateMemo(id, e)}
+                                            onClick={(e) => handleUpdateMemo(Id, e)}
                                         >
                                             Save
                                         </button>
@@ -301,25 +273,25 @@ const PrivateMemos = ({ isDarkMode }) => {
                                 </div>
                             ) : (
                                 <>
-                                    <div className="memo-content">{memo}</div>
+                                    <div className="memo-content">{Text}</div>
                                     <div className="memo-actions">
                                         <button 
                                             className="memo-button edit-button" 
-                                            onClick={() => handleEditMemo(id)}
+                                            onClick={() => handleEditMemo(Id)}
                                         >
                                             Edit
                                         </button>
                                         <button 
                                             className="memo-button delete-button" 
-                                            onClick={() => handleDeleteMemo({ id, memo })}
+                                            onClick={() => handleDeleteMemo({ Id: Id, Text: Text })}
                                         >
                                             Delete
                                         </button>
                                         <button 
                                             className="memo-button done-button"
-                                            onClick={() => done ? handleUndoneMemo(id) : handleDoneMemo(id)}
+                                            onClick={() => Done ? handleUndoneMemo(Id) : handleDoneMemo(Id, true)}
                                         >
-                                            {done ? 'Undone' : 'Done'}
+                                            {Done ? 'Undone' : 'Done'}
                                         </button>
                                     </div>
                                 </>
