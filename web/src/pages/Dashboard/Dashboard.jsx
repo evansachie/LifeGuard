@@ -11,7 +11,7 @@ import { fetchWithAuth, API_ENDPOINTS, QUOTE_API_URL } from '../../utils/api';
 import './Dashboard.css';
 import QuickAccess from '../../components/QuickAccess/QuickAccess';
 import Spinner from '../../components/Spinner/Spinner';
-import HealthAssistant from '../../components/HealthAssistant/HealthAssistant';
+import FloatingHealthAssistant from '../../components/HealthAssistant/FloatingHealthAssistant';
 import { Steps } from 'intro.js-react';
 import { dashboardSteps } from '../../utils/tourSteps';
 import { useBLE } from '../../contexts/BLEContext';
@@ -290,9 +290,8 @@ function Dashboard({ isDarkMode }) {
                 </div>
             </div>
 
-            <HealthAssistant isDarkMode={isDarkMode} />
-
             <QuickAccess isDarkMode={isDarkMode} />
+            <FloatingHealthAssistant isDarkMode={isDarkMode} />            
 
             <Steps
                 enabled={showDashboardTour}
