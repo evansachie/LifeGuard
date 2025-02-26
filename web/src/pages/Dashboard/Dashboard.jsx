@@ -291,10 +291,7 @@ function Dashboard({ isDarkMode }) {
             </div>
 
             <QuickAccess isDarkMode={isDarkMode} />
-            
-            {/* Floating Health Assistant instead of embedded component */}
-            <FloatingHealthAssistant isDarkMode={isDarkMode} />
-            
+            <FloatingHealthAssistant isDarkMode={isDarkMode} />            
 
             <Steps
                 enabled={showDashboardTour}
