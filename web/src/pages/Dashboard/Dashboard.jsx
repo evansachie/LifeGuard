@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { FaTemperatureHigh, FaExclamationTriangle, FaChartLine, FaStickyNote, FaBluetooth, FaBluetoothB } from 'react-icons/fa';
+import { FaTemperatureHigh, FaExclamationTriangle, FaChartLine, FaStickyNote, FaBluetooth, FaBluetoothB, FaRobot } from 'react-icons/fa';
 import { IoFootstepsOutline } from "react-icons/io5";
 import { MdCo2 } from "react-icons/md";
 import { WiBarometer, WiHumidity, WiDust } from "react-icons/wi";
@@ -11,6 +11,7 @@ import { fetchWithAuth, API_ENDPOINTS, QUOTE_API_URL } from '../../utils/api';
 import './Dashboard.css';
 import QuickAccess from '../../components/QuickAccess/QuickAccess';
 import Spinner from '../../components/Spinner/Spinner';
+import HealthAssistant from '../../components/HealthAssistant/HealthAssistant';
 import { Steps } from 'intro.js-react';
 import { dashboardSteps } from '../../utils/tourSteps';
 import { useBLE } from '../../contexts/BLEContext';
@@ -288,6 +289,8 @@ function Dashboard({ isDarkMode }) {
                     ))}
                 </div>
             </div>
+
+            <HealthAssistant isDarkMode={isDarkMode} />
 
             <QuickAccess isDarkMode={isDarkMode} />
 
