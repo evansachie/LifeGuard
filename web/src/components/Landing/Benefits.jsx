@@ -1,27 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import ProactiveHealth from '../../assets/health-monitor.svg'
-import Environmental from '../../assets/nature.svg'
-import Emergency from '../../assets/emergency.svg'
+import { benefits } from '../../data/benefits';
 import './Benefits.css';
-
-const benefits = [
-    {
-        title: 'Proactive Health Monitoring',
-        description: 'Stay ahead of health issues with real-time monitoring and early warning systems.',
-        image: ProactiveHealth
-    },
-    {
-        title: 'Environmental Awareness',
-        description: 'Understand your surroundings with detailed environmental quality metrics.',
-        image: Environmental
-    },
-    {
-        title: 'Emergency Response',
-        description: 'Quick access to emergency services and automated alerts to emergency contacts.',
-        image: Emergency
-    }
-];
 
 const Benefits = () => {
     return (
