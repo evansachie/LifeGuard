@@ -2,9 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaPlay, FaPause, FaVolumeUp, FaRedo, FaMusic, FaTimes } from 'react-icons/fa';
 import { GiMeditation } from 'react-icons/gi';
-import { BsClock } from 'react-icons/bs';
 import BreathingCircle from '../../components/BreathingCircle/BreathingCircle';
 import soundsData from '../../data/sound-data.json';
+import { formatTime } from '../../utils/formatTime';
+import { meditationPresets } from '../../utils/meditationPresets';
 import { breathingPatterns } from '../../data/breathing-data';
 import './WellnessHub.css';
 
@@ -34,13 +35,6 @@ const WellnessHub = ({ isDarkMode }) => {
     const timerRef = useRef(null);
     const breathingRef = useRef(null);
 
-    const meditationPresets = [
-        { time: 300, label: '5 minutes', icon: <BsClock /> },
-        { time: 600, label: '10 minutes', icon: <BsClock /> },
-        { time: 900, label: '15 minutes', icon: <BsClock /> },
-        { time: 1200, label: '20 minutes', icon: <BsClock /> }
-    ];
-
     // Breathing Exercise Logic
     const startBreathing = (pattern) => {
         setSelectedPattern(pattern);
@@ -62,13 +56,6 @@ const WellnessHub = ({ isDarkMode }) => {
             const currentIndex = phases.indexOf(current);
             return phases[(currentIndex + 1) % phases.length];
         });
-    };
-
-    // Meditation Timer Logic
-    const formatTime = (seconds) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
     const toggleTimer = () => {
