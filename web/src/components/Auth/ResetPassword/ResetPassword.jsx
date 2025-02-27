@@ -4,6 +4,7 @@ import { FaLock, FaMoon, FaSun } from 'react-icons/fa';
 import Button from '../../button/button';
 import resetPasswordIllustration from '../../../assets/auth/reset-password.svg';
 import { API_ENDPOINTS, fetchApi } from '../../../utils/api';
+import { validatePassword } from '../../../utils/validatePassword';
 import { toast } from 'react-toastify';
 import './ResetPassword.css';
 
@@ -34,19 +35,6 @@ export default function ResetPassword({ isDarkMode, toggleTheme }) {
             ...prev,
             [name]: value
         }));
-    };
-
-    const validatePassword = (password) => {
-        const hasUpperCase = /[A-Z]/.test(password);
-        const hasNonAlphanumeric = /[^a-zA-Z0-9]/.test(password);
-        
-        if (!hasUpperCase) {
-            return 'Password must contain at least one uppercase letter';
-        }
-        if (!hasNonAlphanumeric) {
-            return 'Password must contain at least one special character';
-        }
-        return '';
     };
 
     const handleSubmit = async (e) => {
