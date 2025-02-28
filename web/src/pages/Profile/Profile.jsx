@@ -22,7 +22,8 @@ function Profile({ isDarkMode }) {
         weight: '',
         height: '',
         profileImage: '',
-        emergencyContacts: []
+        emergencyContacts: [],
+        age: ''
     });
 
     const fileInputRef = useRef(null);
@@ -67,22 +68,66 @@ function Profile({ isDarkMode }) {
             const userId = localStorage.getItem('userId');
             if (!userId) return;
 
-            const userData = await fetchWithAuth(`${API_ENDPOINTS.GET_USER}?id=${userId}`);
+            // First fetch basic user data using the existing method
+            const userData = await fetchWithAuth(API_ENDPOINTS.GET_USER(userId));
             
-            // Update profile data with retrieved information
+            // Then fetch detailed profile data using the new endpoint
+            const profileResponse = await fetchWithAuth(API_ENDPOINTS.GET_PROFILE(userId));
+            
+            // Extract the actual profile data from the nested 'data' property
+            const profileData = profileResponse && profileResponse.data ? profileResponse.data : {};
+            
+            console.log('User data:', userData);
+            console.log('Profile data:', profileData);
+            
+            // Try to get the profile photo URL directly
+            let photoUrl = profileData?.profileImage;
+            
+            // If no profile image URL in profile data, try to fetch it from the photo endpoint
+            if (!photoUrl) {
+                try {
+                    const photoResponse = await fetchWithAuth(API_ENDPOINTS.GET_PHOTO(userId), {
+                        method: 'GET'
+                    });
+                    
+                    // If the response contains a URL or image data
+                    if (photoResponse && typeof photoResponse === 'object') {
+                        photoUrl = photoResponse.url || photoResponse.imageUrl || photoResponse.profileImage;
+                    } else if (typeof photoResponse === 'string' && photoResponse.startsWith('http')) {
+                        // If the response is a direct URL string
+                        photoUrl = photoResponse;
+                    }
+                } catch (photoError) {
+                    console.log('No profile photo found, using default avatar');
+                }
+            }
+            
+            // Update profile data with retrieved information, handling NULL fields
             setProfileData(prev => ({
                 ...prev,
-                fullName: userData.fullName || prev.fullName,
-                email: userData.email || prev.email,
-                gender: userData.gender || '',
-                phone: userData.phoneNumber || '',
-                bio: userData.bio || '',
-                birthDate: userData.birthDate || '',
-                weight: userData.weight || '',
-                height: userData.height || '',
+                // Use basic user data for essential fields
+                fullName: userData?.userName || prev.fullName,
+                email: userData?.email || prev.email,
+                
+                // Use detailed profile data for additional fields with null handling
+                gender: profileData?.gender || '',
+                phone: profileData?.phoneNumber || '',
+                bio: profileData?.bio || '',
+                birthDate: profileData?.birthDate || '',
+                // Add direct age field
+                age: profileData?.age?.toString() || '',
+                weight: profileData?.weight?.toString() || '',
+                height: profileData?.height?.toString() || '',
+                profileImage: photoUrl || prev.profileImage,
             }));
+            
+            // Store userName in localStorage for other components
+            if (userData?.userName) {
+                localStorage.setItem('userName', userData.userName);
+            }
         } catch (error) {
             console.error('Error fetching user profile:', error);
+            toast.error('Failed to load profile data');
         }
     };
 
@@ -190,22 +235,23 @@ function Profile({ isDarkMode }) {
         setIsLoading(true);
         
         try {
-            // Prepare data for API
+            // Create a complete profile data object with all required fields
+            // Use empty strings or null for any missing values
             const completeProfileData = {
-                email: profileData.email,
-                age: calculateAge(profileData.birthDate),
-                gender: profileData.gender,
-                weight: parseInt(profileData.weight),
-                height: parseInt(profileData.height),
-                phoneNumber: profileData.phone,
-                bio: profileData.bio,
-                profileImage: profileData.profileImage // Add profile image URL
+                Email: profileData.email,
+                Age: profileData.age ? parseInt(profileData.age) : null,
+                Gender: profileData.gender || "", // Required field - send empty string if null
+                Weight: profileData.weight ? parseInt(profileData.weight) : null,
+                Height: profileData.height ? parseInt(profileData.height) : null,
+                PhoneNumber: profileData.phone || "", // Required field - send empty string if null
+                Bio: profileData.bio || "", // Required field - send empty string if null
+                ProfileImage: profileData.profileImage || null
             };
             
-            console.log('Sending profile data:', completeProfileData);
+            console.log('Sending complete profile data with all required fields:', completeProfileData);
             
             // Post to Complete Profile endpoint
-            await fetchWithAuth(API_ENDPOINTS.COMPLETE_PROFILE, {
+            const response = await fetchWithAuth(API_ENDPOINTS.COMPLETE_PROFILE, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -213,8 +259,15 @@ function Profile({ isDarkMode }) {
                 body: JSON.stringify(completeProfileData)
             });
             
+            console.log('Profile update response:', response);
+            
             toast.success('Profile updated successfully!');
             setEditMode(false);
+            
+            // Refresh profile data after update
+            setTimeout(() => {
+                fetchUserProfile();
+            }, 1000);
         } catch (error) {
             toast.error(error.message || 'Failed to update profile');
             console.error('Error updating profile:', error);
@@ -355,14 +408,17 @@ function Profile({ isDarkMode }) {
                                 <h3>Physical Information</h3>
                                 <div className="form-grid">
                                     <div className="form-group">
-                                        <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Birth Date</div>
+                                        <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Age</div>
                                         <input
-                                            type="date"
-                                            name="birthDate"
-                                            value={profileData.birthDate}
+                                            type="number"
+                                            name="age"
+                                            value={profileData.age}
                                             onChange={handleInputChange}
                                             disabled={!editMode}
-                                            max={new Date().toISOString().split('T')[0]}
+                                            placeholder="Enter age"
+                                            min="0"
+                                            max="120"
+                                            step="1"
                                         />
                                     </div>
 
