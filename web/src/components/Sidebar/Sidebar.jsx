@@ -5,12 +5,14 @@ import { TbReportAnalytics } from "react-icons/tb";
 import { MdContactEmergency, MdHealthAndSafety, MdOutlineAnalytics } from "react-icons/md";
 import { FaMap } from "react-icons/fa";
 import { fetchWithAuth, API_ENDPOINTS } from '../../utils/api';
+import { fetchProfilePhoto, generateAvatarUrl } from '../../utils/profileUtils';
 import './Sidebar.css';
 import { useAuth } from '../../contexts/AuthContext';
 
 function Sidebar({ toggleTheme, isDarkMode }) {
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
     const [userData, setUserData] = useState(null);
+    const [profilePhotoUrl, setProfilePhotoUrl] = useState(null);
     const [isActivityDropdownOpen, setIsActivityDropdownOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const navigate = useNavigate();
@@ -25,9 +27,12 @@ function Sidebar({ toggleTheme, isDarkMode }) {
                 const userId = localStorage.getItem('userId');
                 if (!userId) return;
 
-                const data = await fetchWithAuth(`${API_ENDPOINTS.GET_USER}?id=${userId}`);
+                const data = await fetchWithAuth(`${API_ENDPOINTS.GET_USER(localStorage.getItem('userId'))}`);
                 setUserData(data);
                 localStorage.setItem('userName', data.userName);
+                
+                // Once we have user data, fetch their profile photo
+                fetchUserProfilePhoto(userId);
             } catch (error) {
                 console.error('Error fetching user data:', error);
             }
@@ -35,6 +40,30 @@ function Sidebar({ toggleTheme, isDarkMode }) {
 
         fetchUserData();
     }, []);
+
+    // Add new function to fetch user's profile photo
+    const fetchUserProfilePhoto = async (userId) => {
+        try {
+            // Try to get the photo using the GET_PHOTO endpoint
+            const photoUrl = await fetchProfilePhoto(userId);
+            
+            if (photoUrl) {
+                setProfilePhotoUrl(photoUrl);
+            } else {
+                // Try to get photo from profile data as fallback
+                try {
+                    const profileResponse = await fetchWithAuth(API_ENDPOINTS.GET_PROFILE(userId));
+                    if (profileResponse?.data?.profileImage) {
+                        setProfilePhotoUrl(profileResponse.data.profileImage);
+                    }
+                } catch (profileError) {
+                    console.log('Could not fetch profile data for photo');
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching profile photo:', error);
+        }
+    };
 
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside);
@@ -133,9 +162,13 @@ function Sidebar({ toggleTheme, isDarkMode }) {
         <div className="user-info" onClick={toggleProfileMenu}>
             <div className="profile-picture-container">
                 <img 
-                    src={`https://ui-avatars.com/api/?name=${getDisplayName()}&background=random`}
+                    src={profilePhotoUrl || generateAvatarUrl(getDisplayName())}
                     alt="Profile" 
                     className="profile-picture" 
+                    onError={(e) => {
+                        e.target.onerror = null; 
+                        e.target.src = generateAvatarUrl(getDisplayName());
+                    }}
                 />
             </div>
             <span className="username">{getDisplayName()}</span>

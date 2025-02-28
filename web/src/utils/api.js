@@ -14,13 +14,16 @@ export const API_ENDPOINTS = {
     FORGOT_PASSWORD: '/Account/forgot-password',
     RESET_PASSWORD: '/Account/ResetPassword',
     COMPLETE_PROFILE: '/Account/CompleteProfile',
+    
     GET_USER: (id) => `/Account/${id}`,
     GET_PROFILE: (id) => `/Account/GetProfile/${id}`,
-    MEMOS: `${NODE_API_URL}/api/memos`,
-    EMERGENCY_CONTACTS: `${NODE_API_URL}/api/emergency-contacts`,
     UPLOAD_PHOTO: (id) => `${BASE_URL}/${id}/photo`,
     DELETE_PHOTO: (id) => `${BASE_URL}/${id}/photo`,
     GET_PHOTO: (id) => `${BASE_URL}/${id}/photo`,
+
+    MEMOS: `${NODE_API_URL}/api/memos`,
+    EMERGENCY_CONTACTS: `${NODE_API_URL}/api/emergency-contacts`,
+
     // RAG API Endpoints
     RAG_QUERY: `${NODE_API_URL}/api/rag/query`,
     RAG_INITIALIZE: `${NODE_API_URL}/api/rag/initialize`,
@@ -32,7 +35,7 @@ export const API_ENDPOINTS = {
 
 export const fetchApi = async (endpoint, options = {}) => {
     const defaultHeaders = options.body instanceof FormData
-        ? { 'Accept': 'application/json' }  // Don't set Content-Type for FormData
+        ? { 'Accept': 'application/json' }
         : {
             'Content-Type': 'application/json',
             'Accept': 'application/json'

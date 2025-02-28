@@ -61,7 +61,7 @@ function Dashboard({ isDarkMode }) {
 
             // Fetch user data and memos
             const [userData, memosData] = await Promise.all([
-                fetchWithAuth(`${API_ENDPOINTS.GET_USER}?id=${localStorage.getItem('userId')}`),
+                fetchWithAuth(`${API_ENDPOINTS.GET_USER(localStorage.getItem('userId'))}`),
                 fetchWithAuth(API_ENDPOINTS.MEMOS)
             ]);
 

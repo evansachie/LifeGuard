@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { FaMoon, FaSun, FaBars, FaTimes, FaUser, FaSignOutAlt, FaCog, FaChartLine } from 'react-icons/fa';
+import { fetchProfilePhoto, generateAvatarUrl } from '../../utils/profileUtils';
+import { fetchWithAuth, API_ENDPOINTS } from '../../utils/api';
 import './Navbar.css';
 
 const Navbar = ({ isDarkMode, toggleTheme, isAuthenticated }) => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [profilePhotoUrl, setProfilePhotoUrl] = useState(null);
     const dropdownRef = useRef(null);
 
     useEffect(() => {
@@ -17,6 +20,38 @@ const Navbar = ({ isDarkMode, toggleTheme, isAuthenticated }) => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    useEffect(() => {
+        const fetchUserPhoto = async () => {
+            if (isAuthenticated) {
+                const userId = localStorage.getItem('userId');
+                if (userId) {
+                    try {
+                        // Try to get the photo using the GET_PHOTO endpoint
+                        const photoUrl = await fetchProfilePhoto(userId);
+                        
+                        if (photoUrl) {
+                            setProfilePhotoUrl(photoUrl);
+                        } else {
+                            // Try to get photo from profile data as fallback
+                            try {
+                                const profileResponse = await fetchWithAuth(API_ENDPOINTS.GET_PROFILE(userId));
+                                if (profileResponse?.data?.profileImage) {
+                                    setProfilePhotoUrl(profileResponse.data.profileImage);
+                                }
+                            } catch (profileError) {
+                                console.log('Could not fetch profile data for photo');
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error fetching profile photo:', error);
+                    }
+                }
+            }
+        };
+        
+        fetchUserPhoto();
+    }, [isAuthenticated]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -65,9 +100,13 @@ const Navbar = ({ isDarkMode, toggleTheme, isAuthenticated }) => {
                     aria-label="Toggle profile menu"
                 >
                     <img 
-                        src={`https://ui-avatars.com/api/?name=${userName}&background=random`}
+                        src={profilePhotoUrl || generateAvatarUrl(userName)}
                         alt="Profile"
                         className="w-10 h-10 rounded-full"
+                        onError={(e) => {
+                            e.target.onerror = null; 
+                            e.target.src = generateAvatarUrl(userName);
+                        }}
                     />
                 </button>
 
@@ -124,4 +163,4 @@ const Navbar = ({ isDarkMode, toggleTheme, isAuthenticated }) => {
     );
 };
 
-export default Navbar; 
+export default Navbar;
