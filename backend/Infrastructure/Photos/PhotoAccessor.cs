@@ -22,9 +22,9 @@ namespace Infrastructure.Photos
             var apiSecret = Environment.GetEnvironmentVariable("CLOUDINARY_API_SECRET");
 
             var account = new Account(cloudName, apiKey, apiSecret);
-            _cloudinary = new Cloudinary(account); 
+            _cloudinary = new Cloudinary(account);
 
-                
+
 
         }
 
@@ -40,7 +40,7 @@ namespace Infrastructure.Photos
                         Transformation = new Transformation().Width(500).Height(500).Crop("fill").Gravity("face")
                     };
 
-                    var uploadResult =await _cloudinary.UploadAsync(uploadParams);
+                    var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
                     if (uploadResult.Error != null)
                     {
@@ -64,6 +64,24 @@ namespace Infrastructure.Photos
             var deleteParams = new DeletionParams(publicId);
             var result = await _cloudinary.DestroyAsync(deleteParams);
             return result.Result == "ok" ? result.Result : null;
+        }
+
+
+        public async Task<PhotoUploadResult> GetPhoto(string publicId)
+        {
+            var getResult = await _cloudinary.GetResourceAsync(publicId);
+
+            if (getResult == null)
+            {
+                return null;
+            }
+            var Photo = new PhotoUploadResult()
+            {
+                PublicId = getResult.PublicId,
+                Url = getResult.Url,
+            };
+
+            return Photo;
         }
     }
 }
