@@ -291,6 +291,7 @@ function Dashboard({ isDarkMode }) {
             </div>
 
             <QuickAccess isDarkMode={isDarkMode} />
+            
             <FloatingHealthAssistant isDarkMode={isDarkMode} />            
 
             <Steps
