@@ -14,11 +14,16 @@ export const API_ENDPOINTS = {
     FORGOT_PASSWORD: '/Account/forgot-password',
     RESET_PASSWORD: '/Account/ResetPassword',
     COMPLETE_PROFILE: '/Account/CompleteProfile',
-    GET_USER: '/Account/id',
-    MEMOS: `${NODE_API_URL}/api/memos`,
-    EMERGENCY_CONTACTS: `${NODE_API_URL}/api/emergency-contacts`,
+    
+    GET_USER: (id) => `/Account/${id}`,
+    GET_PROFILE: (id) => `/Account/GetProfile/${id}`,
     UPLOAD_PHOTO: (id) => `${BASE_URL}/${id}/photo`,
     DELETE_PHOTO: (id) => `${BASE_URL}/${id}/photo`,
+    GET_PHOTO: (id) => `${BASE_URL}/${id}/photo`,
+
+    MEMOS: `${NODE_API_URL}/api/memos`,
+    EMERGENCY_CONTACTS: `${NODE_API_URL}/api/emergency-contacts`,
+
     // RAG API Endpoints
     RAG_QUERY: `${NODE_API_URL}/api/rag/query`,
     RAG_INITIALIZE: `${NODE_API_URL}/api/rag/initialize`,
@@ -30,7 +35,7 @@ export const API_ENDPOINTS = {
 
 export const fetchApi = async (endpoint, options = {}) => {
     const defaultHeaders = options.body instanceof FormData
-        ? { 'Accept': 'application/json' }  // Don't set Content-Type for FormData
+        ? { 'Accept': 'application/json' }
         : {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
@@ -121,4 +126,4 @@ export const handleApiResponse = async (response) => {
 
 export const getResetPasswordUrl = (email, token) => {
     return `${FRONTEND_URL}/reset-password?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`;
-}; 
+};
