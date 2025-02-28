@@ -312,9 +312,9 @@ lifeguard/
 
 ## 📚 API Documentation
 
-Below is an overview of the core endpoints for the LifeGuard API:
+Below is an overview of the core endpoints for the LifeGuard API.
 
-### Account Endpoints
+### Main Service Endpoints (Hosted on Render)
 
 | **Method** | **Endpoint**                         | **Description**                                      |
 |------------|--------------------------------------|------------------------------------------------------|
@@ -325,8 +325,8 @@ Below is an overview of the core endpoints for the LifeGuard API:
 | POST       | `/api/Account/ResendOTP`             | Resend OTP to the user                               |
 | POST       | `/api/Account/VerifyOTP`             | Verify the OTP provided by the user                  |
 | POST       | `/api/Account/ResetPassword`         | Reset the user's password using a token              |
-| GET        | `/api/Account/{id}`                  | Retrieve basic account information by ID             |
 | POST       | `/api/Account/CompleteProfile`       | Submit additional profile details                    |
+| GET        | `/api/Account/{id}`                  | Retrieve basic account information by ID             |
 | GET        | `/api/Account/GetProfile/{id}`       | Retrieve detailed user profile information           |
 
 ### Photo Endpoints
@@ -337,6 +337,22 @@ Below is an overview of the core endpoints for the LifeGuard API:
 | DELETE     | `/{id}/photo`        | Delete the user's photo identified by the given ID      |
 | GET        | `/{id}/photo`        | Retrieve the photo for the user with the specified ID    |
 
+### Node-Server Endpoints
+
+These endpoints are served from the Node-Server (hosted at `https://lifeguard-node.onrender.com`):
+
+| **Method** | **Endpoint**                                      | **Description**                                            |
+|------------|---------------------------------------------------|------------------------------------------------------------|
+| GET/POST*  | `/api/memos`                                      | Retrieve or manage memos                                   |
+| GET/POST*  | `/api/emergency-contacts`                         | Retrieve or manage emergency contacts                      |
+| POST       | `/api/rag/query`                                  | Submit a query to the RAG (Retrieval-Augmented Generation) API |
+| POST       | `/api/rag/initialize`                             | Initialize the RAG system                                  |
+| POST       | `/api/rag/process/health`                         | Process health data via the RAG API                        |
+| POST       | `/api/rag/process/environmental`                  | Process environmental data via the RAG API                 |
+| POST       | `/api/rag/process/medical`                        | Process medical data via the RAG API                       |
+| POST       | `/api/rag/process/profiles`                       | Process profile data via the RAG API                       |
+
+*Note: The HTTP methods for `/api/memos` and `/api/emergency-contacts` depend on the specific operation (e.g., GET for retrieval, POST for creation).
 
 Complete API documentation would be posted soon...
 
@@ -369,7 +385,7 @@ Complete API documentation would be posted soon...
   <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 30px;">
     <div>
       <h4>Dashboard</h4>
-      <img src="./docs/images/dashboard.PNG" alt="Admin Dashboard" width="600"/>
+      <img src="./docs/images/web-dashboard.png" alt="Admin Dashboard" width="600"/>
     </div>
   </div>
   
