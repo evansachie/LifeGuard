@@ -92,8 +92,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 5px;
-  margin-right: 5px;
+  padding: 3px;
+  margin-right: 25px;
   transition: all 0.2s ease;
 }
 
@@ -105,22 +105,6 @@
 .icon-button.active {
   opacity: 1;
   color: #fff;
-}
-
-.close-button {
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 5px;
-}
-
-.close-button:hover {
-  opacity: 0.8;
 }
 
 /* Shortcuts Panel */
