@@ -12,5 +12,6 @@ namespace Application.Contracts.Photos
     {
         Task<PhotoUploadResult> AddUserPhotoAsync(string userId, IFormFile file);
         Task DeleteUserPhotoAsync(string userId);
+        Task<PhotoUploadResult> GetUserPhotoAsync(string userId);   
     }
 }
