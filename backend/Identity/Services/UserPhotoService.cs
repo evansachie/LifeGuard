@@ -17,7 +17,7 @@ namespace Identity.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IPhotoAccessor _photoAccessor;
 
-        public UserPhotoService(UserManager<ApplicationUser> userManager,  IPhotoAccessor photoAccessor)
+        public UserPhotoService(UserManager<ApplicationUser> userManager,IPhotoAccessor photoAccessor)
         {
             _userManager = userManager;
             _photoAccessor = photoAccessor;
@@ -63,7 +63,7 @@ namespace Identity.Services
             if (deletionResult == null)
                 throw new Exception("Problem deleting photo");
 
-            
+
             user.PhotoUrl = null;
             user.PhotoPublicId = null;
 
@@ -72,5 +72,28 @@ namespace Identity.Services
                 throw new Exception("Problem updating user photo");
         }
 
+        public async Task<PhotoUploadResult> GetUserPhotoAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
+
+            if (string.IsNullOrEmpty(user.PhotoPublicId))
+            {
+                throw new Exception("User does not have a photo");
+            }
+
+            var  result = await _photoAccessor.GetPhoto(user.PhotoPublicId);
+            if (result == null)
+            {
+                throw new Exception("User does not have a photo");
+            }
+
+            return result;
+        }
+           
     }
 }
