@@ -22,7 +22,7 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
     const fetchUserData = async () => {
       setIsLoading(true);
       try {
-        const response = await fetchWithAuth(`${API_ENDPOINTS.GET_USER}?id=${localStorage.getItem('userId')}`, {
+        const response = await fetchWithAuth(`${API_ENDPOINTS.GET_USER(localStorage.getItem('userId'))}`, {
           method: 'GET',
         });
         
