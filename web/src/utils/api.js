@@ -14,11 +14,13 @@ export const API_ENDPOINTS = {
     FORGOT_PASSWORD: '/Account/forgot-password',
     RESET_PASSWORD: '/Account/ResetPassword',
     COMPLETE_PROFILE: '/Account/CompleteProfile',
-    GET_USER: '/Account/id',
+    GET_USER: (id) => `/Account/${id}`,
+    GET_PROFILE: (id) => `/Account/GetProfile/${id}`,
     MEMOS: `${NODE_API_URL}/api/memos`,
     EMERGENCY_CONTACTS: `${NODE_API_URL}/api/emergency-contacts`,
     UPLOAD_PHOTO: (id) => `${BASE_URL}/${id}/photo`,
     DELETE_PHOTO: (id) => `${BASE_URL}/${id}/photo`,
+    GET_PHOTO: (id) => `${BASE_URL}/${id}/photo`,
     // RAG API Endpoints
     RAG_QUERY: `${NODE_API_URL}/api/rag/query`,
     RAG_INITIALIZE: `${NODE_API_URL}/api/rag/initialize`,
@@ -121,4 +123,4 @@ export const handleApiResponse = async (response) => {
 
 export const getResetPasswordUrl = (email, token) => {
     return `${FRONTEND_URL}/reset-password?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`;
-}; 
+};
