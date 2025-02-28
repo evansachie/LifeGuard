@@ -1,5 +1,4 @@
 ﻿using Application.Contracts.Photos;
-
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +8,7 @@ namespace LifeGuard.Controllers
     {
         private readonly IMediator _mediator;
         private readonly IUserPhotoService _userPhotoService;
-        
+
         public PhotosController(IMediator mediator, IUserPhotoService userPhotoService)
         {
             _mediator = mediator;
@@ -25,7 +24,7 @@ namespace LifeGuard.Controllers
                 return Ok(result);
             }
             catch (Exception ex)
-            { 
+            {
                 return BadRequest(ex.Message);
             }
         }
@@ -36,7 +35,22 @@ namespace LifeGuard.Controllers
             try
             {
                 await _userPhotoService.DeleteUserPhotoAsync(id);
-                return Ok("Photo deleted");
+                return NoContent(); 
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("{id}/photo")]
+        public async Task<IActionResult> GetPhoto(string id)
+        {
+            try
+            {
+
+                return Ok(await _userPhotoService.GetUserPhotoAsync(id));
             }
             catch (Exception ex)
             {
