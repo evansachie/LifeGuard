@@ -13,24 +13,56 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
-app.use((req, res, next) => {
-    res.on('finish', () => {
-        console.log(`${req.method} ${req.originalUrl} ${res.statusCode}`);
-    });
-    next();
-});
 
-app.use(cors({
-    origin: [
-        'http://localhost:3000',
-        'https://lifeguard-vq69.onrender.com',
-        'https://lifeguard-vert.vercel.app'
-    ],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-    optionsSuccessStatus: 200
-}));
+// Configure CORS more comprehensively
+// This middleware must be added before any routes
+const corsOptions = {
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'https://lifeguard-vq69.onrender.com',
+      'https://lifeguard-vert.vercel.app',
+      'https://lifeguard-node.onrender.com'
+    ];
+    // Allow requests with no origin (like mobile apps, curl, postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log("CORS blocked origin:", origin);
+      callback(null, true); // Temporarily allow all origins for debugging
+    }
+  },
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  credentials: true,
+  preflightContinue: false,
+  optionsSuccessStatus: 204
+};
+
+// Apply CORS middleware first
+app.use(cors(corsOptions));
+
+// Handle preflight OPTIONS requests explicitly
+app.options('*', cors(corsOptions));
+
+// Add CORS headers directly to all responses as a fallback
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  // Log request details for debugging
+  console.log(`${req.method} ${req.originalUrl} - Origin: ${req.headers.origin || 'none'}`);
+  
+  // Handle OPTIONS requests
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end();
+  }
+  
+  next();
+});
 
 app.use(express.json());
 
