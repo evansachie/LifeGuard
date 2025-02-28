@@ -8,10 +8,14 @@ import './Profile.css';
 import { API_ENDPOINTS, fetchWithAuth } from '../../utils/api';
 import { calculateAge } from '../../utils/calculateAge';
 import { uploadToCloudinary } from '../../utils/cloudinary';
+import Spinner from '../../components/Spinner/Spinner';
 
 function Profile({ isDarkMode }) {
     const [editMode, setEditMode] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [profileLoading, setProfileLoading] = useState(true);
+    const [contactsLoading, setContactsLoading] = useState(true);
+    const [imageLoading, setImageLoading] = useState(false);
     const [profileData, setProfileData] = useState({
         fullName: '',
         email: '',
@@ -33,23 +37,22 @@ function Profile({ isDarkMode }) {
         const storedName = localStorage.getItem('userName');
         const storedEmail = localStorage.getItem('email') || localStorage.getItem('userName');
         
-        // Load emergency contacts (if any)
-        const contacts = JSON.parse(localStorage.getItem('emergencyContacts')) || [];
-        
+        // Set initial values from localStorage
         setProfileData(prev => ({
             ...prev,
             fullName: storedName || 'User',
             email: storedEmail || 'user@example.com',
-            emergencyContacts: contacts
         }));
 
         // Fetch user profile data if available
-        fetchUserProfile();
+        setProfileLoading(true);
+        fetchUserProfile().finally(() => setProfileLoading(false));
     }, []);
 
     useEffect(() => {
         const fetchEmergencyContacts = async () => {
             try {
+                setContactsLoading(true);
                 const data = await fetchWithAuth(API_ENDPOINTS.EMERGENCY_CONTACTS);
                 setProfileData(prev => ({
                     ...prev,
@@ -57,6 +60,8 @@ function Profile({ isDarkMode }) {
                 }));
             } catch (error) {
                 console.error('Error fetching emergency contacts:', error);
+            } finally {
+                setContactsLoading(false);
             }
         };
 
@@ -286,10 +291,16 @@ function Profile({ isDarkMode }) {
                 >
                     <div className="profile-avatar-container">
                         <div className="profile-avatar">
-                            <img 
-                                src={profileData.imageUrl || profileData.profileImage || `https://ui-avatars.com/api/?name=${profileData.fullName}&background=random`} 
-                                alt="Profile" 
-                            />
+                            {profileLoading ? (
+                                <div className="avatar-spinner-container">
+                                    <Spinner size="large" />
+                                </div>
+                            ) : (
+                                <img 
+                                    src={profileData.imageUrl || profileData.profileImage || `https://ui-avatars.com/api/?name=${profileData.fullName}&background=random`} 
+                                    alt="Profile" 
+                                />
+                            )}
                         </div>
                         {editMode && (
                             <div className="avatar-actions">
@@ -320,8 +331,8 @@ function Profile({ isDarkMode }) {
                             </div>
                         )}
                     </div>
-                    <h1>{profileData.fullName}</h1>
-                    <p>{profileData.email}</p>
+                    <h1>{profileLoading ? "Loading..." : profileData.fullName}</h1>
+                    <p>{profileLoading ? "..." : profileData.email}</p>
                 </motion.div>
 
                 <motion.div
@@ -333,7 +344,7 @@ function Profile({ isDarkMode }) {
                     <div className="profile-section">
                         <div className="section-header">
                             <h2>Personal Information</h2>
-                            {!editMode && (
+                            {!editMode && !profileLoading && (
                                 <button 
                                     className="edit-button"
                                     onClick={() => setEditMode(true)}
@@ -343,150 +354,157 @@ function Profile({ isDarkMode }) {
                             )}
                         </div>
 
-                        <form onSubmit={handleSubmit}>
-                            <div className="form-grid">
-                                <div className="form-group">
-                                <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                                    <FaUser />
-                                    <span>Full Name</span>
-                                </div>
-                                    <input
-                                        type="text"
-                                        name="fullName"
-                                        value={profileData.fullName}
-                                        onChange={handleInputChange}
-                                        disabled={!editMode}
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                                        <FaEnvelope />
-                                        <span>Email</span>
-                                    </div>
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        value={profileData.email}
-                                        onChange={handleInputChange}
-                                        disabled={true}
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                                        <FaPhone />
-                                        <span>Phone</span>
-                                    </div>
-                                    <input
-                                        type="tel"
-                                        name="phone"
-                                        value={profileData.phone}
-                                        onChange={handleInputChange}
-                                        disabled={!editMode}
-                                        placeholder="Enter phone number"
-                                    />
-                                </div>
+                        {profileLoading ? (
+                            <div className="form-loading-container">
+                                <Spinner size="large" />
+                                <p>Loading profile information...</p>
                             </div>
-
-                            <div className="form-group full-width">
-                                <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                                    <FaPerson />
-                                    <span>Bio</span>
-                                </div>
-                                <textarea
-                                    name="bio"
-                                    value={profileData.bio}
-                                    onChange={handleInputChange}
-                                    disabled={!editMode}
-                                    placeholder="Tell us about yourself"
-                                    rows={4}
-                                />
-                            </div>
-
-                            <div className="physical-info-section">
-                                <h3>Physical Information</h3>
+                        ) : (
+                            <form onSubmit={handleSubmit}>
                                 <div className="form-grid">
                                     <div className="form-group">
-                                        <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Age</div>
+                                    <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                                        <FaUser />
+                                        <span>Full Name</span>
+                                    </div>
                                         <input
-                                            type="number"
-                                            name="age"
-                                            value={profileData.age}
+                                            type="text"
+                                            name="fullName"
+                                            value={profileData.fullName}
                                             onChange={handleInputChange}
                                             disabled={!editMode}
-                                            placeholder="Enter age"
-                                            min="0"
-                                            max="120"
-                                            step="1"
                                         />
                                     </div>
 
                                     <div className="form-group">
-                                        <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Gender</div>
-                                        <select
-                                            name="gender"
-                                            value={profileData.gender}
+                                        <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                                            <FaEnvelope />
+                                            <span>Email</span>
+                                        </div>
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            value={profileData.email}
+                                            onChange={handleInputChange}
+                                            disabled={true}
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                                            <FaPhone />
+                                            <span>Phone</span>
+                                        </div>
+                                        <input
+                                            type="tel"
+                                            name="phone"
+                                            value={profileData.phone}
                                             onChange={handleInputChange}
                                             disabled={!editMode}
+                                            placeholder="Enter phone number"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="form-group full-width">
+                                    <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                                        <FaPerson />
+                                        <span>Bio</span>
+                                    </div>
+                                    <textarea
+                                        name="bio"
+                                        value={profileData.bio}
+                                        onChange={handleInputChange}
+                                        disabled={!editMode}
+                                        placeholder="Tell us about yourself"
+                                        rows={4}
+                                    />
+                                </div>
+
+                                <div className="physical-info-section">
+                                    <h3>Physical Information</h3>
+                                    <div className="form-grid">
+                                        <div className="form-group">
+                                            <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Age</div>
+                                            <input
+                                                type="number"
+                                                name="age"
+                                                value={profileData.age}
+                                                onChange={handleInputChange}
+                                                disabled={!editMode}
+                                                placeholder="Enter age"
+                                                min="0"
+                                                max="120"
+                                                step="1"
+                                            />
+                                        </div>
+
+                                        <div className="form-group">
+                                            <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Gender</div>
+                                            <select
+                                                name="gender"
+                                                value={profileData.gender}
+                                                onChange={handleInputChange}
+                                                disabled={!editMode}
+                                            >
+                                                <option value="">Select Gender</option>
+                                                <option value="male">Male</option>
+                                                <option value="female">Female</option>
+                                                <option value="other">Other</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="form-group">
+                                            <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Weight (kg)</div>
+                                            <input
+                                                type="number"
+                                                name="weight"
+                                                value={profileData.weight}
+                                                onChange={handleInputChange}
+                                                disabled={!editMode}
+                                                placeholder="Enter weight"
+                                                min="0"
+                                                step="0.1"
+                                            />
+                                        </div>
+
+                                        <div className="form-group">
+                                            <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Height (cm)</div>
+                                            <input
+                                                type="number"
+                                                name="height"
+                                                value={profileData.height}
+                                                onChange={handleInputChange}
+                                                disabled={!editMode}
+                                                placeholder="Enter height"
+                                                min="0"
+                                                step="0.1"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {editMode && (
+                                    <div className="form-actions">
+                                        <button 
+                                            type="submit" 
+                                            className="save-button"
+                                            disabled={isLoading}
                                         >
-                                            <option value="">Select Gender</option>
-                                            <option value="male">Male</option>
-                                            <option value="female">Female</option>
-                                            <option value="other">Other</option>
-                                        </select>
+                                            {isLoading ? 'Saving...' : <><FaSave /> Save Changes</>}
+                                        </button>
+                                        <button 
+                                            type="button" 
+                                            className="cancel-button"
+                                            onClick={() => setEditMode(false)}
+                                            disabled={isLoading}
+                                        >
+                                            <FaTimesCircle /> Cancel
+                                        </button>
                                     </div>
-
-                                    <div className="form-group">
-                                        <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Weight (kg)</div>
-                                        <input
-                                            type="number"
-                                            name="weight"
-                                            value={profileData.weight}
-                                            onChange={handleInputChange}
-                                            disabled={!editMode}
-                                            placeholder="Enter weight"
-                                            min="0"
-                                            step="0.1"
-                                        />
-                                    </div>
-
-                                    <div className="form-group">
-                                        <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Height (cm)</div>
-                                        <input
-                                            type="number"
-                                            name="height"
-                                            value={profileData.height}
-                                            onChange={handleInputChange}
-                                            disabled={!editMode}
-                                            placeholder="Enter height"
-                                            min="0"
-                                            step="0.1"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            {editMode && (
-                                <div className="form-actions">
-                                    <button 
-                                        type="submit" 
-                                        className="save-button"
-                                        disabled={isLoading}
-                                    >
-                                        {isLoading ? 'Saving...' : <><FaSave /> Save Changes</>}
-                                    </button>
-                                    <button 
-                                        type="button" 
-                                        className="cancel-button"
-                                        onClick={() => setEditMode(false)}
-                                        disabled={isLoading}
-                                    >
-                                        <FaTimesCircle /> Cancel
-                                    </button>
-                                </div>
-                            )}
-                        </form>
+                                )}
+                            </form>
+                        )}
                     </div>
                 </motion.div>
 
@@ -498,7 +516,12 @@ function Profile({ isDarkMode }) {
                         </Link>
                     </div>
                     <div className="contacts-card">
-                        {profileData.emergencyContacts.length > 0 ? (
+                        {contactsLoading ? (
+                            <div className="contacts-loading-container">
+                                <Spinner size="large" />
+                                <p>Loading emergency contacts...</p>
+                            </div>
+                        ) : profileData.emergencyContacts.length > 0 ? (
                             profileData.emergencyContacts.map((contact) => (
                                 <div key={contact.Id} className="contact-item">
                                     <div className="contact-info">
