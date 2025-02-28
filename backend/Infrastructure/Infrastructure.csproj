@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CloudinaryDotNet" Version="1.27.4" />
     <PackageReference Include="Otp.NET" Version="1.4.0" />
     <PackageReference Include="RestSharp" Version="112.1.0" />
   </ItemGroup>

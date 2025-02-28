@@ -122,7 +122,7 @@ namespace LifeGuard_API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
-        [HttpGet("id")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(string id)
         {
             return Ok(await _authService.GetUserById(id));
@@ -134,6 +134,20 @@ namespace LifeGuard_API.Controllers
         public async Task<IActionResult> CompleteProfile(CompleteProfileCommand request)
         {
             var result = await mediator.Send(request);
+
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            return StatusCode((int)result.StatusCode, result);
+        }
+
+
+        [HttpGet("GetProfile/{id}")]
+
+        public async Task<IActionResult> GetProfile(string id)
+        {
+            var result = await mediator.Send(new GetProfileQuery { Id = id});
 
             if (result.IsSuccess)
             {

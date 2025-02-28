@@ -16,6 +16,8 @@ using System.Reflection;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using Persistence;
+using Application.Contracts.Photos;
+using Infrastructure.Photos;
 namespace LifeGuard
 {
     public class Program
@@ -61,6 +63,10 @@ namespace LifeGuard
             builder.Services.AddTransient<IAuthService, AuthService>();
             builder.Services.AddTransient<IEmailService, EmailService>();
             builder.Services.AddTransient<IOTPService, OTPService>();
+            
+
+            builder.Services.AddScoped<IPhotoAccessor, PhotoAccessor>();
+            builder.Services.AddScoped<IUserPhotoService, UserPhotoService>();
 
 
             builder.Services.AddAuthentication(options =>
