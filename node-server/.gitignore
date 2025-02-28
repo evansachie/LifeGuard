@@ -10,6 +10,7 @@
 
 # production
 /build
+/scripts
 
 # others
 code_context.txt
