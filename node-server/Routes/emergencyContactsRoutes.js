@@ -110,17 +110,26 @@ module.exports = (pool) => {
             const { name, phone, email, relationship, priority = 1, role = 'General' } = req.body;
 
             // Start a transaction
-            const client = await pool.connect();
+            let client;
             try {
+                client = await pool.connect();
+                console.log("Database connection established");
+                
                 await client.query('BEGIN');
+                console.log("Transaction started");
+
+                // Test database connection
+                const testResult = await client.query('SELECT NOW()');
+                console.log("Database connection test successful:", testResult.rows[0]);
 
                 // Insert the contact
+                console.log("Attempting to insert contact with data:", { name, phone, email, relationship, userId, priority, role });
                 const { rows } = await client.query(
                     'INSERT INTO "EmergencyContacts" ("Name", "Phone", "Email", "Relationship", "UserId", "IsVerified", "Priority", "Role", "CreatedAt", "UpDatedAt") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *',
                     [name, phone, email, relationship, userId, false, priority, role]
                 );
                 
-                console.log('Contact inserted:', rows[0]);
+                console.log('Contact inserted successfully:', rows[0]);
                 
                 // Get user info for the email - handle case where AspNetUsers might not exist
                 let userData = { name: 'A LifeGuard user', email: decoded.email || email };
@@ -144,6 +153,7 @@ module.exports = (pool) => {
                 
                 // Commit the transaction
                 await client.query('COMMIT');
+                console.log("Transaction committed successfully");
                 
                 // Return the created contact with email status
                 res.status(201).json({
@@ -151,10 +161,31 @@ module.exports = (pool) => {
                     notificationSent: emailResult.success
                 });
             } catch (error) {
-                await client.query('ROLLBACK');
-                throw error;
+                console.error('Detailed error in contact creation:', {
+                    error: error.message,
+                    stack: error.stack,
+                    query: error.query,
+                    parameters: error.parameters
+                });
+                
+                if (client) {
+                    try {
+                        await client.query('ROLLBACK');
+                        console.log("Transaction rolled back due to error");
+                    } catch (rollbackError) {
+                        console.error('Error rolling back transaction:', rollbackError);
+                    }
+                }
+                
+                res.status(500).json({ 
+                    error: 'Failed to create emergency contact',
+                    details: error.message
+                });
             } finally {
-                client.release();
+                if (client) {
+                    client.release();
+                    console.log("Database client released");
+                }
             }
         } catch (error) {
             console.error('Error creating emergency contact:', error);
