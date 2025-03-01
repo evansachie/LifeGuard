@@ -62,7 +62,7 @@ export default function LogIn({ isDarkMode, toggleTheme }) {
             navigate('/dashboard');
         } catch (error) {
             console.error('Login failed:', error);
-            toast.error(error.message || 'Login failed');
+            toast.error('Login failed');
         } finally {
             setIsLoading(false);
         }

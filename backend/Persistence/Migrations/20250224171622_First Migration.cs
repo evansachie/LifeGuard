@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class First_LifeGuardDbContext_Migration : Migration
+    public partial class FirstMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -51,7 +51,7 @@ namespace Persistence.Migrations
             migrationBuilder.InsertData(
                 table: "Memos",
                 columns: new[] { "Id", "CreatedAt", "Done", "Text", "UpDatedAt", "UserId" },
-                values: new object[] { 1, new DateTime(2025, 2, 18, 0, 55, 41, 195, DateTimeKind.Utc).AddTicks(3573), false, "Hi, This is my first Memo", new DateTime(2025, 2, 18, 0, 55, 41, 195, DateTimeKind.Utc).AddTicks(3574), "7a223968-23b4-4652-z7b7-8574d048cdb9" });
+                values: new object[] { 1, new DateTime(2025, 2, 24, 17, 16, 22, 183, DateTimeKind.Utc).AddTicks(8329), false, "Hi, This is my first Memo", new DateTime(2025, 2, 24, 17, 16, 22, 183, DateTimeKind.Utc).AddTicks(8331), "7a223968-23b4-4652-z7b7-8574d048cdb9" });
         }
 
         /// <inheritdoc />

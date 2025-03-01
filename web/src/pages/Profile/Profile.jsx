@@ -8,10 +8,14 @@ import './Profile.css';
 import { API_ENDPOINTS, fetchWithAuth } from '../../utils/api';
 import { calculateAge } from '../../utils/calculateAge';
 import { uploadToCloudinary } from '../../utils/cloudinary';
+import Spinner from '../../components/Spinner/Spinner';
 
 function Profile({ isDarkMode }) {
     const [editMode, setEditMode] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [profileLoading, setProfileLoading] = useState(true);
+    const [contactsLoading, setContactsLoading] = useState(true);
+    const [imageLoading, setImageLoading] = useState(false);
     const [profileData, setProfileData] = useState({
         fullName: '',
         email: '',
@@ -22,7 +26,8 @@ function Profile({ isDarkMode }) {
         weight: '',
         height: '',
         profileImage: '',
-        emergencyContacts: []
+        emergencyContacts: [],
+        age: ''
     });
 
     const fileInputRef = useRef(null);
@@ -32,23 +37,22 @@ function Profile({ isDarkMode }) {
         const storedName = localStorage.getItem('userName');
         const storedEmail = localStorage.getItem('email') || localStorage.getItem('userName');
         
-        // Load emergency contacts (if any)
-        const contacts = JSON.parse(localStorage.getItem('emergencyContacts')) || [];
-        
+        // Set initial values from localStorage
         setProfileData(prev => ({
             ...prev,
             fullName: storedName || 'User',
             email: storedEmail || 'user@example.com',
-            emergencyContacts: contacts
         }));
 
         // Fetch user profile data if available
-        fetchUserProfile();
+        setProfileLoading(true);
+        fetchUserProfile().finally(() => setProfileLoading(false));
     }, []);
 
     useEffect(() => {
         const fetchEmergencyContacts = async () => {
             try {
+                setContactsLoading(true);
                 const data = await fetchWithAuth(API_ENDPOINTS.EMERGENCY_CONTACTS);
                 setProfileData(prev => ({
                     ...prev,
@@ -56,6 +60,8 @@ function Profile({ isDarkMode }) {
                 }));
             } catch (error) {
                 console.error('Error fetching emergency contacts:', error);
+            } finally {
+                setContactsLoading(false);
             }
         };
 
@@ -67,22 +73,66 @@ function Profile({ isDarkMode }) {
             const userId = localStorage.getItem('userId');
             if (!userId) return;
 
-            const userData = await fetchWithAuth(`${API_ENDPOINTS.GET_USER}?id=${userId}`);
+            // First fetch basic user data using the existing method
+            const userData = await fetchWithAuth(API_ENDPOINTS.GET_USER(userId));
             
-            // Update profile data with retrieved information
+            // Then fetch detailed profile data using the new endpoint
+            const profileResponse = await fetchWithAuth(API_ENDPOINTS.GET_PROFILE(userId));
+            
+            // Extract the actual profile data from the nested 'data' property
+            const profileData = profileResponse && profileResponse.data ? profileResponse.data : {};
+            
+            console.log('User data:', userData);
+            console.log('Profile data:', profileData);
+            
+            // Try to get the profile photo URL directly
+            let photoUrl = profileData?.profileImage;
+            
+            // If no profile image URL in profile data, try to fetch it from the photo endpoint
+            if (!photoUrl) {
+                try {
+                    const photoResponse = await fetchWithAuth(API_ENDPOINTS.GET_PHOTO(userId), {
+                        method: 'GET'
+                    });
+                    
+                    // If the response contains a URL or image data
+                    if (photoResponse && typeof photoResponse === 'object') {
+                        photoUrl = photoResponse.url || photoResponse.imageUrl || photoResponse.profileImage;
+                    } else if (typeof photoResponse === 'string' && photoResponse.startsWith('http')) {
+                        // If the response is a direct URL string
+                        photoUrl = photoResponse;
+                    }
+                } catch (photoError) {
+                    console.log('No profile photo found, using default avatar');
+                }
+            }
+            
+            // Update profile data with retrieved information, handling NULL fields
             setProfileData(prev => ({
                 ...prev,
-                fullName: userData.fullName || prev.fullName,
-                email: userData.email || prev.email,
-                gender: userData.gender || '',
-                phone: userData.phoneNumber || '',
-                bio: userData.bio || '',
-                birthDate: userData.birthDate || '',
-                weight: userData.weight || '',
-                height: userData.height || '',
+                // Use basic user data for essential fields
+                fullName: userData?.userName || prev.fullName,
+                email: userData?.email || prev.email,
+                
+                // Use detailed profile data for additional fields with null handling
+                gender: profileData?.gender || '',
+                phone: profileData?.phoneNumber || '',
+                bio: profileData?.bio || '',
+                birthDate: profileData?.birthDate || '',
+                // Add direct age field
+                age: profileData?.age?.toString() || '',
+                weight: profileData?.weight?.toString() || '',
+                height: profileData?.height?.toString() || '',
+                profileImage: photoUrl || prev.profileImage,
             }));
+            
+            // Store userName in localStorage for other components
+            if (userData?.userName) {
+                localStorage.setItem('userName', userData.userName);
+            }
         } catch (error) {
             console.error('Error fetching user profile:', error);
+            toast.error('Failed to load profile data');
         }
     };
 
@@ -190,22 +240,23 @@ function Profile({ isDarkMode }) {
         setIsLoading(true);
         
         try {
-            // Prepare data for API
+            // Create a complete profile data object with all required fields
+            // Use empty strings or null for any missing values
             const completeProfileData = {
-                email: profileData.email,
-                age: calculateAge(profileData.birthDate),
-                gender: profileData.gender,
-                weight: parseInt(profileData.weight),
-                height: parseInt(profileData.height),
-                phoneNumber: profileData.phone,
-                bio: profileData.bio,
-                profileImage: profileData.profileImage // Add profile image URL
+                Email: profileData.email,
+                Age: profileData.age ? parseInt(profileData.age) : null,
+                Gender: profileData.gender || "", // Required field - send empty string if null
+                Weight: profileData.weight ? parseInt(profileData.weight) : null,
+                Height: profileData.height ? parseInt(profileData.height) : null,
+                PhoneNumber: profileData.phone || "", // Required field - send empty string if null
+                Bio: profileData.bio || "", // Required field - send empty string if null
+                ProfileImage: profileData.profileImage || null
             };
             
-            console.log('Sending profile data:', completeProfileData);
+            console.log('Sending complete profile data with all required fields:', completeProfileData);
             
             // Post to Complete Profile endpoint
-            await fetchWithAuth(API_ENDPOINTS.COMPLETE_PROFILE, {
+            const response = await fetchWithAuth(API_ENDPOINTS.COMPLETE_PROFILE, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -213,8 +264,15 @@ function Profile({ isDarkMode }) {
                 body: JSON.stringify(completeProfileData)
             });
             
+            console.log('Profile update response:', response);
+            
             toast.success('Profile updated successfully!');
             setEditMode(false);
+            
+            // Refresh profile data after update
+            setTimeout(() => {
+                fetchUserProfile();
+            }, 1000);
         } catch (error) {
             toast.error(error.message || 'Failed to update profile');
             console.error('Error updating profile:', error);
@@ -233,10 +291,16 @@ function Profile({ isDarkMode }) {
                 >
                     <div className="profile-avatar-container">
                         <div className="profile-avatar">
-                            <img 
-                                src={profileData.imageUrl || profileData.profileImage || `https://ui-avatars.com/api/?name=${profileData.fullName}&background=random`} 
-                                alt="Profile" 
-                            />
+                            {profileLoading ? (
+                                <div className="avatar-spinner-container">
+                                    <Spinner size="large" />
+                                </div>
+                            ) : (
+                                <img 
+                                    src={profileData.imageUrl || profileData.profileImage || `https://ui-avatars.com/api/?name=${profileData.fullName}&background=random`} 
+                                    alt="Profile" 
+                                />
+                            )}
                         </div>
                         {editMode && (
                             <div className="avatar-actions">
@@ -267,8 +331,8 @@ function Profile({ isDarkMode }) {
                             </div>
                         )}
                     </div>
-                    <h1>{profileData.fullName}</h1>
-                    <p>{profileData.email}</p>
+                    <h1>{profileLoading ? "Loading..." : profileData.fullName}</h1>
+                    <p>{profileLoading ? "..." : profileData.email}</p>
                 </motion.div>
 
                 <motion.div
@@ -280,7 +344,7 @@ function Profile({ isDarkMode }) {
                     <div className="profile-section">
                         <div className="section-header">
                             <h2>Personal Information</h2>
-                            {!editMode && (
+                            {!editMode && !profileLoading && (
                                 <button 
                                     className="edit-button"
                                     onClick={() => setEditMode(true)}
@@ -290,147 +354,157 @@ function Profile({ isDarkMode }) {
                             )}
                         </div>
 
-                        <form onSubmit={handleSubmit}>
-                            <div className="form-grid">
-                                <div className="form-group">
-                                <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                                    <FaUser />
-                                    <span>Full Name</span>
-                                </div>
-                                    <input
-                                        type="text"
-                                        name="fullName"
-                                        value={profileData.fullName}
-                                        onChange={handleInputChange}
-                                        disabled={!editMode}
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                                        <FaEnvelope />
-                                        <span>Email</span>
-                                    </div>
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        value={profileData.email}
-                                        onChange={handleInputChange}
-                                        disabled={true}
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                                        <FaPhone />
-                                        <span>Phone</span>
-                                    </div>
-                                    <input
-                                        type="tel"
-                                        name="phone"
-                                        value={profileData.phone}
-                                        onChange={handleInputChange}
-                                        disabled={!editMode}
-                                        placeholder="Enter phone number"
-                                    />
-                                </div>
+                        {profileLoading ? (
+                            <div className="form-loading-container">
+                                <Spinner size="large" />
+                                <p>Loading profile information...</p>
                             </div>
-
-                            <div className="form-group full-width">
-                                <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                                    <FaPerson />
-                                    <span>Bio</span>
-                                </div>
-                                <textarea
-                                    name="bio"
-                                    value={profileData.bio}
-                                    onChange={handleInputChange}
-                                    disabled={!editMode}
-                                    placeholder="Tell us about yourself"
-                                    rows={4}
-                                />
-                            </div>
-
-                            <div className="physical-info-section">
-                                <h3>Physical Information</h3>
+                        ) : (
+                            <form onSubmit={handleSubmit}>
                                 <div className="form-grid">
                                     <div className="form-group">
-                                        <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Birth Date</div>
+                                    <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                                        <FaUser />
+                                        <span>Full Name</span>
+                                    </div>
                                         <input
-                                            type="date"
-                                            name="birthDate"
-                                            value={profileData.birthDate}
+                                            type="text"
+                                            name="fullName"
+                                            value={profileData.fullName}
                                             onChange={handleInputChange}
                                             disabled={!editMode}
-                                            max={new Date().toISOString().split('T')[0]}
                                         />
                                     </div>
 
                                     <div className="form-group">
-                                        <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Gender</div>
-                                        <select
-                                            name="gender"
-                                            value={profileData.gender}
+                                        <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                                            <FaEnvelope />
+                                            <span>Email</span>
+                                        </div>
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            value={profileData.email}
+                                            onChange={handleInputChange}
+                                            disabled={true}
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                                            <FaPhone />
+                                            <span>Phone</span>
+                                        </div>
+                                        <input
+                                            type="tel"
+                                            name="phone"
+                                            value={profileData.phone}
                                             onChange={handleInputChange}
                                             disabled={!editMode}
+                                            placeholder="Enter phone number"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="form-group full-width">
+                                    <div className={`flex items-center gap-2 mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                                        <FaPerson />
+                                        <span>Bio</span>
+                                    </div>
+                                    <textarea
+                                        name="bio"
+                                        value={profileData.bio}
+                                        onChange={handleInputChange}
+                                        disabled={!editMode}
+                                        placeholder="Tell us about yourself"
+                                        rows={4}
+                                    />
+                                </div>
+
+                                <div className="physical-info-section">
+                                    <h3>Physical Information</h3>
+                                    <div className="form-grid">
+                                        <div className="form-group">
+                                            <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Age</div>
+                                            <input
+                                                type="number"
+                                                name="age"
+                                                value={profileData.age}
+                                                onChange={handleInputChange}
+                                                disabled={!editMode}
+                                                placeholder="Enter age"
+                                                min="0"
+                                                max="120"
+                                                step="1"
+                                            />
+                                        </div>
+
+                                        <div className="form-group">
+                                            <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Gender</div>
+                                            <select
+                                                name="gender"
+                                                value={profileData.gender}
+                                                onChange={handleInputChange}
+                                                disabled={!editMode}
+                                            >
+                                                <option value="">Select Gender</option>
+                                                <option value="male">Male</option>
+                                                <option value="female">Female</option>
+                                                <option value="other">Other</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="form-group">
+                                            <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Weight (kg)</div>
+                                            <input
+                                                type="number"
+                                                name="weight"
+                                                value={profileData.weight}
+                                                onChange={handleInputChange}
+                                                disabled={!editMode}
+                                                placeholder="Enter weight"
+                                                min="0"
+                                                step="0.1"
+                                            />
+                                        </div>
+
+                                        <div className="form-group">
+                                            <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Height (cm)</div>
+                                            <input
+                                                type="number"
+                                                name="height"
+                                                value={profileData.height}
+                                                onChange={handleInputChange}
+                                                disabled={!editMode}
+                                                placeholder="Enter height"
+                                                min="0"
+                                                step="0.1"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {editMode && (
+                                    <div className="form-actions">
+                                        <button 
+                                            type="submit" 
+                                            className="save-button"
+                                            disabled={isLoading}
                                         >
-                                            <option value="">Select Gender</option>
-                                            <option value="male">Male</option>
-                                            <option value="female">Female</option>
-                                            <option value="other">Other</option>
-                                        </select>
+                                            {isLoading ? 'Saving...' : <><FaSave /> Save Changes</>}
+                                        </button>
+                                        <button 
+                                            type="button" 
+                                            className="cancel-button"
+                                            onClick={() => setEditMode(false)}
+                                            disabled={isLoading}
+                                        >
+                                            <FaTimesCircle /> Cancel
+                                        </button>
                                     </div>
-
-                                    <div className="form-group">
-                                        <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Weight (kg)</div>
-                                        <input
-                                            type="number"
-                                            name="weight"
-                                            value={profileData.weight}
-                                            onChange={handleInputChange}
-                                            disabled={!editMode}
-                                            placeholder="Enter weight"
-                                            min="0"
-                                            step="0.1"
-                                        />
-                                    </div>
-
-                                    <div className="form-group">
-                                        <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Height (cm)</div>
-                                        <input
-                                            type="number"
-                                            name="height"
-                                            value={profileData.height}
-                                            onChange={handleInputChange}
-                                            disabled={!editMode}
-                                            placeholder="Enter height"
-                                            min="0"
-                                            step="0.1"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            {editMode && (
-                                <div className="form-actions">
-                                    <button 
-                                        type="submit" 
-                                        className="save-button"
-                                        disabled={isLoading}
-                                    >
-                                        {isLoading ? 'Saving...' : <><FaSave /> Save Changes</>}
-                                    </button>
-                                    <button 
-                                        type="button" 
-                                        className="cancel-button"
-                                        onClick={() => setEditMode(false)}
-                                        disabled={isLoading}
-                                    >
-                                        <FaTimesCircle /> Cancel
-                                    </button>
-                                </div>
-                            )}
-                        </form>
+                                )}
+                            </form>
+                        )}
                     </div>
                 </motion.div>
 
@@ -442,7 +516,12 @@ function Profile({ isDarkMode }) {
                         </Link>
                     </div>
                     <div className="contacts-card">
-                        {profileData.emergencyContacts.length > 0 ? (
+                        {contactsLoading ? (
+                            <div className="contacts-loading-container">
+                                <Spinner size="large" />
+                                <p>Loading emergency contacts...</p>
+                            </div>
+                        ) : profileData.emergencyContacts.length > 0 ? (
                             profileData.emergencyContacts.map((contact) => (
                                 <div key={contact.Id} className="contact-item">
                                     <div className="contact-info">

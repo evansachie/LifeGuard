@@ -94,10 +94,10 @@ namespace Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 2, 18, 0, 55, 41, 195, DateTimeKind.Utc).AddTicks(3573),
+                            CreatedAt = new DateTime(2025, 2, 24, 17, 16, 22, 183, DateTimeKind.Utc).AddTicks(8329),
                             Done = false,
                             Text = "Hi, This is my first Memo",
-                            UpDatedAt = new DateTime(2025, 2, 18, 0, 55, 41, 195, DateTimeKind.Utc).AddTicks(3574),
+                            UpDatedAt = new DateTime(2025, 2, 24, 17, 16, 22, 183, DateTimeKind.Utc).AddTicks(8331),
                             UserId = "7a223968-23b4-4652-z7b7-8574d048cdb9"
                         });
                 });

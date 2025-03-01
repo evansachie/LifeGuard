@@ -475,6 +475,47 @@ body {
     pointer-events: none;
 }
 
+/* Loading spinner containers */
+.avatar-spinner-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 50%;
+}
+
+.form-loading-container, 
+.contacts-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+  min-height: 200px;
+}
+
+.form-loading-container p,
+.contacts-loading-container p {
+  margin-top: 1rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.dark .form-loading-container,
+.dark .contacts-loading-container {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark .form-loading-container p,
+.dark .contacts-loading-container p {
+  color: #aaa;
+}
+
 /* Mobile responsiveness improvements */
 @media (max-width: 768px) {
     .profile-page {
@@ -534,4 +575,74 @@ body {
 .dark .contact-name strong,
 .dark .contact-phone span {
     color: #e2e8f0;
+}
+
+/* Add these to your existing Profile.css */
+
+.profile-info-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.profile-info-loading p {
+  color: #6B7280;
+  font-size: 0.9rem;
+}
+
+.dark .profile-info-loading p {
+  color: #9CA3AF;
+}
+
+.avatar-spinner-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 50%;
+}
+
+.dark .avatar-spinner-container {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.form-loading-container, 
+.contacts-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+  min-height: 200px;
+}
+
+.form-loading-container p,
+.contacts-loading-container p {
+  margin-top: 1rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.dark .form-loading-container,
+.dark .contacts-loading-container {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark .form-loading-container p,
+.dark .contacts-loading-container p {
+  color: #aaa;
+}
+
+.save-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
