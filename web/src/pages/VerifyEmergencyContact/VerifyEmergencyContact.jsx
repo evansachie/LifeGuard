@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { FaCheckCircle, FaTimesCircle, FaSpinner, FaMoon, FaSun } from 'react-icons/fa';
 import { toast } from 'react-toastify';
-import { FaCheckCircle, FaTimesCircle, FaSpinner } from 'react-icons/fa';
-import { API_ENDPOINTS, fetchWithAuth } from '../../utils/api';
+import verifyContactImage from '../../assets/verifyContactImage.svg';
+import { API_ENDPOINTS } from '../../utils/api';
+import './VerifyEmergencyContact.css';
 
-function VerifyEmergencyContact({ isDarkMode }) {
+function VerifyEmergencyContact({ isDarkMode, toggleTheme }) {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [verificationStatus, setVerificationStatus] = useState('loading'); // loading, success, error
+  const [verificationStatus, setVerificationStatus] = useState('loading');
   const [contactData, setContactData] = useState(null);
   const token = searchParams.get('token');
 
@@ -21,7 +22,15 @@ function VerifyEmergencyContact({ isDarkMode }) {
       }
 
       try {
-        const response = await fetch(`${API_ENDPOINTS.EMERGENCY_CONTACT_VERIFY(token)}`);
+        console.log('Verifying token:', token);
+        // Make sure the token is properly URI encoded if needed
+        const encodedToken = encodeURIComponent(token);
+        const response = await fetch(`${API_ENDPOINTS.EMERGENCY_CONTACT_VERIFY(encodedToken)}`);
+        
+        if (!response.ok) {
+          throw new Error(`Verification failed with status: ${response.status}`);
+        }
+        
         const data = await response.json();
 
         if (data.success) {
@@ -35,7 +44,7 @@ function VerifyEmergencyContact({ isDarkMode }) {
       } catch (error) {
         console.error('Error verifying contact:', error);
         setVerificationStatus('error');
-        toast.error('Failed to verify contact');
+        toast.error('Failed to verify contact: ' + error.message);
       }
     };
 
@@ -47,63 +56,67 @@ function VerifyEmergencyContact({ isDarkMode }) {
   };
 
   return (
-    <div className={`min-h-screen flex items-center justify-center p-4 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className={`max-w-md w-full p-8 rounded-lg shadow-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}
-      >
-        <div className="text-center">
+    <div className={`verify-contact-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+      <button className="theme-toggle" onClick={toggleTheme}>
+        {isDarkMode ? <FaSun /> : <FaMoon />}
+      </button>
+      
+      <div className="verify-contact-illustration bg-[#2D3748]">
+        <img 
+          src={verifyContactImage}
+          alt="Verify Emergency Contact" 
+        />
+      </div>
+
+      <div className="verify-contact-form-container">
+        <div className="verify-contact-form-card">
+          <img src="/images/lifeguard-2.svg" alt="lhp logo" className="logo" />
+          
           {verificationStatus === 'loading' && (
-            <>
-              <FaSpinner className="animate-spin text-4xl mx-auto mb-4 text-blue-500" />
-              <h2 className="text-2xl font-bold mb-2">Verifying Contact</h2>
-              <p className={`mb-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            <div className="verification-status">
+              <FaSpinner className="status-icon spinner" />
+              <h2 className="verify-contact-heading">Verifying Contact</h2>
+              <p className="verify-contact-subheading">
                 Please wait while we verify your emergency contact status...
               </p>
-            </>
+            </div>
           )}
 
           {verificationStatus === 'success' && (
-            <>
-              <FaCheckCircle className="text-5xl mx-auto mb-4 text-green-500" />
-              <h2 className="text-2xl font-bold mb-2">Verification Successful!</h2>
-              <p className={`mb-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            <div className="verification-status">
+              <FaCheckCircle className="status-icon success" />
+              <h2 className="verify-contact-heading">Verification Successful!</h2>
+              <p className="verify-contact-subheading">
                 Thank you for confirming your emergency contact status. You are now a verified emergency contact.
               </p>
               {contactData && (
-                <div className={`p-4 rounded-lg mb-6 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
-                  <h3 className="font-semibold mb-2">Your Contact Information:</h3>
-                  <p><span className="font-medium">Name:</span> {contactData.Name}</p>
-                  <p><span className="font-medium">Email:</span> {contactData.Email}</p>
-                  <p><span className="font-medium">Phone:</span> {contactData.Phone}</p>
+                <div className="contact-info-container">
+                  <h3 className="contact-info-heading">Your Contact Information:</h3>
+                  <p className="contact-info-detail"><span>Name:</span> {contactData.Name}</p>
+                  <p className="contact-info-detail"><span>Email:</span> {contactData.Email}</p>
+                  <p className="contact-info-detail"><span>Phone:</span> {contactData.Phone}</p>
                 </div>
               )}
-            </>
+            </div>
           )}
 
           {verificationStatus === 'error' && (
-            <>
-              <FaTimesCircle className="text-5xl mx-auto mb-4 text-red-500" />
-              <h2 className="text-2xl font-bold mb-2">Verification Failed</h2>
-              <p className={`mb-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            <div className="verification-status">
+              <h2 className="verify-contact-heading">Verification Failed</h2>
+              <p className="verify-contact-subheading">
                 We couldn't verify your emergency contact status. The link may be invalid or expired.
               </p>
-            </>
+            </div>
           )}
 
           <button
             onClick={handleGoToHome}
-            className={`w-full py-2 rounded-lg font-medium ${
-              isDarkMode
-                ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                : 'bg-blue-500 hover:bg-blue-600 text-white'
-            }`}
+            className="primary-button"
           >
             Return to Home
           </button>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
