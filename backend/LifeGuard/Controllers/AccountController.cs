@@ -5,7 +5,8 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Identity.Features.ResendOTP;
 using Identity.Features.VerifyOTP;
-using Identity.Features.CompleteProfile;
+using Identity.Features.Profile.GetProfile;
+using Identity.Features.Profile.CompleteProfile;
 
 namespace LifeGuard_API.Controllers
 {
