@@ -49,13 +49,22 @@ module.exports = (pool) => {
                     [name, phone, email, relationship, userId, false, priority, role]
                 );
                 
-                // Get user info for the email
-                const userResult = await client.query(
-                    'SELECT "Name" as name, "Email" as email, "Phone" as phone FROM "AspNetUsers" WHERE "Id" = $1',
-                    [userId]
-                );
+                // Get user info for the email - handle case where AspNetUsers might not exist
+                let userData = { name: 'A LifeGuard user', email: decoded.email || email };
                 
-                const userData = userResult.rows[0] || { name: 'A LifeGuard user' };
+                try {
+                    const userResult = await client.query(
+                        'SELECT "Name" as name, "Email" as email, "Phone" as phone FROM "AspNetUsers" WHERE "Id" = $1',
+                        [userId]
+                    );
+                    
+                    if (userResult.rows.length > 0) {
+                        userData = userResult.rows[0];
+                    }
+                } catch (userError) {
+                    console.log('AspNetUsers table might not exist, using default user data:', userError.message);
+                    // Continue with default userData
+                }
                 
                 // Send email notification
                 const emailResult = await sendEmergencyContactNotification(rows[0], userData);
@@ -170,17 +179,27 @@ module.exports = (pool) => {
             
             const { message, location, medicalInfo } = req.body;
             
-            // Get user info
-            const userResult = await pool.query(
-                'SELECT "Name" as name, "Email" as email, "Phone" as phone FROM "AspNetUsers" WHERE "Id" = $1',
-                [userId]
-            );
+            // Get user info - handle case where AspNetUsers might not exist
+            let userData = { 
+                id: userId, 
+                name: 'A LifeGuard user', 
+                email: decoded.email || 'user@lifeguard.com',
+                phone: 'Not available'
+            };
             
-            if (userResult.rows.length === 0) {
-                return res.status(404).json({ error: 'User not found' });
+            try {
+                const userResult = await pool.query(
+                    'SELECT "Name" as name, "Email" as email, "Phone" as phone FROM "AspNetUsers" WHERE "Id" = $1',
+                    [userId]
+                );
+                
+                if (userResult.rows.length > 0) {
+                    userData = { ...userData, ...userResult.rows[0] };
+                }
+            } catch (userError) {
+                console.log('AspNetUsers table might not exist, using default user data:', userError.message);
+                // Continue with default userData
             }
-            
-            const userData = userResult.rows[0];
             
             // Get all verified emergency contacts
             const { rows: contacts } = await pool.query(
@@ -249,17 +268,27 @@ module.exports = (pool) => {
             const userId = decoded.uid;
             const { id } = req.params;
             
-            // Get user info
-            const userResult = await pool.query(
-                'SELECT "Name" as name, "Email" as email, "Phone" as phone FROM "AspNetUsers" WHERE "Id" = $1',
-                [userId]
-            );
+            // Get user info - handle case where AspNetUsers might not exist
+            let userData = { 
+                id: userId, 
+                name: 'A LifeGuard user', 
+                email: decoded.email || 'user@lifeguard.com',
+                phone: 'Not available'
+            };
             
-            if (userResult.rows.length === 0) {
-                return res.status(404).json({ error: 'User not found' });
+            try {
+                const userResult = await pool.query(
+                    'SELECT "Name" as name, "Email" as email, "Phone" as phone FROM "AspNetUsers" WHERE "Id" = $1',
+                    [userId]
+                );
+                
+                if (userResult.rows.length > 0) {
+                    userData = { ...userData, ...userResult.rows[0] };
+                }
+            } catch (userError) {
+                console.log('AspNetUsers table might not exist, using default user data:', userError.message);
+                // Continue with default userData
             }
-            
-            const userData = userResult.rows[0];
             
             // Get the specific contact
             const { rows } = await pool.query(
