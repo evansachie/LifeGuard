@@ -24,6 +24,8 @@ const readHTMLFile = (path) => {
   });
 };
 
+// Default frontend URL if not set in environment variables
+const FRONTEND_URL = process.env.FRONTEND_URL || 'https://lifeguard-vert.vercel.app';
 
 const sendEmergencyContactNotification = async (contactData, userData) => {
   try {
@@ -33,13 +35,13 @@ const sendEmergencyContactNotification = async (contactData, userData) => {
     const template = handlebars.compile(html);
     
     const verificationToken = Buffer.from(`${contactData.Id}:${contactData.Email}`).toString('base64');
-    const verificationLink = `${process.env.FRONTEND_URL}/verify-emergency-contact?token=${verificationToken}`;
+    const verificationLink = `${FRONTEND_URL}/verify-emergency-contact?token=${verificationToken}`;
     
     const replacements = {
       contactName: contactData.Name,
       userName: userData.name || 'A LifeGuard user',
       verificationLink: verificationLink,
-      appLogo: `${process.env.FRONTEND_URL}/logo.png`,
+      appLogo: 'https://github-production-user-asset-6210df.s3.amazonaws.com/102630199/418295595-9dbe93f6-9f68-41b5-9b9e-4312683f5b34.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250301%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250301T174742Z&X-Amz-Expires=300&X-Amz-Signature=b487a8f40e2dbddd3c608dd8832b02c042b270ecf5fb68a6c7c32041417f3f48&X-Amz-SignedHeaders=host',
       currentYear: new Date().getFullYear()
     };
     
@@ -69,7 +71,7 @@ const sendEmergencyAlert = async (contactData, userData, emergencyData) => {
     const template = handlebars.compile(html);
     
     const trackingToken = Buffer.from(`${userData.id}:${new Date().toISOString()}`).toString('base64');
-    const trackingLink = `${process.env.FRONTEND_URL}/emergency-tracking?token=${trackingToken}`;
+    const trackingLink = `${FRONTEND_URL}/emergency-tracking?token=${trackingToken}`;
     
     const replacements = {
       contactName: contactData.Name,
@@ -79,7 +81,7 @@ const sendEmergencyAlert = async (contactData, userData, emergencyData) => {
       emergencyLocation: emergencyData.location || 'Location not available',
       trackingLink: trackingLink,
       medicalInfo: userData.medicalInfo || 'No medical information provided',
-      appLogo: `${process.env.FRONTEND_URL}/logo.png`,
+      appLogo: 'https://github-production-user-asset-6210df.s3.amazonaws.com/102630199/418295595-9dbe93f6-9f68-41b5-9b9e-4312683f5b34.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250301%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250301T174742Z&X-Amz-Expires=300&X-Amz-Signature=b487a8f40e2dbddd3c608dd8832b02c042b270ecf5fb68a6c7c32041417f3f48&X-Amz-SignedHeaders=host',
       currentYear: new Date().getFullYear()
     };
     
@@ -112,7 +114,7 @@ const sendTestAlert = async (contactData, userData) => {
     const replacements = {
       contactName: contactData.Name,
       userName: userData.name || 'A LifeGuard user',
-      appLogo: `${process.env.FRONTEND_URL}/logo.png`,
+      appLogo: 'https://github-production-user-asset-6210df.s3.amazonaws.com/102630199/418295595-9dbe93f6-9f68-41b5-9b9e-4312683f5b34.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250301%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250301T174742Z&X-Amz-Expires=300&X-Amz-Signature=b487a8f40e2dbddd3c608dd8832b02c042b270ecf5fb68a6c7c32041417f3f48&X-Amz-SignedHeaders=host',
       currentYear: new Date().getFullYear()
     };
     

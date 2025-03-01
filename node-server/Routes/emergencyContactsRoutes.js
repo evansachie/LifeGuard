@@ -1,7 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const { sendEmergencyContactNotification, sendEmergencyAlert, sendTestAlert } = require('../services/emailService');
-const { sendEmergencyAlertSMS, sendVerificationSMS, sendTestAlertSMS } = require('../services/smsService');
+const { sendEmergencyAlertSMS, sendTestAlertSMS } = require('../services/smsService');
 const crypto = require('crypto');
 
 module.exports = (pool) => {
