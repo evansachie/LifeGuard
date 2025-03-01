@@ -141,19 +141,45 @@ module.exports = (pool) => {
         try {
             const { token } = req.params;
             
+            console.log('Received verification token:', token);
+            
+            if (!token) {
+                return res.status(400).json({ error: 'Missing verification token' });
+            }
+            
             // Decode the token
-            const decodedData = Buffer.from(token, 'base64').toString('utf-8');
-            const [contactId, email] = decodedData.split(':');
+            let decodedData;
+            try {
+                decodedData = Buffer.from(token, 'base64').toString('utf-8');
+                console.log('Decoded token data:', decodedData);
+            } catch (decodeError) {
+                console.error('Error decoding token:', decodeError);
+                return res.status(400).json({ error: 'Invalid token format - could not decode base64' });
+            }
+            
+            // Split the decoded data
+            const parts = decodedData.split(':');
+            if (parts.length !== 2) {
+                console.error('Invalid token format - expected format "id:email", got:', decodedData);
+                return res.status(400).json({ error: 'Invalid token format - expected format "id:email"' });
+            }
+            
+            const [contactId, email] = parts;
             
             if (!contactId || !email) {
-                return res.status(400).json({ error: 'Invalid verification token' });
+                console.error('Invalid token data - missing contactId or email:', { contactId, email });
+                return res.status(400).json({ error: 'Invalid verification token data' });
             }
+            
+            console.log('Attempting to verify contact:', { contactId, email });
             
             // Update the contact verification status
             const { rows } = await pool.query(
                 'UPDATE "EmergencyContacts" SET "IsVerified" = true, "UpDatedAt" = CURRENT_TIMESTAMP WHERE "Id" = $1 AND "Email" = $2 RETURNING *',
                 [contactId, email]
             );
+            
+            console.log('Query result:', rows.length > 0 ? 'Contact found and updated' : 'No contact found');
             
             if (rows.length === 0) {
                 return res.status(404).json({ error: 'Contact not found or already verified' });
@@ -166,7 +192,7 @@ module.exports = (pool) => {
             });
         } catch (error) {
             console.error('Error verifying emergency contact:', error);
-            res.status(500).json({ error: 'Failed to verify emergency contact' });
+            res.status(500).json({ error: 'Failed to verify emergency contact: ' + error.message });
         }
     });
 

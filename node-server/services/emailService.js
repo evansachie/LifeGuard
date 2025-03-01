@@ -34,8 +34,20 @@ const sendEmergencyContactNotification = async (contactData, userData) => {
     const html = await readHTMLFile(templatePath);
     const template = handlebars.compile(html);
     
-    const verificationToken = Buffer.from(`${contactData.Id}:${contactData.Email}`).toString('base64');
-    const verificationLink = `${FRONTEND_URL}/verify-emergency-contact?token=${verificationToken}`;
+    // Ensure contactId is a string
+    const contactId = String(contactData.Id);
+    const contactEmail = contactData.Email;
+    
+    // Create the token string and encode it
+    const tokenString = `${contactId}:${contactEmail}`;
+    console.log('Creating verification token with data:', tokenString);
+    
+    const verificationToken = Buffer.from(tokenString).toString('base64');
+    console.log('Generated verification token:', verificationToken);
+    
+    // Create the verification URL
+    const verificationLink = `${FRONTEND_URL}/verify-emergency-contact?token=${encodeURIComponent(verificationToken)}`;
+    console.log('Verification link:', verificationLink);
     
     const replacements = {
       contactName: contactData.Name,
