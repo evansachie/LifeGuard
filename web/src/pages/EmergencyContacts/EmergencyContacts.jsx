@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaUserPlus, FaEdit, FaTrash, FaPhone, FaEnvelope, FaBell } from 'react-icons/fa';
+import { FaUserPlus, FaEdit, FaTrash, FaPhone, FaEnvelope, FaBell, FaCheck, FaExclamationTriangle, FaMapMarkerAlt, FaHistory, FaCheckCircle, FaTimesCircle, FaVial } from 'react-icons/fa';
 import { IoMdAlert } from 'react-icons/io';
 import { toast } from 'react-toastify';
 import { API_ENDPOINTS, fetchWithAuth } from '../../utils/api';
@@ -16,7 +16,9 @@ function EmergencyContacts({ isDarkMode }) {
     name: '',
     phone: '',
     email: '',
-    relationship: ''
+    relationship: '',
+    priority: 1,
+    role: 'General'
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -24,6 +26,22 @@ function EmergencyContacts({ isDarkMode }) {
   const [deletingContact, setDeletingContact] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  
+  // New state variables for enhanced features
+  const [emergencyAlertModalOpen, setEmergencyAlertModalOpen] = useState(false);
+  const [emergencyData, setEmergencyData] = useState({
+    message: '',
+    location: '',
+    medicalInfo: ''
+  });
+  const [isSendingAlert, setIsSendingAlert] = useState(false);
+  const [testAlertModalOpen, setTestAlertModalOpen] = useState(false);
+  const [testingContact, setTestingContact] = useState(null);
+  const [isSendingTest, setIsSendingTest] = useState(false);
+  const [alertHistory, setAlertHistory] = useState([]);
+  const [showAlertHistory, setShowAlertHistory] = useState(false);
+  const [userLocation, setUserLocation] = useState(null);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
 
   useEffect(() => {
     fetchContacts();
@@ -73,12 +91,18 @@ function EmergencyContacts({ isDarkMode }) {
 
     setIsSaving(true);
     try {
+      // Ensure priority is a number
+      const dataToSubmit = {
+        ...formData,
+        priority: parseInt(formData.priority, 10)
+      };
+      
       if (editingContact) {
         const updatedContact = await fetchWithAuth(
           `${API_ENDPOINTS.EMERGENCY_CONTACTS}/${editingContact.Id}`,
           {
             method: 'PUT',
-            body: JSON.stringify(formData)
+            body: JSON.stringify(dataToSubmit)
           }
         );
         setContacts(contacts.map(contact =>
@@ -90,7 +114,7 @@ function EmergencyContacts({ isDarkMode }) {
           API_ENDPOINTS.EMERGENCY_CONTACTS,
           {
             method: 'POST',
-            body: JSON.stringify(formData)
+            body: JSON.stringify(dataToSubmit)
           }
         );
         setContacts([...contacts, newContact]);
@@ -106,14 +130,59 @@ function EmergencyContacts({ isDarkMode }) {
   };
 
   // Handle emergency alert
-  const handleEmergencyAlert = () => {
-    // Mock API call to send emergency alerts
-    contacts.forEach(contact => {
-      console.log(`Sending emergency alert to ${contact.name} at ${contact.phone} and ${contact.email}`);
-    });
-    toast.info('Emergency alerts sent to all contacts!', {
-      icon: <IoMdAlert className="text-red-500" />
-    });
+  const handleEmergencyAlert = async () => {
+    try {
+      setIsLoading(true);
+      const alertData = {
+        message: "Emergency alert triggered from LifeGuard app",
+        location: "User's last known location",
+        medicalInfo: "Please contact immediately"
+      };
+      
+      const response = await fetchWithAuth(
+        API_ENDPOINTS.EMERGENCY_ALERTS,
+        {
+          method: 'POST',
+          body: JSON.stringify(alertData)
+        }
+      );
+      
+      if (response.success) {
+        toast.success(`Emergency alerts sent to ${response.alertsSent?.length || 0} contacts!`, {
+          icon: <IoMdAlert className="text-red-500" />
+        });
+      } else {
+        toast.error('Failed to send emergency alerts');
+      }
+    } catch (error) {
+      console.error('Error sending emergency alerts:', error);
+      toast.error('Failed to send emergency alerts');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle test alert
+  const handleTestAlert = async (contactId) => {
+    try {
+      const response = await fetchWithAuth(
+        API_ENDPOINTS.EMERGENCY_TEST_ALERT(contactId),
+        {
+          method: 'POST'
+        }
+      );
+      
+      if (response.success) {
+        toast.success('Test alert sent successfully!', {
+          icon: <FaBell className="text-blue-500" />
+        });
+      } else {
+        toast.error('Failed to send test alert');
+      }
+    } catch (error) {
+      console.error('Error sending test alert:', error);
+      toast.error('Failed to send test alert');
+    }
   };
 
   // Reset form and close modal
@@ -124,7 +193,9 @@ function EmergencyContacts({ isDarkMode }) {
       name: '',
       phone: '',
       email: '',
-      relationship: ''
+      relationship: '',
+      priority: 1,
+      role: 'General'
     });
     setErrors({});
   };
@@ -137,7 +208,9 @@ function EmergencyContacts({ isDarkMode }) {
         name: contact.Name,
         phone: contact.Phone,
         email: contact.Email,
-        relationship: contact.Relationship
+        relationship: contact.Relationship,
+        priority: contact.Priority,
+        role: contact.Role
     });
     setIsModalOpen(true);
   };
@@ -237,8 +310,26 @@ function EmergencyContacts({ isDarkMode }) {
                   <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                     {contact.Relationship}
                   </p>
+                  {contact.IsVerified ? (
+                    <span className="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">
+                      Pending Verification
+                    </span>
+                  )}
                 </div>
                 <div className="flex gap-2">
+                  <button
+                    onClick={() => handleTestAlert(contact.Id)}
+                    className={`p-2 rounded-full ${
+                      isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+                    }`}
+                    title="Send Test Alert"
+                  >
+                    <FaBell className="text-blue-500" />
+                  </button>
                   <button
                     onClick={() => handleEdit(contact)}
                     className={`p-2 rounded-full ${
@@ -265,6 +356,36 @@ function EmergencyContacts({ isDarkMode }) {
                 <div className="flex items-center gap-2">
                   <FaEnvelope className="text-blue-500" />
                   <span>{contact.Email}</span>
+                </div>
+                <div className="flex items-center gap-2 mt-2">
+                  <div className="flex items-center">
+                    <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                      Role: 
+                    </span>
+                    <span className={`ml-1 px-2 py-0.5 text-xs rounded-full ${
+                      contact.Role === 'Medical' 
+                        ? 'bg-red-100 text-red-800' 
+                        : contact.Role === 'Emergency' 
+                          ? 'bg-orange-100 text-orange-800' 
+                          : 'bg-blue-100 text-blue-800'
+                    }`}>
+                      {contact.Role}
+                    </span>
+                  </div>
+                  <div className="flex items-center ml-3">
+                    <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                      Priority: 
+                    </span>
+                    <span className={`ml-1 px-2 py-0.5 text-xs rounded-full ${
+                      contact.Priority === 1 
+                        ? 'bg-red-100 text-red-800' 
+                        : contact.Priority === 2 
+                          ? 'bg-yellow-100 text-yellow-800' 
+                          : 'bg-green-100 text-green-800'
+                    }`}>
+                      {contact.Priority === 1 ? 'High' : contact.Priority === 2 ? 'Medium' : 'Low'}
+                    </span>
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -348,6 +469,38 @@ function EmergencyContacts({ isDarkMode }) {
                     }`}
                   />
                   {errors.relationship && <p className="text-red-500 text-sm mt-1">{errors.relationship}</p>}
+                </div>
+                <div>
+                <div className={`block mb-1`}>Priority</div>
+                  <select
+                    value={formData.priority}
+                    onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+                    className={`w-full p-2 rounded border ${
+                      isDarkMode 
+                        ? 'bg-gray-700 border-gray-600' 
+                        : 'bg-white border-gray-300'
+                    }`}
+                  >
+                    <option value="1">High</option>
+                    <option value="2">Medium</option>
+                    <option value="3">Low</option>
+                  </select>
+                </div>
+                <div>
+                <div className={`block mb-1`}>Role</div>
+                  <select
+                    value={formData.role}
+                    onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                    className={`w-full p-2 rounded border ${
+                      isDarkMode 
+                        ? 'bg-gray-700 border-gray-600' 
+                        : 'bg-white border-gray-300'
+                    }`}
+                  >
+                    <option value="General">General</option>
+                    <option value="Medical">Medical</option>
+                    <option value="Emergency">Emergency</option>
+                  </select>
                 </div>
                 <div className="flex justify-end gap-4 mt-6">
                   <button
