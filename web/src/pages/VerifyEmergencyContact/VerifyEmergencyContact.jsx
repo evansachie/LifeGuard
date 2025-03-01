@@ -12,20 +12,33 @@ function VerifyEmergencyContact({ isDarkMode, toggleTheme }) {
   const [verificationStatus, setVerificationStatus] = useState('loading');
   const [contactData, setContactData] = useState(null);
   const token = searchParams.get('token');
+  const contactId = searchParams.get('contactId');
+  const contactEmail = searchParams.get('contactEmail');
 
   useEffect(() => {
     const verifyContact = async () => {
-      if (!token) {
+      if (!token && (!contactId || !contactEmail)) {
         setVerificationStatus('error');
-        toast.error('Invalid verification token');
+        toast.error('Invalid verification parameters');
         return;
       }
 
       try {
-        console.log('Verifying token:', token);
-        // Make sure the token is properly URI encoded if needed
-        const encodedToken = encodeURIComponent(token);
-        const response = await fetch(`${API_ENDPOINTS.EMERGENCY_CONTACT_VERIFY(encodedToken)}`);
+        let response;
+        
+        if (token) {
+          console.log('Verifying with token:', token);
+          // Make sure the token is properly URI encoded
+          const encodedToken = encodeURIComponent(token);
+          response = await fetch(`${API_ENDPOINTS.EMERGENCY_CONTACT_VERIFY(encodedToken)}`);
+        } else {
+          // Fallback to using contactId and contactEmail directly
+          console.log('Verifying with contactId and contactEmail:', { contactId, contactEmail });
+          // Create a token on the fly
+          const fallbackToken = Buffer.from(`${contactId}:${contactEmail}`).toString('base64');
+          const encodedToken = encodeURIComponent(fallbackToken);
+          response = await fetch(`${API_ENDPOINTS.EMERGENCY_CONTACT_VERIFY(encodedToken)}`);
+        }
         
         if (!response.ok) {
           throw new Error(`Verification failed with status: ${response.status}`);
@@ -49,7 +62,7 @@ function VerifyEmergencyContact({ isDarkMode, toggleTheme }) {
     };
 
     verifyContact();
-  }, [token]);
+  }, [token, contactId, contactEmail]);
 
   const handleGoToHome = () => {
     navigate('/');
@@ -70,7 +83,7 @@ function VerifyEmergencyContact({ isDarkMode, toggleTheme }) {
 
       <div className="verify-contact-form-container">
         <div className="verify-contact-form-card">
-          <img src="/images/lifeguard-2.svg" alt="lhp logo" className="logo" />
+          <img src="/images/lifeguard-logo.svg" alt="LifeGuard Logo" className="logo" />
           
           {verificationStatus === 'loading' && (
             <div className="verification-status">
@@ -102,6 +115,7 @@ function VerifyEmergencyContact({ isDarkMode, toggleTheme }) {
 
           {verificationStatus === 'error' && (
             <div className="verification-status">
+              <FaTimesCircle className="status-icon error" />
               <h2 className="verify-contact-heading">Verification Failed</h2>
               <p className="verify-contact-subheading">
                 We couldn't verify your emergency contact status. The link may be invalid or expired.
