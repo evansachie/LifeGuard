@@ -10,12 +10,6 @@
 
 # production
 /build
-checkTokenPermissions.js
-directCloudflareTest.js
-seedMedicalKnowledge.js
-testCloudflareAI.js
-testCloudflareModels.js
-updateEmergencyContactsSchema.js
 
 # others
 code_context.txt
