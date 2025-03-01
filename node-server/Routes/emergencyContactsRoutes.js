@@ -25,6 +25,77 @@ module.exports = (pool) => {
         }
     });
 
+    // Verify emergency contact - IMPORTANT: This route must be defined BEFORE other parametrized routes
+    router.get('/verify', async (req, res) => {
+        try {
+            const token = req.query.token;
+            const contactId = req.query.contactId;
+            const contactEmail = req.query.contactEmail;
+            
+            // Check if we have a token or direct parameters
+            if (!token && (!contactId || !contactEmail)) {
+                return res.status(400).json({ error: 'Missing verification parameters' });
+            }
+            
+            let finalContactId, finalContactEmail;
+            
+            if (token) {
+                console.log('Received verification token:', token);
+                
+                // Decode the token
+                try {
+                    const decodedData = Buffer.from(token, 'base64').toString('utf-8');
+                    console.log('Decoded token data:', decodedData);
+                    
+                    // Split the decoded data
+                    const parts = decodedData.split(':');
+                    if (parts.length !== 2) {
+                        console.error('Invalid token format - expected format "id:email", got:', decodedData);
+                        return res.status(400).json({ error: 'Invalid token format - expected format "id:email"' });
+                    }
+                    
+                    [finalContactId, finalContactEmail] = parts;
+                } catch (decodeError) {
+                    console.error('Error decoding token:', decodeError);
+                    return res.status(400).json({ error: 'Invalid token format - could not decode base64' });
+                }
+            } else {
+                // Use direct parameters
+                console.log('Using direct contactId and contactEmail parameters');
+                finalContactId = contactId;
+                finalContactEmail = contactEmail;
+            }
+            
+            if (!finalContactId || !finalContactEmail) {
+                console.error('Invalid verification data - missing contactId or email:', { finalContactId, finalContactEmail });
+                return res.status(400).json({ error: 'Invalid verification data' });
+            }
+            
+            console.log('Attempting to verify contact:', { finalContactId, finalContactEmail });
+            
+            // Update the contact verification status
+            const { rows } = await pool.query(
+                'UPDATE "EmergencyContacts" SET "IsVerified" = true, "UpDatedAt" = CURRENT_TIMESTAMP WHERE "Id" = $1 AND "Email" = $2 RETURNING *',
+                [finalContactId, finalContactEmail]
+            );
+            
+            console.log('Query result:', rows.length > 0 ? 'Contact found and updated' : 'No contact found');
+            
+            if (rows.length === 0) {
+                return res.status(404).json({ error: 'Contact not found or already verified' });
+            }
+            
+            res.json({ 
+                success: true, 
+                message: 'Contact verified successfully',
+                contact: rows[0]
+            });
+        } catch (error) {
+            console.error('Error verifying emergency contact:', error);
+            res.status(500).json({ error: 'Failed to verify emergency contact: ' + error.message });
+        }
+    });
+
     // Create new emergency contact
     router.post('/', async (req, res) => {
         try {
@@ -48,6 +119,8 @@ module.exports = (pool) => {
                     'INSERT INTO "EmergencyContacts" ("Name", "Phone", "Email", "Relationship", "UserId", "IsVerified", "Priority", "Role", "CreatedAt", "UpDatedAt") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *',
                     [name, phone, email, relationship, userId, false, priority, role]
                 );
+                
+                console.log('Contact inserted:', rows[0]);
                 
                 // Get user info for the email - handle case where AspNetUsers might not exist
                 let userData = { name: 'A LifeGuard user', email: decoded.email || email };
@@ -133,66 +206,6 @@ module.exports = (pool) => {
         } catch (error) {
             console.error('Error deleting emergency contact:', error);
             res.status(500).json({ error: 'Failed to delete emergency contact' });
-        }
-    });
-
-    // Verify emergency contact
-    router.get('/verify/:token', async (req, res) => {
-        try {
-            const { token } = req.params;
-            
-            console.log('Received verification token:', token);
-            
-            if (!token) {
-                return res.status(400).json({ error: 'Missing verification token' });
-            }
-            
-            // Decode the token
-            let decodedData;
-            try {
-                decodedData = Buffer.from(token, 'base64').toString('utf-8');
-                console.log('Decoded token data:', decodedData);
-            } catch (decodeError) {
-                console.error('Error decoding token:', decodeError);
-                return res.status(400).json({ error: 'Invalid token format - could not decode base64' });
-            }
-            
-            // Split the decoded data
-            const parts = decodedData.split(':');
-            if (parts.length !== 2) {
-                console.error('Invalid token format - expected format "id:email", got:', decodedData);
-                return res.status(400).json({ error: 'Invalid token format - expected format "id:email"' });
-            }
-            
-            const [contactId, email] = parts;
-            
-            if (!contactId || !email) {
-                console.error('Invalid token data - missing contactId or email:', { contactId, email });
-                return res.status(400).json({ error: 'Invalid verification token data' });
-            }
-            
-            console.log('Attempting to verify contact:', { contactId, email });
-            
-            // Update the contact verification status
-            const { rows } = await pool.query(
-                'UPDATE "EmergencyContacts" SET "IsVerified" = true, "UpDatedAt" = CURRENT_TIMESTAMP WHERE "Id" = $1 AND "Email" = $2 RETURNING *',
-                [contactId, email]
-            );
-            
-            console.log('Query result:', rows.length > 0 ? 'Contact found and updated' : 'No contact found');
-            
-            if (rows.length === 0) {
-                return res.status(404).json({ error: 'Contact not found or already verified' });
-            }
-            
-            res.json({ 
-                success: true, 
-                message: 'Contact verified successfully',
-                contact: rows[0]
-            });
-        } catch (error) {
-            console.error('Error verifying emergency contact:', error);
-            res.status(500).json({ error: 'Failed to verify emergency contact: ' + error.message });
         }
     });
 

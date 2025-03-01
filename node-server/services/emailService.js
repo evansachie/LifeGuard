@@ -46,7 +46,7 @@ const sendEmergencyContactNotification = async (contactData, userData) => {
     console.log('Generated verification token:', verificationToken);
     
     // Create the verification URL
-    const verificationLink = `${FRONTEND_URL}/verify-emergency-contact?token=${encodeURIComponent(verificationToken)}`;
+    const verificationLink = `${FRONTEND_URL}/verify-emergency-contact?token=${encodeURIComponent(verificationToken)}&contactId=${contactId}&contactEmail=${contactEmail}`;
     console.log('Verification link:', verificationLink);
     
     const replacements = {
