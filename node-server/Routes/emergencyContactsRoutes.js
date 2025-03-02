@@ -73,7 +73,7 @@ module.exports = (pool) => {
             
             console.log('Attempting to verify contact:', { finalContactId, finalContactEmail });
             
-            // Update the contact verification status
+            // Update the contact verification status using direct pool query
             const { rows } = await pool.query(
                 'UPDATE "EmergencyContacts" SET "IsVerified" = true, "UpDatedAt" = CURRENT_TIMESTAMP WHERE "Id" = $1 AND "Email" = $2 RETURNING *',
                 [finalContactId, finalContactEmail]
@@ -109,87 +109,46 @@ module.exports = (pool) => {
             }
             const { name, phone, email, relationship, priority = 1, role = 'General' } = req.body;
 
-            // Start a transaction
-            let client;
+            console.log("Attempting to insert contact with data:", { name, phone, email, relationship, userId, priority, role });
+            
+            // Insert the contact directly without transaction
+            const { rows } = await pool.query(
+                'INSERT INTO "EmergencyContacts" ("Name", "Phone", "Email", "Relationship", "UserId", "IsVerified", "Priority", "Role", "CreatedAt", "UpDatedAt") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *',
+                [name, phone, email, relationship, userId, false, priority, role]
+            );
+            
+            console.log('Contact inserted successfully:', rows[0]);
+            
+            // Get user info for the email
+            let userData = { name: 'A LifeGuard user', email: decoded.email || email };
+            
             try {
-                client = await pool.connect();
-                console.log("Database connection established");
-                
-                await client.query('BEGIN');
-                console.log("Transaction started");
-
-                // Test database connection
-                const testResult = await client.query('SELECT NOW()');
-                console.log("Database connection test successful:", testResult.rows[0]);
-
-                // Insert the contact
-                console.log("Attempting to insert contact with data:", { name, phone, email, relationship, userId, priority, role });
-                const { rows } = await client.query(
-                    'INSERT INTO "EmergencyContacts" ("Name", "Phone", "Email", "Relationship", "UserId", "IsVerified", "Priority", "Role", "CreatedAt", "UpDatedAt") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *',
-                    [name, phone, email, relationship, userId, false, priority, role]
+                const userResult = await pool.query(
+                    'SELECT "Name" as name, "Email" as email, "Phone" as phone FROM "AspNetUsers" WHERE "Id" = $1',
+                    [userId]
                 );
                 
-                console.log('Contact inserted successfully:', rows[0]);
-                
-                // Get user info for the email - handle case where AspNetUsers might not exist
-                let userData = { name: 'A LifeGuard user', email: decoded.email || email };
-                
-                try {
-                    const userResult = await client.query(
-                        'SELECT "Name" as name, "Email" as email, "Phone" as phone FROM "AspNetUsers" WHERE "Id" = $1',
-                        [userId]
-                    );
-                    
-                    if (userResult.rows.length > 0) {
-                        userData = userResult.rows[0];
-                    }
-                } catch (userError) {
-                    console.log('AspNetUsers table might not exist, using default user data:', userError.message);
-                    // Continue with default userData
+                if (userResult.rows.length > 0) {
+                    userData = userResult.rows[0];
                 }
-                
-                // Send email notification
-                const emailResult = await sendEmergencyContactNotification(rows[0], userData);
-                
-                // Commit the transaction
-                await client.query('COMMIT');
-                console.log("Transaction committed successfully");
-                
-                // Return the created contact with email status
-                res.status(201).json({
-                    ...rows[0],
-                    notificationSent: emailResult.success
-                });
-            } catch (error) {
-                console.error('Detailed error in contact creation:', {
-                    error: error.message,
-                    stack: error.stack,
-                    query: error.query,
-                    parameters: error.parameters
-                });
-                
-                if (client) {
-                    try {
-                        await client.query('ROLLBACK');
-                        console.log("Transaction rolled back due to error");
-                    } catch (rollbackError) {
-                        console.error('Error rolling back transaction:', rollbackError);
-                    }
-                }
-                
-                res.status(500).json({ 
-                    error: 'Failed to create emergency contact',
-                    details: error.message
-                });
-            } finally {
-                if (client) {
-                    client.release();
-                    console.log("Database client released");
-                }
+            } catch (userError) {
+                console.log('AspNetUsers table might not exist, using default user data:', userError.message);
             }
+            
+            // Send email notification
+            const emailResult = await sendEmergencyContactNotification(rows[0], userData);
+            
+            // Return the created contact with email status
+            res.status(201).json({
+                ...rows[0],
+                notificationSent: emailResult.success
+            });
         } catch (error) {
             console.error('Error creating emergency contact:', error);
-            res.status(500).json({ error: 'Failed to create emergency contact' });
+            res.status(500).json({ 
+                error: 'Failed to create emergency contact',
+                details: error.message
+            });
         }
     });
 
