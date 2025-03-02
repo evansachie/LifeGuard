@@ -15,6 +15,8 @@ import SignUp from "./components/Auth/SignUp/SignUp";
 import OTPVerification from './components/Auth/OTPVerification/OTPVerification';
 import ForgotPassword from './components/Auth/ForgotPassword/ForgotPassword';
 import ResetPassword from './components/Auth/ResetPassword/ResetPassword';
+import VerifyEmergencyContact from './pages/VerifyEmergencyContact/VerifyEmergencyContact';
+import EmergencyTracking from './pages/EmergencyTracking/EmergencyTracking';
 
 import Sidebar from './components/Sidebar/Sidebar';
 import Dashboard from './pages/Dashboard/Dashboard';
@@ -111,6 +113,14 @@ function App() {
                             <Route 
                                 path="/reset-password" 
                                 element={<ResetPassword isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
+                            />
+                            <Route 
+                                path="/verify-emergency-contact" 
+                                element={<VerifyEmergencyContact isDarkMode={isDarkMode} />} 
+                            />
+                            <Route 
+                                path="/emergency-tracking" 
+                                element={<EmergencyTracking isDarkMode={isDarkMode} />} 
                             />
 
                             <Route
