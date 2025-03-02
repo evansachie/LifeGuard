@@ -44,20 +44,23 @@ module.exports = (pool) => {
                 
                 // Decode the token
                 try {
-                    const decodedData = Buffer.from(token, 'base64').toString('utf-8');
+                    // First decode the URL encoding, then decode base64
+                    const decodedToken = decodeURIComponent(token);
+                    const decodedData = Buffer.from(decodedToken, 'base64').toString('utf-8');
                     console.log('Decoded token data:', decodedData);
                     
-                    // Split the decoded data
+                    // Split the decoded data and clean any special characters
                     const parts = decodedData.split(':');
                     if (parts.length !== 2) {
                         console.error('Invalid token format - expected format "id:email", got:', decodedData);
                         return res.status(400).json({ error: 'Invalid token format - expected format "id:email"' });
                     }
                     
-                    [finalContactId, finalContactEmail] = parts;
+                    finalContactId = parts[0].trim();
+                    finalContactEmail = parts[1].trim().replace(/[\r\n\x00-\x1F\x7F-\x9F]/g, '');
                 } catch (decodeError) {
                     console.error('Error decoding token:', decodeError);
-                    return res.status(400).json({ error: 'Invalid token format - could not decode base64' });
+                    return res.status(400).json({ error: 'Invalid token format - could not decode' });
                 }
             } else {
                 // Use direct parameters

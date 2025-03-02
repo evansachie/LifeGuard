@@ -42,11 +42,13 @@ const sendEmergencyContactNotification = async (contactData, userData) => {
     const tokenString = `${contactId}:${contactEmail}`;
     console.log('Creating verification token with data:', tokenString);
     
-    const verificationToken = Buffer.from(tokenString).toString('base64');
+    // Clean the token string before encoding
+    const cleanTokenString = tokenString.trim().replace(/[\r\n\x00-\x1F\x7F-\x9F]/g, '');
+    const verificationToken = Buffer.from(cleanTokenString).toString('base64');
     console.log('Generated verification token:', verificationToken);
     
-    // Create the verification URL
-    const verificationLink = `${FRONTEND_URL}/verify-emergency-contact?token=${encodeURIComponent(verificationToken)}&contactId=${contactId}&contactEmail=${contactEmail}`;
+    // Create the verification URL - no need to encode the token here as it will be encoded in the frontend
+    const verificationLink = `${FRONTEND_URL}/verify-emergency-contact?token=${verificationToken}&contactId=${contactId}&contactEmail=${contactEmail}`;
     console.log('Verification link:', verificationLink);
     
     const replacements = {
