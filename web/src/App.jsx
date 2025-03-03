@@ -120,7 +120,7 @@ function App() {
                             />
                             <Route 
                                 path="/emergency-tracking" 
-                                element={<EmergencyTracking isDarkMode={isDarkMode} />} 
+                                element={<EmergencyTracking isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
                             />
 
                             <Route
