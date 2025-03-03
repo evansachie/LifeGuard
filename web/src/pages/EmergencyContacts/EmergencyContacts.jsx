@@ -26,22 +26,6 @@ function EmergencyContacts({ isDarkMode }) {
   const [deletingContact, setDeletingContact] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  
-  // New state variables for enhanced features
-  const [emergencyAlertModalOpen, setEmergencyAlertModalOpen] = useState(false);
-  const [emergencyData, setEmergencyData] = useState({
-    message: '',
-    location: '',
-    medicalInfo: ''
-  });
-  const [isSendingAlert, setIsSendingAlert] = useState(false);
-  const [testAlertModalOpen, setTestAlertModalOpen] = useState(false);
-  const [testingContact, setTestingContact] = useState(null);
-  const [isSendingTest, setIsSendingTest] = useState(false);
-  const [alertHistory, setAlertHistory] = useState([]);
-  const [showAlertHistory, setShowAlertHistory] = useState(false);
-  const [userLocation, setUserLocation] = useState(null);
-  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
 
   useEffect(() => {
     fetchContacts();

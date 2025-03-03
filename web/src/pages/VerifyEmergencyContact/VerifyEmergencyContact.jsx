@@ -74,7 +74,7 @@ function VerifyEmergencyContact({ isDarkMode, toggleTheme }) {
         {isDarkMode ? <FaSun /> : <FaMoon />}
       </button>
       
-      <div className="verify-contact-illustration bg-[#2D3748]">
+      <div className={`verify-contact-illustration ${isDarkMode ? 'bg-[#2D3748]' : 'bg-[#E8EEF7]'}`}>
         <img 
           src={verifyContactImage}
           alt="Verify Emergency Contact" 
@@ -83,7 +83,7 @@ function VerifyEmergencyContact({ isDarkMode, toggleTheme }) {
 
       <div className="verify-contact-form-container">
         <div className="verify-contact-form-card">
-          <img src="/images/lifeguard-logo.svg" alt="LifeGuard Logo" className="logo" />
+          <img src="lifeguard-2.svg" alt="LifeGuard Logo" className="logo" />
           
           {verificationStatus === 'loading' && (
             <div className="verification-status">
@@ -125,7 +125,7 @@ function VerifyEmergencyContact({ isDarkMode, toggleTheme }) {
 
           <button
             onClick={handleGoToHome}
-            className="primary-button"
+            className="home-button"
           >
             Return to Home
           </button>

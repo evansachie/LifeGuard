@@ -116,11 +116,11 @@ function App() {
                             />
                             <Route 
                                 path="/verify-emergency-contact" 
-                                element={<VerifyEmergencyContact isDarkMode={isDarkMode} />} 
+                                element={<VerifyEmergencyContact isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
                             />
                             <Route 
                                 path="/emergency-tracking" 
-                                element={<EmergencyTracking isDarkMode={isDarkMode} />} 
+                                element={<EmergencyTracking isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
                             />
 
                             <Route
