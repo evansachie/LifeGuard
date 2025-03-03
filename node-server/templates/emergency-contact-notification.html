@@ -70,18 +70,18 @@
         </div>
         <div class="content">
             <p>Hello {{contactName}},</p>
-            <p><strong>{{user.firstName}} {{user.lastName}}</strong> has added you as an emergency contact on LifeGuard, a health and wellness application designed to provide assistance during emergencies.</p>
+            <p><strong>{{userName}}</strong> has added you as an emergency contact on LifeGuard, a health and wellness application designed to provide assistance during emergencies.</p>
             
             <div class="alert-box">
                 <p>As an emergency contact, you may receive:</p>
                 <ul>
-                    <li>Emergency alerts if {{user.firstName}} {{user.lastName}} needs help</li>
+                    <li>Emergency alerts if {{userName}} needs help</li>
                     <li>Location information during emergencies</li>
                     <li>Medical information that could be critical in an emergency</li>
                 </ul>
             </div>
             
-            <p>Please verify that you agree to be an emergency contact for {{user.firstName}} {{user.lastName}} by clicking the button below:</p>
+            <p>Please verify that you agree to be an emergency contact for {{userName}} by clicking the button below:</p>
             
             <div style="text-align: center;">
                 <a href="{{verificationLink}}" class="button">Verify Emergency Contact</a>
