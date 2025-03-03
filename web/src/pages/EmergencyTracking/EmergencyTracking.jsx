@@ -35,7 +35,7 @@ function EmergencyTracking({ isDarkMode, toggleTheme }) {
 
       try {
         // Decode token to get user ID and timestamp
-        const decodedData = Buffer.from(token, 'base64').toString('utf-8');
+        const decodedData = atob(token);
         const [userId, timestamp] = decodedData.split(':');
 
         // Fetch user data from API
