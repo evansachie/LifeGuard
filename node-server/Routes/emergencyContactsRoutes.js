@@ -1,6 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const { sendEmergencyContactNotification, sendEmergencyAlert, sendTestAlert } = require('../services/emailService');
+const { sendEmergencyAlertSMS, sendTestAlertSMS } = require('../services/smsService');
 const crypto = require('crypto');
 
 module.exports = (pool) => {
@@ -138,7 +139,7 @@ module.exports = (pool) => {
             }
             
             // Send email notification
-            const emailResult = await sendEmergencyContactNotification(rows[0], userId, decoded.email, pool);
+            const emailResult = await sendEmergencyContactNotification(rows[0], userData);
             
             // Return the created contact with email status
             res.status(201).json({
@@ -261,19 +262,22 @@ module.exports = (pool) => {
                 };
                 
                 // Send email alert
-                const emailResult = await sendEmergencyAlert(contact, userId, decoded.email, pool, emergencyData);
+                const emailResult = await sendEmergencyAlert(contact, userData, emergencyData);
+                
+                // Send SMS alert
+                const smsResult = await sendEmergencyAlertSMS(contact, userData, emergencyData);
                 
                 // Record the alert
                 await pool.query(
                     'INSERT INTO "EmergencyContactAlerts" ("EmergencyId", "ContactId", "EmailSent", "SmsSent", "CreatedAt") VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)',
-                    [emergencyId, contact.Id, emailResult.success, false]
+                    [emergencyId, contact.Id, emailResult.success, smsResult.success]
                 );
                 
                 return {
                     contactId: contact.Id,
                     contactName: contact.Name,
                     emailSent: emailResult.success,
-                    smsSent: false
+                    smsSent: smsResult.success
                 };
             }));
             
@@ -331,14 +335,15 @@ module.exports = (pool) => {
             const contact = rows[0];
             
             // Send test alerts
-            const emailResult = await sendTestAlert(contact, userId, decoded.email, pool);
+            const emailResult = await sendTestAlert(contact, userData);
+            const smsResult = await sendTestAlertSMS(contact, userData);
             
             res.json({
                 success: true,
                 contactId: contact.Id,
                 contactName: contact.Name,
                 emailSent: emailResult.success,
-                smsSent: false
+                smsSent: smsResult.success
             });
         } catch (error) {
             console.error('Error sending test alert:', error);
