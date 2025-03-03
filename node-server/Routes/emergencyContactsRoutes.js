@@ -1,7 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const { sendEmergencyContactNotification, sendEmergencyAlert, sendTestAlert } = require('../services/emailService');
-const { sendEmergencyAlertSMS, sendTestAlertSMS } = require('../services/smsService');
 const crypto = require('crypto');
 
 module.exports = (pool) => {
@@ -264,20 +263,17 @@ module.exports = (pool) => {
                 // Send email alert
                 const emailResult = await sendEmergencyAlert(contact, userData, emergencyData);
                 
-                // Send SMS alert
-                const smsResult = await sendEmergencyAlertSMS(contact, userData, emergencyData);
-                
                 // Record the alert
                 await pool.query(
                     'INSERT INTO "EmergencyContactAlerts" ("EmergencyId", "ContactId", "EmailSent", "SmsSent", "CreatedAt") VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)',
-                    [emergencyId, contact.Id, emailResult.success, smsResult.success]
+                    [emergencyId, contact.Id, emailResult.success, false]
                 );
                 
                 return {
                     contactId: contact.Id,
                     contactName: contact.Name,
                     emailSent: emailResult.success,
-                    smsSent: smsResult.success
+                    smsSent: false
                 };
             }));
             
@@ -336,14 +332,13 @@ module.exports = (pool) => {
             
             // Send test alerts
             const emailResult = await sendTestAlert(contact, userData);
-            const smsResult = await sendTestAlertSMS(contact, userData);
             
             res.json({
                 success: true,
                 contactId: contact.Id,
                 contactName: contact.Name,
                 emailSent: emailResult.success,
-                smsSent: smsResult.success
+                smsSent: false
             });
         } catch (error) {
             console.error('Error sending test alert:', error);

@@ -27,7 +27,7 @@ const readHTMLFile = (path) => {
 // Default frontend URL if not set in environment variables
 const FRONTEND_URL = process.env.FRONTEND_URL || 'https://lifeguard-vert.vercel.app';
 
-const sendEmergencyContactNotification = async (contactData, userData) => {
+const sendEmergencyContactNotification = async (contactData, userId, email, pool) => {
   try {
     const templatePath = path.join(__dirname, '../templates/emergency-contact-notification.html');
     
@@ -37,6 +37,27 @@ const sendEmergencyContactNotification = async (contactData, userData) => {
     // Ensure contactId is a string
     const contactId = String(contactData.Id);
     const contactEmail = contactData.Email;
+    
+    // Get user info for the email
+    let userData = { name: 'Unknown User', email: email };
+    
+    try {
+        const userResult = await pool.query(
+            'SELECT "FirstName", "LastName", "Email" as email, "Phone" as phone FROM "AspNetUsers" WHERE "Id" = $1',
+            [userId]
+        );
+        
+        if (userResult.rows.length > 0) {
+            const user = userResult.rows[0];
+            userData = {
+                name: `${user.firstname} ${user.lastname}`,
+                email: user.email,
+                phone: user.phone
+            };
+        }
+    } catch (userError) {
+        console.log('Error fetching user data:', userError.message);
+    }
     
     // Create the token string and encode it
     const tokenString = `${contactId}:${contactEmail}`;
@@ -77,14 +98,36 @@ const sendEmergencyContactNotification = async (contactData, userData) => {
   }
 };
 
-const sendEmergencyAlert = async (contactData, userData, emergencyData) => {
+const sendEmergencyAlert = async (contactData, userId, email, pool, emergencyData) => {
   try {
     const templatePath = path.join(__dirname, '../templates/emergency-alert.html');
     
     const html = await readHTMLFile(templatePath);
     const template = handlebars.compile(html);
     
-    const trackingToken = Buffer.from(`${userData.id}:${new Date().toISOString()}`).toString('base64');
+    // Get user info for the email
+    let userData = { name: 'Unknown User', email: email };
+    
+    try {
+        const userResult = await pool.query(
+            'SELECT "FirstName", "LastName", "Email" as email, "Phone" as phone, "MedicalInfo" as medicalInfo FROM "AspNetUsers" WHERE "Id" = $1',
+            [userId]
+        );
+        
+        if (userResult.rows.length > 0) {
+            const user = userResult.rows[0];
+            userData = {
+                name: `${user.firstname} ${user.lastname}`,
+                email: user.email,
+                phone: user.phone,
+                medicalInfo: user.medicalInfo
+            };
+        }
+    } catch (userError) {
+        console.log('Error fetching user data:', userError.message);
+    }
+    
+    const trackingToken = Buffer.from(`${userId}:${new Date().toISOString()}`).toString('base64');
     const trackingLink = `${FRONTEND_URL}/emergency-tracking?token=${trackingToken}`;
     
     const replacements = {
@@ -118,12 +161,32 @@ const sendEmergencyAlert = async (contactData, userData, emergencyData) => {
   }
 };
 
-const sendTestAlert = async (contactData, userData) => {
+const sendTestAlert = async (contactData, userId, email, pool) => {
   try {
     const templatePath = path.join(__dirname, '../templates/test-alert.html');
     
     const html = await readHTMLFile(templatePath);
     const template = handlebars.compile(html);
+    
+    // Get user info for the email
+    let userData = { name: 'Unknown User', email: email };
+    
+    try {
+        const userResult = await pool.query(
+            'SELECT "FirstName", "LastName", "Email" as email FROM "AspNetUsers" WHERE "Id" = $1',
+            [userId]
+        );
+        
+        if (userResult.rows.length > 0) {
+            const user = userResult.rows[0];
+            userData = {
+                name: `${user.firstname} ${user.lastname}`,
+                email: user.email
+            };
+        }
+    } catch (userError) {
+        console.log('Error fetching user data:', userError.message);
+    }
     
     const replacements = {
       contactName: contactData.Name,
