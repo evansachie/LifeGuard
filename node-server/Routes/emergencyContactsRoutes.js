@@ -138,7 +138,7 @@ module.exports = (pool) => {
             }
             
             // Send email notification
-            const emailResult = await sendEmergencyContactNotification(rows[0], userData);
+            const emailResult = await sendEmergencyContactNotification(rows[0], userId, decoded.email, pool);
             
             // Return the created contact with email status
             res.status(201).json({
@@ -261,7 +261,7 @@ module.exports = (pool) => {
                 };
                 
                 // Send email alert
-                const emailResult = await sendEmergencyAlert(contact, userData, emergencyData);
+                const emailResult = await sendEmergencyAlert(contact, userId, decoded.email, pool, emergencyData);
                 
                 // Record the alert
                 await pool.query(
@@ -331,7 +331,7 @@ module.exports = (pool) => {
             const contact = rows[0];
             
             // Send test alerts
-            const emailResult = await sendTestAlert(contact, userData);
+            const emailResult = await sendTestAlert(contact, userId, decoded.email, pool);
             
             res.json({
                 success: true,
