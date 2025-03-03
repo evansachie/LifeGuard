@@ -1,12 +1,15 @@
 import * as React from "react";
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Outlet } from 'react-router-dom';
+
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import 'intro.js/introjs.css';
+
 import { AuthProvider } from './contexts/AuthContext';
 import { BLEProvider } from './contexts/BLEContext';
+
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 
 import LandingPage from './pages/Landing/LandingPage';
 
@@ -15,6 +18,7 @@ import SignUp from "./components/Auth/SignUp/SignUp";
 import OTPVerification from './components/Auth/OTPVerification/OTPVerification';
 import ForgotPassword from './components/Auth/ForgotPassword/ForgotPassword';
 import ResetPassword from './components/Auth/ResetPassword/ResetPassword';
+
 import VerifyEmergencyContact from './pages/VerifyEmergencyContact/VerifyEmergencyContact';
 import EmergencyTracking from './pages/EmergencyTracking/EmergencyTracking';
 
