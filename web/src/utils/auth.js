@@ -43,6 +43,14 @@ export async function loginUser(email, password) {
     return data; // Return token and user info
 }
 
+export async function registerUser(name, email, password) {
+    return fetchWithAuth(API_ENDPOINTS.REGISTER, {
+        method: 'POST',
+        body: JSON.stringify({ name, email, password }),
+    });
+}
+
+
 export async function verifyOTP(email, otp) {
     return fetchWithAuth(API_ENDPOINTS.VERIFY_OTP, {
         method: 'POST',
