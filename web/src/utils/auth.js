@@ -1,4 +1,10 @@
-import { API_ENDPOINTS, fetchApi } from '../utils/api';
+import { API_ENDPOINTS, fetchApi, API_BASE_URL } from '../utils/api';
+
+export const isAuthenticated = () => {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+    return !!(token && userId);
+};
 
 export async function requestPasswordReset(email) {
     return fetchApi(API_ENDPOINTS.FORGOT_PASSWORD, {
@@ -20,3 +26,20 @@ export async function resetUserPassword(email, token, newPassword, confirmPasswo
         }),
     });
 }
+
+export async function loginUser(email, password) {
+    const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.LOGIN}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+    });
+
+    const data = await response.json();
+    
+    if (!response.ok) {
+        throw new Error(data.message || 'Login failed');
+    }
+
+    return data; // Return token and user info
+}
+

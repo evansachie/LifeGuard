@@ -35,7 +35,7 @@ import TermsOfUse from '../pages/TermsOfUse/TermsOfUse';
 import PrivacyPolicy from '../pages/PrivacyPolicy/PrivacyPolicy';
 import NotFound from '../pages/NotFound/NotFound';
 
-import { isAuthenticated } from "../utils/authUtils";
+import { isAuthenticated } from '../utils/auth';
 
 const AppRoutes = ({ isDarkMode, toggleTheme }) => {
   return (
