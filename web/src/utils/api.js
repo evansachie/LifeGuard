@@ -1,5 +1,3 @@
-import { toast } from 'react-toastify';
-
 export const FRONTEND_URL = window.location.origin; // Gets the current frontend URL
 export const BASE_URL = 'https://lifeguard-hiij.onrender.com';
 export const API_BASE_URL = `${BASE_URL}/api`;
@@ -83,7 +81,7 @@ export const fetchApi = async (endpoint, options = {}) => {
             error,
             requestBody: options.body
         });
-        toast.error(error.message || 'An error occurred');
+        console.log(error.message || 'An error occurred');
         throw error;
     }
 };
