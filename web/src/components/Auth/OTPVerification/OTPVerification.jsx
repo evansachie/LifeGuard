@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FaMoon, FaSun } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 import Button from '../../button/button';
 import otpIllustration from '../../../assets/auth/otp.svg';
-import { API_ENDPOINTS, fetchWithAuth } from '../../../utils/api';
+import { verifyOTP, resendOTP } from '../../../utils/auth';
+import OTPInput from '../../OTPInput/OTPInput';
+import ThemeToggle from '../../ThemeToggle/ThemeToggle';
 import './OTPVerification.css';
 
 export default function OTPVerification({ isDarkMode, toggleTheme }) {
@@ -13,7 +15,7 @@ export default function OTPVerification({ isDarkMode, toggleTheme }) {
     const [timeLeft, setTimeLeft] = useState(30);
     const navigate = useNavigate();
     const location = useLocation();
-
+    
     const email = location.state?.email;
 
     useEffect(() => {
@@ -25,23 +27,10 @@ export default function OTPVerification({ isDarkMode, toggleTheme }) {
         return () => clearInterval(timer);
     }, [timeLeft, email, navigate]);
 
-    const handleChange = (element, index) => {
-        if (isNaN(element.value)) return;
-
-        setOtp([...otp.map((d, idx) => (idx === index ? element.value : d))]);
-
-        if (element.nextSibling && element.value !== '') {
-            element.nextSibling.focus();
-        }
-    };
-
     const handleResendOTP = async () => {
         try {
             setIsLoading(true);
-            await fetchWithAuth(API_ENDPOINTS.RESEND_OTP, {
-                method: 'POST',
-                body: JSON.stringify({ email })
-            });
+            await resendOTP(email);
             setTimeLeft(30);
             setError('');
         } catch (error) {
@@ -61,13 +50,8 @@ export default function OTPVerification({ isDarkMode, toggleTheme }) {
 
         setIsLoading(true);
         try {
-            await fetchWithAuth(API_ENDPOINTS.VERIFY_OTP, {
-                method: 'POST',
-                body: JSON.stringify({
-                    email,
-                    otp: otpValue
-                })
-            });
+            await verifyOTP(email, otpValue);
+            toast.success('OTP verified successfully!');
             navigate('/log-in');
         } catch (error) {
             setError(error.message || 'Invalid OTP');
@@ -78,10 +62,8 @@ export default function OTPVerification({ isDarkMode, toggleTheme }) {
 
     return (
         <div className={`otp-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
-            <button className="theme-toggle" onClick={toggleTheme}>
-                {isDarkMode ? <FaSun /> : <FaMoon />}
-            </button>
-            
+            <ThemeToggle isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
+
             <div className="otp-illustration">
                 <img src={otpIllustration} alt="OTP Verification" />
             </div>
@@ -93,25 +75,11 @@ export default function OTPVerification({ isDarkMode, toggleTheme }) {
                     <p>Please enter the 6-digit code sent to your email</p>
 
                     <form onSubmit={handleSubmit}>
-                        <div className="otp-input-container">
-                            {otp.map((data, index) => (
-                                <input
-                                    key={index}
-                                    type="text"
-                                    maxLength="1"
-                                    value={data}
-                                    onChange={e => handleChange(e.target, index)}
-                                    onFocus={e => e.target.select()}
-                                />
-                            ))}
-                        </div>
+                        <OTPInput otp={otp} setOtp={setOtp} />
 
                         {error && <div className="error-message">{error}</div>}
 
-                        <Button 
-                            text="Verify OTP" 
-                            isLoading={isLoading} 
-                        />
+                        <Button text="Verify OTP" isLoading={isLoading} />
 
                         <div className="resend-container">
                             {timeLeft > 0 ? (
@@ -132,4 +100,4 @@ export default function OTPVerification({ isDarkMode, toggleTheme }) {
             </div>
         </div>
     );
-} 
+}
