@@ -1,5 +1,3 @@
-import { toast } from 'react-toastify';
-
 export const FRONTEND_URL = window.location.origin; // Gets the current frontend URL
 export const BASE_URL = 'https://lifeguard-hiij.onrender.com';
 export const API_BASE_URL = `${BASE_URL}/api`;
@@ -24,9 +22,10 @@ export const API_ENDPOINTS = {
     MEMOS: `${NODE_API_URL}/api/memos`,
     EMERGENCY_CONTACTS: `${NODE_API_URL}/api/emergency-contacts`,
     EMERGENCY_ALERTS: `${NODE_API_URL}/api/emergency-contacts/alert`,
+
     EMERGENCY_TEST_ALERT: (id) => `${NODE_API_URL}/api/emergency-contacts/test-alert/${id}`,
-    EMERGENCY_ALERTS_HISTORY: `${NODE_API_URL}/api/emergency-contacts/alerts`,
     EMERGENCY_CONTACT_VERIFY: (token) => `${NODE_API_URL}/api/emergency-contacts/verify?token=${encodeURIComponent(token)}`,
+    EMERGENCY_ALERTS_HISTORY: `${NODE_API_URL}/api/emergency-contacts/alerts`,
 
     // RAG API Endpoints
     RAG_QUERY: `${NODE_API_URL}/api/rag/query`,
@@ -83,7 +82,7 @@ export const fetchApi = async (endpoint, options = {}) => {
             error,
             requestBody: options.body
         });
-        toast.error(error.message || 'An error occurred');
+        console.log(error.message || 'An error occurred');
         throw error;
     }
 };
