@@ -22,9 +22,10 @@ export const API_ENDPOINTS = {
     MEMOS: `${NODE_API_URL}/api/memos`,
     EMERGENCY_CONTACTS: `${NODE_API_URL}/api/emergency-contacts`,
     EMERGENCY_ALERTS: `${NODE_API_URL}/api/emergency-contacts/alert`,
+
     EMERGENCY_TEST_ALERT: (id) => `${NODE_API_URL}/api/emergency-contacts/test-alert/${id}`,
-    EMERGENCY_ALERTS_HISTORY: `${NODE_API_URL}/api/emergency-contacts/alerts`,
     EMERGENCY_CONTACT_VERIFY: (token) => `${NODE_API_URL}/api/emergency-contacts/verify?token=${encodeURIComponent(token)}`,
+    EMERGENCY_ALERTS_HISTORY: `${NODE_API_URL}/api/emergency-contacts/alerts`,
 
     // RAG API Endpoints
     RAG_QUERY: `${NODE_API_URL}/api/rag/query`,

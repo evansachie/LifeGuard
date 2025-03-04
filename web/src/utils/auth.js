@@ -1,4 +1,4 @@
-import { API_ENDPOINTS, fetchApi, API_BASE_URL } from '../utils/api';
+import { API_ENDPOINTS, fetchApi, fetchWithAuth, API_BASE_URL } from '../utils/api';
 
 export const isAuthenticated = () => {
     const token = localStorage.getItem('token');
@@ -43,3 +43,16 @@ export async function loginUser(email, password) {
     return data; // Return token and user info
 }
 
+export async function verifyOTP(email, otp) {
+    return fetchWithAuth(API_ENDPOINTS.VERIFY_OTP, {
+        method: 'POST',
+        body: JSON.stringify({ email, otp }),
+    });
+}
+
+export async function resendOTP(email) {
+    return fetchWithAuth(API_ENDPOINTS.RESEND_OTP, {
+        method: 'POST',
+        body: JSON.stringify({ email }),
+    });
+}
