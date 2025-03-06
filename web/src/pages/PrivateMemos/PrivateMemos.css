@@ -534,17 +534,6 @@
     border-color: transparent #68d391 transparent transparent;
 }
 
-.keyboard-shortcuts-hint {
-    position: absolute;
-    bottom: 0.5rem;
-    background: #4299e1;
-    color: white;
-    padding: 0.25rem 0.5rem;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    font-weight: 500;
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
     .private-memos {

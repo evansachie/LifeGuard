@@ -33,6 +33,10 @@
     margin: 0.5rem 0 0 0;
 }
 
+.dark-mode .header-left .page-title{
+    color: #e2e8f0;
+}
+
 .header-right .date-picker {
     display: flex;
     align-items: center;
