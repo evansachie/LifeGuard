@@ -1,23 +1,12 @@
+/* Base dashboard styles */
 .dashboard {
     padding: 2rem;
     min-height: 100vh;
+    transition: all 0.3s ease;
 }
 
 .dashboard-header {
-    margin-bottom: 2rem;
-}
-
-test-button {
-    background-color: #4CAF50;
-    border: none;
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
+    margin-bottom: 1.5rem;
 }
 
 .dashboard-header h1 {
@@ -31,23 +20,91 @@ test-button {
     font-size: 1rem;
 }
 
+/* Card animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Grid and List View Styles */
 .dashboard-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5rem;
     margin-bottom: 2rem;
+    transition: all 0.3s ease;
 }
 
+.dashboard-grid.list-layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.list-view .dashboard-card {
+    animation: fadeIn 0.5s ease forwards;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 1.25rem;
+}
+
+.list-view .dashboard-card h2 {
+    margin-bottom: 0;
+    min-width: 220px;
+    font-size: 1.1rem;
+}
+
+.list-view .dashboard-card .card-value {
+    margin: 0 0 0 auto;
+    font-size: 1.5rem;
+}
+
+.list-view .quote-card,
+.list-view .reminders-card {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.list-view .reminders-content {
+    width: 100%;
+}
+
+.list-view .pollutants-grid {
+    margin: 0;
+    width: 100%;
+}
+
+/* Card styles */
 .dashboard-card {
     background: #fff;
     border-radius: 12px;
     padding: 1.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    animation: fadeIn 0.5s ease forwards;
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(to right, #4a90e2, #63b3ed);
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 .dashboard-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-card:hover::before {
+    opacity: 1;
 }
 
 .dashboard-card h2 {
@@ -59,24 +116,68 @@ test-button {
     margin-bottom: 1rem;
 }
 
+.dashboard-card h2 svg {
+    color: #4a90e2;
+}
+
 .card-value {
-    font-size: 2rem;
+    font-size: 2.5rem;
     font-weight: 600;
     margin: 1rem 0;
+    color: #2d3748;
+    display: flex;
+    align-items: baseline;
 }
 
 .card-link {
     display: inline-block;
-    color: #007AFF;
+    color: #4a90e2;
     text-decoration: none;
     font-weight: 500;
     margin-top: 1rem;
+    padding: 0.5rem 0;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.card-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #4a90e2;
+    transition: width 0.3s ease;
 }
 
 .card-link:hover {
-    text-decoration: underline;
+    color: #2c5282;
 }
 
+.card-link:hover::after {
+    width: 100%;
+}
+
+/* Specific card types */
+.temperature-card .card-value,
+.aqi-card .card-value {
+    color: #4a90e2;
+}
+
+.humidity-card .card-value {
+    color: #38b2ac;
+}
+
+.pressure-card .card-value {
+    color: #805ad5;
+}
+
+.wind-card .card-value {
+    color: #3182ce;
+}
+
+/* Pollutants grid */
 .pollutants-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -89,26 +190,37 @@ test-button {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    padding: 0.75rem;
+    background-color: #f7fafc;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.pollutant:hover {
+    background-color: #edf2f7;
+    transform: translateY(-2px);
 }
 
 .pollutant span:first-child {
     font-size: 0.875rem;
-    color: #666;
+    color: #718096;
     margin-bottom: 0.25rem;
 }
 
 .pollutant span:last-child {
-    font-size: 1rem;
-    font-weight: 500;
-    color: #333;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #4a5568;
 }
 
+/* Alerts section */
 .alerts-section {
     background: #fff;
     border-radius: 12px;
     padding: 1.5rem;
     margin-bottom: 2rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    animation: fadeIn 0.5s ease forwards;
 }
 
 .alerts-section h2 {
@@ -118,6 +230,10 @@ test-button {
     font-size: 1.25rem;
     color: #333;
     margin-bottom: 1rem;
+}
+
+.alerts-section h2 svg {
+    color: #ed8936;
 }
 
 .alerts-list {
@@ -130,86 +246,188 @@ test-button {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem;
+    padding: 1rem 1.25rem;
     border-radius: 8px;
-    background: #f5f5f5;
+    background: #f7fafc;
+    transition: all 0.2s ease;
+}
+
+.alert-item:hover {
+    transform: translateX(5px);
 }
 
 .alert-item.warning {
-    background: #fff3e0;
-    border-left: 4px solid #ff9800;
+    background: #fffaf0;
+    border-left: 4px solid #ed8936;
 }
 
 .alert-item.info {
-    background: #e3f2fd;
-    border-left: 4px solid #2196f3;
+    background: #ebf8ff;
+    border-left: 4px solid #3182ce;
 }
 
 .alert-message {
     font-weight: 500;
-    color: #333;
+    color: #2d3748;
 }
 
 .alert-time {
-    color: #666;
+    color: #718096;
     font-size: 0.875rem;
 }
 
+/* Quote card */
 .quote-card {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
     font-style: italic;
     line-height: 1.6;
+    font-size: 1.1rem;
+    color: #4a5568;
+}
+
+.dark-mode .quote-card {
+    color: #cbd5e0;
 }
 
 .quote-card h2 {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
 }
 
 .quote-card br {
-    margin: 0.5rem 0;
+    margin: 0.75rem 0;
+}
+
+/* Reminders list */
+.reminders-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.reminders-list li {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #edf2f7;
+    transition: all 0.2s ease;
+}
+
+.reminders-list li:last-child {
+    border-bottom: none;
+}
+
+.reminders-list li {
+    color: black;
+}
+
+.dark-mode .reminders-list li {
+    color: #f7fafc;
+}
+
+.reminders-list li:hover {
+    padding-left: 0.5rem;
+}
+
+.reminders-list li.done {
+    text-decoration: line-through;
+    color: #a0aec0;
+    opacity: 0.7;
 }
 
 /* Dark mode styles */
 .dark-mode {
-    background: #1a1a1a;
+    background: #171923;
+    color: #e2e8f0;
 }
 
-.dark-mode .dashboard-header h1,
-.dark-mode .dashboard-card h2,
-.dark-mode .card-value,
-.dark-mode .pollutant span:last-child,
-.dark-mode .alert-message {
-    color: #fff;
+.dark-mode .dashboard-header h1 {
+    color: #f7fafc;
 }
 
-.dark-mode .date,
-.dark-mode .pollutant span:first-child,
-.dark-mode .alert-time {
-    color: #999;
+.dark-mode .date {
+    color: #a0aec0;
 }
 
 .dark-mode .dashboard-card,
 .dark-mode .alerts-section {
-    background: #2d2d2d;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    background: #2D2D2D;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .dashboard-card h2,
+.dark-mode .alerts-section h2 {
+    color: #e2e8f0;
+}
+
+.dark-mode .card-value {
+    color: #f7fafc;
+}
+
+.dark-mode .temperature-card .card-value {
+    color: #63b3ed;
+}
+
+.dark-mode .humidity-card .card-value {
+    color: #4fd1c5;
+}
+
+.dark-mode .pressure-card .card-value {
+    color: #9f7aea;
+}
+
+.dark-mode .wind-card .card-value {
+    color: #4299e1;
+}
+
+.dark-mode .pollutant {
+    background-color: #2d3748;
+}
+
+.dark-mode .pollutant:hover {
+    background-color: #4a5568;
+}
+
+.dark-mode .pollutant span:first-child {
+    color: #a0aec0;
+}
+
+.dark-mode .pollutant span:last-child {
+    color: #e2e8f0;
 }
 
 .dark-mode .alert-item {
-    background: #333;
+    background: #2d3748;
 }
 
 .dark-mode .alert-item.warning {
-    background: #332d1a;
+    background: #4a5568;
 }
 
 .dark-mode .alert-item.info {
-    background: #1a2733;
+    background: #2b6cb0;
+}
+
+.dark-mode .alert-message {
+    color: #e2e8f0;
+}
+
+.dark-mode .alert-time {
+    color: #a0aec0;
 }
 
 .dark-mode .card-link {
-    color: #5c9eff;
+    color: #63b3ed;
+}
+
+.dark-mode .card-link:hover {
+    color: #2b6cb0;
+}
+
+.dark-mode .card-link::after {
+    background-color: #63b3ed;
+}
+
+.dark-mode .card-link:hover::after {
+    background-color: #2b6cb0;
 }
 
 @media (max-width: 768px) {
