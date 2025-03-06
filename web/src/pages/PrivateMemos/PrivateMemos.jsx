@@ -280,7 +280,7 @@ const PrivateMemos = ({ isDarkMode }) => {
                         <input
                             ref={searchInputRef}
                             type="text"
-                            placeholder="Search notes... (Press / to focus)"
+                            placeholder="Press / to focus"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="search-input"
@@ -463,10 +463,6 @@ const PrivateMemos = ({ isDarkMode }) => {
                 isDarkMode={isDarkMode}
             />
             
-            {/* Keyboard shortcuts hint */}
-            <div className="keyboard-shortcuts-hint">
-                Press <kbd>/</kbd> to search • <kbd>Ctrl+N</kbd> to create new note
-            </div>
         </div>
     );
 }

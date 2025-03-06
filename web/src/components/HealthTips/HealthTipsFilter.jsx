@@ -43,52 +43,6 @@ const HealthTipsFilter = ({
           </button>
         ))}
       </div>
-      
-      <div className="filter-actions">
-        <div className="filter-sort">
-          <div 
-            className="advanced-filter-toggle"
-            onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-            role="button"
-            tabIndex={0}
-            aria-expanded={showAdvancedFilters}
-            aria-label="Toggle advanced filters"
-          >
-            <FaFilter />
-            <span>Advanced</span>
-            {showAdvancedFilters ? <FaChevronUp /> : <FaChevronDown />}
-          </div>
-          
-          {showAdvancedFilters && (
-            <div className="advanced-filters-dropdown">
-              <div className="sort-options">
-                <h4>Sort By</h4>
-                <ul>
-                  {sortOptions.map(option => (
-                    <li 
-                      key={option.id}
-                      className={currentSort === option.id ? 'active' : ''}
-                      onClick={() => onSortChange(option.id)}
-                    >
-                      {currentSort === option.id && <FaCheck className="check-icon" />}
-                      {option.label}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              
-              <div className="time-filter">
-                <h4>Time</h4>
-                <div className="time-options">
-                  <button className="time-option active">All Time</button>
-                  <button className="time-option">This Week</button>
-                  <button className="time-option">This Month</button>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
     </div>
   );
 };

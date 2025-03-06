@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { SiSmartthings } from "react-icons/si";
-import { FaRunning, FaBrain, FaYoutube, FaBookMedical, FaSearch, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { MdHealthAndSafety } from 'react-icons/md';
+import { FaRunning, FaBrain, FaYoutube, FaBookMedical } from 'react-icons/fa';
+import { MdHealthAndSafety, MdRestaurant } from 'react-icons/md';
 import { fetchHealthTips } from '../../services/healthTipsService';
 import { localHealthTips } from '../../data/healthTipsData';
 import { featuredVideos } from '../../data/featured-videos-data';
 import HealthTipModal from '../../components/HealthTipModal/HealthTipModal';
+import HealthTipsFilter from '../../components/HealthTips/HealthTipsFilter';
+import HealthTipCard from '../../components/HealthTips/HealthTipCard';
 import './HealthTips.css';
 
+// Define categories with icons
 const categories = [
   { id: 'fitness', icon: <FaRunning />, label: 'Fitness' },
   { id: 'mental', icon: <FaBrain />, label: 'Mental Health' },
+  { id: 'nutrition', icon: <MdRestaurant />, label: 'Nutrition' },
   { id: 'prevention', icon: <MdHealthAndSafety />, label: 'Prevention' },
   { id: 'resources', icon: <FaBookMedical />, label: 'Resources' },
   { id: 'videos', icon: <FaYoutube />, label: 'Featured Videos' }
@@ -20,6 +24,7 @@ const categories = [
 const ITEMS_PER_PAGE = 6;
 
 function HealthTips({ isDarkMode }) {
+  // State
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -28,7 +33,9 @@ function HealthTips({ isDarkMode }) {
   const [isApiLoaded, setIsApiLoaded] = useState(false);
   const [error, setError] = useState(null);
   const [selectedTip, setSelectedTip] = useState(null);
-
+  const [sortOrder, setSortOrder] = useState('newest');
+  
+  // Fetch health tips
   useEffect(() => {
     const loadHealthTips = async () => {
       try {
@@ -47,26 +54,80 @@ function HealthTips({ isDarkMode }) {
     loadHealthTips();
   }, []);
 
-  const filteredTips = healthData?.tips.filter(tip => 
+  // Filter tips by category and search query
+  const filteredTips = healthData?.tips?.filter(tip => 
     (selectedCategory === 'all' || tip.category === selectedCategory) &&
     (tip.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
      tip.description.toLowerCase().includes(searchQuery.toLowerCase()))
   ) || [];
 
+  // Sort filtered tips
+  const sortedTips = [...filteredTips].sort((a, b) => {
+    switch (sortOrder) {
+      case 'oldest':
+        return new Date(a.date) - new Date(b.date);
+      case 'az':
+        return a.title.localeCompare(b.title);
+      case 'za':
+        return b.title.localeCompare(a.title);
+      case 'relevant':
+        // In a real app, you'd have a relevance algorithm
+        return b.priority - a.priority;
+      case 'newest':
+      default:
+        return new Date(b.date) - new Date(a.date);
+    }
+  });
+
   // Pagination
-  const totalPages = Math.ceil(filteredTips.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(sortedTips.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedTips = filteredTips.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const paginatedTips = sortedTips.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    setCurrentPage(1); // Reset to first page when changing categories
+  };
+
+  const handleSortChange = (sortType) => {
+    setSortOrder(sortType);
+    setCurrentPage(1); // Reset to first page when changing sort
+  };
+
   const handleReadMore = (tip) => {
     setSelectedTip(tip);
   };
 
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1); // Reset to first page when searching
+  };
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1
+    }
+  };
+
+  // Pagination component
   const renderPagination = () => {
     const renderPageNumbers = () => {
       const pages = [];
@@ -117,52 +178,41 @@ function HealthTips({ isDarkMode }) {
         <button 
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="pagination-button"
+          className="pagination-button prev-button"
+          aria-label="Previous page"
         >
-          <FaChevronLeft /> Prev
+          Previous
         </button>
         
-        {renderPageNumbers()}
+        <div className="page-numbers">
+          {renderPageNumbers()}
+        </div>
         
         <button 
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="pagination-button"
+          className="pagination-button next-button"
+          aria-label="Next page"
         >
-          Next <FaChevronRight />
+          Next
         </button>
       </div>
     );
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1
-    }
-  };
-
+  // Loading state
   if (isLoading && !healthData) {
     return (
       <div className={`health-tips-loading ${isDarkMode ? 'dark-mode' : ''}`}>
         <div className="loader"></div>
+        <p>Loading health tips...</p>
       </div>
     );
   }
 
   return (
     <div className={`health-tips-container ${isDarkMode ? 'dark-mode' : ''}`}>
+      {/* Error banner if API fails */}
       {error && (
         <div className="error-banner">
           {error}
@@ -172,43 +222,41 @@ function HealthTips({ isDarkMode }) {
       {/* Featured Section - Shows immediately with local data */}
       <section className="featured-tip">
         <div className="featured-content">
-          <h1>{healthData?.featured.title}</h1>
-          <p>{healthData?.featured.description}</p>
-          <button className="learn-more-btn">Learn More</button>
+          <h1>{healthData?.featured?.title || "Today's Featured Health Tip"}</h1>
+          <p>{healthData?.featured?.description || "Stay healthy with our daily health tips and recommendations."}</p>
+          <button 
+            className="learn-more-btn"
+            onClick={() => healthData?.featured && setSelectedTip(healthData.featured)}
+          >
+            Learn More
+          </button>
         </div>
-        <div className="featured-image" style={{ backgroundImage: `url(${healthData?.featured.image})` }} />
+        <div 
+          className="featured-image" 
+          style={{ backgroundImage: `url(${healthData?.featured?.image || 'https://placehold.co/600x400'})` }} 
+        />
       </section>
 
-      {/* Search and Categories */}
+      {/* New Search and Advanced Filters */}
       <section className="controls-section">
         <div className="search-bar">
-          <FaSearch className="search-icon" />
           <input
             type="text"
             placeholder="Search health tips..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleSearchChange}
+            className="search-input"
           />
         </div>
-        <div className="categories">
-          <button
-            className={`category-btn ${selectedCategory === 'all' ? 'active' : ''}`}
-            onClick={() => setSelectedCategory('all')}
-          >
-            <SiSmartthings />
-            All
-          </button>
-          {categories.map(category => (
-            <button
-              key={category.id}
-              className={`category-btn ${selectedCategory === category.id ? 'active' : ''}`}
-              onClick={() => setSelectedCategory(category.id)}
-            >
-              {category.icon}
-              {category.label}
-            </button>
-          ))}
-        </div>
+        
+        <HealthTipsFilter 
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onCategoryChange={handleCategoryChange}
+          isDarkMode={isDarkMode}
+          onSortChange={handleSortChange}
+          currentSort={sortOrder}
+        />
       </section>
 
       {/* Tips Grid with Pagination */}
@@ -218,37 +266,26 @@ function HealthTips({ isDarkMode }) {
         initial="hidden"
         animate="visible"
       >
-        {paginatedTips.map(tip => (
-          <motion.div
-            key={tip.id}
-            className={`tip-card ${tip.type}`}
-            variants={itemVariants}
-          >
-            <img 
-              src={tip.imageUrl} 
-              alt={tip.imageAlt}
-              className="tip-card-image"
-              onError={(e) => {
-                e.target.src = '/images/default-health.jpg';
-              }}
-            />
-            <div className="tip-card-content">
-              <h3>{tip.title}</h3>
-              <p>{tip.description}</p>
-              <div className="tip-footer">
-                <span className={`tip-category ${tip.category}`}>
-                  {categories.find(cat => cat.id === tip.category)?.label}
-                </span>
-                <button 
-                  className="read-more"
-                  onClick={() => handleReadMore(tip)}
-                >
-                  Read More
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        ))}
+        {paginatedTips.length === 0 ? (
+          <div className="no-results">
+            <h3>No health tips found</h3>
+            <p>Try changing your search or filter settings</p>
+          </div>
+        ) : (
+          paginatedTips.map(tip => (
+            <motion.div
+              key={tip.id}
+              className="tip-card-container"
+              variants={itemVariants}
+            >
+              <HealthTipCard 
+                tip={tip}
+                onReadMore={handleReadMore}
+                isDarkMode={isDarkMode}
+              />
+            </motion.div>
+          ))
+        )}
       </motion.section>
 
       {/* Pagination */}
@@ -261,8 +298,10 @@ function HealthTips({ isDarkMode }) {
         </div>
       )}
 
+      {/* Video Section - Only show when Videos category is selected */}
       {selectedCategory === 'videos' && (
         <section className="video-section">
+          <h2>Featured Health Videos</h2>
           <div className="video-grid">
             {featuredVideos.map(video => (
               <motion.div
@@ -288,6 +327,7 @@ function HealthTips({ isDarkMode }) {
         </section>
       )}
 
+      {/* Modal for displaying full health tip details */}
       <HealthTipModal 
         tip={selectedTip}
         isOpen={!!selectedTip}

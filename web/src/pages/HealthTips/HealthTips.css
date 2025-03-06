@@ -1,4 +1,4 @@
-/* Health Tips Container */
+/* Base container */
 .health-tips-container {
   min-height: 100vh;
   padding: 2rem;
@@ -52,6 +52,7 @@
   border-radius: 20px;
   overflow: hidden;
   min-height: 400px;
+  box-shadow: 0 10px 25px rgba(0, 123, 255, 0.15);
 }
 
 .featured-content {
@@ -72,6 +73,7 @@
   font-size: 1.1rem;
   margin-bottom: 2rem;
   opacity: 0.9;
+  line-height: 1.6;
 }
 
 .featured-image {
@@ -88,15 +90,17 @@
   border-radius: 30px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: all 0.2s ease;
   align-self: flex-start;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .learn-more-btn:hover {
   transform: translateY(-2px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
 
-/* Controls Section */
+/* Enhanced Controls Section */
 .controls-section {
   margin-bottom: 2rem;
 }
@@ -106,66 +110,44 @@
   margin-bottom: 1.5rem;
 }
 
-.search-bar input {
+.search-input {
   width: 100%;
   padding: 1rem 1rem 1rem 3rem;
-  border: none;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
   background-color: white;
   font-size: 1rem;
   transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.dark-mode .search-bar input {
+.dark-mode .search-input {
   background-color: #2d2d2d;
   color: #e0e0e0;
+  border-color: #4a5568;
 }
 
-.search-icon {
+.search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
+
+.search-input::placeholder {
+  color: #a0aec0;
+}
+
+.search-bar::before {
+  content: '🔍';
   position: absolute;
   left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #666;
+  color: #a0aec0;
+  pointer-events: none;
 }
 
-.categories {
-  display: flex;
-  gap: 1rem;
-  overflow-x: auto;
-  padding-bottom: 1rem;
-}
-
-.category-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 30px;
-  background-color: white;
-  color: #333;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-}
-
-.dark-mode .category-btn {
-  background-color: #2d2d2d;
-  color: #e0e0e0;
-}
-
-.category-btn.active {
-  background-color: #007AFF;
-  color: white;
-}
-
-.category-btn:hover {
-  transform: translateY(-2px);
-}
-
-/* Tips Grid */
+/* Tips Grid with HealthTipCard component */
 .tips-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -173,96 +155,112 @@
   margin-bottom: 3rem;
 }
 
-.tip-card {
-  background: white;
-  border-radius: 12px;
-  padding: 0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+.tip-card-container {
   height: 100%;
 }
 
-.tip-card-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
+/* No results state */
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem 2rem;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.tip-card-content {
-  padding: 1.5rem;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+.dark-mode .no-results {
+  background-color: #2d2d2d;
 }
 
-.type-icon {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
+.no-results h3 {
   font-size: 1.5rem;
-  color: #007AFF;
-}
-
-.tip-card h3 {
-  font-size: 1.25rem;
   margin-bottom: 1rem;
-  color: #333;
+  color: #4a5568;
 }
 
-.dark-mode .tip-card h3 {
-  color: #fff;
+.dark-mode .no-results h3 {
+  color: #e2e8f0;
 }
 
-.tip-card p {
-  color: #666;
-  margin-bottom: 1.5rem;
-  line-height: 1.6;
+.no-results p {
+  color: #718096;
 }
 
-.dark-mode .tip-card p {
-  color: #e0e0e0;
+.dark-mode .no-results p {
+  color: #a0aec0;
 }
 
-.tip-footer {
+/* Enhanced Pagination */
+.pagination {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  margin: 2rem 0;
+  gap: 0.5rem;
 }
 
-.tip-category {
+.page-numbers {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.pagination-button {
   padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.875rem;
+  border: none;
+  background: white;
+  color: #333;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   font-weight: 500;
 }
 
-.tip-category.emergency { background-color: #FFE5E5; color: #FF4444; }
-.tip-category.fitness { background-color: #E5FFE5; color: #44FF44; }
-.tip-category.nutrition { background-color: #FFE5FF; color: #FF44FF; }
-.tip-category.mental { background-color: #E5E5FF; color: #4444FF; }
-.tip-category.prevention { background-color: #FFFFE5; color: black; }
-.tip-category.resources { background-color: #E5FFFF; color: #44FFFF; }
-
-.dark-mode .tip-category {
-  opacity: 0.8;
+.prev-button, .next-button {
+  padding: 0.5rem 1.25rem;
 }
 
-.read-more {
-  background: none;
-  border: none;
-  color: #007AFF;
-  font-weight: 600;
-  cursor: pointer;
+.pagination-button.active {
+  background: #3b82f6;
+  color: white;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
 }
 
-/* Video Section */
+.pagination-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.pagination-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dark-mode .pagination-button {
+  background: #2d3748;
+  color: #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .pagination-button.active {
+  background: #4299e1;
+  color: white;
+}
+
+.pagination-ellipsis {
+  color: #718096;
+  padding: 0.5rem 0.25rem;
+  user-select: none;
+}
+
+.dark-mode .pagination-ellipsis {
+  color: #a0aec0;
+}
+
+/* Enhanced Video Section */
 .video-section {
-  margin-top: 2rem;
+  margin-top: 3rem;
 }
 
 .video-section h2 {
