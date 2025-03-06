@@ -462,11 +462,6 @@ const PrivateMemos = ({ isDarkMode }) => {
                 isLoading={isDeleting}
                 isDarkMode={isDarkMode}
             />
-            
-            {/* Keyboard shortcuts hint */}
-            <div className="keyboard-shortcuts-hint">
-                Press <kbd>/</kbd> to search • <kbd>Ctrl+N</kbd> to create new note
-            </div>
         </div>
     );
 }
