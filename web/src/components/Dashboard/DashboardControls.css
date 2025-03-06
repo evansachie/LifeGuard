@@ -1,0 +1,327 @@
+.dashboard-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  background-color: #f9fafb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-controls.dark-mode {
+  background-color: #2D2D2D;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.search-container {
+  position: relative;
+  flex: 1;
+  max-width: 500px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background-color: #fff;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
+
+.controls-right {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+/* Filter and Sort Containers */
+.filter-container, .sort-container {
+  position: relative;
+  z-index: 100; /* Higher than default, but lower than dropdowns */
+}
+
+.control-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #4b5563;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.control-btn:hover {
+  background-color: #f3f4f6;
+}
+
+/* Improved Dropdown Menu Styling */
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 1000; /* Much higher z-index to appear above all components */
+  width: 240px;
+  padding: 1rem;
+  margin-top: 0.25rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 
+              0 10px 10px -5px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+}
+
+.filter-option, .sort-option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.filter-option:last-of-type, .sort-option:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0.5rem;
+}
+
+.filter-option input[type="checkbox"], 
+.sort-option input[type="radio"] {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  accent-color: #3b82f6;
+}
+
+.filter-option label, .sort-option label {
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #374151;
+  flex: 1;
+}
+
+.apply-btn {
+  display: block;
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #3b82f6;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  text-align: center;
+}
+
+.apply-btn:hover {
+  background-color: #2563eb;
+}
+
+.view-toggle {
+  display: flex;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.view-btn {
+  border: none;
+  padding: 0.75rem;
+  background-color: #fff;
+  color: #4b5563;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.view-btn:first-child {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  border-right: 1px solid #e2e8f0;
+}
+
+.view-btn:last-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.view-btn:hover {
+  background-color: #f3f4f6;
+}
+
+.view-btn.active {
+  background-color: #3b82f6;
+  color: white;
+}
+
+/* Dark mode styles */
+.dashboard-controls.dark-mode .search-input {
+  background-color: #1a202c;
+  border-color: #4a5568;
+  color: #e2e8f0;
+}
+
+.dashboard-controls.dark-mode .search-icon {
+  color: #718096;
+}
+
+.dashboard-controls.dark-mode .control-btn,
+.dashboard-controls.dark-mode .view-btn {
+  background-color: #2A2A2A;
+  color: #e2e8f0;
+}
+
+.dashboard-controls.dark-mode .control-btn:hover,
+.dashboard-controls.dark-mode .view-btn:hover {
+  background-color: #4a5568;
+}
+
+/* Dark mode dropdown fixes */
+.dashboard-controls.dark-mode .dropdown-menu {
+  background-color: #3C3C3C;
+  border-color: #4a5568;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-controls.dark-mode .filter-option,
+.dashboard-controls.dark-mode .sort-option {
+  border-bottom-color: #374151;
+}
+
+.dashboard-controls.dark-mode .filter-option label,
+.dashboard-controls.dark-mode .sort-option label {
+  color: #e2e8f0;
+}
+
+.dashboard-controls.dark-mode .filter-option input[type="checkbox"], 
+.dashboard-controls.dark-mode .sort-option input[type="radio"] {
+  accent-color: #4299e1;
+  border-color: #4a5568;
+}
+
+.dashboard-controls.dark-mode .apply-btn {
+  background-color: #4299e1;
+  color: #e2e8f0;
+}
+
+.dashboard-controls.dark-mode .apply-btn:hover {
+  background-color: #3182ce;
+}
+
+.dashboard-controls.dark-mode .view-btn.active {
+  background-color: #3C3C3C;
+  color: #e2e8f0;
+}
+
+/* Make sure the buttons that open the dropdowns have a higher z-index */
+.control-btn.active {
+  position: relative;
+  z-index: 1001; /* Slightly higher than dropdown */
+  background-color: #e5e7eb;
+}
+
+.dashboard-controls.dark-mode .control-btn.active {
+  background-color: #4a5568;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .dashboard-controls {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .search-container {
+    width: 100%;
+    max-width: none;
+  }
+  
+  .controls-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .control-btn span {
+    display: none;
+  }
+  
+  .dropdown-menu {
+    width: 200px;
+    right: -50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dropdown-menu {
+    width: 180px;
+    right: -70px;
+  }
+  
+  .controls-right {
+    gap: 0.5rem;
+  }
+}
+
+/* Add keyboard shortcut button styles */
+.shortcuts-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #4b5563;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.shortcuts-btn:hover {
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+.dashboard-controls.dark-mode .shortcuts-btn {
+  background-color: #2A2A2A;
+  color: #e2e8f0;
+}
+
+.dashboard-controls.dark-mode .shortcuts-btn:hover {
+  background-color: #4a5568;
+}
+
+/* Make search bar show keyboard shortcut hint */
+.search-input::placeholder {
+  color: #9ca3af;
+  opacity: 0.8;
+}
+
+/* Tooltip for keyboard shortcuts */
+[title] {
+  position: relative;
+}

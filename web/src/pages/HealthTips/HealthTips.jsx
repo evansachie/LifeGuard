@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { SiSmartthings } from "react-icons/si";
 import { FaRunning, FaBrain, FaYoutube, FaBookMedical, FaSearch, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { MdHealthAndSafety } from 'react-icons/md';
 import { fetchHealthTips } from '../../services/healthTipsService';
 import { localHealthTips } from '../../data/healthTipsData';
 import { featuredVideos } from '../../data/featured-videos-data';
 import HealthTipModal from '../../components/HealthTipModal/HealthTipModal';
+import HealthTipsFilter from '../../components/HealthTips/HealthTipsFilter';
+import HealthTipCard from '../../components/HealthTips/HealthTipCard';
 import './HealthTips.css';
 
 const categories = [
@@ -47,16 +48,26 @@ function HealthTips({ isDarkMode }) {
     loadHealthTips();
   }, []);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, searchQuery]);
+
+  const sortTips = (tips) => {
+    return [...tips].sort((a, b) => new Date(b.date || Date.now()) - new Date(a.date || 0));
+  };
+
   const filteredTips = healthData?.tips.filter(tip => 
     (selectedCategory === 'all' || tip.category === selectedCategory) &&
     (tip.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
      tip.description.toLowerCase().includes(searchQuery.toLowerCase()))
   ) || [];
 
+  const sortedAndFilteredTips = sortTips(filteredTips);
+
   // Pagination
-  const totalPages = Math.ceil(filteredTips.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(sortedAndFilteredTips.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedTips = filteredTips.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const paginatedTips = sortedAndFilteredTips.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -67,24 +78,32 @@ function HealthTips({ isDarkMode }) {
     setSelectedTip(tip);
   };
 
+  const handleFeaturedLearnMore = () => {
+    const featuredTip = {
+      ...healthData.featured,
+      title: healthData.featured.title,
+      description: healthData.featured.description,
+      imageUrl: healthData.featured.image,
+      category: healthData.featured.category || 'prevention'
+    };
+    setSelectedTip(featuredTip);
+  };
+
   const renderPagination = () => {
     const renderPageNumbers = () => {
       const pages = [];
       
       if (totalPages <= 5) {
-        // If 5 or fewer pages, show all
         for (let i = 1; i <= totalPages; i++) {
           pages.push(i);
         }
       } else {
-        // Always show first page
         pages.push(1);
         
         if (currentPage > 3) {
           pages.push('...');
         }
         
-        // Show current page and one before/after
         for (let i = Math.max(2, currentPage - 1); i <= Math.min(currentPage + 1, totalPages - 1); i++) {
           pages.push(i);
         }
@@ -93,8 +112,9 @@ function HealthTips({ isDarkMode }) {
           pages.push('...');
         }
         
-        // Always show last page
-        pages.push(totalPages);
+        if (totalPages > 1) {
+          pages.push(totalPages);
+        }
       }
       
       return pages.map((page, index) => (
@@ -149,7 +169,11 @@ function HealthTips({ isDarkMode }) {
     hidden: { y: 20, opacity: 0 },
     visible: {
       y: 0,
-      opacity: 1
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut"
+      }
     }
   };
 
@@ -157,6 +181,7 @@ function HealthTips({ isDarkMode }) {
     return (
       <div className={`health-tips-loading ${isDarkMode ? 'dark-mode' : ''}`}>
         <div className="loader"></div>
+        <p>Loading health tips...</p>
       </div>
     );
   }
@@ -169,17 +194,20 @@ function HealthTips({ isDarkMode }) {
         </div>
       )}
 
-      {/* Featured Section - Shows immediately with local data */}
-      <section className="featured-tip">
+      <motion.section 
+        className="featured-tip"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
         <div className="featured-content">
           <h1>{healthData?.featured.title}</h1>
           <p>{healthData?.featured.description}</p>
-          <button className="learn-more-btn">Learn More</button>
+          <button className="learn-more-btn" onClick={handleFeaturedLearnMore}>Learn More</button>
         </div>
         <div className="featured-image" style={{ backgroundImage: `url(${healthData?.featured.image})` }} />
-      </section>
+      </motion.section>
 
-      {/* Search and Categories */}
       <section className="controls-section">
         <div className="search-bar">
           <FaSearch className="search-icon" />
@@ -188,82 +216,54 @@ function HealthTips({ isDarkMode }) {
             placeholder="Search health tips..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            aria-label="Search health tips"
           />
         </div>
-        <div className="categories">
-          <button
-            className={`category-btn ${selectedCategory === 'all' ? 'active' : ''}`}
-            onClick={() => setSelectedCategory('all')}
-          >
-            <SiSmartthings />
-            All
-          </button>
-          {categories.map(category => (
-            <button
-              key={category.id}
-              className={`category-btn ${selectedCategory === category.id ? 'active' : ''}`}
-              onClick={() => setSelectedCategory(category.id)}
-            >
-              {category.icon}
-              {category.label}
-            </button>
-          ))}
-        </div>
+        
+        <HealthTipsFilter 
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+          isDarkMode={isDarkMode}
+        />
       </section>
 
-      {/* Tips Grid with Pagination */}
-      <motion.section 
-        className="tips-grid"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {paginatedTips.map(tip => (
-          <motion.div
-            key={tip.id}
-            className={`tip-card ${tip.type}`}
-            variants={itemVariants}
+      {selectedCategory !== 'videos' ? (
+        <>
+          <motion.section 
+            className="tips-grid"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
           >
-            <img 
-              src={tip.imageUrl} 
-              alt={tip.imageAlt}
-              className="tip-card-image"
-              onError={(e) => {
-                e.target.src = '/images/default-health.jpg';
-              }}
-            />
-            <div className="tip-card-content">
-              <h3>{tip.title}</h3>
-              <p>{tip.description}</p>
-              <div className="tip-footer">
-                <span className={`tip-category ${tip.category}`}>
-                  {categories.find(cat => cat.id === tip.category)?.label}
-                </span>
-                <button 
-                  className="read-more"
-                  onClick={() => handleReadMore(tip)}
-                >
-                  Read More
-                </button>
+            {paginatedTips.length > 0 ? paginatedTips.map(tip => (
+              <motion.div
+                key={tip.id}
+                variants={itemVariants}
+              >
+                <HealthTipCard 
+                  tip={tip}
+                  onReadMore={handleReadMore}
+                  isDarkMode={isDarkMode}
+                />
+              </motion.div>
+            )) : (
+              <div className="no-results">
+                <p>No health tips found matching your criteria. Try adjusting your search or filters.</p>
               </div>
-            </div>
-          </motion.div>
-        ))}
-      </motion.section>
+            )}
+          </motion.section>
 
-      {/* Pagination */}
-      {filteredTips.length > ITEMS_PER_PAGE && renderPagination()}
-
-      {/* Loading indicator for API data */}
-      {isLoading && !isApiLoaded && (
-        <div className="api-loading-indicator">
-          Updating content...
-        </div>
-      )}
-
-      {selectedCategory === 'videos' && (
+          {sortedAndFilteredTips.length > ITEMS_PER_PAGE && renderPagination()}
+        </>
+      ) : (
         <section className="video-section">
-          <div className="video-grid">
+          <motion.div 
+            className="video-grid"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
             {featuredVideos.map(video => (
               <motion.div
                 key={video.id}
@@ -284,8 +284,14 @@ function HealthTips({ isDarkMode }) {
                 </div>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </section>
+      )}
+
+      {isLoading && !isApiLoaded && (
+        <div className="api-loading-indicator">
+          Updating content...
+        </div>
       )}
 
       <HealthTipModal 
