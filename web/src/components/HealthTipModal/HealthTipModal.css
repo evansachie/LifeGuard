@@ -75,6 +75,10 @@
     font-size: 1.2rem;
     cursor: pointer;
     padding: 0.5rem;
+    color: #a0aec0;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.5rem;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -171,6 +175,29 @@ tip-category.fitness { background-color: #E5FFE5; color: #38A169; }
     border-top: 1px solid #e2e8f0;
 }
 
+.dark-mode .tip-bullet-points h3 {
+    color: #e2e8f0;
+}
+
+.tip-bullet-points ul {
+    padding-left: 1.5rem;
+    margin: 0;
+}
+
+.tip-bullet-points li {
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+}
+
+.tip-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
 .dark-mode .tip-actions {
     border-top-color: #4a5568;
 }
@@ -209,9 +236,36 @@ tip-category.fitness { background-color: #E5FFE5; color: #38A169; }
     border: 1px solid #cbd5e0;
 }
 
-.dark-mode .bookmark-btn {
-    color: #e2e8f0;
-    border-color: #4a5568;
+.dark-mode .modal-header h2 {
+    color: #e0e0e0;
+}
+
+.related-tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.related-tip {
+    padding: 1rem;
+    background-color: #f7fafc;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.dark-mode .related-tip {
+    background-color: #4a5568;
+}
+
+.related-tip:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .tip-date, 
+.dark-mode .tip-read-time {
+    color: #aaa;
 }
 
 .bookmark-btn:hover {
