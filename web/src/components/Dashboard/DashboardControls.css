@@ -284,3 +284,44 @@
     gap: 0.5rem;
   }
 }
+
+/* Add keyboard shortcut button styles */
+.shortcuts-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #4b5563;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.shortcuts-btn:hover {
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+.dashboard-controls.dark-mode .shortcuts-btn {
+  background-color: #2A2A2A;
+  color: #e2e8f0;
+}
+
+.dashboard-controls.dark-mode .shortcuts-btn:hover {
+  background-color: #4a5568;
+}
+
+/* Make search bar show keyboard shortcut hint */
+.search-input::placeholder {
+  color: #9ca3af;
+  opacity: 0.8;
+}
+
+/* Tooltip for keyboard shortcuts */
+[title] {
+  position: relative;
+}

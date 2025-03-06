@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { FaSearch, FaFilter, FaSortAmountDown, FaListUl, FaTh, FaChevronDown } from 'react-icons/fa';
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
+import { FaSearch, FaFilter, FaSortAmountDown, FaListUl, FaTh, FaChevronDown, FaKeyboard } from 'react-icons/fa';
 import './DashboardControls.css';
 
-const DashboardControls = ({
+const DashboardControls = forwardRef(({
   isDarkMode,
   onSearchChange,
   onViewChange,
   onFilterChange,
   onSortChange,
+  onShowShortcuts,
   filterOptions = {
     temperature: true,
     humidity: true,
@@ -16,12 +17,32 @@ const DashboardControls = ({
   },
   sortOption = 'newest',
   viewMode = 'grid' 
-}) => {
+}, ref) => {
   const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [localFilters, setLocalFilters] = useState(filterOptions);
   const [localSort, setLocalSort] = useState(sortOption);
+  
+  // Refs
+  const searchInputRef = useRef(null);
+  const filterBtnRef = useRef(null);
+  const sortBtnRef = useRef(null);
+  
+  // Expose methods to parent component
+  useImperativeHandle(ref, () => ({
+    focusSearch: () => {
+      searchInputRef.current?.focus();
+    },
+    toggleFilter: () => {
+      toggleFilterMenu();
+      filterBtnRef.current?.focus();
+    },
+    toggleSort: () => {
+      toggleSortMenu();
+      sortBtnRef.current?.focus();
+    }
+  }));
   
   // Update local state when props change
   useEffect(() => {
@@ -124,25 +145,31 @@ const DashboardControls = ({
       <div className="search-container">
         <FaSearch className="search-icon" />
         <input
+          ref={searchInputRef}
           type="text"
-          placeholder="Search dashboard..."
+          placeholder="Search dashboard... (Press / to focus)"
           value={searchValue}
           onChange={handleSearchChange}
           className="search-input"
+          aria-label="Search dashboard"
         />
       </div>
       
       <div className="controls-right">
         <div className="filter-container">
           <button 
+            ref={filterBtnRef}
             className={`control-btn ${isFilterMenuOpen ? 'active' : ''}`} 
             onClick={toggleFilterMenu}
+            title="Filter (Ctrl+F)"
+            aria-label="Toggle filter menu"
+            aria-expanded={isFilterMenuOpen}
           >
             <FaFilter /> <span>Filter</span> <FaChevronDown />
           </button>
           
           {isFilterMenuOpen && (
-            <div className="dropdown-menu filter-menu">
+            <div className="dropdown-menu filter-menu" role="menu">
               <div className="filter-option">
                 <input 
                   type="checkbox" 
@@ -150,10 +177,7 @@ const DashboardControls = ({
                   checked={localFilters.temperature}
                   onChange={handleFilterOptionChange}
                 />
-                <div
-                  className={`${isDarkMode ? 'text-white' : 'text-black'}`} 
-                  htmlFor="temperature">Temperature & Weather
-                </div>
+                <label htmlFor="temperature">Temperature & Weather</label>
               </div>
               <div className="filter-option">
                 <input 
@@ -162,10 +186,7 @@ const DashboardControls = ({
                   checked={localFilters.airQuality}
                   onChange={handleFilterOptionChange}
                 />
-                <div 
-                  className={`${isDarkMode ? 'text-white' : 'text-black'}`}
-                  htmlFor="airQuality">Air Quality
-                </div>
+                <label htmlFor="airQuality">Air Quality</label>
               </div>
               <div className="filter-option">
                 <input 
@@ -174,10 +195,7 @@ const DashboardControls = ({
                   checked={localFilters.alerts}
                   onChange={handleFilterOptionChange}
                 />
-                <div 
-                  className={`${isDarkMode ? 'text-white' : 'text-black'}`}
-                  htmlFor="alerts">Alerts
-                </div>
+                <label htmlFor="alerts">Alerts</label>
               </div>
               <button className="apply-btn" onClick={applyFilters}>Apply Filters</button>
             </div>
@@ -186,14 +204,18 @@ const DashboardControls = ({
         
         <div className="sort-container">
           <button 
+            ref={sortBtnRef}
             className={`control-btn ${isSortMenuOpen ? 'active' : ''}`} 
             onClick={toggleSortMenu}
+            title="Sort (Ctrl+S)"
+            aria-label="Toggle sort menu"
+            aria-expanded={isSortMenuOpen}
           >
             <FaSortAmountDown /> <span>Sort</span> <FaChevronDown />
           </button>
           
           {isSortMenuOpen && (
-            <div className="dropdown-menu sort-menu">
+            <div className="dropdown-menu sort-menu" role="menu">
               <div className="sort-option">
                 <input 
                   type="radio" 
@@ -202,10 +224,7 @@ const DashboardControls = ({
                   checked={localSort === 'newest'}
                   onChange={handleSortOptionChange}
                 />
-                <div 
-                  className={`${isDarkMode ? 'text-white' : 'text-black'}`}
-                  htmlFor="newest">Newest First
-                </div>
+                <label htmlFor="newest">Newest First</label>
               </div>
               <div className="sort-option">
                 <input 
@@ -215,10 +234,7 @@ const DashboardControls = ({
                   checked={localSort === 'oldest'}
                   onChange={handleSortOptionChange}
                 />
-                <div
-                  className={`${isDarkMode ? 'text-white' : 'text-black'}`} 
-                  htmlFor="oldest">Oldest First
-                </div>
+                <label htmlFor="oldest">Oldest First</label>
               </div>
               <div className="sort-option">
                 <input 
@@ -228,10 +244,7 @@ const DashboardControls = ({
                   checked={localSort === 'priority'}
                   onChange={handleSortOptionChange}
                 />
-                <div
-                  className={`${isDarkMode ? 'text-white' : 'text-black'}`}
-                  htmlFor="priority">Priority
-                </div>
+                <label htmlFor="priority">Priority</label>
               </div>
               <button className="apply-btn" onClick={applySort}>Apply Sort</button>
             </div>
@@ -242,19 +255,32 @@ const DashboardControls = ({
           <button 
             className={`view-btn ${viewMode === 'grid' ? 'active' : ''}`} 
             onClick={() => handleViewChange('grid')}
+            title="Grid View (Ctrl+G)"
+            aria-label="Switch to grid view"
           >
             <FaTh />
           </button>
           <button 
             className={`view-btn ${viewMode === 'list' ? 'active' : ''}`} 
             onClick={() => handleViewChange('list')}
+            title="List View (Ctrl+L)"
+            aria-label="Switch to list view"
           >
             <FaListUl />
           </button>
         </div>
+        
+        <button 
+          className="shortcuts-btn"
+          onClick={onShowShortcuts}
+          title="Keyboard Shortcuts (?)"
+          aria-label="Show keyboard shortcuts"
+        >
+          <FaKeyboard />
+        </button>
       </div>
     </div>
   );
-};
+});
 
 export default DashboardControls;
