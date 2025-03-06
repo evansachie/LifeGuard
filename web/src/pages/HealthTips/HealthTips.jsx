@@ -256,6 +256,7 @@ function HealthTips({ isDarkMode }) {
           isDarkMode={isDarkMode}
           onSortChange={handleSortChange}
           currentSort={sortOrder}
+          allCategoryIcon={<SiSmartthings />}
         />
       </section>
 
@@ -266,12 +267,12 @@ function HealthTips({ isDarkMode }) {
         initial="hidden"
         animate="visible"
       >
-        {paginatedTips.length === 0 ? (
+        {selectedCategory !== 'videos' && paginatedTips.length === 0 ? (
           <div className="no-results">
             <h3>No health tips found</h3>
             <p>Try changing your search or filter settings</p>
           </div>
-        ) : (
+        ) : selectedCategory !== 'videos' && (
           paginatedTips.map(tip => (
             <motion.div
               key={tip.id}
@@ -288,8 +289,8 @@ function HealthTips({ isDarkMode }) {
         )}
       </motion.section>
 
-      {/* Pagination */}
-      {filteredTips.length > ITEMS_PER_PAGE && renderPagination()}
+      {/* Pagination - Only show if tips exist and not in videos category */}
+      {selectedCategory !== 'videos' && filteredTips.length > ITEMS_PER_PAGE && renderPagination()}
 
       {/* Loading indicator for API data */}
       {isLoading && !isApiLoaded && (

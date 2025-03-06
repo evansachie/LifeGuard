@@ -9,7 +9,8 @@ const HealthTipsFilter = ({
   onCategoryChange, 
   isDarkMode,
   onSortChange,
-  currentSort = 'newest'
+  currentSort = 'newest',
+  allCategoryIcon
 }) => {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   
@@ -28,7 +29,8 @@ const HealthTipsFilter = ({
           className={`category-btn ${selectedCategory === 'all' ? 'active' : ''}`}
           onClick={() => onCategoryChange('all')}
         >
-          All
+          {allCategoryIcon}
+          <span className="category-label">All</span>
         </button>
         
         {categories.map(category => (
@@ -59,7 +61,8 @@ HealthTipsFilter.propTypes = {
   onCategoryChange: PropTypes.func.isRequired,
   isDarkMode: PropTypes.bool,
   onSortChange: PropTypes.func,
-  currentSort: PropTypes.string
+  currentSort: PropTypes.string,
+  allCategoryIcon: PropTypes.node
 };
 
 export default HealthTipsFilter;
