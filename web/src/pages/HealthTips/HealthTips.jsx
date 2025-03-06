@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { SiSmartthings } from "react-icons/si";
-import { FaRunning, FaBrain, FaYoutube, FaBookMedical } from 'react-icons/fa';
-import { MdHealthAndSafety, MdRestaurant } from 'react-icons/md';
+import { FaRunning, FaBrain, FaYoutube, FaBookMedical, FaSearch, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { MdHealthAndSafety } from 'react-icons/md';
 import { fetchHealthTips } from '../../services/healthTipsService';
 import { localHealthTips } from '../../data/healthTipsData';
 import { featuredVideos } from '../../data/featured-videos-data';
@@ -54,33 +53,26 @@ function HealthTips({ isDarkMode }) {
     loadHealthTips();
   }, []);
 
-  // Filter tips by category and search query
-  const filteredTips = healthData?.tips?.filter(tip => 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, searchQuery]);
+
+  const sortTips = (tips) => {
+    return [...tips].sort((a, b) => new Date(b.date || Date.now()) - new Date(a.date || 0));
+  };
+
+  const filteredTips = healthData?.tips.filter(tip => 
     (selectedCategory === 'all' || tip.category === selectedCategory) &&
     (tip.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
      tip.description.toLowerCase().includes(searchQuery.toLowerCase()))
   ) || [];
 
-  const sortedTips = [...filteredTips].sort((a, b) => {
-    switch (sortOrder) {
-      case 'oldest':
-        return new Date(a.date) - new Date(b.date);
-      case 'az':
-        return a.title.localeCompare(b.title);
-      case 'za':
-        return b.title.localeCompare(a.title);
-      case 'relevant':
-        return b.priority - a.priority;
-      case 'newest':
-      default:
-        return new Date(b.date) - new Date(a.date);
-    }
-  });
+  const sortedAndFilteredTips = sortTips(filteredTips);
 
   // Pagination
-  const totalPages = Math.ceil(sortedTips.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(sortedAndFilteredTips.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedTips = sortedTips.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const paginatedTips = sortedAndFilteredTips.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -101,27 +93,15 @@ function HealthTips({ isDarkMode }) {
     setSelectedTip(tip);
   };
 
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-    setCurrentPage(1);
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1
-    }
+  const handleFeaturedLearnMore = () => {
+    const featuredTip = {
+      ...healthData.featured,
+      title: healthData.featured.title,
+      description: healthData.featured.description,
+      imageUrl: healthData.featured.image,
+      category: healthData.featured.category || 'prevention'
+    };
+    setSelectedTip(featuredTip);
   };
 
   const renderPagination = () => {
@@ -147,7 +127,9 @@ function HealthTips({ isDarkMode }) {
           pages.push('...');
         }
         
-        pages.push(totalPages);
+        if (totalPages > 1) {
+          pages.push(totalPages);
+        }
       }
       
       return pages.map((page, index) => (
@@ -192,11 +174,33 @@ function HealthTips({ isDarkMode }) {
     );
   };
 
-  // Loading state
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut"
+      }
+    }
+  };
+
   if (isLoading && !healthData) {
     return (
       <div className={`health-tips-loading ${isDarkMode ? 'dark-mode' : ''}`}>
         <div className="loader"></div>
+        <p>Loading health tips...</p>
         <p>Loading health tips...</p>
       </div>
     );
@@ -210,22 +214,19 @@ function HealthTips({ isDarkMode }) {
         </div>
       )}
 
-      <section className="featured-tip">
+      <motion.section 
+        className="featured-tip"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
         <div className="featured-content">
-          <h1>{healthData?.featured?.title || "Today's Featured Health Tip"}</h1>
-          <p>{healthData?.featured?.description || "Stay healthy with our daily health tips and recommendations."}</p>
-          <button 
-            className="learn-more-btn"
-            onClick={() => healthData?.featured && setSelectedTip(healthData.featured)}
-          >
-            Learn More
-          </button>
+          <h1>{healthData?.featured.title}</h1>
+          <p>{healthData?.featured.description}</p>
+          <button className="learn-more-btn" onClick={handleFeaturedLearnMore}>Learn More</button>
         </div>
-        <div 
-          className="featured-image" 
-          style={{ backgroundImage: `url(${healthData?.featured?.image || 'https://placehold.co/600x400'})` }} 
-        />
-      </section>
+        <div className="featured-image" style={{ backgroundImage: `url(${healthData?.featured.image})` }} />
+      </motion.section>
 
       <section className="controls-section">
         <div className="search-bar">
@@ -233,62 +234,55 @@ function HealthTips({ isDarkMode }) {
             type="text"
             placeholder="Search health tips..."
             value={searchQuery}
-            onChange={handleSearchChange}
-            className="search-input"
+            onChange={(e) => setSearchQuery(e.target.value)}
+            aria-label="Search health tips"
           />
         </div>
         
         <HealthTipsFilter 
           categories={categories}
           selectedCategory={selectedCategory}
-          onCategoryChange={handleCategoryChange}
+          onCategoryChange={setSelectedCategory}
           isDarkMode={isDarkMode}
-          onSortChange={handleSortChange}
-          currentSort={sortOrder}
-          allCategoryIcon={<SiSmartthings />}
         />
       </section>
 
-      <motion.section 
-        className="tips-grid"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {selectedCategory !== 'videos' && paginatedTips.length === 0 ? (
-          <div className="no-results">
-            <h3>No health tips found</h3>
-            <p>Try changing your search or filter settings</p>
-          </div>
-        ) : selectedCategory !== 'videos' && (
-          paginatedTips.map(tip => (
-            <motion.div
-              key={tip.id}
-              className="tip-card-container"
-              variants={itemVariants}
-            >
-              <HealthTipCard 
-                tip={tip}
-                onReadMore={handleReadMore}
-                isDarkMode={isDarkMode}
-              />
-            </motion.div>
-          ))
-        )}
-      </motion.section>
+      {selectedCategory !== 'videos' ? (
+        <>
+          <motion.section 
+            className="tips-grid"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {paginatedTips.length > 0 ? paginatedTips.map(tip => (
+              <motion.div
+                key={tip.id}
+                variants={itemVariants}
+              >
+                <HealthTipCard 
+                  tip={tip}
+                  onReadMore={handleReadMore}
+                  isDarkMode={isDarkMode}
+                />
+              </motion.div>
+            )) : (
+              <div className="no-results">
+                <p>No health tips found matching your criteria. Try adjusting your search or filters.</p>
+              </div>
+            )}
+          </motion.section>
 
-      {selectedCategory !== 'videos' && filteredTips.length > ITEMS_PER_PAGE && renderPagination()}
-
-      {isLoading && !isApiLoaded && (
-        <div className="api-loading-indicator">
-          Updating content...
-        </div>
-      )}
-
-      {selectedCategory === 'videos' && (
+          {sortedAndFilteredTips.length > ITEMS_PER_PAGE && renderPagination()}
+        </>
+      ) : (
         <section className="video-section">
-          <h2>Featured Health Videos</h2>
-          <div className="video-grid">
+          <motion.div 
+            className="video-grid"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
             {featuredVideos.map(video => (
               <motion.div
                 key={video.id}
@@ -309,8 +303,14 @@ function HealthTips({ isDarkMode }) {
                 </div>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </section>
+      )}
+
+      {isLoading && !isApiLoaded && (
+        <div className="api-loading-indicator">
+          Updating content...
+        </div>
       )}
 
       <HealthTipModal 
