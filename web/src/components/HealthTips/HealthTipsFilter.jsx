@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { FaFilter, FaChevronDown, FaChevronUp, FaCheck } from 'react-icons/fa';
 import './HealthTipsFilter.css';
 
 const HealthTipsFilter = ({ 
@@ -8,19 +7,8 @@ const HealthTipsFilter = ({
   selectedCategory, 
   onCategoryChange, 
   isDarkMode,
-  onSortChange,
-  currentSort = 'newest',
   allCategoryIcon
 }) => {
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
-  
-  const sortOptions = [
-    { id: 'newest', label: 'Newest First' },
-    { id: 'oldest', label: 'Oldest First' },
-    { id: 'az', label: 'A-Z' },
-    { id: 'za', label: 'Z-A' },
-    { id: 'relevant', label: 'Most Relevant' }
-  ];
 
   return (
     <div className={`health-tips-filter ${isDarkMode ? 'dark-mode' : ''}`}>

@@ -61,7 +61,6 @@ function HealthTips({ isDarkMode }) {
      tip.description.toLowerCase().includes(searchQuery.toLowerCase()))
   ) || [];
 
-  // Sort filtered tips
   const sortedTips = [...filteredTips].sort((a, b) => {
     switch (sortOrder) {
       case 'oldest':
@@ -71,7 +70,6 @@ function HealthTips({ isDarkMode }) {
       case 'za':
         return b.title.localeCompare(a.title);
       case 'relevant':
-        // In a real app, you'd have a relevance algorithm
         return b.priority - a.priority;
       case 'newest':
       default:
@@ -91,12 +89,12 @@ function HealthTips({ isDarkMode }) {
 
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
-    setCurrentPage(1); // Reset to first page when changing categories
+    setCurrentPage(1);
   };
 
   const handleSortChange = (sortType) => {
     setSortOrder(sortType);
-    setCurrentPage(1); // Reset to first page when changing sort
+    setCurrentPage(1);
   };
 
   const handleReadMore = (tip) => {
@@ -105,10 +103,9 @@ function HealthTips({ isDarkMode }) {
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
-    setCurrentPage(1); // Reset to first page when searching
+    setCurrentPage(1);
   };
 
-  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -127,25 +124,21 @@ function HealthTips({ isDarkMode }) {
     }
   };
 
-  // Pagination component
   const renderPagination = () => {
     const renderPageNumbers = () => {
       const pages = [];
       
       if (totalPages <= 5) {
-        // If 5 or fewer pages, show all
         for (let i = 1; i <= totalPages; i++) {
           pages.push(i);
         }
       } else {
-        // Always show first page
         pages.push(1);
         
         if (currentPage > 3) {
           pages.push('...');
         }
         
-        // Show current page and one before/after
         for (let i = Math.max(2, currentPage - 1); i <= Math.min(currentPage + 1, totalPages - 1); i++) {
           pages.push(i);
         }
@@ -154,7 +147,6 @@ function HealthTips({ isDarkMode }) {
           pages.push('...');
         }
         
-        // Always show last page
         pages.push(totalPages);
       }
       
@@ -212,14 +204,12 @@ function HealthTips({ isDarkMode }) {
 
   return (
     <div className={`health-tips-container ${isDarkMode ? 'dark-mode' : ''}`}>
-      {/* Error banner if API fails */}
       {error && (
         <div className="error-banner">
           {error}
         </div>
       )}
 
-      {/* Featured Section - Shows immediately with local data */}
       <section className="featured-tip">
         <div className="featured-content">
           <h1>{healthData?.featured?.title || "Today's Featured Health Tip"}</h1>
@@ -237,7 +227,6 @@ function HealthTips({ isDarkMode }) {
         />
       </section>
 
-      {/* New Search and Advanced Filters */}
       <section className="controls-section">
         <div className="search-bar">
           <input
@@ -260,7 +249,6 @@ function HealthTips({ isDarkMode }) {
         />
       </section>
 
-      {/* Tips Grid with Pagination */}
       <motion.section 
         className="tips-grid"
         variants={containerVariants}
@@ -289,17 +277,14 @@ function HealthTips({ isDarkMode }) {
         )}
       </motion.section>
 
-      {/* Pagination - Only show if tips exist and not in videos category */}
       {selectedCategory !== 'videos' && filteredTips.length > ITEMS_PER_PAGE && renderPagination()}
 
-      {/* Loading indicator for API data */}
       {isLoading && !isApiLoaded && (
         <div className="api-loading-indicator">
           Updating content...
         </div>
       )}
 
-      {/* Video Section - Only show when Videos category is selected */}
       {selectedCategory === 'videos' && (
         <section className="video-section">
           <h2>Featured Health Videos</h2>
@@ -328,7 +313,6 @@ function HealthTips({ isDarkMode }) {
         </section>
       )}
 
-      {/* Modal for displaying full health tip details */}
       <HealthTipModal 
         tip={selectedTip}
         isOpen={!!selectedTip}

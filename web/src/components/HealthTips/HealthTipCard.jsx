@@ -6,7 +6,7 @@ const HealthTipCard = ({ tip, onReadMore, isDarkMode }) => {
   const categoryLabel = tip.category.charAt(0).toUpperCase() + tip.category.slice(1);
 
   const handleImageError = (e) => {
-    e.target.src = '/images/default-health.jpg';
+    e.target.src = 'https://placehold.co/600x400';
   };
 
   return (

@@ -16,7 +16,6 @@ const HealthTipModal = ({ tip, isOpen, onClose, isDarkMode }) => {
 
         if (isOpen) {
             document.addEventListener('mousedown', handleClickOutside);
-            // Prevent scrolling when modal is open
             document.body.style.overflow = 'hidden';
         }
 
@@ -45,7 +44,6 @@ const HealthTipModal = ({ tip, isOpen, onClose, isDarkMode }) => {
 
     if (!isOpen || !tip) return null;
 
-    // Function to handle sharing
     const handleShare = () => {
         if (navigator.share) {
             navigator.share({
@@ -57,7 +55,6 @@ const HealthTipModal = ({ tip, isOpen, onClose, isDarkMode }) => {
         }
     };
 
-    // Function to check if device supports sharing
     const canShare = () => {
         return typeof navigator.share !== 'undefined';
     };
