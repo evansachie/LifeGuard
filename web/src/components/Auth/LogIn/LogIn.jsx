@@ -7,17 +7,15 @@ import loginIllustration from "../../../assets/auth/loginIllustration.svg";
 import loginIllustration2 from "../../../assets/auth/loginIllustration2.svg";
 import loginIllustration3 from "../../../assets/auth/loginIllustration3.svg";
 import ImageSlider from "../../ImageSlider/ImageSlider";
-import { useAuth } from "../../../contexts/AuthContext";
 import { loginUser } from "../../../utils/auth";
 import InputField from "../../InputField/InputField";
-import ThemeToggle from "../../ThemeToggle/ThemeToggle";
+import ThemeToggle from '../../../contexts/ThemeToggle';
 import "./LogIn.css";
 
 export default function LogIn({ isDarkMode, toggleTheme }) {
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const { login } = useAuth();
 
     const handleChange = (e) => {
         const { name, value } = e.target;

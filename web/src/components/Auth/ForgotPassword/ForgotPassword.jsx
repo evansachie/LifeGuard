@@ -5,7 +5,7 @@ import Button from '../../button/button';
 import forgotPasswordIllustration from '../../../assets/auth/forgot-password.svg';
 import { requestPasswordReset } from '../../../utils/auth';
 import InputField from '../../InputField/InputField';
-import ThemeToggle from '../../ThemeToggle/ThemeToggle';
+import ThemeToggle from '../../../contexts/ThemeToggle';
 import './ForgotPassword.css';
 
 export default function ForgotPassword({ isDarkMode, toggleTheme }) {

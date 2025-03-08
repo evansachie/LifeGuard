@@ -5,7 +5,7 @@ import Button from '../../button/button';
 import otpIllustration from '../../../assets/auth/otp.svg';
 import { verifyOTP, resendOTP } from '../../../utils/auth';
 import OTPInput from '../../OTPInput/OTPInput';
-import ThemeToggle from '../../ThemeToggle/ThemeToggle';
+import ThemeToggle from '../../../contexts/ThemeToggle';
 import './OTPVerification.css';
 
 export default function OTPVerification({ isDarkMode, toggleTheme }) {
