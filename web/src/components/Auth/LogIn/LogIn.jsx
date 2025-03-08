@@ -9,7 +9,7 @@ import loginIllustration3 from "../../../assets/auth/loginIllustration3.svg";
 import ImageSlider from "../../ImageSlider/ImageSlider";
 import { loginUser } from "../../../utils/auth";
 import InputField from "../../InputField/InputField";
-import ThemeToggle from "../../ThemeToggle/ThemeToggle";
+import ThemeToggle from '../../../contexts/ThemeToggle';
 import "./LogIn.css";
 
 export default function LogIn({ isDarkMode, toggleTheme }) {

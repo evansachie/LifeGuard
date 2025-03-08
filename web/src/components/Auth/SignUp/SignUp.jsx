@@ -10,7 +10,7 @@ import ImageSlider from "../../ImageSlider/ImageSlider";
 import { registerUser } from "../../../utils/auth";
 import { validateSignUpForm } from "../../../utils/validateForm";
 import InputField from "../../InputField/InputField";
-import ThemeToggle from "../../ThemeToggle/ThemeToggle";
+import ThemeToggle from "../../../contexts/ThemeToggle";
 import "./SignUp.css";
 
 export default function SignUp({ isDarkMode, toggleTheme }) {
