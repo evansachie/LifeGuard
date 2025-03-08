@@ -354,6 +354,18 @@ These endpoints are served from the Node-Server (hosted at `https://lifeguard-no
 
 *Note: The HTTP methods for `/api/memos` and `/api/emergency-contacts` depend on the specific operation (e.g., GET for retrieval, POST for creation).
 
+### RAG System Routes
+
+| **Method** | **Endpoint**                    | **Description**                                                   |
+|------------|---------------------------------|-------------------------------------------------------------------|
+| POST       | `/initialize`                   | Initialize the RAG system (admin only)                            |
+| POST       | `/query`                        | Query the RAG system (authenticated users)                        |
+| POST       | `/process/health`               | Process health data (authenticated users)                         |
+| POST       | `/process/environmental`        | Process environmental data (authenticated users)                  |
+| POST       | `/process/medical`              | Process medical knowledge (admin only)                            |
+| POST       | `/process/profiles`             | Process user profiles (authenticated users)                       |
+
+
 Complete API documentation would be posted soon...
 
 ## 👥 Team
