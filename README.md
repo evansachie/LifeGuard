@@ -338,37 +338,16 @@ Below is an overview of the core endpoints for the LifeGuard API:
 | GET        | `/{id}/photo`        | Retrieve the photo for the user with the specified ID    |
 
 
-### Rag Endpoints
+### RAG System Routes
 
-| **Method** | **Endpoint**         | **Description**                                         |
-<!-- const express = require('express');
-const router = express.Router();
-const ragController = require('../controllers/ragController');
-const authMiddleware = require('../middleware/auth');
-
-// Initialize RAG system
-router.post('/initialize', authMiddleware.verifyAdmin, ragController.initializeRag);
-
-// Query the RAG system
-router.post('/query', authMiddleware.verifyToken, ragController.queryRagSystem);
-
-// Process health data
-router.post('/process/health', authMiddleware.verifyToken, ragController.processHealthDataEndpoint);
-
-// Process environmental data
-router.post('/process/environmental', authMiddleware.verifyToken, ragController.processEnvironmentalDataEndpoint);
-
-// Process medical knowledge (admin only)
-router.post('/process/medical', authMiddleware.verifyAdmin, ragController.processMedicalKnowledgeEndpoint);
-
-// Process user profiles
-router.post('/process/profiles', authMiddleware.verifyToken, ragController.processUserProfilesEndpoint);
-
-module.exports = router;
- -->
-
-<!-- add rag routes -->
-
+| **Method** | **Endpoint**                    | **Description**                                                   |
+|------------|---------------------------------|-------------------------------------------------------------------|
+| POST       | `/initialize`                   | Initialize the RAG system (admin only)                            |
+| POST       | `/query`                        | Query the RAG system (authenticated users)                        |
+| POST       | `/process/health`               | Process health data (authenticated users)                         |
+| POST       | `/process/environmental`        | Process environmental data (authenticated users)                  |
+| POST       | `/process/medical`              | Process medical knowledge (admin only)                            |
+| POST       | `/process/profiles`             | Process user profiles (authenticated users)                       |
 
 
 Complete API documentation would be posted soon...
