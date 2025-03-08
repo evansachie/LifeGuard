@@ -1,5 +1,5 @@
 import React from 'react';
-import { DATE_RANGES } from '../../pages/Analytics/constants';
+import { DATE_RANGES } from '../../utils/constants';
 
 const ReportHeader = ({ dateRange, onDateRangeChange }) => (
     <div className="report-header">
