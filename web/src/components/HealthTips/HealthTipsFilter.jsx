@@ -8,8 +8,6 @@ const HealthTipsFilter = ({
   selectedCategory, 
   onCategoryChange, 
   isDarkMode,
-  onSortChange,
-  currentSort = 'newest'
 }) => {
   return (
     <div className={`health-tips-filter ${isDarkMode ? 'dark-mode' : ''}`}>
