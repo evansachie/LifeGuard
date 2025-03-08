@@ -6,7 +6,7 @@ import resetPasswordIllustration from '../../../assets/auth/reset-password.svg';
 import { resetUserPassword } from '../../../utils/auth';
 import { validatePassword } from '../../../utils/validatePassword';
 import InputField from '../../InputField/InputField';
-import ThemeToggle from '../../ThemeToggle/ThemeToggle';
+import ThemeToggle from '../../../contexts/ThemeToggle';
 import './ResetPassword.css';
 
 export default function ResetPassword({ isDarkMode, toggleTheme }) {
