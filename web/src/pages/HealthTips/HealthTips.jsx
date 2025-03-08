@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaRunning, FaBrain, FaYoutube, FaBookMedical, FaSearch, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { MdHealthAndSafety } from 'react-icons/md';
+import { MdHealthAndSafety, MdRestaurant } from 'react-icons/md';
 import { fetchHealthTips } from '../../services/healthTipsService';
 import { localHealthTips } from '../../data/healthTipsData';
 import { featuredVideos } from '../../data/featured-videos-data';
