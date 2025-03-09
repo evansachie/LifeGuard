@@ -1,11 +1,13 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, memo } from 'react';
+import PropTypes from 'prop-types';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaTimes, FaExternalLinkAlt, FaClock, FaCalendarAlt, FaTag, FaShareAlt } from 'react-icons/fa';
+import { FaTimes, FaExternalLinkAlt, FaShareAlt, FaBookmark } from 'react-icons/fa';
 import './HealthTipModal.css';
 
 const HealthTipModal = ({ tip, isOpen, onClose, isDarkMode }) => {
     const modalRef = useRef(null);
 
+    // Handle click outside to close
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -21,110 +23,108 @@ const HealthTipModal = ({ tip, isOpen, onClose, isDarkMode }) => {
 
         if (isOpen) {
             document.addEventListener('mousedown', handleClickOutside);
-            document.addEventListener('keydown', handleEscKey);
-            document.body.style.overflow = 'hidden'; // Prevent scrolling of background
+            document.body.style.overflow = 'hidden';
         }
 
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
-            document.removeEventListener('keydown', handleEscKey);
-            document.body.style.overflow = ''; // Re-enable scrolling
+            document.body.style.overflow = '';
         };
     }, [isOpen, onClose]);
 
-    const handleShare = async () => {
-        // Check if Web Share API is available
-        if (navigator.share) {
-            try {
-                await navigator.share({
-                    title: tip.title,
-                    text: tip.description,
-                    url: tip.url || window.location.href,
-                });
-            } catch (error) {
-                console.log('Error sharing:', error);
+    // Handle escape key press
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.key === 'Escape') {
+                onClose();
             }
-        } else {
-            // Fallback for browsers that don't support Web Share API
-            navigator.clipboard.writeText(
-                `${tip.title}\n\n${tip.description}\n\n${tip.url || window.location.href}`
-            );
-            alert('Link copied to clipboard!');
+        };
+
+        if (isOpen) {
+            document.addEventListener('keydown', handleKeyDown);
         }
-    };
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [isOpen, onClose]);
 
     if (!isOpen || !tip) return null;
 
-    const categoryLabel = tip.category.charAt(0).toUpperCase() + tip.category.slice(1);
-    
+    const handleShare = () => {
+        if (navigator.share) {
+            navigator.share({
+                title: tip.title,
+                text: tip.description,
+                url: window.location.href,
+            })
+            .catch((error) => console.log('Error sharing:', error));
+        }
+    };
+
+    const canShare = () => {
+        return typeof navigator.share !== 'undefined';
+    };
+
     return (
         <AnimatePresence>
             {isOpen && (
-                <motion.div 
+                <motion.div
                     className="health-tip-modal-overlay"
+                    role="dialog"
+                    aria-labelledby="modal-title"
+                    aria-modal="true"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
                 >
-                    <motion.div 
+                    <motion.div
                         ref={modalRef}
                         className={`health-tip-modal ${isDarkMode ? 'dark-mode' : ''}`}
-                        initial={{ y: 50, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        exit={{ y: 50, opacity: 0 }}
-                        transition={{ type: "spring", damping: 20 }}
+                        initial={{ scale: 0.9 }}
+                        animate={{ scale: 1 }}
+                        exit={{ scale: 0.9 }}
                     >
-                        <button 
-                            className="close-button" 
-                            onClick={onClose} 
-                            aria-label="Close dialog"
-                        >
-                            <FaTimes />
-                        </button>
+                        <div className="modal-header">
+                            <h2 id="modal-title">{tip.title}</h2>
+                            <button 
+                                className="close-button" 
+                                onClick={onClose}
+                                aria-label="Close modal"
+                            >
+                                <FaTimes />
+                            </button>
+                        </div>
 
                         <div className="modal-content">
                             <div className="modal-image-container">
                                 <img 
                                     src={tip.imageUrl} 
-                                    alt={tip.imageAlt || tip.title} 
+                                    alt={tip.imageAlt || ""} 
                                     className="modal-image"
                                     onError={(e) => {
                                         e.target.src = '/images/default-health.jpg';
                                     }}
                                 />
-                                <div className="modal-image-overlay"></div>
-                                <div className="modal-image-category">
-                                    <span className={`tip-category ${tip.category}`}>
-                                        <FaTag className="metadata-icon" />
-                                        {categoryLabel}
-                                    </span>
-                                </div>
                             </div>
                             
-                            <div className="modal-header">
-                                <h2>{tip.title}</h2>
-                                
-                                <div className="modal-metadata">
-                                    {tip.date && (
-                                        <div className="tip-date">
-                                            <FaCalendarAlt className="metadata-icon" />
-                                            {new Date(tip.date).toLocaleDateString()}
-                                        </div>
-                                    )}
-                                    
-                                    {tip.readTime && (
-                                        <div className="tip-read-time">
-                                            <FaClock className="metadata-icon" />
-                                            {tip.readTime} min read
-                                        </div>
-                                    )}
-                                </div>
+                            <div className={`tip-category ${tip.category}`}>
+                                {tip.category.charAt(0).toUpperCase() + tip.category.slice(1)}
                             </div>
 
                             <div className="tip-description">
                                 <p>{tip.description}</p>
                                 {tip.longDescription && <p>{tip.longDescription}</p>}
+                                {tip.tips && (
+                                    <div className="tip-bullet-points">
+                                        <h3>Key Points:</h3>
+                                        <ul>
+                                            {tip.tips.map((point, index) => (
+                                                <li key={index}>{point}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="tip-actions">
@@ -133,20 +133,43 @@ const HealthTipModal = ({ tip, isOpen, onClose, isDarkMode }) => {
                                         href={tip.url} 
                                         target="_blank" 
                                         rel="noopener noreferrer"
-                                        className="resource-link primary-action"
+                                        className="tip-action-btn learn-more-btn"
                                     >
                                         Learn More <FaExternalLinkAlt />
                                     </a>
                                 )}
                                 
                                 <button 
-                                    className="resource-link secondary-action"
-                                    onClick={handleShare}
-                                    aria-label="Share this health tip"
+                                    className="tip-action-btn bookmark-btn"
+                                    aria-label="Save this tip"
                                 >
-                                    <FaShareAlt /> Share
+                                    <FaBookmark /> Save
                                 </button>
+                                
+                                {canShare() && (
+                                    <button 
+                                        className="tip-action-btn share-btn"
+                                        onClick={handleShare}
+                                        aria-label="Share this tip"
+                                    >
+                                        <FaShareAlt /> Share
+                                    </button>
+                                )}
                             </div>
+
+                            {tip.relatedTips && tip.relatedTips.length > 0 && (
+                                <div className="related-tips">
+                                    <h3>Related Tips</h3>
+                                    <div className="related-tips-grid">
+                                        {tip.relatedTips.map(relatedTip => (
+                                            <div key={relatedTip.id} className="related-tip">
+                                                <h4>{relatedTip.title}</h4>
+                                                <p>{relatedTip.description.substring(0, 60)}...</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </motion.div>
                 </motion.div>
@@ -155,4 +178,22 @@ const HealthTipModal = ({ tip, isOpen, onClose, isDarkMode }) => {
     );
 };
 
-export default HealthTipModal;
+HealthTipModal.propTypes = {
+    tip: PropTypes.shape({
+        id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        title: PropTypes.string.isRequired,
+        description: PropTypes.string.isRequired,
+        longDescription: PropTypes.string,
+        imageUrl: PropTypes.string,
+        imageAlt: PropTypes.string,
+        category: PropTypes.string,
+        tips: PropTypes.arrayOf(PropTypes.string),
+        url: PropTypes.string,
+        relatedTips: PropTypes.array
+    }),
+    isOpen: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    isDarkMode: PropTypes.bool
+};
+
+export default memo(HealthTipModal);

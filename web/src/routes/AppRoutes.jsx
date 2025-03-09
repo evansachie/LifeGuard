@@ -3,11 +3,11 @@ import { Routes, Route, Outlet } from 'react-router-dom';
 
 import LandingPage from '../pages/Landing/LandingPage';
 
-import LogIn from "../components/Auth/LogIn/LogIn";
-import SignUp from "../components/Auth/SignUp/SignUp";
-import OTPVerification from '../components/Auth/OTPVerification/OTPVerification';
-import ForgotPassword from '../components/Auth/ForgotPassword/ForgotPassword';
-import ResetPassword from '../components/Auth/ResetPassword/ResetPassword';
+import LogIn from "../pages/Auth/LogIn/LogIn";
+import SignUp from "../pages/Auth/SignUp/SignUp";
+import OTPVerification from '../pages/Auth/OTPVerification/OTPVerification';
+import ForgotPassword from '../pages/Auth/ForgotPassword/ForgotPassword';
+import ResetPassword from '../pages/Auth/ResetPassword/ResetPassword';
 
 import VerifyEmergencyContact from '../pages/VerifyEmergencyContact/VerifyEmergencyContact';
 import EmergencyTracking from '../pages/EmergencyTracking/EmergencyTracking';

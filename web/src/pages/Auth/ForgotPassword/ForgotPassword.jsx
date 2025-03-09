@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import Button from '../../button/button';
+import Button from '../../../components/button/button';
 import forgotPasswordIllustration from '../../../assets/auth/forgot-password.svg';
 import { requestPasswordReset } from '../../../utils/auth';
-import InputField from '../../InputField/InputField';
+import InputField from '../../../components/InputField/InputField';
 import ThemeToggle from '../../../contexts/ThemeToggle';
 import './ForgotPassword.css';
 

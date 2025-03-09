@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { memo } from 'react';
+import PropTypes from 'prop-types';
 
 const DataCard = ({ 
     title, 
@@ -7,11 +8,23 @@ const DataCard = ({
     icon: Icon, 
     className = '',
     valueColor = null,
-    children
+    children,
+    onRefresh = null
 }) => {
     return (
         <div className={`dashboard-card ${className}`}>
-            <h2>{Icon && <Icon />} {title}</h2>
+            <div className="card-header">
+                <h2>{Icon && <Icon aria-hidden="true" />} {title}</h2>
+                {onRefresh && (
+                    <button 
+                        onClick={onRefresh} 
+                        className="refresh-btn"
+                        aria-label={`Refresh ${title} data`}
+                    >
+                        ⟳
+                    </button>
+                )}
+            </div>
             {children || (
                 <div className="card-value" style={valueColor ? { color: valueColor } : {}}>
                     {value}{unit}
@@ -21,4 +34,15 @@ const DataCard = ({
     );
 };
 
-export default DataCard;
+DataCard.propTypes = {
+    title: PropTypes.string.isRequired,
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    unit: PropTypes.string,
+    icon: PropTypes.elementType,
+    className: PropTypes.string,
+    valueColor: PropTypes.string,
+    children: PropTypes.node,
+    onRefresh: PropTypes.func
+};
+
+export default memo(DataCard);

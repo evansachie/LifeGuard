@@ -11,7 +11,7 @@ import {
     Tooltip,
     Legend
 } from 'chart.js';
-import { TABS } from './constants';
+import { TABS } from '../../utils/constants';
 import EnvironmentCharts from '../../components/Analytics/EnvironmentCharts';
 import AirQualityCharts from '../../components/Analytics/AirQualityCharts';
 import ReportHeader from '../../components/Analytics/ReportHeader';

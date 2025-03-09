@@ -115,8 +115,6 @@ export default function HealthReportModal({ isOpen, onClose, userData, isDarkMod
               ))}
             </div>
           </section>
-
-          {/* Similar sections for environmental and activity metrics */}
           
           <section className="report-section">
             <h2>Recommendations</h2>

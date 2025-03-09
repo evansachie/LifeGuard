@@ -4,210 +4,263 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    padding: 1rem;
-    backdrop-filter: blur(8px);
+    padding: 20px;
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .health-tip-modal {
-    background: white;
+    background-color: #fff;
     border-radius: 16px;
-    padding: 0;
-    position: relative;
     width: 100%;
-    max-width: 700px;
+    max-width: 800px;
     max-height: 90vh;
     overflow-y: auto;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    display: flex;
-    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: slideUp 0.3s ease;
+    position: relative;
 }
 
-.close-button {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: rgba(0, 0, 0, 0.3);
-    border: none;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    color: white;
-    z-index: 10;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+@keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
-.close-button:hover {
-    background: rgba(0, 0, 0, 0.5);
-    transform: rotate(90deg);
-}
-
-.modal-content {
-    padding: 0 0 1.5rem;
+.dark-mode.health-tip-modal {
+    background-color: #2D2D2D;
+    color: #e2e8f0;
 }
 
 .modal-header {
-    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    position: sticky;
+    top: 0;
+    background: inherit;
+    z-index: 10;
+}
+
+.dark-mode .modal-header {
+    border-bottom-color: #4a5568;
 }
 
 .modal-header h2 {
-    font-size: 2rem;
-    margin: 1.25rem 0 0.75rem;
-    color: #333;
-    line-height: 1.3;
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2d3436;
 }
 
-.modal-metadata {
+.dark-mode .modal-header h2 {
+    color: #e2e8f0;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    color: #a0aec0;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    color: #a0aec0;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
     display: flex;
-    gap: 1.25rem;
-    flex-wrap: wrap;
-    margin-bottom: 1rem;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
 }
 
-.metadata-icon {
-    margin-right: 0.5rem;
-    font-size: 0.875rem;
+.close-button:hover {
+    background-color: #f7fafc;
+    color: #4a5568;
 }
 
-/* Modal image styles */
+.dark-mode .close-button:hover {
+    background-color: #4a5568;
+    color: #e2e8f0;
+}
+
+.modal-content {
+    padding: 0 1.5rem 1.5rem;
+}
+
 .modal-image-container {
-    width: 100%;
-    height: 300px;
-    position: relative;
-    overflow: hidden;
+    margin: 0 -1.5rem 1.5rem;
 }
 
 .modal-image {
     width: 100%;
-    height: 100%;
+    height: 280px;
     object-fit: cover;
-    transition: transform 0.8s ease;
-}
-
-.health-tip-modal:hover .modal-image {
-    transform: scale(1.05);
-}
-
-.modal-image-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 70%;
-    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
-    pointer-events: none;
-}
-
-.modal-image-category {
-    position: absolute;
-    left: 2rem;
-    bottom: 1.5rem;
-    z-index: 5;
 }
 
 .tip-category {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.5rem 1.25rem;
-    border-radius: 30px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    text-transform: capitalize;
 }
 
-.tip-date, .tip-read-time {
-    display: inline-flex;
-    align-items: center;
-    color: #666;
-    font-size: 0.9rem;
+.tip-category.emergency { background-color: #FFE5E5; color: #E53E3E; }
+tip-category.fitness { background-color: #E5FFE5; color: #38A169; }
+.tip-category.nutrition { background-color: #FFE5FF; color: #D53F8C; }
+.tip-category.mental { background-color: #E5E5FF; color: #3182CE; }
+.tip-category.prevention { background-color: #FFFFE5; color: #D69E2E; }
+.tip-category.resources { background-color: #E5FFFF; color: #319795; }
+
+.dark-mode .tip-category {
+    opacity: 0.9;
 }
 
 .tip-description {
-    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    font-size: 1.05rem;
     color: #4a5568;
-    margin: 1.5rem 2rem;
+}
+
+.dark-mode .tip-description {
+    color: #e2e8f0;
+}
+
+.tip-bullet-points {
+    margin-top: 1.5rem;
+}
+
+.tip-bullet-points h3 {
     font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    color: #2d3436;
 }
 
-.tip-description p {
-    margin-bottom: 1.25rem;
+.dark-mode .tip-bullet-points h3 {
+    color: #e2e8f0;
 }
 
-.tip-description p:last-child {
-    margin-bottom: 0;
+.tip-bullet-points ul {
+    padding-left: 1.5rem;
+    margin: 0;
+}
+
+.tip-bullet-points li {
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
 }
 
 .tip-actions {
     display: flex;
-    gap: 1rem;
-    padding: 0 2rem;
-    margin-top: 2rem;
     flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
 }
 
-.resource-link {
-    display: inline-flex;
+.dark-mode .tip-bullet-points h3 {
+    color: #e2e8f0;
+}
+
+.tip-bullet-points ul {
+    padding-left: 1.5rem;
+    margin: 0;
+}
+
+.tip-bullet-points li {
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+}
+
+.tip-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.dark-mode .tip-actions {
+    border-top-color: #4a5568;
+}
+
+.tip-action-btn {
+    display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
+    padding: 0.7rem 1.2rem;
     border-radius: 8px;
-    text-decoration: none;
-    transition: all 0.3s ease;
     font-weight: 500;
+    font-size: 0.95rem;
     cursor: pointer;
-    border: none;
-    font-size: 1rem;
+    transition: all 0.2s ease;
+    text-decoration: none;
 }
 
-.primary-action {
-    background: #4285F4;
+.learn-more-btn {
+    background-color: #4299e1;
     color: white;
-    box-shadow: 0 2px 10px rgba(66, 133, 244, 0.3);
+    border: none;
 }
 
-.primary-action:hover {
-    background: #3367d6;
+.learn-more-btn:hover {
+    background-color: #3182ce;
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(66, 133, 244, 0.4);
 }
 
-.secondary-action {
-    background: #f8f9fa;
-    color: #333;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+.dark-mode .learn-more-btn:hover {
+    color: white;
 }
 
-.secondary-action:hover {
-    background: #e9ecef;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
-}
-
-.resource-link:active {
-    transform: translateY(1px);
-}
-
-/* Dark mode styles */
-.health-tip-modal.dark-mode {
-    background: #1a1a1a;
-    color: #e0e0e0;
+.bookmark-btn {
+    background-color: transparent;
+    color: #4a5568;
+    border: 1px solid #cbd5e0;
 }
 
 .dark-mode .modal-header h2 {
     color: #e0e0e0;
 }
 
-.dark-mode .tip-description {
-    color: #b0b0b0;
+.related-tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.related-tip {
+    padding: 1rem;
+    background-color: #f7fafc;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.dark-mode .related-tip {
+    background-color: #4a5568;
+}
+
+.related-tip:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .dark-mode .tip-date, 
@@ -215,9 +268,102 @@
     color: #aaa;
 }
 
-.dark-mode .secondary-action {
-    background: #333;
-    color: #e0e0e0;
+.bookmark-btn:hover {
+    background-color: #f7fafc;
+    color: #2d3748;
+}
+
+.dark-mode .bookmark-btn:hover {
+    background-color: #4a5568;
+    color: #e2e8f0;
+}
+
+.share-btn {
+    background-color: transparent;
+    color: #4a5568;
+    border: 1px solid #cbd5e0;
+}
+
+.dark-mode .share-btn {
+    color: #e2e8f0;
+    border-color: #4a5568;
+}
+
+.share-btn:hover {
+    background-color: #f7fafc;
+    color: #2d3748;
+}
+
+.dark-mode .share-btn:hover {
+    background-color: #4a5568;
+    color: #e2e8f0;
+}
+
+.related-tips {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.dark-mode .related-tips {
+    border-top-color: #4a5568;
+}
+
+.related-tips h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: #2d3436;
+}
+
+.dark-mode .related-tips h3 {
+    color: #e2e8f0;
+}
+
+.related-tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.related-tip {
+    padding: 1rem;
+    background-color: #f7fafc;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.dark-mode .related-tip {
+    background-color: #4a5568;
+}
+
+.related-tip:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .related-tip:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.related-tip h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    color: #2d3436;
+}
+
+.dark-mode .related-tip h4 {
+    color: #e2e8f0;
+}
+
+.related-tip p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #4a5568;
+}
+
+.dark-mode .related-tip p {
+    color: #cbd5e0;
 }
 
 .dark-mode .secondary-action:hover {
@@ -232,79 +378,50 @@
 .tip-category.prevention { background-color: #FFFFE5; color: #D69E2E; }
 .tip-category.resources { background-color: #E5FFFF; color: #319795; }
 
-/* Responsive styles */
-@media (max-width: 768px) {
-    .health-tip-modal {
-        max-width: 90%;
-        margin: 0;
+/* Responsive */
+@media (max-width: 640px) {
+    .modal-header {
+        padding: 1rem;
     }
     
     .modal-header h2 {
-        font-size: 1.75rem;
-        margin-top: 1rem;
+        font-size: 1.25rem;
     }
     
-    .tip-description {
-        margin: 1.25rem 1.5rem;
-        font-size: 1rem;
-    }
-    
-    .tip-actions {
-        padding: 0 1.5rem;
-        justify-content: center;
-    }
-    
-    .modal-header {
-        padding: 0 1.5rem;
-    }
-}
-
-@media (max-width: 640px) {
-    .health-tip-modal {
-        max-width: 95%;
-        max-height: 85vh;
+    .modal-content {
+        padding: 0 1rem 1rem;
     }
     
     .modal-image-container {
+        margin: 0 -1rem 1rem;
+    }
+    
+    .modal-image {
         height: 200px;
     }
     
-    .modal-image-category {
-        left: 1rem;
-        bottom: 1rem;
-    }
-
-    .tip-category {
-        padding: 0.4rem 1rem;
-        font-size: 0.8rem;
-    }
-
-    .modal-header h2 {
-        font-size: 1.5rem;
-        margin-top: 0.75rem;
-    }
-    
-    .modal-metadata {
-        gap: 0.75rem;
-    }
-    
-    .tip-description {
-        margin: 1rem 1rem;
-        font-size: 0.95rem;
-    }
-    
     .tip-actions {
-        padding: 0 1rem;
-        margin-top: 1.5rem;
         flex-direction: column;
     }
     
-    .resource-link {
+    .tip-action-btn {
         width: 100%;
         justify-content: center;
     }
     
-    .modal-header {
-        padding: 0 1rem;
+    .related-tips-grid {
+        grid-template-columns: 1fr;
     }
+}
+
+/* Focus state for accessibility */
+.close-button:focus,
+.tip-action-btn:focus {
+    outline: 2px solid #4299e1;
+    outline-offset: 2px;
+}
+
+.dark-mode .close-button:focus,
+.dark-mode .tip-action-btn:focus {
+    outline-color: #63b3ed;
 }

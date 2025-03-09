@@ -95,6 +95,11 @@
     color: #718096;
 }
 
+.dark-mode .edit-memo-input{
+    color: black
+}
+
+
 /* Action Buttons */
 .action-button {
     display: flex;

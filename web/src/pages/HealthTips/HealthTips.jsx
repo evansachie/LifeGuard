@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaRunning, FaBrain, FaYoutube, FaBookMedical, FaSearch, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { MdHealthAndSafety } from 'react-icons/md';
+import { MdHealthAndSafety, MdRestaurant } from 'react-icons/md';
 import { fetchHealthTips } from '../../services/healthTipsService';
 import { localHealthTips } from '../../data/healthTipsData';
 import { featuredVideos } from '../../data/featured-videos-data';
@@ -10,9 +10,11 @@ import HealthTipsFilter from '../../components/HealthTips/HealthTipsFilter';
 import HealthTipCard from '../../components/HealthTips/HealthTipCard';
 import './HealthTips.css';
 
+// Define categories with icons
 const categories = [
   { id: 'fitness', icon: <FaRunning />, label: 'Fitness' },
   { id: 'mental', icon: <FaBrain />, label: 'Mental Health' },
+  { id: 'nutrition', icon: <MdRestaurant />, label: 'Nutrition' },
   { id: 'prevention', icon: <MdHealthAndSafety />, label: 'Prevention' },
   { id: 'resources', icon: <FaBookMedical />, label: 'Resources' },
   { id: 'videos', icon: <FaYoutube />, label: 'Featured Videos' }
@@ -21,6 +23,7 @@ const categories = [
 const ITEMS_PER_PAGE = 6;
 
 function HealthTips({ isDarkMode }) {
+  // State
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -29,7 +32,9 @@ function HealthTips({ isDarkMode }) {
   const [isApiLoaded, setIsApiLoaded] = useState(false);
   const [error, setError] = useState(null);
   const [selectedTip, setSelectedTip] = useState(null);
-
+  const [sortOrder, setSortOrder] = useState('newest');
+  
+  // Fetch health tips
   useEffect(() => {
     const loadHealthTips = async () => {
       try {
@@ -72,6 +77,16 @@ function HealthTips({ isDarkMode }) {
   const handlePageChange = (page) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    setCurrentPage(1);
+  };
+
+  const handleSortChange = (sortType) => {
+    setSortOrder(sortType);
+    setCurrentPage(1);
   };
 
   const handleReadMore = (tip) => {
@@ -137,19 +152,23 @@ function HealthTips({ isDarkMode }) {
         <button 
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="pagination-button"
+          className="pagination-button prev-button"
+          aria-label="Previous page"
         >
-          <FaChevronLeft /> Prev
+          Previous
         </button>
         
-        {renderPageNumbers()}
+        <div className="page-numbers">
+          {renderPageNumbers()}
+        </div>
         
         <button 
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="pagination-button"
+          className="pagination-button next-button"
+          aria-label="Next page"
         >
-          Next <FaChevronRight />
+          Next
         </button>
       </div>
     );
@@ -210,7 +229,6 @@ function HealthTips({ isDarkMode }) {
 
       <section className="controls-section">
         <div className="search-bar">
-          <FaSearch className="search-icon" />
           <input
             type="text"
             placeholder="Search health tips..."
