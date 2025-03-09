@@ -366,6 +366,18 @@ tip-category.fitness { background-color: #E5FFE5; color: #38A169; }
     color: #cbd5e0;
 }
 
+.dark-mode .secondary-action:hover {
+    background: #444;
+}
+
+/* Category-specific styles */
+.tip-category.emergency { background-color: #FFE5E5; color: #E53E3E; }
+.tip-category.fitness { background-color: #E5FFE5; color: #38A169; }
+.tip-category.nutrition { background-color: #FFE5FF; color: #D53F8C; }
+.tip-category.mental { background-color: #E5E5FF; color: #3182CE; }
+.tip-category.prevention { background-color: #FFFFE5; color: #D69E2E; }
+.tip-category.resources { background-color: #E5FFFF; color: #319795; }
+
 /* Responsive */
 @media (max-width: 640px) {
     .modal-header {

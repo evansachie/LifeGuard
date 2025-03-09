@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
+import { FaThLarge } from 'react-icons/fa';
 import './HealthTipsFilter.css';
 
 const HealthTipsFilter = ({ 
@@ -7,17 +8,16 @@ const HealthTipsFilter = ({
   selectedCategory, 
   onCategoryChange, 
   isDarkMode,
-  allCategoryIcon
 }) => {
-
   return (
     <div className={`health-tips-filter ${isDarkMode ? 'dark-mode' : ''}`}>
       <div className="filter-categories">
         <button
           className={`category-btn ${selectedCategory === 'all' ? 'active' : ''}`}
           onClick={() => onCategoryChange('all')}
+          aria-pressed={selectedCategory === 'all'}
         >
-          {allCategoryIcon}
+          <FaThLarge />
           <span className="category-label">All</span>
         </button>
         
@@ -27,6 +27,7 @@ const HealthTipsFilter = ({
             className={`category-btn ${selectedCategory === category.id ? 'active' : ''}`}
             onClick={() => onCategoryChange(category.id)}
             aria-label={`Filter by ${category.label}`}
+            aria-pressed={selectedCategory === category.id}
           >
             {category.icon}
             <span className="category-label">{category.label}</span>
@@ -49,8 +50,7 @@ HealthTipsFilter.propTypes = {
   onCategoryChange: PropTypes.func.isRequired,
   isDarkMode: PropTypes.bool,
   onSortChange: PropTypes.func,
-  currentSort: PropTypes.string,
-  allCategoryIcon: PropTypes.node
+  currentSort: PropTypes.string
 };
 
 export default HealthTipsFilter;

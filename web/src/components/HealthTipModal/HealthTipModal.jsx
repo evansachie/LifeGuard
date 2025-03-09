@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, memo } from 'react';
 import PropTypes from 'prop-types';
+import { motion, AnimatePresence } from 'framer-motion';
 import { FaTimes, FaExternalLinkAlt, FaShareAlt, FaBookmark } from 'react-icons/fa';
 import './HealthTipModal.css';
 
@@ -66,104 +67,114 @@ const HealthTipModal = ({ tip, isOpen, onClose, isDarkMode }) => {
     };
 
     return (
-        <div 
-            className="health-tip-modal-overlay" 
-            role="dialog" 
-            aria-labelledby="modal-title"
-            aria-modal="true"
-        >
-            <div 
-                ref={modalRef}
-                className={`health-tip-modal ${isDarkMode ? 'dark-mode' : ''}`}
-            >
-                <div className="modal-header">
-                    <h2 id="modal-title">{tip.title}</h2>
-                    <button 
-                        className="close-button" 
-                        onClick={onClose}
-                        aria-label="Close modal"
+        <AnimatePresence>
+            {isOpen && (
+                <motion.div
+                    className="health-tip-modal-overlay"
+                    role="dialog"
+                    aria-labelledby="modal-title"
+                    aria-modal="true"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                >
+                    <motion.div
+                        ref={modalRef}
+                        className={`health-tip-modal ${isDarkMode ? 'dark-mode' : ''}`}
+                        initial={{ scale: 0.9 }}
+                        animate={{ scale: 1 }}
+                        exit={{ scale: 0.9 }}
                     >
-                        <FaTimes />
-                    </button>
-                </div>
-
-                <div className="modal-content">
-                    <div className="modal-image-container">
-                        <img 
-                            src={tip.imageUrl} 
-                            alt={tip.imageAlt || ""} 
-                            className="modal-image"
-                            onError={(e) => {
-                                e.target.src = '/images/default-health.jpg';
-                            }}
-                        />
-                    </div>
-                    
-                    <div className={`tip-category ${tip.category}`}>
-                        {tip.category.charAt(0).toUpperCase() + tip.category.slice(1)}
-                    </div>
-
-                    <div className="tip-description">
-                        <p>{tip.description}</p>
-                        {tip.longDescription && <p>{tip.longDescription}</p>}
-                        {tip.tips && (
-                            <div className="tip-bullet-points">
-                                <h3>Key Points:</h3>
-                                <ul>
-                                    {tip.tips.map((point, index) => (
-                                        <li key={index}>{point}</li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="tip-actions">
-                        {tip.url && (
-                            <a 
-                                href={tip.url} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="tip-action-btn learn-more-btn"
-                            >
-                                Learn More <FaExternalLinkAlt />
-                            </a>
-                        )}
-                        
-                        <button 
-                            className="tip-action-btn bookmark-btn"
-                            aria-label="Save this tip"
-                        >
-                            <FaBookmark /> Save
-                        </button>
-                        
-                        {canShare() && (
+                        <div className="modal-header">
+                            <h2 id="modal-title">{tip.title}</h2>
                             <button 
-                                className="tip-action-btn share-btn"
-                                onClick={handleShare}
-                                aria-label="Share this tip"
+                                className="close-button" 
+                                onClick={onClose}
+                                aria-label="Close modal"
                             >
-                                <FaShareAlt /> Share
+                                <FaTimes />
                             </button>
-                        )}
-                    </div>
-
-                    {tip.relatedTips && tip.relatedTips.length > 0 && (
-                        <div className="related-tips">
-                            <h3>Related Tips</h3>
-                            <div className="related-tips-grid">
-                                {tip.relatedTips.map(relatedTip => (
-                                    <div key={relatedTip.id} className="related-tip">
-                                        <h4>{relatedTip.title}</h4>
-                                        <p>{relatedTip.description.substring(0, 60)}...</p>
-                                    </div>
-                                ))}
-                            </div>
                         </div>
-                    )}
-                </div>
-            </div>
-        </div>
+
+                        <div className="modal-content">
+                            <div className="modal-image-container">
+                                <img 
+                                    src={tip.imageUrl} 
+                                    alt={tip.imageAlt || ""} 
+                                    className="modal-image"
+                                    onError={(e) => {
+                                        e.target.src = '/images/default-health.jpg';
+                                    }}
+                                />
+                            </div>
+                            
+                            <div className={`tip-category ${tip.category}`}>
+                                {tip.category.charAt(0).toUpperCase() + tip.category.slice(1)}
+                            </div>
+
+                            <div className="tip-description">
+                                <p>{tip.description}</p>
+                                {tip.longDescription && <p>{tip.longDescription}</p>}
+                                {tip.tips && (
+                                    <div className="tip-bullet-points">
+                                        <h3>Key Points:</h3>
+                                        <ul>
+                                            {tip.tips.map((point, index) => (
+                                                <li key={index}>{point}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="tip-actions">
+                                {tip.url && (
+                                    <a 
+                                        href={tip.url} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="tip-action-btn learn-more-btn"
+                                    >
+                                        Learn More <FaExternalLinkAlt />
+                                    </a>
+                                )}
+                                
+                                <button 
+                                    className="tip-action-btn bookmark-btn"
+                                    aria-label="Save this tip"
+                                >
+                                    <FaBookmark /> Save
+                                </button>
+                                
+                                {canShare() && (
+                                    <button 
+                                        className="tip-action-btn share-btn"
+                                        onClick={handleShare}
+                                        aria-label="Share this tip"
+                                    >
+                                        <FaShareAlt /> Share
+                                    </button>
+                                )}
+                            </div>
+
+                            {tip.relatedTips && tip.relatedTips.length > 0 && (
+                                <div className="related-tips">
+                                    <h3>Related Tips</h3>
+                                    <div className="related-tips-grid">
+                                        {tip.relatedTips.map(relatedTip => (
+                                            <div key={relatedTip.id} className="related-tip">
+                                                <h4>{relatedTip.title}</h4>
+                                                <p>{relatedTip.description.substring(0, 60)}...</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </motion.div>
+                </motion.div>
+            )}
+        </AnimatePresence>
     );
 };
 

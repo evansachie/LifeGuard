@@ -201,7 +201,6 @@ function HealthTips({ isDarkMode }) {
       <div className={`health-tips-loading ${isDarkMode ? 'dark-mode' : ''}`}>
         <div className="loader"></div>
         <p>Loading health tips...</p>
-        <p>Loading health tips...</p>
       </div>
     );
   }
