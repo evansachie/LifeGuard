@@ -11,6 +11,12 @@ export const muscleGroups = [
     { id: 'glutes', name: 'Glutes' }
 ];
 
+export const fitnessLevels = [
+  { id: 'beginner', label: 'Beginner', color: '#4CAF50' },
+  { id: 'intermediate', label: 'Intermediate', color: '#FF9800' },
+  { id: 'advanced', label: 'Advanced', color: '#f44336' }
+];
+
 export const workoutData = {
     beginner: {
       warmup: [
