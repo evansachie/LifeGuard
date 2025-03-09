@@ -9,7 +9,11 @@ module.exports = {
       colors: {
         'custom-blue': '#407CE2',
         'custom-blue-hover': '#2d5bb9',
-        'loading': '#6c94e0'
+        'loading': '#6c94e0',
+        'dark-bg': '#1a1a1a',
+        'light-bg': '#f0f0f0',
+        'dark-card': '#2D2D2D',
+        'dark-card2': '#3C3C3C'
       }
     },
   },
