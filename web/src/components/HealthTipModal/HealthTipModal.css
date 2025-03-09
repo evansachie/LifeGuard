@@ -227,13 +227,17 @@ tip-category.fitness { background-color: #E5FFE5; color: #38A169; }
 }
 
 .dark-mode .learn-more-btn:hover {
-    color: white;
+    color: black;
 }
 
 .bookmark-btn {
     background-color: transparent;
-    color: #4a5568;
+    color: black;
     border: 1px solid #cbd5e0;
+}
+
+.dark-mode .bookmark-btn {
+    color: white;
 }
 
 .dark-mode .modal-header h2 {

@@ -1,111 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { FaDumbbell, FaFire, FaHeartbeat, FaStopwatch, FaPlay, FaPause, FaRedo } from 'react-icons/fa';
-import { GiMuscleUp, GiWeightLiftingUp, GiMeditation } from 'react-icons/gi';
-import { BiTargetLock } from 'react-icons/bi';
-import './ExerciseRoutines.css';
-import { workoutData, muscleGroups } from '../../data/exercise-data';
+import { motion, AnimatePresence } from 'framer-motion';
+import { workoutData, fitnessLevels } from '../../data/exercise-data';
+import { workoutCategories } from '../../data/workout-categories';
+import { GiWeightLiftingUp } from 'react-icons/gi';
+import { FaChevronRight, FaChevronLeft, FaInfoCircle } from 'react-icons/fa';
 
-// 3D Model Component
-const MODEL_URL = import.meta.env.VITE_MODEL_URL;
+import { useWorkoutTimer } from '../../hooks/useWorkoutTimer';
 
-const fitnessLevels = [
-  { id: 'beginner', label: 'Beginner', color: '#4CAF50' },
-  { id: 'intermediate', label: 'Intermediate', color: '#FF9800' },
-  { id: 'advanced', label: 'Advanced', color: '#f44336' }
-];
-
-const workoutCategories = [
-  { id: 'warmup', label: 'Warm-Up', icon: <FaHeartbeat /> },
-  { id: 'cardio', label: 'Cardio', icon: <FaFire /> },
-  { id: 'strength', label: 'Strength', icon: <GiMuscleUp /> },
-  { id: 'hiit', label: 'HIIT', icon: <FaStopwatch /> },
-  { id: 'cooldown', label: 'Cool Down', icon: <GiMeditation /> }
-];
-
-const categoryAnnotationMap = {
-  warmup: 7,
-  cardio: 4,
-  strength: 9,
-  hiit: 1, 
-  cooldown: 7
-};
-
-const ModelSection = ({ activeExercise, selectedCategory }) => {
-  useEffect(() => {
-    const iframe = document.querySelector('.model-container iframe');
-    if (!iframe || !selectedCategory) return;
-
-    const annotation = categoryAnnotationMap[selectedCategory];
-    console.log('Selected annotation:', annotation);
-
-    // Update iframe src with single annotation
-    iframe.src = `${MODEL_URL}&annotation=${annotation}`;
-
-    const highlightMuscles = () => {
-      iframe.contentWindow.postMessage({
-        type: 'callMethod',
-        data: {
-          method: 'clearAnnotations'
-        }
-      }, '*');
-
-      // Then highlight target muscles
-      targetMuscles.forEach(muscle => {
-        iframe.contentWindow.postMessage({
-          type: 'callMethod',
-          data: {
-            method: 'showAnnotation',
-            args: [muscle]
-          }
-        }, '*');
-      });
-    };
-
-    const attempts = [0, 1000, 2000, 3000]; 
-    attempts.forEach(delay => {
-      setTimeout(highlightMuscles, delay);
-    });
-
-    const handleMessage = (event) => {
-      if (event.data === 'viewerready') {
-        highlightMuscles();
-      }
-    };
-
-    window.addEventListener('message', handleMessage);
-    
-    return () => {
-      window.removeEventListener('message', handleMessage);
-    };
-  }, [activeExercise, selectedCategory]);
-
-  return (
-    <div className="model-section">
-      <div className="model-container">
-        <iframe
-          title="3D Muscle Model"
-          src={MODEL_URL}
-          allowFullScreen
-          mozallowfullscreen="true"
-          webkitallowfullscreen="true"
-        />
-      </div>
-    </div>
-  );
-};
+import ProgressOverview from '../../components/ExerciseRoutines/ProgressOverview';
+import ExerciseCard from '../../components/ExerciseRoutines/ExerciseCard';
+import WorkoutTimer from '../../components/ExerciseRoutines/WorkoutTimer';
+import ModelSection from '../../components/ExerciseRoutines/ModelSection';
 
 function ExerciseRoutines({ isDarkMode }) {
   const [selectedLevel, setSelectedLevel] = useState('beginner');
   const [selectedCategory, setSelectedCategory] = useState('warmup');
   const [isLoading, setIsLoading] = useState(true);
   const [activeWorkout, setActiveWorkout] = useState(null);
-  const [workoutTimer, setWorkoutTimer] = useState(0);
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [activeExercise, setActiveExercise] = useState(null);
+  const [showTip, setShowTip] = useState(true);
+  const [workoutProgress, setWorkoutProgress] = useState(0);
+
+  const { 
+    workoutTimer, 
+    isTimerRunning, 
+    toggleTimer, 
+    resetTimer, 
+    setWorkoutTimer 
+  } = useWorkoutTimer();
 
   useEffect(() => {
-    // Simulate API loading
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1500);
@@ -113,238 +37,224 @@ function ExerciseRoutines({ isDarkMode }) {
   }, []);
 
   useEffect(() => {
-    let interval;
-    if (isTimerRunning) {
-      interval = setInterval(() => {
-        setWorkoutTimer(prev => prev + 1);
-      }, 1000);
+    if (activeWorkout && isTimerRunning) {
+      // Update progress based on workout duration
+      const duration = parseInt(activeWorkout.duration.split(' ')[0]) * 60;
+      const progress = Math.min((workoutTimer / duration) * 100, 100);
+      setWorkoutProgress(progress);
     }
-    return () => clearInterval(interval);
-  }, [isTimerRunning]);
-
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1
-    }
-  };
+  }, [workoutTimer, activeWorkout, isTimerRunning]);
 
   const handleExerciseClick = (exercise) => {
     setActiveExercise(exercise);
     setActiveWorkout(exercise);
+    setWorkoutProgress(0);
     setWorkoutTimer(0);
-    setIsTimerRunning(true);
+    toggleTimer();
   };
 
-  const highlightMuscles = (exercise) => {
-    // Reset all muscles to default state
-    muscleGroups.forEach(group => {
-        const element = document.getElementById(group.id);
-        if (element) {
-            element.style.fill = isDarkMode ? '#2D3748' : '#E2E8F0';
-        }
-    });
-
-    // Highlight target muscles
-    if (exercise && exercise.targetMuscles) {
-        exercise.targetMuscles.forEach(muscleId => {
-            const element = document.getElementById(muscleId);
-            if (element) {
-                element.style.fill = '#3182CE';
-            }
-        });
+  const handleCategoryChange = (categoryId) => {
+    setSelectedCategory(categoryId);
+    // Reset active workout when changing categories
+    if (activeWorkout) {
+      setActiveWorkout(null);
+      setActiveExercise(null);
+      resetTimer();
     }
   };
-
-  useEffect(() => {
-    if (activeExercise) {
-        highlightMuscles(activeExercise);
-    }
-  }, [isDarkMode, activeExercise]);
 
   if (isLoading) {
     return (
-      <div className={`exercise-loading ${isDarkMode ? 'dark-mode' : ''}`}>
-        <GiWeightLiftingUp className="loading-icon" />
-        <p>Preparing your workout routine...</p>
+      <div className={`flex flex-col items-center justify-center h-screen ${isDarkMode ? 'bg-dark-bg text-gray-100' : 'bg-gray-50 text-gray-800'}`}>
+        <GiWeightLiftingUp className="text-6xl text-blue-500 animate-bounce" />
+        <p className="mt-4 text-lg">Preparing your workout routine...</p>
       </div>
     );
   }
 
   return (
-    <div className={`exercise-routines-container ${isDarkMode ? 'dark-mode' : ''}`}>
-      <div className="content-wrapper">
-        <div className="exercises-section">
-          {/* Progress Overview */}
-          <section className="progress-overview">
-            <motion.div 
-              className="stats-card"
-              whileHover={{ scale: 1.05 }}
-            >
-              <div className="stats-icon">
-                <FaFire />
-              </div>
-              <div className="stats-info">
-                <h3>Calories Burned</h3>
-                <p>324 kcal</p>
-              </div>
-            </motion.div>
-
-            <motion.div 
-              className="stats-card"
-              whileHover={{ scale: 1.05 }}
-            >
-              <div className="stats-icon">
-                <FaDumbbell />
-              </div>
-              <div className="stats-info">
-                <h3>Workouts Completed</h3>
-                <p>12 this week</p>
-              </div>
-            </motion.div>
-
-            <motion.div 
-              className="stats-card"
-              whileHover={{ scale: 1.05 }}
-            >
-              <div className="stats-icon">
-                <BiTargetLock />
-              </div>
-              <div className="stats-info">
-                <h3>Current Goal</h3>
-                <p>Build Strength</p>
-              </div>
-            </motion.div>
-          </section>
-          
-          {/* Fitness Level Selection */}
-          <section className="fitness-level-selection">
-            {fitnessLevels.map(level => (
-              <button
-                key={level.id}
-                className={`level-btn ${selectedLevel === level.id ? 'active' : ''}`}
-                style={{ '--level-color': level.color }}
-                onClick={() => setSelectedLevel(level.id)}
-              >
-                {level.label}
-              </button>
-            ))}
-          </section>
-
-          {/* Workout Categories */}
-          <section className="workout-categories">
-            {workoutCategories.map(category => (
-              <button
-                key={category.id}
-                className={`category-btn ${selectedCategory === category.id ? 'active' : ''}`}
-                onClick={() => setSelectedCategory(category.id)}
-              >
-                {category.icon}
-                <span>{category.label}</span>
-              </button>
-            ))}
-          </section>
-
-          {/* Active Workout Timer */}
-          {activeWorkout && (
-            <motion.section 
-              className="active-workout"
-              initial={{ y: 50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-            >
-              <div className="workout-timer">
-                <h3>Current Workout</h3>
-                <div className="timer-display">{formatTime(workoutTimer)}</div>
-                <div className="timer-controls">
-                  <button onClick={() => setIsTimerRunning(!isTimerRunning)}>
-                    {isTimerRunning ? <FaPause /> : <FaPlay />}
-                  </button>
-                  <button onClick={() => setWorkoutTimer(0)}><FaRedo /></button>
-                </div>
-              </div>
-              <button className="end-workout" onClick={() => setActiveWorkout(null)}>
-                End Workout
-              </button>
-            </motion.section>
-          )}
-
-          {/* Exercises Grid */}
-          <motion.section 
-            className="exercises-grid"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            {workoutData[selectedLevel][selectedCategory]?.map(exercise => (
-              <motion.div
-                key={exercise.id}
-                className="exercise-card"
-                variants={itemVariants}
-              >
-                <div className="exercise-video">
-                  {exercise.videoUrl ? (
-                    <iframe
-                      src={exercise.videoUrl}
-                      title={exercise.title}
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  ) : (
-                    <div className="video-placeholder">
-                      <FaPlay />
-                      <p>Video Coming Soon</p>
-                    </div>
-                  )}
-                  <span className="exercise-duration">{exercise.duration}</span>
-                </div>
-                <div className="exercise-content">
-                  <h3>{exercise.title}</h3>
-                  <p>{exercise.description}</p>
-                  <div className="exercise-meta">
-                    <span className="calories">
-                      <FaFire /> {exercise.calories} cal
-                    </span>
-                    <div className="target-muscles">
-                      {exercise.targetMuscles.map(muscle => (
-                        <span key={muscle} className="muscle-tag">{muscle}</span>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="exercise-actions">
-                    {!activeWorkout && (
-                      <button 
-                        className="start-exercise"
-                        onClick={() => handleExerciseClick(exercise)}
-                      >
-                        Start Exercise
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.section>
+    <div className={`min-h-screen ${isDarkMode ? 'bg-dark-bg text-gray-100' : 'bg-light-bg text-gray-800'}`}>
+      <div className="max-w-7xl mx-auto px-4 py-8 lg:px-8">
+        {/* Header Section with Progress Overview */}
+        <div className="mb-8">
+          <ProgressOverview />
         </div>
-        <ModelSection 
-          activeExercise={activeExercise} 
-          selectedCategory={selectedCategory} 
-        />
+        
+        {/* Workout Tip - Conditional */}
+        <AnimatePresence>
+          {showTip && (
+            <motion.div 
+              className={`rounded-xl p-4 mb-6 ${isDarkMode ? 'bg-gradient-to-r from-blue-600 to-blue-500' : 'bg-gradient-to-r from-blue-500 to-blue-400'} text-white shadow-lg`}
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <FaInfoCircle className="text-xl flex-shrink-0" />
+                  <p className="text-sm text-white">For best results, complete at least 3 workouts per week and maintain proper form.</p>
+                </div>
+                <button 
+                  className="rounded-full w-6 h-6 bg-white/20 flex items-center justify-center text-white hover:bg-white/30 transition-all transform hover:rotate-90"
+                  onClick={() => setShowTip(false)}
+                >
+                  ×
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
+        {/* Controls Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* Fitness Level Selection */}
+          <div className={`rounded-xl p-5 ${isDarkMode ? 'bg-dark-card' : 'bg-white'} shadow-md`}>
+            <h2 className="text-xl font-semibold mb-3 pb-2 border-b border-gray-200 dark:border-gray-700">Fitness Level</h2>
+            <div className="flex flex-wrap gap-3">
+              {fitnessLevels.map(level => (
+                <button
+                  key={level.id}
+                  className={`px-4 py-2 rounded-full border-2 font-medium transition-all ${
+                    selectedLevel === level.id 
+                      ? `bg-[${level.color}] text-white border-[${level.color}]` 
+                      : `border-[${level.color}] text-[${level.color}] hover:bg-[${level.color}]/10`
+                  }`}
+                  style={{ 
+                    '--tw-border-opacity': 1,
+                    borderColor: level.color,
+                    color: selectedLevel === level.id ? 'white' : level.color,
+                    backgroundColor: selectedLevel === level.id ? level.color : 'transparent'
+                  }}
+                  onClick={() => setSelectedLevel(level.id)}
+                >
+                  {level.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          {/* Workout Categories */}
+          <div className={`rounded-xl p-5 ${isDarkMode ? 'bg-dark-card' : 'bg-white'} shadow-md`}>
+            <h2 className="text-xl font-semibold mb-3">Workout Type</h2>
+            <div className="relative flex items-center">
+              <button className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mr-2 ${isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'} hover:bg-blue-500 hover:text-white transition-colors`}>
+                <FaChevronLeft className="text-sm" />
+              </button>
+              <div className="flex space-x-4 overflow-x-auto py-2 scrollbar-hide">
+                {workoutCategories.map(category => (
+                  <button
+                    key={category.id}
+                    className={`flex flex-col items-center p-3 min-w-[100px] rounded-lg transition-all ${
+                      selectedCategory === category.id
+                        ? isDarkMode 
+                          ? 'bg-gradient-to-r from-gray-800 to-gray-700 text-white'
+                          : 'bg-gradient-to-r from-blue-600 to-blue-500 text-white'
+                        : `${isDarkMode ? 'bg-dark-card2 hover:bg-gray-700' : 'bg-gray-50 hover:bg-gray-100'} shadow`
+                    } shadow-lg transform hover:-translate-y-1`}
+                    onClick={() => handleCategoryChange(category.id)}
+                  >
+                    <div className="text-2xl mb-1">{category.icon}</div>
+                    <span className="text-sm font-medium">{category.label}</span>
+                  </button>
+                ))}
+              </div>
+              <button className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ml-2 ${isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'} hover:bg-blue-500 hover:text-white transition-colors`}>
+                <FaChevronRight className="text-sm" />
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        {/* Active Workout Timer */}
+        {activeWorkout && (
+          <div className="mb-6">
+            <WorkoutTimer 
+              activeWorkout={activeWorkout}
+              workoutTimer={workoutTimer}
+              isTimerRunning={isTimerRunning}
+              onToggleTimer={toggleTimer}
+              onResetTimer={resetTimer}
+              onEndWorkout={() => {
+                setActiveWorkout(null);
+                setWorkoutProgress(0);
+              }}
+            />
+            <div className="mt-3 px-1">
+              <div className="flex justify-between mb-2 text-sm font-medium">
+                <span>Workout Progress</span>
+                <span>{Math.round(workoutProgress)}%</span>
+              </div>
+              <div className={`h-2 w-full rounded-full ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+                <motion.div 
+                  className="h-full rounded-full bg-gradient-to-r from-blue-500 to-blue-400"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${workoutProgress}%` }}
+                  transition={{ duration: 0.5 }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Exercise Grid with Integrated 3D Model */}
+        <motion.div 
+          className={`rounded-xl ${isDarkMode ? 'bg-dark-card' : 'bg-white'} shadow-md overflow-hidden`}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { staggerChildren: 0.1 }
+            }
+          }}
+          initial="hidden"
+          animate="visible"
+        >
+          <h2 className="text-xl font-semibold p-5 border-b border-gray-200 dark:border-gray-700">Available Exercises</h2>
+          
+          <div className="flex flex-col lg:flex-row">
+            {/* Exercise Card - Left side */}
+            <div className="lg:w-1/2 p-5">
+              {workoutData[selectedLevel][selectedCategory]?.length > 0 && (
+                <ExerciseCard 
+                  exercise={workoutData[selectedLevel][selectedCategory][0]}
+                  onExerciseStart={handleExerciseClick}
+                  activeWorkout={activeWorkout}
+                  isDarkMode={isDarkMode}
+                  showModel={false}
+                />
+              )}
+            </div>
+            
+            {/* 3D Model - Right side */}
+            <div className="lg:w-1/2 border-t lg:border-t-0 lg:border-l border-gray-200 dark:border-gray-700">
+              <ModelSection 
+                activeExercise={activeExercise} 
+                selectedCategory={selectedCategory} 
+                isDarkMode={isDarkMode}
+              />
+            </div>
+          </div>
+          
+          {/* Additional Exercises */}
+          {workoutData[selectedLevel][selectedCategory]?.length > 1 && (
+            <div className="border-t border-gray-200 dark:border-gray-700 p-5">
+              <h3 className="text-lg font-medium mb-4">More Exercises</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {workoutData[selectedLevel][selectedCategory]?.slice(1).map(exercise => (
+                  <ExerciseCard 
+                    key={exercise.id}
+                    exercise={exercise}
+                    onExerciseStart={handleExerciseClick}
+                    activeWorkout={activeWorkout}
+                    isDarkMode={isDarkMode}
+                    showModel={false}
+                    compact={true}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+        </motion.div>
       </div>
     </div>
   );
