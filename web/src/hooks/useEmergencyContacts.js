@@ -8,12 +8,10 @@ export function useEmergencyContacts() {
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Initial data loading
   useEffect(() => {
     fetchContacts();
   }, []);
 
-  // Fetch all contacts
   const fetchContacts = async () => {
     try {
       setIsLoading(true);
@@ -27,18 +25,15 @@ export function useEmergencyContacts() {
     }
   };
 
-  // Save contact (create or update)
   const saveContact = async (formData, editingContactId = null) => {
     setIsSaving(true);
     try {
-      // Ensure priority is a number
       const dataToSubmit = {
         ...formData,
         priority: parseInt(formData.priority, 10)
       };
       
       if (editingContactId) {
-        // Update existing contact
         const updatedContact = await fetchWithAuth(
           `${API_ENDPOINTS.EMERGENCY_CONTACTS}/${editingContactId}`,
           {
@@ -51,7 +46,6 @@ export function useEmergencyContacts() {
         ));
         toast.success('Contact updated successfully!');
       } else {
-        // Create new contact
         const newContact = await fetchWithAuth(
           API_ENDPOINTS.EMERGENCY_CONTACTS,
           {
@@ -72,7 +66,6 @@ export function useEmergencyContacts() {
     }
   };
 
-  // Delete a contact
   const deleteContact = async (contactId) => {
     if (!contactId) {
       toast.error('Invalid contact ID');
@@ -97,7 +90,6 @@ export function useEmergencyContacts() {
     }
   };
 
-  // Send emergency alert
   const sendEmergencyAlert = async () => {
     try {
       setIsLoading(true);
@@ -131,7 +123,6 @@ export function useEmergencyContacts() {
     }
   };
 
-  // Send test alert to a specific contact
   const sendTestAlert = async (contactId) => {
     try {
       const response = await fetchWithAuth(
