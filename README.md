@@ -391,7 +391,7 @@ Complete API documentation would be posted soon...
 
 ## 📷 Screenshots
 
-### Web Dashboard
+### Appendix: Screenshots
 
 <div align="center">
   <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 30px;">
@@ -442,6 +442,35 @@ Complete API documentation would be posted soon...
     <div>
       <h4>Profile</h4>
       <img src="./docs/images/profile.PNG" alt="Pollution Map" width="600"/>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 20px;">
+    <div>
+      <h4>Exercise Routines</h4>
+      <img src="./docs/images/exercise-routines.PNG" alt="Device Monitoring" width="600"/>
+    </div>
+    <div>
+      <h4>Wellness Hub (Breathing)</h4>
+      <img src="./docs/images/wellness-hub.PNG" alt="Pollution Map" width="600"/>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 20px;">
+    <div>
+      <h4>Wellness Hub (Meditation)</h4>
+      <img src="./docs/images/meditation.PNG" alt="Device Monitoring" width="600"/>
+    </div>
+    <div>
+      <h4>Wellness Hub (Zen Sounds)</h4>
+      <img src="./docs/images/zen-sounds.PNG" alt="Pollution Map" width="600"/>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 20px;">
+    <div>
+      <h4>Health Metrics Calculator</h4>
+      <img src="./docs/images/health-metrics.PNG" alt="Device Monitoring" width="600"/>
     </div>
   </div>
 </div>
