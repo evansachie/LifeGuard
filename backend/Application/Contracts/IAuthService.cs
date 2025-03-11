@@ -20,7 +20,9 @@ namespace Application.Contracts
 
         Task<Result<string>> ResetPasswordAsync(ResetPasswordRequest request);
 
-        Task<GetUserResponse> GetUserById(string id);
+        Task<GetUserResponse?> GetUserById(string id);
+
+        Task<bool> DeleteUser(string id);
 
     }
 }
