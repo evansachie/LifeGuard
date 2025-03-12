@@ -646,3 +646,75 @@ body {
   justify-content: center;
   gap: 0.5rem;
 }
+
+/* Delete Account Section */
+.delete-account-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.dark .delete-account-section {
+    border-color: #4a5568;
+}
+
+.delete-account-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 1rem;
+}
+
+.dark .delete-account-card {
+    background: #2D2D2D;
+}
+
+.delete-account-content {
+    text-align: center;
+}
+
+.delete-account-content p {
+    margin-bottom: 1.5rem;
+    color: #718096;
+}
+
+.dark .delete-account-content p {
+    color: #a0aec0;
+}
+
+.delete-account-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: #e53e3e;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+    margin: 0 auto;
+}
+
+.delete-account-button:hover {
+    background-color: #c53030;
+}
+
+.delete-account-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Responsive styles for delete account section */
+@media (max-width: 768px) {
+    .delete-account-card {
+        padding: 1rem;
+    }
+
+    .delete-account-button {
+        width: 100%;
+    }
+}
