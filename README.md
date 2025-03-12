@@ -327,7 +327,8 @@ Below is an overview of the core endpoints for the LifeGuard API.
 | POST       | `/api/Account/ResetPassword`         | Reset the user's password using a token              |
 | POST       | `/api/Account/CompleteProfile`       | Submit additional profile details                    |
 | GET        | `/api/Account/{id}`                  | Retrieve basic account information by ID             |
-| GET        | `/api/Account/GetProfile/{id}`       | Retrieve detailed user profile information           |
+| GET        | `/api/Account/GetProfile/{id}`       | Retrieve detailed user profile information   
+| DELETE        | `/api/Account/{id}`       | Delete user profile information by ID             |
 
 ### Photo Endpoints
 
