@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MediatR;
 
-namespace Identity.Features.CompleteProfile
+namespace Identity.Features.Profile.CompleteProfile
 {
     public class CompleteProfileCommandHandler : IRequestHandler<CompleteProfileCommand, Result>
     {
@@ -19,8 +19,8 @@ namespace Identity.Features.CompleteProfile
 
         public CompleteProfileCommandHandler(UserManager<ApplicationUser> userManager)
         {
-            this._userManager = userManager;
-            
+            _userManager = userManager;
+
         }
 
         public async Task<Result> Handle(CompleteProfileCommand request, CancellationToken cancellationtoken)
@@ -33,14 +33,15 @@ namespace Identity.Features.CompleteProfile
 
             }
 
+            user.Age = request.Age;
             user.Gender = request.Gender;
             user.Height = request.Height;
             user.Weight = request.Weight;
             user.PhoneNumber = request.PhoneNumber;
-            user.Bio = request.Bio; 
+            user.Bio = request.Bio;
 
             var result = await _userManager.UpdateAsync(user);
-            if (!result.Succeeded) 
+            if (!result.Succeeded)
             {
                 var errors = string.Join("; ", result.Errors.Select(e => e.Description));
                 return new Result(false, ResultStatusCode.BadRequest, errors);

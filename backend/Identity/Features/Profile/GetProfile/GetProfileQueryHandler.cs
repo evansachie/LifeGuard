@@ -9,20 +9,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Identity.Features.CompleteProfile
+namespace Identity.Features.Profile.GetProfile
 {
     public class GetProfileQueryHandler : IRequestHandler<GetProfileQuery, Result<GetProfileDto>>
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        public GetProfileQueryHandler(UserManager<ApplicationUser> userManager ) 
-        { 
+        public GetProfileQueryHandler(UserManager<ApplicationUser> userManager)
+        {
             _userManager = userManager;
         }
 
         public async Task<Result<GetProfileDto>> Handle(GetProfileQuery query, CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByIdAsync( query.Id );
-            if ( user == null )
+            var user = await _userManager.FindByIdAsync(query.Id);
+            if (user == null)
             {
                 throw new Exception("User does not exist");
             }
@@ -40,8 +40,8 @@ namespace Identity.Features.CompleteProfile
 
             };
 
-            return new Result<GetProfileDto> (true, ResultStatusCode.Success, result, "Successful" );
-               
+            return new Result<GetProfileDto>(true, ResultStatusCode.Success, result, "Successful");
+
 
 
         }

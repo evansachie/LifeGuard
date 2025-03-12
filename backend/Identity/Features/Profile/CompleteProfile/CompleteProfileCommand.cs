@@ -6,13 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Identity.Features.CompleteProfile
+namespace Identity.Features.Profile.CompleteProfile
 {
     public class CompleteProfileCommand : IRequest<Result>
     {
         public string Email { get; set; }
-        
-        public int Age { get; set;}
+
+        public int Age { get; set; }
         public string Gender { get; set; }
         public int Weight { get; set; }
         public int Height { get; set; }

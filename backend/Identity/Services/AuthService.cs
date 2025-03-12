@@ -177,7 +177,7 @@ namespace Identity.Services
                 return new Result<string>(false, ResultStatusCode.NotFound, string.Empty, "User not found or email not confirmed.");
             }
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            Console.WriteLine("token " + token);
+            
 
             var mainResetUrl = Environment.GetEnvironmentVariable("RESET_URL");
             var resetUrl = $"{_frontEndUrl}/reset-password?email={user.Email}&token={WebUtility.UrlEncode(token)}";
@@ -215,13 +215,12 @@ namespace Identity.Services
 
         }
 
-        public async Task<GetUserResponse> GetUserById(string id)
+        public async Task<GetUserResponse?> GetUserById(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-
             if (user == null)
             {
-                throw new Exception("User does not exist.");
+                return null;
             }
 
             return new GetUserResponse
@@ -230,6 +229,20 @@ namespace Identity.Services
                 Email = user.Email
             };
             
+        }
+
+        public async Task<bool> DeleteUser(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return false;
+            }
+
+            var response = await _userManager.DeleteAsync(user);
+
+            return response.Succeeded;
+
         }
     }
 }
