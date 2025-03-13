@@ -177,7 +177,8 @@ const DashboardControls = forwardRef(({
                   checked={localFilters.temperature}
                   onChange={handleFilterOptionChange}
                 />
-                <label htmlFor="temperature">Temperature & Weather</label>
+                {/* add dark mode check */}
+                <div className={`${isDarkMode ? 'text-white' : 'text-black'}`} htmlFor="temperature">Temperature & Weather</div>
               </div>
               <div className="filter-option">
                 <input 
@@ -186,7 +187,7 @@ const DashboardControls = forwardRef(({
                   checked={localFilters.airQuality}
                   onChange={handleFilterOptionChange}
                 />
-                <label htmlFor="airQuality">Air Quality</label>
+                <div className={`${isDarkMode ? 'text-white' : 'text-black'}`} htmlFor="airQuality">Air Quality</div>
               </div>
               <div className="filter-option">
                 <input 
@@ -195,7 +196,7 @@ const DashboardControls = forwardRef(({
                   checked={localFilters.alerts}
                   onChange={handleFilterOptionChange}
                 />
-                <label htmlFor="alerts">Alerts</label>
+                <div className={`${isDarkMode ? 'text-white' : 'text-black'}`} htmlFor="alerts">Alerts</div>
               </div>
               <button className="apply-btn" onClick={applyFilters}>Apply Filters</button>
             </div>
@@ -224,7 +225,7 @@ const DashboardControls = forwardRef(({
                   checked={localSort === 'newest'}
                   onChange={handleSortOptionChange}
                 />
-                <label htmlFor="newest">Newest First</label>
+                <div className={`${isDarkMode ? 'text-white' : 'text-black'}`} htmlFor="newest">Newest First</div>
               </div>
               <div className="sort-option">
                 <input 
@@ -234,7 +235,7 @@ const DashboardControls = forwardRef(({
                   checked={localSort === 'oldest'}
                   onChange={handleSortOptionChange}
                 />
-                <label htmlFor="oldest">Oldest First</label>
+                <div className={`${isDarkMode ? 'text-white' : 'text-black'}`} htmlFor="oldest">Oldest First</div>
               </div>
               <div className="sort-option">
                 <input 
@@ -244,7 +245,7 @@ const DashboardControls = forwardRef(({
                   checked={localSort === 'priority'}
                   onChange={handleSortOptionChange}
                 />
-                <label htmlFor="priority">Priority</label>
+                <div className={`${isDarkMode ? 'text-white' : 'text-black'}`} htmlFor="priority">Priority</div>
               </div>
               <button className="apply-btn" onClick={applySort}>Apply Sort</button>
             </div>

@@ -1,5 +1,4 @@
 import React from 'react';
-import Spinner from '../Spinner/Spinner';
 
 const DashboardHeader = ({ userData, dataLoading }) => {
     const getFirstName = (fullName) => {
