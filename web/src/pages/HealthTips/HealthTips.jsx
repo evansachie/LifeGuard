@@ -10,6 +10,7 @@ import FeaturedHealthTip from '../../components/HealthTips/FeaturedHealthTip';
 import TipsGrid from '../../components/HealthTips/TipsGrid';
 import HealthVideoGrid from '../../components/HealthTips/HealthVideoGrid';
 import Pagination from '../../components/HealthTips/Pagination';
+import { FaSearch } from "react-icons/fa";
 import './HealthTips.css';
 
 const ITEMS_PER_PAGE = 6;
@@ -102,6 +103,7 @@ function HealthTips({ isDarkMode }) {
 
       <section className="controls-section">
         <div className="search-bar">
+          <FaSearch className="search-icon" />
           <input
             type="text"
             placeholder="Search health tips..."

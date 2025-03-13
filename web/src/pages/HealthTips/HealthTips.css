@@ -164,7 +164,6 @@
 }
 
 .search-bar::before {
-  content: '🔍';
   position: absolute;
   left: 1rem;
   top: 50%;
