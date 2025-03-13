@@ -5,7 +5,8 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Identity.Features.ResendOTP;
 using Identity.Features.VerifyOTP;
-using Identity.Features.CompleteProfile;
+using Identity.Features.Profile.GetProfile;
+using Identity.Features.Profile.CompleteProfile;
 
 namespace LifeGuard_API.Controllers
 {
@@ -123,11 +124,15 @@ namespace LifeGuard_API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetUserById(string id)
+        public async Task<ActionResult<GetUserResponse?>> GetUserById(string id)
         {
-            return Ok(await _authService.GetUserById(id));
+            var result = await _authService.GetUserById(id);
 
-            
+            if (result == null)
+            {
+                return NotFound("User Cannot be Found");
+            }
+            return Ok(await _authService.GetUserById(id));
         }
 
         [HttpPost("CompleteProfile")]
@@ -154,6 +159,18 @@ namespace LifeGuard_API.Controllers
                 return Ok(result);
             }
             return StatusCode((int)result.StatusCode, result);
+        }
+
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteUser(string id)
+        {
+            var result = await _authService.DeleteUser(id);
+            if (!result)
+            {
+                return NotFound("User not found");
+            }
+            return NoContent();
         }
     }
 }

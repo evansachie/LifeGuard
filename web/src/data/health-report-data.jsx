@@ -1,3 +1,7 @@
+import { FaTemperatureHigh, FaTint, FaWalking, FaChartLine, } from 'react-icons/fa';
+import { WiBarometer } from 'react-icons/wi';
+import { MdAir } from 'react-icons/md';
+
 export const generateHealthReport = (userData) => ({
   userInfo: {
     name: userData?.userName || 'Test User',
@@ -73,3 +77,19 @@ export const generateHealthReport = (userData) => ({
     "Keep up with the consistent sleep schedule"
   ]
 }); 
+
+export const healthData = {
+    stats: [
+      { icon: FaTemperatureHigh, label: 'Temperature', value: '30°C', color: '#FF6B6B' },
+      { icon: FaTint, label: 'Humidity', value: '58.8%', color: '#4A90E2' },
+      { icon: WiBarometer, label: 'Pressure', value: '1013 hPa', color: '#9B51E0' },
+      { icon: FaWalking, label: 'Steps', value: '1.2K', color: '#F5A623' },
+      { icon: MdAir, label: 'Air Quality', value: '75 AQI', color: '#2ECC71' },
+      { icon: FaChartLine, label: 'Activity', value: '+15%', color: '#1ABC9C' }
+    ],
+    reports: [
+      { id: 1, date: 'Jul 10, 2023', type: 'General Health Report', status: 'Normal' },
+      { id: 2, date: 'Jul 5, 2023', type: 'Air Quality Report', status: 'Warning' },
+      { id: 3, date: 'Jul 1, 2023', type: 'Activity Report', status: 'Normal' }
+    ]
+  };

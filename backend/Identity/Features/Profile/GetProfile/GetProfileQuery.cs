@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Identity.Features.CompleteProfile
+namespace Identity.Features.Profile.GetProfile
 {
     public class GetProfileQuery : IRequest<Result<GetProfileDto>>
     {

@@ -3,18 +3,21 @@ import { motion } from 'framer-motion';
 import { FaUser, FaEnvelope, FaPhone, FaUserEdit, FaSave, FaTimesCircle, FaCamera, FaPlus, FaUserPlus, FaTrash } from 'react-icons/fa';
 import { FaPerson } from "react-icons/fa6";
 import { toast } from 'react-toastify';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Profile.css';
 import { API_ENDPOINTS, fetchWithAuth } from '../../utils/api';
 import { uploadToCloudinary } from '../../utils/cloudinary';
 import Spinner from '../../components/Spinner/Spinner';
+import DeleteConfirmationModal from '../../components/DeleteConfirmationModal/DeleteConfirmationModal';
 
 function Profile({ isDarkMode }) {
+    const navigate = useNavigate();
     const [editMode, setEditMode] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [profileLoading, setProfileLoading] = useState(true);
     const [contactsLoading, setContactsLoading] = useState(true);
     const [imageLoading, setImageLoading] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [profileData, setProfileData] = useState({
         fullName: '',
         email: '',
@@ -141,10 +144,6 @@ function Profile({ isDarkMode }) {
             ...prev,
             [name]: value
         }));
-    };
-
-    const handleImageClick = () => {
-        fileInputRef.current?.click();
     };
 
     const handleImageChange = async (e) => {
@@ -277,6 +276,31 @@ function Profile({ isDarkMode }) {
             console.error('Error updating profile:', error);
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleDeleteAccount = () => {
+        setIsDeleteModalOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        try {
+            setIsLoading(true);
+            const userId = localStorage.getItem('userId');
+            await fetchWithAuth(API_ENDPOINTS.DELETE_USER(userId), {
+                method: 'DELETE'
+            });
+            
+            // Clear local storage and redirect to home
+            localStorage.clear();
+            toast.success('Account deleted successfully');
+            navigate('/');
+        } catch (error) {
+            toast.error(error.message || 'Failed to delete account');
+            console.error('Error deleting account:', error);
+        } finally {
+            setIsLoading(false);
+            setIsDeleteModalOpen(false);
         }
     };
 
@@ -544,7 +568,40 @@ function Profile({ isDarkMode }) {
                         )}
                     </div>
                 </div>
+
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="delete-account-section"
+                >
+                    <div className="section-header">
+                        <h2 className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Delete Account</h2>
+                    </div>
+                    <div className="delete-account-card">
+                        <div className="delete-account-content">
+                            <p>Once you delete your account, there is no going back. Please be certain.</p>
+                            <button 
+                                className="delete-account-button"
+                                onClick={handleDeleteAccount}
+                                disabled={isLoading}
+                            >
+                                <FaTrash /> {isLoading ? 'Deleting...' : 'Delete Account'}
+                            </button>
+                        </div>
+                    </div>
+                </motion.div>
+
             </div>
+            <DeleteConfirmationModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={handleConfirmDelete}
+                title="Delete Account"
+                message="Are you sure you want to delete your account? This action cannot be undone."
+                isLoading={isLoading}
+                isDarkMode={isDarkMode}
+            />
         </div>
     );
 }

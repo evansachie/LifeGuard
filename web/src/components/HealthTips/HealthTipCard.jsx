@@ -1,22 +1,39 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import PropTypes from 'prop-types';
 import './HealthTipCard.css';
+import Spinner from '../Spinner/Spinner';
 
 const HealthTipCard = ({ tip, onReadMore, isDarkMode }) => {
+  const [imageError, setImageError] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  
+  const defaultImage = 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800';
+
   const categoryLabel = tip.category.charAt(0).toUpperCase() + tip.category.slice(1);
 
-  const handleImageError = (e) => {
-    e.target.src = 'https://placehold.co/600x400';
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
   };
 
   return (
     <div className={`health-tip-card ${isDarkMode ? 'dark-mode' : ''}`}>
       <div className="tip-image-container">
+        {!imageLoaded && (
+          <div className="image-placeholder spinner-container">
+            <Spinner color='#fff'/>
+          </div>
+        )}
         <img
-          src={tip.imageUrl}
+          src={imageError ? defaultImage : tip.imageUrl}
           alt={tip.imageAlt || tip.title}
           className="tip-image"
           onError={handleImageError}
+          onLoad={handleImageLoad}
+          style={{ display: imageLoaded ? 'block' : 'none' }}
         />
         <span className={`tip-category ${tip.category}`}>
           {categoryLabel}

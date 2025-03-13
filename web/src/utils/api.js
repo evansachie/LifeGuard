@@ -15,9 +15,10 @@ export const API_ENDPOINTS = {
     
     GET_USER: (id) => `/Account/${id}`,
     GET_PROFILE: (id) => `/Account/GetProfile/${id}`,
+    GET_PHOTO: (id) => `${BASE_URL}/${id}/photo`,
     UPLOAD_PHOTO: (id) => `${BASE_URL}/${id}/photo`,
     DELETE_PHOTO: (id) => `${BASE_URL}/${id}/photo`,
-    GET_PHOTO: (id) => `${BASE_URL}/${id}/photo`,
+    DELETE_USER: (id) => `/Account/${id}`,
 
     MEMOS: `${NODE_API_URL}/api/memos`,
     EMERGENCY_CONTACTS: `${NODE_API_URL}/api/emergency-contacts`,
