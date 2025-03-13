@@ -1,3 +1,7 @@
+import { FaTemperatureHigh, FaTint, FaWalking, FaChartLine, } from 'react-icons/fa';
+import { WiBarometer } from 'react-icons/wi';
+import { MdAir } from 'react-icons/md';
+
 export const generateHealthReport = (userData) => ({
   userInfo: {
     name: userData?.userName || 'Test User',
