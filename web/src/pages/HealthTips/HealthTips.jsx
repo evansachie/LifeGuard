@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { fetchHealthTips } from '../../services/healthTipsService';
-import { localHealthTips } from '../../data/healthTipsData';
+import { localHealthTips } from '../../data/health-tips-data';
 import { featuredVideos } from '../../data/featured-videos-data';
 import { containerVariants, itemVariants } from '../../utils/animationVariants';
-import { categories } from '../../components/HealthTips/Categories';
+import { categories } from '../../data/health-tips-categories';
 import HealthTipModal from '../../components/HealthTipModal/HealthTipModal';
 import HealthTipsFilter from '../../components/HealthTips/HealthTipsFilter';
 import FeaturedHealthTip from '../../components/HealthTips/FeaturedHealthTip';
