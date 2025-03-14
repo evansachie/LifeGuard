@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import signupIllustration from "../../../assets/auth/signupIllustration.svg";
 import signupIllustration2 from "../../../assets/auth/signupIllustration2.svg";
 import signupIllustration3 from "../../../assets/auth/signupIllustration3.svg";
-import Button from "../../../components/button/button";
+import Button from "../../../components/Buttons/button";
 import ImageSlider from "../../../components/ImageSlider/ImageSlider";
 import { registerUser } from "../../../utils/auth";
 import { validateSignUpForm } from "../../../utils/validateForm";
