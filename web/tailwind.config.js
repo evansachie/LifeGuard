@@ -17,6 +17,8 @@ module.exports = {
         'high-pollution': '#FF4444',
         'medium-pollution': '#FFB344',
         'low-pollution': '#4CAF50',
+        'light-dark': '#1C1C1C',
+        'inner-dark': '#2C2C2C'
       }
     },
   },

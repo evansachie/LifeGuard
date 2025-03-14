@@ -1,85 +1,160 @@
-import * as React from "react";
-import { Link } from 'react-router-dom';
-import './PrivacyPolicy.css';
-import {ArrowLeft} from "lucide-react";
+import React from "react";
+import { motion } from 'framer-motion';
+import { FaShieldAlt, FaUserShield, FaDatabase, FaLock, FaShareAlt, FaUserCog, FaHistory, FaEnvelope } from 'react-icons/fa';
+import { BackButton } from "../../components/Buttons/backButton";
 
 const PrivacyPolicy = ({ isDarkMode }) => {
     return (
-        <div className={`privacy-policy-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
-            <div className="privacy-policy-header">
-                <Link to="/settings" className="back-link">
-                    <ArrowLeft size={20} className="back-icon" />
-                    <i className="fas fa-arrow-left"></i> Back to Settings
-                </Link>
-                <h1>Privacy Policy</h1>
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`min-h-screen p-6 md:p-12 ${
+                isDarkMode 
+                    ? 'dark-mode bg-gradient-to-br from-gray-900 to-gray-800' 
+                    : 'bg-gradient-to-br from-gray-50 to-white text-gray-900'
+            }`}
+        >
+            <div className="max-w-4xl mx-auto">
+                <BackButton text="Back to Settings" to="/settings" isDarkMode={isDarkMode} />
+
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className={`p-8 rounded-xl shadow-lg backdrop-blur-sm ${
+                        isDarkMode 
+                            ? 'bg-[#2D2D2D]/90 hover:bg-[#2D2D2D]/95' 
+                            : 'bg-white/90 hover:bg-white/95'
+                    } transition-all duration-300`}
+                >
+                    <div className="flex items-center gap-3 mb-8">
+                        <FaShieldAlt className="text-3xl text-blue-500" />
+                        <h1 className="text-3xl font-bold">Privacy Policy</h1>
+                    </div>
+
+                    <div className="space-y-8">
+                        {/* Privacy sections with icons */}
+                        <Section 
+                            icon={<FaUserShield />} 
+                            title="Our Commitment to Privacy"
+                            isDarkMode={isDarkMode}
+                        >
+                            <p>Your privacy is important to us. This Privacy Policy outlines how we collect, use, and protect your personal information when you use our application.</p>
+                        </Section>
+
+                        <Section 
+                            icon={<FaDatabase />} 
+                            title="Information We Collect"
+                            isDarkMode={isDarkMode}
+                        >
+                            <ul className="list-disc pl-6 space-y-2">
+                                <li><strong>Personal Information:</strong> Name, email, profile picture</li>
+                                <li><strong>Health Data:</strong> Activity tracking, health metrics</li>
+                                <li><strong>Environmental Data:</strong> Air quality readings</li>
+                                <li><strong>Usage Information:</strong> App interactions, preferences</li>
+                            </ul>
+                        </Section>
+
+                        <Section 
+                            icon={<FaLock />} 
+                            title="How We Protect Your Information"
+                            isDarkMode={isDarkMode}
+                        >
+                            <p>We implement industry-standard security measures including:</p>
+                            <ul className="list-disc pl-6 space-y-2 mt-2">
+                                <li>End-to-end encryption</li>
+                                <li>Secure data storage</li>
+                                <li>Regular security audits</li>
+                                <li>Access controls</li>
+                            </ul>
+                        </Section>
+
+                        <Section 
+                            icon={<FaShareAlt />} 
+                            title="Information Sharing"
+                            isDarkMode={isDarkMode}
+                        >
+                            <p>We do not sell your personal information. We only share data with:</p>
+                            <ul className="list-disc pl-6 space-y-2 mt-2">
+                                <li>Service providers who assist in delivering our services</li>
+                                <li>Legal authorities when required by law</li>
+                            </ul>
+                        </Section>
+
+                        <Section 
+                            icon={<FaUserCog />} 
+                            title="Your Choices"
+                            isDarkMode={isDarkMode}
+                        >
+                            <ul className="list-disc pl-6 space-y-2">
+                                <li>Access and update your information</li>
+                                <li>Request data deletion</li>
+                                <li>Opt-out of communications</li>
+                                <li>Control app permissions</li>
+                            </ul>
+                        </Section>
+
+                        <Section 
+                            icon={<FaHistory />} 
+                            title="Policy Updates"
+                            isDarkMode={isDarkMode}
+                        >
+                            <p>We may update this policy periodically. We will notify you of significant changes via email or app notification.</p>
+                        </Section>
+
+                        <Section 
+                            icon={<FaEnvelope />} 
+                            title="Contact Us"
+                            isDarkMode={isDarkMode}
+                        >
+                            <p className="mb-2">For privacy-related inquiries, contact us at:</p>
+                            <div className="space-y-1">
+                                <a href="mailto:evansachie0101@gmail.com" 
+                                   className="block text-blue-500 hover:underline">
+                                    evansachie0101@gmail.com
+                                </a>
+                                <a href="mailto:michaeladugyamfi76@gmail.com" 
+                                   className="block text-blue-500 hover:underline">
+                                    michaeladugyamfi76@gmail.com
+                                </a>
+                            </div>
+                        </Section>
+                    </div>
+
+                    <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                            Last updated: {new Date().toLocaleDateString()}
+                        </p>
+                    </div>
+                </motion.div>
             </div>
-
-            <div className="privacy-policy-content">
-            <h2><strong>Our Commitment to Privacy</strong></h2>
-            <p>
-                Your privacy is important to us. This Privacy Policy outlines how we collect, use, and protect your personal information when you use our application. By using our services, you agree to the practices described in this policy.
-            </p>
-
-            <h2><strong>Information We Collect</strong></h2>
-            <p>
-                We collect the following types of information to provide and improve our services:
-            </p>
-            <ul>
-                <li><strong>Personal Information:</strong> Information you provide, such as your name, email address, and profile picture, when creating an account.</li>
-                <li><strong>Health and Activity Data:</strong> Information you input into health trackers, notes, or other features.</li>
-                <li><strong>Environmental Data:</strong> Data collected through sensors or external integrations for air quality and pollution tracking.</li>
-                <li><strong>Usage Data:</strong> Information about how you interact with our application, including pages visited, features used, and time spent on the platform.</li>
-            </ul>
-
-            <h2><strong>How We Use Your Information</strong></h2>
-            <p>
-                We use your information to:
-            </p>
-            <ul>
-                <li>Provide and personalize the services you use.</li>
-                <li>Improve our application's performance and user experience.</li>
-                <li>Send important updates, notifications, or reminders.</li>
-                <li>Maintain the security of your account and data.</li>
-            </ul>
-
-            <h2><strong>How We Protect Your Information</strong></h2>
-            <p>
-                We implement robust security measures to protect your personal information, including encryption, secure storage, and restricted access. However, no system can be completely secure, and we encourage you to safeguard your account credentials.
-            </p>
-
-            <h2><strong>Sharing Your Information</strong></h2>
-            <p>
-                We do not sell or share your personal information with third parties, except in the following cases:
-            </p>
-            <ul>
-                <li>To comply with legal requirements or protect our rights.</li>
-                <li>To trusted service providers who assist in delivering our services (e.g., hosting, analytics).</li>
-            </ul>
-
-            <h2><strong>Your Choices</strong></h2>
-            <p>
-                You have control over your data. You can:
-            </p>
-            <ul>
-                <li>Access and update your account information.</li>
-                <li>Request the deletion of your personal data.</li>
-                <li>Opt-out of receiving promotional communications.</li>
-            </ul>
-
-            <h2><strong>Changes to This Policy</strong></h2>
-            <p>
-                We may update this Privacy Policy from time to time to reflect changes in our practices or for legal reasons. We will notify you of any significant updates through our application or via email.
-            </p>
-
-            <h2><strong>Contact Us</strong></h2>
-            <p>
-                If you have any questions or concerns about this Privacy Policy or how your information is handled, please contact us at <strong>evansachie0101@gmail.com</strong>
-                or <strong>michaeladugyamfi76@gmail.com</strong>.
-            </p>
-        </div>
-
-        </div>
+        </motion.div>
     );
 };
+
+const Section = ({ icon, title, children, isDarkMode }) => (
+    <motion.section
+        whileHover={{ x: 5 }}
+        className={`p-6 rounded-lg ${
+            isDarkMode 
+                ? 'bg-[#3C3C3C]/50 hover:bg-[#3C3C3C]/70' 
+                : 'bg-gray-50 hover:bg-gray-100/80'
+        } transition-all duration-200`}
+    >
+        <div className="flex items-center gap-3 mb-4">
+            <span className={`text-2xl ${
+                isDarkMode ? 'text-blue-400' : 'text-blue-500'
+            }`}>
+                {icon}
+            </span>
+            <h2 className="text-xl font-semibold">{title}</h2>
+        </div>
+        <div className={`ml-9 ${
+            isDarkMode ? 'text-gray-300' : 'text-gray-600'
+        }`}>
+            {children}
+        </div>
+    </motion.section>
+);
 
 export default PrivacyPolicy;
