@@ -16,7 +16,11 @@ const TermsOfUse = ({ isDarkMode }) => {
       }`}
     >
       <div className="max-w-4xl mx-auto">
-        <BackButton text="Back to Settings" to="/settings" />
+        <BackButton 
+          text="Back to Settings" 
+          to="/settings" 
+          isDarkMode={isDarkMode} 
+        />
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}

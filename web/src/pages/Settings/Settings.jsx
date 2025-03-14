@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaMoon, FaSun, FaBell, FaUser, FaEnvelope, FaRuler } from 'react-icons/fa';
+import { FaMoon, FaSun, FaBell, FaUser, FaEnvelope, FaRuler, FaShieldAlt, FaFileContract, FaChevronRight } from 'react-icons/fa';
+import { CiSettings } from "react-icons/ci";
 import { IoMdNotifications, IoMdNotificationsOff } from 'react-icons/io';
 import { toast } from 'react-toastify';
 import { fetchWithAuth, API_ENDPOINTS } from '../../utils/api';
@@ -44,7 +46,6 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
 
   const handleThemeToggle = () => {
     toggleDarkMode();
-    // Save theme preference to localStorage
     localStorage.setItem('theme', !isDarkMode ? 'dark' : 'light');
     toast.success(`Switched to ${!isDarkMode ? 'dark' : 'light'} mode`);
   };
@@ -111,6 +112,7 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-4 mb-12"
         >
+          <CiSettings size={42}/>
           <h1 className={`text-4xl font-bold ${
             isDarkMode ? 'text-white' : 'text-gray-800'
           }`}>Settings</h1>
@@ -128,7 +130,10 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
                 Dark Mode
               </span>
             </div>
-            <ToggleSwitch enabled={isDarkMode} onChange={handleThemeToggle} />
+            <ToggleSwitch 
+              enabled={isDarkMode} 
+              onChange={handleThemeToggle}
+            />
           </div>
         </SettingSection>
 
@@ -240,6 +245,36 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
                 />
               </div>
             ))}
+          </div>
+        </SettingSection>
+
+        {/* Legal & Privacy */}
+        <SettingSection title="Legal & Privacy">
+          <div className="space-y-4">
+            <Link
+              to="/privacy-policy"
+              className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100/5 transition-colors"
+            >
+              <div className="flex items-center gap-4">
+                <FaShieldAlt className="text-2xl text-blue-500" />
+                <span className={`text-lg ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                  Privacy Policy
+                </span>
+              </div>
+              <FaChevronRight className={isDarkMode ? 'text-gray-400' : 'text-gray-600'} />
+            </Link>
+            <Link
+              to="/terms-of-use"
+              className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100/5 transition-colors"
+            >
+              <div className="flex items-center gap-4">
+                <FaFileContract className="text-2xl text-green-500" />
+                <span className={`text-lg ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                  Terms of Service
+                </span>
+              </div>
+              <FaChevronRight className={isDarkMode ? 'text-gray-400' : 'text-gray-600'} />
+            </Link>
           </div>
         </SettingSection>
       </div>
