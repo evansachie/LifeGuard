@@ -31,7 +31,7 @@ import Profile from "../pages/Profile/Profile";
 import Settings from "../pages/Settings/Settings";
 import Help from '../pages/Help/Help';
 
-import TermsOfUse from '../pages/TermsOfUse/TermsOfUse';
+import TermsOfUse from '../pages/Terms/TermsOfUse';
 import PrivacyPolicy from '../pages/PrivacyPolicy/PrivacyPolicy';
 import NotFound from '../pages/NotFound/NotFound';
 
