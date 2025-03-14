@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import Button from '../../../components/button/button';
+import Button from '../../../components/Buttons/button';
 import resetPasswordIllustration from '../../../assets/auth/reset-password.svg';
 import { resetUserPassword } from '../../../utils/auth';
 import { validatePassword } from '../../../utils/validatePassword';

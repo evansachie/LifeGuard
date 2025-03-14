@@ -2,7 +2,7 @@ import * as React from "react";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import Button from '../../../components/button/button';
+import Button from '../../../components/Buttons/button';
 import loginIllustration from "../../../assets/auth/loginIllustration.svg";
 import loginIllustration2 from "../../../assets/auth/loginIllustration2.svg";
 import loginIllustration3 from "../../../assets/auth/loginIllustration3.svg";

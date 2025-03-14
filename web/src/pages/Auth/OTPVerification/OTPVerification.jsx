@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import Button from '../../../components/button/button';
+import Button from '../../../components/Buttons/button';
 import otpIllustration from '../../../assets/auth/otp.svg';
 import { verifyOTP, resendOTP } from '../../../utils/auth';
 import OTPInput from '../../../components/OTPInput/OTPInput';
