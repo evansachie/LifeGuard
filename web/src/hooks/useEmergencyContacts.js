@@ -7,9 +7,12 @@ export function useEmergencyContacts() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [emergencyContacts, setEmergencyContacts] = useState([]);
+  const [contactsLoading, setContactsLoading] = useState(true);
 
   useEffect(() => {
     fetchContacts();
+    fetchEmergencyContacts();
   }, []);
 
   const fetchContacts = async () => {
@@ -22,6 +25,18 @@ export function useEmergencyContacts() {
       toast.error('Failed to fetch contacts');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchEmergencyContacts = async () => {
+    try {
+      setContactsLoading(true);
+      const data = await fetchWithAuth(API_ENDPOINTS.EMERGENCY_CONTACTS);
+      setEmergencyContacts(data);
+    } catch (error) {
+      console.error('Error fetching emergency contacts:', error);
+    } finally {
+      setContactsLoading(false);
     }
   };
 
@@ -153,6 +168,8 @@ export function useEmergencyContacts() {
     saveContact,
     deleteContact,
     sendEmergencyAlert,
-    sendTestAlert
+    sendTestAlert,
+    emergencyContacts,
+    contactsLoading
   };
 }

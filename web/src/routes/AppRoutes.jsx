@@ -25,7 +25,7 @@ import HealthTips from "../pages/HealthTips/HealthTips";
 import ExerciseRoutines from "../pages/ExerciseRoutines/ExerciseRoutines";
 import WellnessHub from "../pages/WellnessHub/WellnessHub";
 import EmergencyContacts from "../pages/EmergencyContacts/EmergencyContacts";
-import HealthMetrics from "../pages/Calories/HealthMetrics";
+import HealthMetrics from "../pages/HealthMetrics/HealthMetrics";
 
 import Profile from "../pages/Profile/Profile";
 import Settings from "../pages/Settings/Settings";
