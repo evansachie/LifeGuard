@@ -93,28 +93,6 @@ function PersonalInformationForm({
                             rows={4}
                         />
                     </div>
-                    
-                    {/* Physical Information Section will be included by parent component */}
-                    
-                    {editMode && (
-                        <div className="form-actions">
-                            <button 
-                                type="submit" 
-                                className="save-button"
-                                disabled={isLoading}
-                            >
-                                {isLoading ? 'Saving...' : <><FaSave /> Save Changes</>}
-                            </button>
-                            <button 
-                                type="button" 
-                                className="cancel-button"
-                                onClick={() => setEditMode(false)}
-                                disabled={isLoading}
-                            >
-                                <FaTimesCircle /> Cancel
-                            </button>
-                        </div>
-                    )}
                 </form>
             )}
         </div>
