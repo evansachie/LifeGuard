@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaPlay, FaPause, FaVolumeUp, FaMusic, FaSpinner } from 'react-icons/fa';
-import { searchSounds } from '../../services/freesoundService';
+import { searchSounds, getProxiedAudioUrl } from '../../services/freesoundService';
 
 const SoundsSection = ({ 
     isDarkMode, 
@@ -53,9 +53,10 @@ const SoundsSection = ({
                     setIsPlaying(true);
                 }
             } else {
-                audioRef.current.src = sound.previews['preview-hq-mp3'];
-                audioRef.current.load();
                 try {
+                    const proxiedUrl = await getProxiedAudioUrl(sound.previews['preview-hq-mp3']);
+                    audioRef.current.src = proxiedUrl;
+                    audioRef.current.load();
                     await audioRef.current.play();
                     setCurrentSound(sound.name);
                     setIsPlaying(true);
