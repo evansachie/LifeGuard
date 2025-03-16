@@ -7,6 +7,7 @@ import 'intro.js/introjs.css';
 
 import { AuthProvider } from './contexts/AuthContext';
 import { BLEProvider } from './contexts/BLEContext';
+import { AudioContextProvider } from './contexts/AudioContext';
 
 import AppRoutes from './routes/AppRoutes';
 import { useTheme } from './hooks/useTheme';
@@ -18,14 +19,16 @@ function App() {
 
   return (
     <Router>
-      <BLEProvider>
-        <AuthProvider>
-          <div className={isDarkMode ? 'dark-mode' : ''}>
-            <ToastContainer position="top-right" theme={isDarkMode ? 'dark' : 'light'} />
-            <AppRoutes isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
-          </div>
-        </AuthProvider>
-      </BLEProvider>
+      <AudioContextProvider>
+        <BLEProvider>
+          <AuthProvider>
+            <div className={isDarkMode ? 'dark-mode' : ''}>
+              <ToastContainer position="top-right" theme={isDarkMode ? 'dark' : 'light'} />
+              <AppRoutes isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
+            </div>
+          </AuthProvider>
+        </BLEProvider>
+      </AudioContextProvider>
     </Router>
   );
 }
