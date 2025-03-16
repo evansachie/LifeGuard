@@ -89,6 +89,7 @@
     padding: 2rem;
     border-radius: 1.5rem;
     transition: all 0.3s ease;
+    animation: float 6s ease-in-out infinite;
 }
 
 .dark .pattern-card {
@@ -165,6 +166,12 @@
 .timer-display {
     text-align: center;
     margin: 2rem 0;
+    position: relative;
+    overflow: hidden;
+    padding: 2rem;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
 }
 
 .time {
@@ -172,6 +179,11 @@
     font-weight: 700;
     margin-bottom: 1rem;
     color: #1a202c;
+    background: linear-gradient(45deg, #3182ce, #805ad5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 6rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .dark .time {
@@ -274,6 +286,20 @@
     background-position: center;
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    filter: grayscale(0.3);
+    transition: all 0.3s ease;
+}
+
+.sound-card:hover {
+    transform: rotateX(10deg) rotateY(10deg);
+    filter: grayscale(0);
+}
+
+.sound-card.playing {
+    filter: grayscale(0);
+    border: 2px solid #3182ce;
 }
 
 .sound-overlay {
@@ -285,6 +311,11 @@
         rgba(0, 0, 0, 0.7)
     );
     transition: all 0.3s ease;
+    background: radial-gradient(
+        circle at center,
+        rgba(0, 0, 0, 0.2),
+        rgba(0, 0, 0, 0.7)
+    );
 }
 
 .sound-card:hover .sound-overlay {
@@ -514,4 +545,58 @@
 /* Add transition for theme changes */
 .wellness-hub {
     transition: background-color 0.3s ease, color 0.3s ease;
-} 
+}
+
+/* Enhanced Animations */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+.pattern-card:nth-child(2) {
+    animation-delay: 1s;
+}
+
+.pattern-card:nth-child(3) {
+    animation-delay: 2s;
+}
+
+/* Glass Morphism Effects */
+.nav-button, .pattern-card, .sound-card, .meditation-presets button {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+.dark .nav-button, 
+.dark .pattern-card, 
+.dark .sound-card, 
+.dark .meditation-presets button {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Loading Spinner */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    gap: 1rem;
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+    font-size: 2rem;
+    color: #3182ce;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Add more styles as needed */

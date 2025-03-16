@@ -7,6 +7,8 @@ import MeditationSection from '../../components/WellnessHub/MeditationSection';
 import SoundsSection from '../../components/WellnessHub/SoundsSection';
 import soundsData from '../../data/sound-data.json';
 import './WellnessHub.css';
+import ParticleBackground from '../../components/WellnessHub/ParticleBackground';
+import AudioVisualizer from '../../components/WellnessHub/AudioVisualizer';
 
 const WellnessHub = ({ isDarkMode }) => {
     const [activeSection, setActiveSection] = useState(() => {
@@ -40,6 +42,7 @@ const WellnessHub = ({ isDarkMode }) => {
 
     return (
         <div className={`wellness-hub ${isDarkMode ? 'dark' : ''}`}>
+            <ParticleBackground isDarkMode={isDarkMode} />
             <SectionNavigation 
                 activeSection={activeSection} 
                 handleSectionChange={handleSectionChange} 
@@ -70,17 +73,22 @@ const WellnessHub = ({ isDarkMode }) => {
                 </AnimatePresence>
             </div>
 
-            {currentSound && activeSection !== 'sounds' && (
-                <MiniPlayer 
-                    sound={soundsData.find(s => s.title === currentSound)}
-                    isPlaying={isPlaying}
-                    onPlayPause={() => setIsPlaying(!isPlaying)}
-                    onClose={() => {
-                        audioRef.current.pause();
-                        setCurrentSound(null);
-                        setIsPlaying(false);
-                    }}
-                />
+            {currentSound && (
+                <>
+                    <AudioVisualizer audioRef={audioRef} isDarkMode={isDarkMode} />
+                    {activeSection !== 'sounds' && (
+                        <MiniPlayer 
+                            sound={soundsData.find(s => s.title === currentSound)}
+                            isPlaying={isPlaying}
+                            onPlayPause={() => setIsPlaying(!isPlaying)}
+                            onClose={() => {
+                                audioRef.current.pause();
+                                setCurrentSound(null);
+                                setIsPlaying(false);
+                            }}
+                        />
+                    )}
+                </>
             )}
             <audio ref={audioRef} loop preload="auto" />
         </div>
