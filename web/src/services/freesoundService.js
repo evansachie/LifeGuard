@@ -4,17 +4,31 @@ const PROXY_URL = 'https://lifeguard-node.onrender.com/api/freesound';  // Produ
 // const PROXY_URL = 'http://localhost:5001/api/freesound';  // Development URL
 
 const categories = {
-    nature: 'nature',
-    ambience: 'ambience',
-    meditation: 'meditation bells',
-    water: 'water',
-    birds: 'birds'
+    nature: 'peaceful nature sounds relaxing',
+    meditation: 'tibetan bowls meditation',
+    rain: 'gentle rain ambient',
+    ocean: 'calming ocean waves',
+    forest: 'peaceful forest ambience',
+    space: 'deep space ambient',
+    bowls: 'crystal singing bowls healing',
+    binaural: 'binaural beats meditation',
+    flute: 'native american flute'
 };
 
-export const searchSounds = async (category, page = 1) => {
+export const searchSounds = async (category, page = 1, filters = {}) => {
     try {
+        const { duration, rating, tags } = filters;
+        let query = categories[category];
+        
+        if (tags) {
+            query += ` ${tags}`;
+        }
+
+        const durationFilter = duration ? `&filter=duration:[${duration[0]} TO ${duration[1]}]` : '';
+        const ratingFilter = rating ? `&filter=avg_rating:[${rating} TO 5]` : '';
+
         const response = await fetch(
-            `${BASE_URL}/search/text/?query=${categories[category]}&filter=duration:[1 TO 180]&fields=id,name,username,previews,images,duration,description&page_size=12&page=${page}&token=${API_KEY}`
+            `${BASE_URL}/search/text/?query=${query}${durationFilter}${ratingFilter}&fields=id,name,username,previews,images,duration,description,avg_rating,tags&page_size=12&page=${page}&token=${API_KEY}`
         );
         
         if (!response.ok) throw new Error('Failed to fetch sounds');
