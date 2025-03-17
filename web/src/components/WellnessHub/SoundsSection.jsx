@@ -1,38 +1,36 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaPlay, FaPause, FaVolumeUp, FaMusic, FaSpinner, FaStar } from 'react-icons/fa';
+import { FaPlay, FaPause, FaVolumeUp, FaMusic, FaSpinner, FaStar, FaTree, FaYinYang, FaCloudRain, FaWater, FaLeaf, FaSpaceShuttle, FaBell, FaGuitar, FaKeyboard, FaExpand, FaCompress } from 'react-icons/fa';
+import { LuBrainCircuit } from "react-icons/lu";
 import { searchSounds, getProxiedAudioUrl } from '../../services/freesoundService';
 import SoundFilters from './SoundFilters';
 import { debounce } from 'lodash';
 import categoryBackgrounds from './SoundBackgrounds';
+import KeyboardShortcuts from './KeyboardShortcuts';
+import { useAudioPlayer } from '../../contexts/AudioPlayerContext';
 
-const SoundsSection = ({ 
-    isDarkMode, 
-    currentSound, 
-    setCurrentSound, 
-    isPlaying, 
-    setIsPlaying, 
-    volume, 
-    setVolume,
-    audioRef 
-}) => {
+const SoundsSection = ({ isDarkMode }) => {
+    const { currentSound, setCurrentSound, isPlaying, setIsPlaying, volume, setVolume, audioRef } = useAudioPlayer();
     const [sounds, setSounds] = useState([]);
     const [loading, setLoading] = useState(false);
     const [activeCategory, setActiveCategory] = useState('nature');
     const [page, setPage] = useState(1);
     const [filters, setFilters] = useState({});
     const [hasMore, setHasMore] = useState(true);
+    const [showShortcuts, setShowShortcuts] = useState(false);
+    const [prevVolume, setPrevVolume] = useState(null);
+    const [isFullscreen, setIsFullscreen] = useState(false);
 
     const categories = {
-        nature: 'Forest & Nature',
-        meditation: 'Tibetan Bowls',
-        rain: 'Gentle Rain',
-        ocean: 'Ocean Waves',
-        forest: 'Forest Ambience',
-        space: 'Space Ambience',
-        bowls: 'Crystal Bowls',
-        binaural: 'Binaural Beats',
-        flute: 'Native Flute'
+        nature: { label: 'Forest & Nature', icon: <FaTree /> },
+        meditation: { label: 'Tibetan Bowls', icon: <FaYinYang /> },
+        rain: { label: 'Gentle Rain', icon: <FaCloudRain /> },
+        ocean: { label: 'Ocean Waves', icon: <FaWater /> },
+        forest: { label: 'Forest Ambience', icon: <FaLeaf /> },
+        space: { label: 'Space Ambience', icon: <FaSpaceShuttle /> },
+        bowls: { label: 'Crystal Bowls', icon: <FaBell /> },
+        binaural: { label: 'Binaural Beats', icon: <LuBrainCircuit /> },
+        flute: { label: 'Native Flute', icon: <FaGuitar /> }
     };
 
     const fetchSounds = useCallback(
@@ -59,6 +57,63 @@ const SoundsSection = ({
     useEffect(() => {
         fetchSounds(true);
     }, [activeCategory, filters]);
+
+    useEffect(() => {
+        const handleKeyPress = (e) => {
+            switch (e.key.toLowerCase()) {
+                case ' ':
+                    e.preventDefault();
+                    setIsPlaying(prev => !prev);
+                    break;
+                case 'arrowleft':
+                    const categories = Object.keys(categories);
+                    const currentIndex = categories.indexOf(activeCategory);
+                    if (currentIndex > 0) {
+                        setActiveCategory(categories[currentIndex - 1]);
+                    }
+                    break;
+                case 'arrowright':
+                    const nextIndex = categories.indexOf(activeCategory) + 1;
+                    if (nextIndex < categories.length) {
+                        setActiveCategory(categories[nextIndex]);
+                    }
+                    break;
+                case 'arrowup':
+                    setVolume(prev => Math.min(1, prev + 0.1));
+                    break;
+                case 'arrowdown':
+                    setVolume(prev => Math.max(0, prev - 0.1));
+                    break;
+                case 'm':
+                    if (volume > 0) {
+                        setPrevVolume(volume);
+                        setVolume(0);
+                    } else {
+                        setVolume(prevVolume || 0.5);
+                    }
+                    break;
+                case 'f':
+                    toggleFullscreen();
+                    break;
+                case 'k':
+                    setShowShortcuts(prev => !prev);
+                    break;
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyPress);
+        return () => window.removeEventListener('keydown', handleKeyPress);
+    }, [activeCategory, volume, isPlaying]);
+
+    const toggleFullscreen = () => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+            setIsFullscreen(true);
+        } else {
+            document.exitFullscreen();
+            setIsFullscreen(false);
+        }
+    };
 
     const handleSoundPlay = async (sound) => {
         if (audioRef.current) {
@@ -99,17 +154,20 @@ const SoundsSection = ({
             <h2>Mindful Soundscapes</h2>
             
             <div className="sound-categories">
-                {Object.entries(categories).map(([key, label]) => (
-                    <button
+                {Object.entries(categories).map(([key, { label, icon }]) => (
+                    <motion.button
                         key={key}
                         className={`category-btn ${activeCategory === key ? 'active' : ''}`}
                         onClick={() => {
                             setActiveCategory(key);
                             setPage(1);
                         }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                     >
+                        <span className="category-icon">{icon}</span>
                         {label}
-                    </button>
+                    </motion.button>
                 ))}
             </div>
 
@@ -169,10 +227,10 @@ const SoundsSection = ({
                     initial={{ y: 50, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                 >
-                    <div className="now-playing">
+                    {/* <div className="now-playing">
                         <FaMusic className="music-icon" />
                         <span>Now Playing: {currentSound}</span>
-                    </div>
+                    </div> */}
                     <div className="volume-slider">
                         <FaVolumeUp />
                         <input
@@ -191,6 +249,26 @@ const SoundsSection = ({
                     </div>
                 </motion.div>
             )}
+
+            <div className="fixed bottom-4 right-4 space-x-2">
+                <button
+                    onClick={() => setShowShortcuts(true)}
+                    className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
+                >
+                    <FaKeyboard />
+                </button>
+                <button
+                    onClick={toggleFullscreen}
+                    className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
+                >
+                    {isFullscreen ? <FaCompress /> : <FaExpand />}
+                </button>
+            </div>
+
+            <KeyboardShortcuts 
+                isOpen={showShortcuts} 
+                onClose={() => setShowShortcuts(false)} 
+            />
         </motion.div>
     );
 };
