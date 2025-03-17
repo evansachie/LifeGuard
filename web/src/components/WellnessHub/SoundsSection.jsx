@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaPlay, FaPause, FaVolumeUp, FaMusic, FaSpinner, FaStar, FaTree, FaYinYang, FaCloudRain, FaWater, FaLeaf, FaSpaceShuttle, FaBell, FaGuitar } from 'react-icons/fa';
+import { FaPlay, FaPause, FaVolumeUp, FaMusic, FaSpinner, FaStar, FaTree, FaYinYang, FaCloudRain, FaWater, FaLeaf, FaSpaceShuttle, FaBell, FaGuitar, FaKeyboard, FaExpand, FaCompress } from 'react-icons/fa';
 import { LuBrainCircuit } from "react-icons/lu";
 import { searchSounds, getProxiedAudioUrl } from '../../services/freesoundService';
 import SoundFilters from './SoundFilters';
 import { debounce } from 'lodash';
 import categoryBackgrounds from './SoundBackgrounds';
+import KeyboardShortcuts from './KeyboardShortcuts';
 
 const SoundsSection = ({ 
     isDarkMode, 
@@ -23,6 +24,9 @@ const SoundsSection = ({
     const [page, setPage] = useState(1);
     const [filters, setFilters] = useState({});
     const [hasMore, setHasMore] = useState(true);
+    const [showShortcuts, setShowShortcuts] = useState(false);
+    const [prevVolume, setPrevVolume] = useState(null);
+    const [isFullscreen, setIsFullscreen] = useState(false);
 
     const categories = {
         nature: { label: 'Forest & Nature', icon: <FaTree /> },
@@ -60,6 +64,63 @@ const SoundsSection = ({
     useEffect(() => {
         fetchSounds(true);
     }, [activeCategory, filters]);
+
+    useEffect(() => {
+        const handleKeyPress = (e) => {
+            switch (e.key.toLowerCase()) {
+                case ' ':
+                    e.preventDefault();
+                    setIsPlaying(prev => !prev);
+                    break;
+                case 'arrowleft':
+                    const categories = Object.keys(categories);
+                    const currentIndex = categories.indexOf(activeCategory);
+                    if (currentIndex > 0) {
+                        setActiveCategory(categories[currentIndex - 1]);
+                    }
+                    break;
+                case 'arrowright':
+                    const nextIndex = categories.indexOf(activeCategory) + 1;
+                    if (nextIndex < categories.length) {
+                        setActiveCategory(categories[nextIndex]);
+                    }
+                    break;
+                case 'arrowup':
+                    setVolume(prev => Math.min(1, prev + 0.1));
+                    break;
+                case 'arrowdown':
+                    setVolume(prev => Math.max(0, prev - 0.1));
+                    break;
+                case 'm':
+                    if (volume > 0) {
+                        setPrevVolume(volume);
+                        setVolume(0);
+                    } else {
+                        setVolume(prevVolume || 0.5);
+                    }
+                    break;
+                case 'f':
+                    toggleFullscreen();
+                    break;
+                case 'k':
+                    setShowShortcuts(prev => !prev);
+                    break;
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyPress);
+        return () => window.removeEventListener('keydown', handleKeyPress);
+    }, [activeCategory, volume, isPlaying]);
+
+    const toggleFullscreen = () => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+            setIsFullscreen(true);
+        } else {
+            document.exitFullscreen();
+            setIsFullscreen(false);
+        }
+    };
 
     const handleSoundPlay = async (sound) => {
         if (audioRef.current) {
@@ -195,6 +256,26 @@ const SoundsSection = ({
                     </div>
                 </motion.div>
             )}
+
+            <div className="fixed bottom-4 right-4 space-x-2">
+                <button
+                    onClick={() => setShowShortcuts(true)}
+                    className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
+                >
+                    <FaKeyboard />
+                </button>
+                <button
+                    onClick={toggleFullscreen}
+                    className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
+                >
+                    {isFullscreen ? <FaCompress /> : <FaExpand />}
+                </button>
+            </div>
+
+            <KeyboardShortcuts 
+                isOpen={showShortcuts} 
+                onClose={() => setShowShortcuts(false)} 
+            />
         </motion.div>
     );
 };
