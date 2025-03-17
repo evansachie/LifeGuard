@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaPlay, FaPause, FaVolumeUp, FaMusic, FaSpinner, FaStar } from 'react-icons/fa';
+import { FaPlay, FaPause, FaVolumeUp, FaMusic, FaSpinner, FaStar, FaTree, FaYinYang, FaCloudRain, FaWater, FaLeaf, FaSpaceShuttle, FaBell, FaGuitar } from 'react-icons/fa';
+import { LuBrainCircuit } from "react-icons/lu";
 import { searchSounds, getProxiedAudioUrl } from '../../services/freesoundService';
 import SoundFilters from './SoundFilters';
 import { debounce } from 'lodash';
@@ -24,15 +25,15 @@ const SoundsSection = ({
     const [hasMore, setHasMore] = useState(true);
 
     const categories = {
-        nature: 'Forest & Nature',
-        meditation: 'Tibetan Bowls',
-        rain: 'Gentle Rain',
-        ocean: 'Ocean Waves',
-        forest: 'Forest Ambience',
-        space: 'Space Ambience',
-        bowls: 'Crystal Bowls',
-        binaural: 'Binaural Beats',
-        flute: 'Native Flute'
+        nature: { label: 'Forest & Nature', icon: <FaTree /> },
+        meditation: { label: 'Tibetan Bowls', icon: <FaYinYang /> },
+        rain: { label: 'Gentle Rain', icon: <FaCloudRain /> },
+        ocean: { label: 'Ocean Waves', icon: <FaWater /> },
+        forest: { label: 'Forest Ambience', icon: <FaLeaf /> },
+        space: { label: 'Space Ambience', icon: <FaSpaceShuttle /> },
+        bowls: { label: 'Crystal Bowls', icon: <FaBell /> },
+        binaural: { label: 'Binaural Beats', icon: <LuBrainCircuit /> },
+        flute: { label: 'Native Flute', icon: <FaGuitar /> }
     };
 
     const fetchSounds = useCallback(
@@ -99,17 +100,20 @@ const SoundsSection = ({
             <h2>Mindful Soundscapes</h2>
             
             <div className="sound-categories">
-                {Object.entries(categories).map(([key, label]) => (
-                    <button
+                {Object.entries(categories).map(([key, { label, icon }]) => (
+                    <motion.button
                         key={key}
                         className={`category-btn ${activeCategory === key ? 'active' : ''}`}
                         onClick={() => {
                             setActiveCategory(key);
                             setPage(1);
                         }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                     >
+                        <span className="category-icon">{icon}</span>
                         {label}
-                    </button>
+                    </motion.button>
                 ))}
             </div>
 
