@@ -7,17 +7,10 @@ import SoundFilters from './SoundFilters';
 import { debounce } from 'lodash';
 import categoryBackgrounds from './SoundBackgrounds';
 import KeyboardShortcuts from './KeyboardShortcuts';
+import { useAudioPlayer } from '../../contexts/AudioPlayerContext';
 
-const SoundsSection = ({ 
-    isDarkMode, 
-    currentSound, 
-    setCurrentSound, 
-    isPlaying, 
-    setIsPlaying, 
-    volume, 
-    setVolume,
-    audioRef 
-}) => {
+const SoundsSection = ({ isDarkMode }) => {
+    const { currentSound, setCurrentSound, isPlaying, setIsPlaying, volume, setVolume, audioRef } = useAudioPlayer();
     const [sounds, setSounds] = useState([]);
     const [loading, setLoading] = useState(false);
     const [activeCategory, setActiveCategory] = useState('nature');
@@ -234,10 +227,10 @@ const SoundsSection = ({
                     initial={{ y: 50, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                 >
-                    <div className="now-playing">
+                    {/* <div className="now-playing">
                         <FaMusic className="music-icon" />
                         <span>Now Playing: {currentSound}</span>
-                    </div>
+                    </div> */}
                     <div className="volume-slider">
                         <FaVolumeUp />
                         <input
