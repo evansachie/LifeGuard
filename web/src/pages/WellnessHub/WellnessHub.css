@@ -44,13 +44,29 @@
 }
 
 .dark .nav-button {
-    background-color: #2d3748;
+    background-color: rgba(45, 55, 72, 0.3);
     color: #e2e8f0;
 }
 
 .nav-button.active {
-    background-color: #3182ce;
+    background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
     color: white;
+    border: none;
+    box-shadow: 0 4px 6px rgba(49, 130, 206, 0.2);
+    transform: translateY(-1px);
+}
+
+.dark .nav-button.active {
+    background: linear-gradient(135deg, #4299e1 0%, #2b6cb0 100%);
+    box-shadow: 0 4px 6px rgba(66, 153, 225, 0.2);
+}
+
+.nav-button:not(.active):hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.dark .nav-button:not(.active):hover {
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .nav-button::before {
@@ -287,10 +303,11 @@
     border-radius: 1.5rem;
     overflow: hidden;
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     transform-style: preserve-3d;
     perspective: 1000px;
     transition: all 0.3s ease;
+    border: none;
 }
 
 .sound-overlay {
@@ -314,6 +331,7 @@
 
 .sounds-section.dark .sound-card {
     background-color: rgba(26, 32, 44, 0.8);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 .sound-card::before {
@@ -609,20 +627,21 @@
     animation-delay: 2s;
 }
 
-/* Glass Morphism Effects */
+/* Glass Morphism Effects - Updated */
 .nav-button, .pattern-card, .sound-card, .meditation-presets button {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .dark .nav-button, 
 .dark .pattern-card, 
 .dark .sound-card, 
 .dark .meditation-presets button {
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 /* Loading Spinner */
