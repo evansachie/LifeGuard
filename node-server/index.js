@@ -8,6 +8,7 @@ const bmrCalculatorRoutes = require('./Routes/bmrCalculatorRoutes')
 const settingsRoutes = require('./Routes/bmrCalculatorRoutes');
 const emergencyContactsRoutes = require('./Routes/emergencyContactsRoutes');
 const ragRoutes = require('./Routes/ragRoutes');
+const freesoundRoutes = require('./Routes/freesoundRoutes');
 const { connectToDatabase } = require('./config/mongodb');
 const path = require('path');
 
@@ -97,6 +98,7 @@ app.use('/api/calories', bmrCalculatorRoutes(pool));
 app.use('/api/settings', settingsRoutes(pool));
 app.use('/api/emergency-contacts', emergencyContactsRoutes(pool));
 app.use('/api/rag', ragRoutes);
+app.use('/api/freesound', freesoundRoutes(pool));
 
 app.get('/', (req, res) => {
     res.send('LifeGuard API is running!');
