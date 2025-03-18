@@ -346,6 +346,7 @@ These endpoints are served from the Node-Server (hosted at `https://lifeguard-no
 |------------|---------------------------------------------------|------------------------------------------------------------|
 | GET/POST*  | `/api/memos`                                      | Retrieve or manage memos                                   |
 | GET/POST*  | `/api/emergency-contacts`                         | Retrieve or manage emergency contacts                      |
+| POST       | `/api/freesound/audio-proxy`                                  | Proxy for streaming audio files from Freesound |
 | POST       | `/api/rag/query`                                  | Submit a query to the RAG (Retrieval-Augmented Generation) API |
 | POST       | `/api/rag/initialize`                             | Initialize the RAG system                                  |
 | POST       | `/api/rag/process/health`                         | Process health data via the RAG API                        |

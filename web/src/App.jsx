@@ -9,12 +9,12 @@ import { AuthProvider } from './contexts/AuthContext';
 import { BLEProvider } from './contexts/BLEContext';
 import { AudioContextProvider } from './contexts/AudioContext';
 import { AudioPlayerProvider } from './contexts/AudioPlayerContext';
+import FloatingAudioPlayer from './components/Audio/FloatingAudioPlayer';
 
 import AppRoutes from './routes/AppRoutes';
 import { useTheme } from './hooks/useTheme';
 
 import './App.css';
-import FloatingAudioPlayer from './components/Audio/FloatingAudioPlayer';
 
 function App() {
   const { isDarkMode, toggleTheme } = useTheme();
