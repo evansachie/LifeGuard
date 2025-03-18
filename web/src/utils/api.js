@@ -28,6 +28,8 @@ export const API_ENDPOINTS = {
     EMERGENCY_CONTACT_VERIFY: (token) => `${NODE_API_URL}/api/emergency-contacts/verify?token=${encodeURIComponent(token)}`,
     EMERGENCY_ALERTS_HISTORY: `${NODE_API_URL}/api/emergency-contacts/alerts`,
 
+    FREESOUND_AUDIO_PROXY: `${NODE_API_URL}/api/freesound/audio-proxy`,
+
     // RAG API Endpoints
     RAG_QUERY: `${NODE_API_URL}/api/rag/query`,
     RAG_INITIALIZE: `${NODE_API_URL}/api/rag/initialize`,

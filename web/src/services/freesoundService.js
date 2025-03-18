@@ -1,7 +1,6 @@
 const API_KEY = import.meta.env.VITE_FREESOUND_API_KEY;
 const BASE_URL = 'https://freesound.org/apiv2';
-const PROXY_URL = 'https://lifeguard-node.onrender.com/api/freesound';  // Production URL
-// const PROXY_URL = 'http://localhost:5001/api/freesound';  // Development URL
+import { API_ENDPOINTS } from "../utils/api";
 
 const categories = {
     nature: 'peaceful nature sounds relaxing',
@@ -57,7 +56,7 @@ export const getSound = async (soundId) => {
 
 export const getProxiedAudioUrl = async (originalUrl) => {
     try {
-        const response = await fetch(`${PROXY_URL}/audio-proxy`, {
+        const response = await fetch(API_ENDPOINTS.FREESOUND_AUDIO_PROXY, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
