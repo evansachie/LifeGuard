@@ -8,6 +8,19 @@ module.exports = (pool) => {
         const { userId, soundId, soundName, soundUrl, previewUrl, category, duration } = req.body;
         
         try {
+            // First check if already exists
+            const existing = await pool.query(
+                'SELECT * FROM favorite_sounds WHERE user_id = $1 AND sound_id = $2',
+                [userId, soundId.toString()]
+            );
+
+            if (existing.rows.length > 0) {
+                return res.status(409).json({ 
+                    error: 'Already favorited',
+                    favorite: existing.rows[0]
+                });
+            }
+
             // Convert duration to a number if it's a string
             const parsedDuration = parseFloat(duration);
             
