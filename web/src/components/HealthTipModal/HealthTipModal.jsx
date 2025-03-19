@@ -15,11 +15,6 @@ const HealthTipModal = ({ tip, isOpen, onClose, isDarkMode }) => {
             }
         };
 
-        const handleEscKey = (e) => {
-            if (e.key === 'Escape') {
-                onClose();
-            }
-        };
 
         if (isOpen) {
             document.addEventListener('mousedown', handleClickOutside);

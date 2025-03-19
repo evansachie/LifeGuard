@@ -28,13 +28,18 @@ export const API_ENDPOINTS = {
     EMERGENCY_CONTACT_VERIFY: (token) => `${NODE_API_URL}/api/emergency-contacts/verify?token=${encodeURIComponent(token)}`,
     EMERGENCY_ALERTS_HISTORY: `${NODE_API_URL}/api/emergency-contacts/alerts`,
 
+    FREESOUND_AUDIO_PROXY: `${NODE_API_URL}/api/freesound/audio-proxy`,
+    FAVORITE_SOUNDS: `${NODE_API_URL}/api/favorite-sounds`,
+    GET_USER_FAVORITES: (userId) => `${NODE_API_URL}/api/favorite-sounds/${userId}`,
+    REMOVE_FAVORITE: (userId, soundId) => `${NODE_API_URL}/api/favorite-sounds/${userId}/${soundId}`,
+
     // RAG API Endpoints
     RAG_QUERY: `${NODE_API_URL}/api/rag/query`,
     RAG_INITIALIZE: `${NODE_API_URL}/api/rag/initialize`,
     RAG_PROCESS_HEALTH: `${NODE_API_URL}/api/rag/process/health`,
     RAG_PROCESS_ENVIRONMENTAL: `${NODE_API_URL}/api/rag/process/environmental`,
     RAG_PROCESS_MEDICAL: `${NODE_API_URL}/api/rag/process/medical`,
-    RAG_PROCESS_PROFILES: `${NODE_API_URL}/api/rag/process/profiles`
+    RAG_PROCESS_PROFILES: `${NODE_API_URL}/api/rag/process/profiles`,
 };
 
 export const fetchApi = async (endpoint, options = {}) => {
