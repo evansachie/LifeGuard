@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaPlay, FaPause, FaVolumeUp, FaMusic, FaSpinner, FaStar, FaTree, FaYinYang, FaCloudRain, FaWater, FaLeaf, FaSpaceShuttle, FaBell, FaGuitar, FaKeyboard, FaExpand, FaCompress } from 'react-icons/fa';
+import { FaPlay, FaPause, FaVolumeUp, FaMusic, FaSpinner, FaStar, FaTree, FaYinYang, FaCloudRain, FaWater, FaLeaf, FaSpaceShuttle, FaBell, FaGuitar, FaKeyboard, FaExpand, FaCompress, FaHeart } from 'react-icons/fa';
 import { LuBrainCircuit } from "react-icons/lu";
 import { searchSounds, getProxiedAudioUrl } from '../../services/freesoundService';
 import SoundFilters from './SoundFilters';
@@ -8,6 +8,8 @@ import { debounce } from 'lodash';
 import categoryBackgrounds from './SoundBackgrounds';
 import KeyboardShortcuts from './KeyboardShortcuts';
 import { useAudioPlayer } from '../../contexts/AudioPlayerContext';
+import { getFavorites, addToFavorites, removeFromFavorites } from '../../services/favoriteSoundsService';
+import { toast } from 'react-toastify';
 
 const SoundsSection = ({ isDarkMode }) => {
     const { currentSound, setCurrentSound, isPlaying, setIsPlaying, volume, setVolume, audioRef } = useAudioPlayer();
@@ -20,6 +22,9 @@ const SoundsSection = ({ isDarkMode }) => {
     const [showShortcuts, setShowShortcuts] = useState(false);
     const [prevVolume, setPrevVolume] = useState(null);
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [favorites, setFavorites] = useState([]);
+    const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+    const userId = localStorage.getItem('userId');
 
     const categories = {
         nature: { label: 'Forest & Nature', icon: <FaTree /> },
@@ -31,6 +36,44 @@ const SoundsSection = ({ isDarkMode }) => {
         bowls: { label: 'Crystal Bowls', icon: <FaBell /> },
         binaural: { label: 'Binaural Beats', icon: <LuBrainCircuit /> },
         flute: { label: 'Native Flute', icon: <FaGuitar /> }
+    };
+
+    useEffect(() => {
+        if (userId) {
+            loadFavorites();
+        }
+    }, [userId]);
+
+    const loadFavorites = async () => {
+        try {
+            const userFavorites = await getFavorites(userId);
+            setFavorites(userFavorites);
+        } catch (error) {
+            console.error('Error loading favorites:', error);
+        }
+    };
+
+    const handleToggleFavorite = async (sound) => {
+        if (!userId) {
+            toast.error('Please login to favorite sounds');
+            return;
+        }
+
+        try {
+            const isFavorite = favorites.some(fav => fav.sound_id === sound.id);
+            
+            if (isFavorite) {
+                await removeFromFavorites(userId, sound.id);
+                setFavorites(prev => prev.filter(fav => fav.sound_id !== sound.id));
+                toast.success('Removed from favorites');
+            } else {
+                const newFavorite = await addToFavorites(userId, sound);
+                setFavorites(prev => [...prev, newFavorite]);
+                toast.success('Added to favorites');
+            }
+        } catch (error) {
+            toast.error('Error updating favorites');
+        }
     };
 
     const fetchSounds = useCallback(
@@ -176,6 +219,8 @@ const SoundsSection = ({ isDarkMode }) => {
                 setFilters={setFilters}
                 onSearch={() => fetchSounds(true)}
                 isDarkMode={isDarkMode}
+                showFavoritesOnly={showFavoritesOnly}
+                onToggleFavorites={() => setShowFavoritesOnly(prev => !prev)}
             />
 
             {loading ? (
@@ -186,37 +231,45 @@ const SoundsSection = ({ isDarkMode }) => {
             ) : (
                 <div className="sounds-grid">
                     <AnimatePresence>
-                        {sounds.map((sound) => (
-                            <motion.div
-                                key={sound.id}
-                                className={`sound-card ${currentSound === sound.name ? 'playing' : ''}`}
-                                style={getBackgroundStyle(sound)}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -20 }}
-                            >
-                                <div className="sound-overlay" />
-                                <div className="sound-content">
-                                    <div className="sound-rating">
-                                        <FaStar className="text-yellow-400" />
-                                        <span>{sound.avg_rating?.toFixed(1) || '4.0'}</span>
+                        {sounds
+                            .filter(sound => !showFavoritesOnly || favorites.some(fav => fav.sound_id === sound.id))
+                            .map((sound) => (
+                                <motion.div
+                                    key={sound.id}
+                                    className={`sound-card ${currentSound === sound.name ? 'playing' : ''}`}
+                                    style={getBackgroundStyle(sound)}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                >
+                                    <div className="sound-overlay" />
+                                    <div className="sound-content">
+                                        <div className="sound-rating">
+                                            <FaStar className="text-yellow-400" />
+                                            <span>{sound.avg_rating?.toFixed(1) || '4.0'}</span>
+                                        </div>
+                                        <h3 className="sound-title">{sound.name}</h3>
+                                        <p className="sound-duration">
+                                            {Math.floor(sound.duration)}s
+                                        </p>
+                                        <div className="sound-controls">
+                                            <button
+                                                className="play-button"
+                                                onClick={() => handleSoundPlay(sound)}
+                                            >
+                                                {currentSound === sound.name && isPlaying ? 
+                                                    <FaPause /> : <FaPlay />}
+                                            </button>
+                                            <button
+                                                className={`favorite-button ${favorites.some(fav => fav.sound_id === sound.id) ? 'active' : ''}`}
+                                                onClick={() => handleToggleFavorite(sound)}
+                                            >
+                                                <FaHeart />
+                                            </button>
+                                        </div>
                                     </div>
-                                    <h3 className="sound-title">{sound.name}</h3>
-                                    <p className="sound-duration">
-                                        {Math.floor(sound.duration)}s
-                                    </p>
-                                    <div className="sound-controls">
-                                        <button
-                                            className="play-button"
-                                            onClick={() => handleSoundPlay(sound)}
-                                        >
-                                            {currentSound === sound.name && isPlaying ? 
-                                                <FaPause /> : <FaPlay />}
-                                        </button>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        ))}
+                                </motion.div>
+                            ))}
                     </AnimatePresence>
                 </div>
             )}
