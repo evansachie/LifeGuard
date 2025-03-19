@@ -197,6 +197,15 @@ const SoundsSection = ({ isDarkMode }) => {
             <h2>Mindful Soundscapes</h2>
             
             <div className="sound-categories">
+                <motion.button
+                    className={`category-btn ${showFavoritesOnly ? 'active' : ''}`}
+                    onClick={() => setShowFavoritesOnly(prev => !prev)}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                >
+                    <span className="category-icon"><FaHeart /></span>
+                    Favorites ({favorites.length})
+                </motion.button>
                 {Object.entries(categories).map(([key, { label, icon }]) => (
                     <motion.button
                         key={key}

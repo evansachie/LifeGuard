@@ -1,7 +1,7 @@
 import React from 'react';
-import { FaSearch, FaFilter, FaStar, FaHeart } from 'react-icons/fa';
+import { FaSearch, FaFilter, FaStar } from 'react-icons/fa';
 
-const SoundFilters = ({ filters, setFilters, onSearch, isDarkMode, showFavoritesOnly, onToggleFavorites }) => {
+const SoundFilters = ({ filters, setFilters, onSearch, isDarkMode }) => {
   return (
     <div className={`
       w-full p-6 rounded-xl shadow-lg backdrop-blur-md
@@ -34,19 +34,6 @@ const SoundFilters = ({ filters, setFilters, onSearch, isDarkMode, showFavorites
 
         {/* Filter Controls */}
         <div className="flex flex-wrap gap-4 w-full md:w-auto">
-          {/* Favorites Filter */}
-          <button
-            onClick={onToggleFavorites}
-            className={`
-              flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors
-              ${showFavoritesOnly ? 'bg-red-500 text-white' : 'bg-transparent'}
-              ${isDarkMode ? 'border-gray-600' : 'border-gray-300'}
-            `}
-          >
-            <FaHeart />
-            <span>Favorites</span>
-          </button>
-
           {/* Duration Filter */}
           <div className={`flex items-center gap-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
             <div className="flex items-center gap-2">

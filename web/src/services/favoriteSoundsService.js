@@ -17,10 +17,10 @@ export const addToFavorites = async (userId, sound) => {
                 userId,
                 soundId: sound.id,
                 soundName: sound.name,
-                soundUrl: sound.url,
+                soundUrl: sound.url || '',  // Add fallback for missing url
                 previewUrl: sound.previews['preview-hq-mp3'],
-                category: sound.type,
-                duration: sound.duration
+                category: sound.type || 'uncategorized',  // Add fallback for missing category
+                duration: parseFloat(sound.duration) // Ensure duration is a number
             })
         });
     } catch (error) {
