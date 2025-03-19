@@ -8,18 +8,21 @@ module.exports = (pool) => {
         const { userId, soundId, soundName, soundUrl, previewUrl, category, duration } = req.body;
         
         try {
+            // Convert duration to a number if it's a string
+            const parsedDuration = parseFloat(duration);
+            
             const result = await pool.query(
                 `INSERT INTO favorite_sounds 
                 (user_id, sound_id, sound_name, sound_url, preview_url, category, duration) 
                 VALUES ($1, $2, $3, $4, $5, $6, $7) 
                 RETURNING *`,
-                [userId, soundId, soundName, soundUrl, previewUrl, category, duration]
+                [userId, soundId.toString(), soundName, soundUrl, previewUrl, category, parsedDuration]
             );
             
             res.json(result.rows[0]);
         } catch (error) {
             console.error('Error adding favorite:', error);
-            res.status(500).json({ error: 'Failed to add favorite' });
+            res.status(500).json({ error: 'Failed to add favorite', details: error.message });
         }
     });
 
