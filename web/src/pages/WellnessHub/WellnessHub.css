@@ -506,6 +506,34 @@
     transform: scale(1.05);
 }
 
+.favorite-button {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid white;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.favorite-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+.favorite-button.active {
+    background: rgba(239, 68, 68, 0.8);
+    border-color: rgba(239, 68, 68, 0.8);
+}
+
+.favorite-button.active:hover {
+    background: rgba(239, 68, 68, 0.9);
+}
+
 .volume-control {
     position: fixed;
     bottom: 2rem;
