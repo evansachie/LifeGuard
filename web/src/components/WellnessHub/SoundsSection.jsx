@@ -48,10 +48,24 @@ const SoundsSection = ({ isDarkMode }) => {
         try {
             const userFavorites = await getFavorites(userId);
             setFavorites(userFavorites);
+            if (showFavoritesOnly) {
+                const favoriteIds = userFavorites.map(fav => fav.sound_id);
+                setSounds(sounds.filter(sound => favoriteIds.includes(sound.id.toString())));
+            }
         } catch (error) {
             console.error('Error loading favorites:', error);
+            toast.error('Failed to load favorites');
         }
     };
+
+    useEffect(() => {
+        if (showFavoritesOnly) {
+            const favoriteIds = favorites.map(fav => fav.sound_id);
+            setSounds(prev => prev.filter(sound => favoriteIds.includes(sound.id.toString())));
+        } else {
+            fetchSounds(true);
+        }
+    }, [showFavoritesOnly]);
 
     const handleToggleFavorite = async (sound) => {
         if (!userId) {
@@ -60,16 +74,22 @@ const SoundsSection = ({ isDarkMode }) => {
         }
 
         try {
-            const isFavorite = favorites.some(fav => fav.sound_id === sound.id);
+            const isFavorite = favorites.some(fav => fav.sound_id === sound.id.toString());
             
             if (isFavorite) {
                 await removeFromFavorites(userId, sound.id);
-                setFavorites(prev => prev.filter(fav => fav.sound_id !== sound.id));
+                setFavorites(prev => prev.filter(fav => fav.sound_id !== sound.id.toString()));
                 toast.success('Removed from favorites');
             } else {
-                const newFavorite = await addToFavorites(userId, sound);
-                setFavorites(prev => [...prev, newFavorite]);
-                toast.success('Added to favorites');
+                const result = await addToFavorites(userId, sound);
+                if (result.error === 'Already favorited') {
+                    // If already favorited, just update the UI
+                    setFavorites(prev => [...prev, result.favorite]);
+                    toast.info('Sound is already in favorites');
+                } else {
+                    setFavorites(prev => [...prev, result]);
+                    toast.success('Added to favorites');
+                }
             }
         } catch (error) {
             toast.error('Error updating favorites');
@@ -241,7 +261,7 @@ const SoundsSection = ({ isDarkMode }) => {
                 <div className="sounds-grid">
                     <AnimatePresence>
                         {sounds
-                            .filter(sound => !showFavoritesOnly || favorites.some(fav => fav.sound_id === sound.id))
+                            .filter(sound => !showFavoritesOnly || favorites.some(fav => fav.sound_id === sound.id.toString()))
                             .map((sound) => (
                                 <motion.div
                                     key={sound.id}
@@ -270,10 +290,18 @@ const SoundsSection = ({ isDarkMode }) => {
                                                     <FaPause /> : <FaPlay />}
                                             </button>
                                             <button
-                                                className={`favorite-button ${favorites.some(fav => fav.sound_id === sound.id) ? 'active' : ''}`}
+                                                className={`favorite-button ${
+                                                    favorites.some(fav => fav.sound_id === sound.id.toString()) 
+                                                        ? 'active bg-red-500 border-red-500' 
+                                                        : ''
+                                                }`}
                                                 onClick={() => handleToggleFavorite(sound)}
                                             >
-                                                <FaHeart />
+                                                <FaHeart className={
+                                                    favorites.some(fav => fav.sound_id === sound.id.toString())
+                                                        ? 'text-white'
+                                                        : 'text-gray-300'
+                                                } />
                                             </button>
                                         </div>
                                     </div>
