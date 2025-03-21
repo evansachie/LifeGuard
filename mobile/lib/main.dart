@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lifeguard/screens/auth/login_screen.dart';
+import 'package:lifeguard/screens/auth/otp_verification_screen.dart';
 import 'package:lifeguard/screens/auth/register_screen.dart';
 import 'package:lifeguard/screens/home/home_screen.dart';
 import 'package:provider/provider.dart';
@@ -68,10 +69,14 @@ class MyApp extends StatelessWidget {
           ),
           home: const SplashScreen(),
           routes: {
-          '/login': (context) => const LoginScreen(),
-          '/register': (context) => const RegisterScreen(),
-          '/home': (context) => const HomeScreen(),
-        },
+            '/login': (context) => const LoginScreen(),
+            '/register': (context) => const RegisterScreen(),
+            '/home': (context) => const HomeScreen(),
+            '/verify-otp': (context) {
+              final email = ModalRoute.of(context)?.settings.arguments as String?;
+              return OTPVerificationScreen(email: email);
+            },
+          },
         ),
       ),
     );
