@@ -89,4 +89,30 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
     return false;
   }
+
+  Future<bool> verifyOTP(String email, String otp) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+      return await _authService.verifyOTP(email, otp);
+    } catch (e) {
+      rethrow;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> resendOTP(String email) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+      return await _authService.requestPasswordReset(email);
+    } catch (e) {
+      rethrow;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 }
