@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lifeguard/screens/auth/forgot_password_screen.dart';
 import 'package:lifeguard/screens/auth/login_screen.dart';
 import 'package:lifeguard/screens/auth/otp_verification_screen.dart';
 import 'package:lifeguard/screens/auth/register_screen.dart';
@@ -72,6 +73,7 @@ class MyApp extends StatelessWidget {
             '/login': (context) => const LoginScreen(),
             '/register': (context) => const RegisterScreen(),
             '/home': (context) => const HomeScreen(),
+            '/forgot-password': (context) => const ForgotPasswordScreen(),
             '/verify-otp': (context) {
               final email = ModalRoute.of(context)?.settings.arguments as String?;
               return OTPVerificationScreen(email: email);
