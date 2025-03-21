@@ -107,6 +107,19 @@ class AuthProvider extends ChangeNotifier {
     try {
       _isLoading = true;
       notifyListeners();
+      return await _authService.resendOTP(email);
+    } catch (e) {
+      rethrow;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> requestPasswordReset(String email) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
       return await _authService.requestPasswordReset(email);
     } catch (e) {
       rethrow;

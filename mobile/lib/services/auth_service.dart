@@ -78,4 +78,50 @@ class AuthService {
       throw Exception('Failed to request password reset: $e');
     }
   }
+
+  Future<bool> resendOTP(String email) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/Account/ResendOTP'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'email': email}),
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      throw Exception('Failed to resend OTP: $e');
+    }
+  }
+
+  Future<bool> forgotPassword(String email) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/Account/forgot-password'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'email': email}),
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      throw Exception('Failed to process forgot password request: $e');
+    }
+  }
+
+  Future<bool> resetPassword(String email, String token, String newPassword) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/Account/ResetPassword'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'email': email,
+          'token': token,
+          'newPassword': newPassword,
+        }),
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      throw Exception('Failed to reset password: $e');
+    }
+  }
 }
