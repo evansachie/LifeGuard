@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lifeguard/providers/auth_provider.dart';
 import 'package:lifeguard/screens/bmr_calculator/bmr_calculator.dart';
 import 'package:lifeguard/screens/exercise_routines/exercise_routines.dart';
 import 'package:lifeguard/screens/health_tips/health_tips.dart';
@@ -22,6 +23,21 @@ class _DashboardTabState extends State<DashboardTab> {
     Future.microtask(
       () => context.read<QuoteProvider>().fetchQuote(),
     );
+  }
+
+  Future<void> _handleLogout() async {
+    try {
+      await context.read<AuthProvider>().logout();
+      if (mounted) {
+        Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error logging out: ${e.toString()}')),
+        );
+      }
+    }
   }
 
   @override
@@ -120,7 +136,7 @@ class _DashboardTabState extends State<DashboardTab> {
                             // Navigate to settings
                             break;
                           case 'logout':
-                            // Handle logout
+                            _handleLogout();
                             break;
                         }
                       },
