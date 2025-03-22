@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:lifeguard/providers/memo_provider.dart';
 import 'package:lifeguard/screens/auth/forgot_password_screen.dart';
 import 'package:lifeguard/screens/auth/login_screen.dart';
 import 'package:lifeguard/screens/auth/otp_verification_screen.dart';
 import 'package:lifeguard/screens/auth/register_screen.dart';
 import 'package:lifeguard/screens/home/home_screen.dart';
+import 'package:lifeguard/screens/memos/memos_screen.dart';
 import 'package:lifeguard/screens/onboarding/onboarding_screen1.dart';
 import 'package:provider/provider.dart';
 import 'package:lifeguard/providers/theme_provider.dart';
@@ -14,11 +16,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 
 Future<void> main() async {
-  // Ensure Flutter is initialized
   WidgetsFlutterBinding.ensureInitialized();
 
   try {
-    // Initialize audio service with error handling
     await JustAudioBackground.init(
       androidNotificationChannelId: 'com.example.lifeguard.audio',
       androidNotificationChannelName: 'LifeGuard Audio',
@@ -34,10 +34,8 @@ Future<void> main() async {
     debugPrint('Error initializing audio service: $e');
   }
 
-  // Load environment variables
   await dotenv.load(fileName: ".env");
 
-  // Run the app
   runApp(const MyApp());
 }
 
@@ -51,6 +49,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => QuoteProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => MemoProvider()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) => MaterialApp(
@@ -77,6 +76,7 @@ class MyApp extends StatelessWidget {
             '/forgot-password': (context) => const ForgotPasswordScreen(),
             '/onboarding': (context) => const OnboardingScreen1(),
             '/welcome': (context) => const SplashScreen(),
+            '/memos': (context) => const MemosScreen(),
             '/verify-otp': (context) {
               final email = ModalRoute.of(context)?.settings.arguments as String?;
               return OTPVerificationScreen(email: email);
