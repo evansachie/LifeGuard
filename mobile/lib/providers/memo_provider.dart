@@ -36,29 +36,22 @@ class MemoProvider extends ChangeNotifier {
   }
 
   Future<void> addMemo(String memo) async {
-    try {
-      _isLoading = true;
-      notifyListeners();
+    if (memo.trim().isEmpty) {
+      throw Exception('Memo content is required');
+    }
 
+    try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
 
       if (token == null) throw Exception('No authentication token');
-      
-      print('Attempting to create memo: $memo'); // Debug log
-      final newMemo = await _memoService.createMemo(token, memo);
-      
-      if (newMemo != null) {
-        print('Successfully created memo: $newMemo'); // Debug log
-        _memos.insert(0, newMemo);
-        notifyListeners();
-      }
-    } catch (e) {
-      print('Add memo error in provider: $e'); // Debug log
-      rethrow;
-    } finally {
-      _isLoading = false;
+
+      final newMemo = await _memoService.createMemo(token, memo.trim());
+      _memos.insert(0, newMemo);
       notifyListeners();
+    } catch (e) {
+      print('Add memo error: $e');
+      rethrow;
     }
   }
 
@@ -69,12 +62,11 @@ class MemoProvider extends ChangeNotifier {
 
       if (token == null) throw Exception('No authentication token');
 
-      final success = await _memoService.deleteMemo(token, id);
-      if (success) {
-        _memos.removeWhere((memo) => memo['_id'] == id);
-        notifyListeners();
-      }
+      await _memoService.deleteMemo(token, id);
+      _memos.removeWhere((memo) => memo['_id'] == id);
+      notifyListeners();
     } catch (e) {
+      print('Delete memo error: $e');
       rethrow;
     }
   }
@@ -98,7 +90,7 @@ class MemoProvider extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print('Update memo error: $e'); // Add debug logging
+      print('Update memo error: $e');
       rethrow;
     }
   }

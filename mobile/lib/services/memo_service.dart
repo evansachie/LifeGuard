@@ -35,7 +35,7 @@ class MemoService {
           'Content-Type': 'application/json',
         },
         body: json.encode({
-          'memo': memo // This is the correct field name as per web impl
+          'memo': memo
         }),
       );
 
@@ -43,7 +43,7 @@ class MemoService {
         final data = json.decode(response.body);
         return {
           '_id': data['Id'],
-          'Text': data['memo'], // Field is returned as 'memo' from API
+          'Text': data['memo'],
           'Done': data['done'] ?? false,
           'CreatedAt': data['createdAt'],
         };
@@ -66,7 +66,7 @@ class MemoService {
           'Content-Type': 'application/json',
         },
         body: json.encode({
-          'memo': memo // This is the correct field name as per web impl
+          'memo': memo
         }),
       );
 
