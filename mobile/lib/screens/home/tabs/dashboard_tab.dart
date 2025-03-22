@@ -239,6 +239,7 @@ class _DashboardTabState extends State<DashboardTab> {
                   title: 'Reminders',
                   value: '3',
                   unit: 'Active',
+                  onTap: () => Navigator.pushNamed(context, '/memos'),
                 ),
                 _buildMetricCard(
                   context: context,
@@ -289,65 +290,69 @@ class _DashboardTabState extends State<DashboardTab> {
     required String title,
     required String value,
     required String unit,
+    VoidCallback? onTap,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: isDark
-                ? Colors.black.withOpacity(0.3)
-                : Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              SvgPicture.asset(
-                icon,
-                width: 24,
-                height: 24,
-                colorFilter: ColorFilter.mode(
-                  isDark ? Colors.white70 : const Color(0xFF4285F4),
-                  BlendMode.srcIn,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                title,
-                style: TextStyle(
-                  color: isDark ? Colors.white70 : Colors.grey[600],
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: isDark
+                  ? Colors.black.withOpacity(0.3)
+                  : Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
-          ),
-          Text(
-            unit,
-            style: TextStyle(
-              color: isDark ? Colors.white60 : Colors.grey[600],
-              fontSize: 12,
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                SvgPicture.asset(
+                  icon,
+                  width: 24,
+                  height: 24,
+                  colorFilter: ColorFilter.mode(
+                    isDark ? Colors.white70 : const Color(0xFF4285F4),
+                    BlendMode.srcIn,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: isDark ? Colors.white70 : Colors.grey[600],
+                    fontSize: 14,
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
+            const SizedBox(height: 12),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black,
+              ),
+            ),
+            Text(
+              unit,
+              style: TextStyle(
+                color: isDark ? Colors.white60 : Colors.grey[600],
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
