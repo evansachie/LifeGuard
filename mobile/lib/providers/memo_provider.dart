@@ -41,17 +41,32 @@ class MemoProvider extends ChangeNotifier {
     }
 
     try {
+      _isLoading = true;
+      notifyListeners();
+
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
 
       if (token == null) throw Exception('No authentication token');
 
       final newMemo = await _memoService.createMemo(token, memo.trim());
-      _memos.insert(0, newMemo);
+      
+      // Ensure the memo is properly formatted before adding to list
+      final formattedMemo = {
+        '_id': newMemo['_id']?.toString() ?? '',
+        'Text': newMemo['Text']?.toString() ?? memo.trim(),
+        'Done': newMemo['Done'] ?? false,
+        'CreatedAt': newMemo['CreatedAt']?.toString() ?? DateTime.now().toIso8601String(),
+      };
+      
+      _memos.insert(0, formattedMemo);
       notifyListeners();
     } catch (e) {
       print('Add memo error: $e');
       rethrow;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
@@ -97,20 +112,33 @@ class MemoProvider extends ChangeNotifier {
 
   Future<void> toggleMemo(String id, bool isDone) async {
     try {
+      // Update local state immediately for better UX
+      final index = _memos.indexWhere((memo) => memo['_id'] == id);
+      if (index != -1) {
+        _memos[index] = {..._memos[index], 'Done': isDone};
+        notifyListeners();
+      }
+
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
 
       if (token == null) throw Exception('No authentication token');
 
+      // Call API in background
       final success = await _memoService.toggleMemo(token, id, isDone);
-      if (success) {
-        final index = _memos.indexWhere((memo) => memo['_id'] == id);
-        if (index != -1) {
-          _memos[index] = {..._memos[index], 'Done': isDone};
-          notifyListeners();
-        }
+      
+      // Revert on failure
+      if (!success && index != -1) {
+        _memos[index] = {..._memos[index], 'Done': !isDone};
+        notifyListeners();
       }
     } catch (e) {
+      // Revert on error
+      final index = _memos.indexWhere((memo) => memo['_id'] == id);
+      if (index != -1) {
+        _memos[index] = {..._memos[index], 'Done': !isDone};
+        notifyListeners();
+      }
       rethrow;
     }
   }

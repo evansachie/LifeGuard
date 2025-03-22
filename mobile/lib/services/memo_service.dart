@@ -39,17 +39,19 @@ class MemoService {
         }),
       );
 
+      print('Create memo response: ${response.body}'); // Debug log
+
       if (response.statusCode == 201 || response.statusCode == 200) {
         final data = json.decode(response.body);
+        // Match the field names with what the API returns
         return {
-          '_id': data['Id'],
-          'Text': data['memo'],
-          'Done': data['done'] ?? false,
-          'CreatedAt': data['createdAt'],
+          '_id': data['Id'].toString(), // Convert to string and use as _id
+          'Text': data['Text'] ?? data['memo'], // Handle both possible field names
+          'Done': data['Done'] ?? data['done'] ?? false,
+          'CreatedAt': data['CreatedAt'] ?? data['createdAt'] ?? DateTime.now().toIso8601String(),
         };
       } else {
-        final error = json.decode(response.body);
-        throw Exception(error['error'] ?? 'Failed to create memo');
+        throw Exception('Failed to create memo');
       }
     } catch (e) {
       print('Create memo error: $e');
