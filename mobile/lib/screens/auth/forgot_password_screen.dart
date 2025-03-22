@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../services/auth_service.dart';
 import '../../utils/validation.dart';
 
@@ -77,10 +78,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             key: _formKey,
             child: Column(
               children: [
-                Image.asset(
-                  'assets/images/forgotPassword.png',
-                  width: 260,
-                  height: 260,
+                SvgPicture.asset(
+                  'assets/images/forgotpassword.svg',
+                  width: 220,
+                  height: 220,
                 ),
                 const SizedBox(height: 40),
                 Text(
