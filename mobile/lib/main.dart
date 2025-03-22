@@ -4,6 +4,7 @@ import 'package:lifeguard/screens/auth/login_screen.dart';
 import 'package:lifeguard/screens/auth/otp_verification_screen.dart';
 import 'package:lifeguard/screens/auth/register_screen.dart';
 import 'package:lifeguard/screens/home/home_screen.dart';
+import 'package:lifeguard/screens/onboarding/onboarding_screen1.dart';
 import 'package:provider/provider.dart';
 import 'package:lifeguard/providers/theme_provider.dart';
 import 'package:lifeguard/providers/auth_provider.dart';
@@ -74,6 +75,8 @@ class MyApp extends StatelessWidget {
             '/register': (context) => const RegisterScreen(),
             '/home': (context) => const HomeScreen(),
             '/forgot-password': (context) => const ForgotPasswordScreen(),
+            '/onboarding': (context) => const OnboardingScreen1(),
+            '/welcome': (context) => const SplashScreen(),
             '/verify-otp': (context) {
               final email = ModalRoute.of(context)?.settings.arguments as String?;
               return OTPVerificationScreen(email: email);
