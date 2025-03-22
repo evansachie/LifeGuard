@@ -22,15 +22,33 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     try {
       final result = await _authService.forgotPassword(_emailController.text);
       if (result && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Password reset link sent to your email')),
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Check Your Email'),
+            content: Text(
+              'We have sent a password reset link to ${_emailController.text}. Please check your inbox and spam folder.',
+              style: const TextStyle(fontSize: 16),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context); // Close dialog
+                  Navigator.pop(context); // Go back to login
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
         );
-        Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } finally {
@@ -61,8 +79,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               children: [
                 Image.asset(
                   'assets/images/forgotPassword.png',
-                  width: 350,
-                  height: 350,
+                  width: 260,
+                  height: 260,
                 ),
                 const SizedBox(height: 40),
                 Text(
