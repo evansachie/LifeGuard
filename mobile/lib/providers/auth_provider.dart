@@ -61,13 +61,19 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    _isAuthenticated = false;
-    _token = null;
-    _userId = null;
-    _userName = null;
-    notifyListeners();
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear(); // Clear all stored data
+      
+      // Reset all auth state
+      _isAuthenticated = false;
+      _token = null;
+      _userId = null;
+      _userName = null;
+      notifyListeners();
+    } catch (e) {
+      throw Exception('Failed to logout: $e');
+    }
   }
 
   Future<bool> checkAuth() async {
@@ -127,5 +133,22 @@ class AuthProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  // Add this function to check login status
+  Future<bool> isLoggedIn() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    final userId = prefs.getString('userId');
+    
+    if (token != null && userId != null) {
+      _token = token;
+      _userId = userId;
+      _userName = prefs.getString('userName');
+      _isAuthenticated = true;
+      notifyListeners();
+      return true;
+    }
+    return false;
   }
 }

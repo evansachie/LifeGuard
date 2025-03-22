@@ -98,12 +98,21 @@ class AuthService {
       final response = await http.post(
         Uri.parse('$baseUrl/api/Account/forgot-password'),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({'email': email}),
+        body: json.encode({
+          'email': email,
+          'resetUrl': 'lifeguardapp://reset-password', // Add mobile deep link
+          'isMobile': true // Add flag to indicate mobile request
+        }),
       );
 
-      return response.statusCode == 200;
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        final error = json.decode(response.body);
+        throw Exception(error['message'] ?? 'Failed to send reset email');
+      }
     } catch (e) {
-      throw Exception('Failed to process forgot password request: $e');
+      throw Exception('Failed to send password reset email: $e');
     }
   }
 
