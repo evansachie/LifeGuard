@@ -531,3 +531,4 @@ FodyWeavers.xsd
 /backend/.env.local
 **/bin/
 **/obj/
+.qodo

@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:lifeguard/screens/auth/forgot_password_screen.dart';
+import 'package:lifeguard/screens/auth/login_screen.dart';
+import 'package:lifeguard/screens/auth/otp_verification_screen.dart';
+import 'package:lifeguard/screens/auth/register_screen.dart';
+import 'package:lifeguard/screens/home/home_screen.dart';
+import 'package:lifeguard/screens/onboarding/onboarding_screen1.dart';
 import 'package:provider/provider.dart';
 import 'package:lifeguard/providers/theme_provider.dart';
+import 'package:lifeguard/providers/auth_provider.dart';
 import 'package:lifeguard/screens/splash/splash_screen.dart';
 import 'package:lifeguard/providers/quote_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -43,6 +50,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => QuoteProvider()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) => MaterialApp(
@@ -62,6 +70,18 @@ class MyApp extends StatelessWidget {
             useMaterial3: true,
           ),
           home: const SplashScreen(),
+          routes: {
+            '/login': (context) => const LoginScreen(),
+            '/register': (context) => const RegisterScreen(),
+            '/home': (context) => const HomeScreen(),
+            '/forgot-password': (context) => const ForgotPasswordScreen(),
+            '/onboarding': (context) => const OnboardingScreen1(),
+            '/welcome': (context) => const SplashScreen(),
+            '/verify-otp': (context) {
+              final email = ModalRoute.of(context)?.settings.arguments as String?;
+              return OTPVerificationScreen(email: email);
+            },
+          },
         ),
       ),
     );
