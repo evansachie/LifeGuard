@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lifeguard/screens/health_report/widgets/health_report_modal.dart';
 
 class HealthReport extends StatelessWidget {
   const HealthReport({super.key});
@@ -24,27 +25,33 @@ class HealthReport extends StatelessWidget {
         centerTitle: false,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Temperature Card
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: const Color(0xFFFBE9E7),
+                color: isDark ? const Color(0xFF2D1B1B) : const Color(0xFFFBE9E7),
                 borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Average Temperature',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF333333),
+                      color: isDark ? Colors.white : const Color(0xFF333333),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -59,7 +66,7 @@ class HealthReport extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 64,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF333333),
+                              color: Colors.grey,
                             ),
                           ),
                           Padding(
@@ -69,7 +76,7 @@ class HealthReport extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF333333),
+                                color: Colors.grey,
                               ),
                             ),
                           ),
@@ -91,16 +98,21 @@ class HealthReport extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // Humidity and Steps Row
             Row(
               children: [
-                // Humidity Card
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE3F2FD),
+                      color: isDark ? const Color(0xFF1A2327) : const Color(0xFFE3F2FD),
                       borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,7 +133,7 @@ class HealthReport extends StatelessWidget {
                               'Humidity',
                               style: TextStyle(
                                 fontSize: 16,
-                                color: Color(0xFF333333),
+                                color: Colors.white,
                               ),
                             ),
                           ],
@@ -135,7 +147,7 @@ class HealthReport extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 32,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF333333),
+                                color: Colors.grey,
                               ),
                             ),
                             Text(
@@ -143,7 +155,7 @@ class HealthReport extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF333333),
+                                color: Colors.grey,
                               ),
                             ),
                           ],
@@ -153,13 +165,19 @@ class HealthReport extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 16),
-                // Steps Card
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFF3E0),
+                      color: isDark ? const Color(0xFF2A2316) : const Color(0xFFFFF3E0),
                       borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,7 +198,7 @@ class HealthReport extends StatelessWidget {
                               'Steps',
                               style: TextStyle(
                                 fontSize: 16,
-                                color: Color(0xFF333333),
+                                color: Colors.white,
                               ),
                             ),
                           ],
@@ -191,7 +209,7 @@ class HealthReport extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF333333),
+                            color: Colors.grey,
                           ),
                         ),
                       ],
@@ -202,9 +220,8 @@ class HealthReport extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            // Latest Reports Section
             Text(
-              'Latest report',
+              'Latest Reports',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -221,20 +238,27 @@ class HealthReport extends StatelessWidget {
                 return Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
                     borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
                   child: Row(
                     children: [
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE3F2FD),
+                          color: isDark ? const Color(0xFF1A2327) : const Color(0xFFE3F2FD),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.description_outlined,
-                          color: Color(0xFF1976D2),
+                          color: isDark ? Colors.blue[300] : const Color(0xFF1976D2),
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -242,18 +266,18 @@ class HealthReport extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'General report',
+                            Text(
+                              'General Report',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF333333),
+                                color: isDark ? Colors.white : const Color(0xFF333333),
                               ),
                             ),
                             Text(
                               index == 0 ? 'Jul 10, 2023' : 'Jul 5, 2023',
                               style: TextStyle(
                                 fontSize: 12,
-                                color: Colors.grey[600],
+                                color: isDark ? Colors.grey[400] : Colors.grey[600],
                               ),
                             ),
                           ],
@@ -262,38 +286,49 @@ class HealthReport extends StatelessWidget {
                       IconButton(
                         icon: const Icon(Icons.more_vert),
                         onPressed: () {},
-                        color: Colors.grey[600],
+                        color: isDark ? Colors.grey[400] : Colors.grey[600],
                       ),
                     ],
                   ),
                 );
               },
             ),
-            const SizedBox(height: 24),
-
-            // Generate Report Button
-            SizedBox(
-              width: double.infinity,
-              height: 56,
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF4285F4),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(28),
-                  ),
-                ),
-                child: const Text(
-                  'Generate Report',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
           ],
+        ),
+      ),
+
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          bottom: 16,
+          top: 8,
+        ),
+        child: ElevatedButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) => HealthReportModal(
+                userData: {'name': 'Evans Acheampongg'},
+              ),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF4285F4),
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(28),
+            ),
+            elevation: 4,
+          ),
+          child: const Text(
+            'Generate Report',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
       ),
     );
