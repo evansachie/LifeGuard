@@ -3,7 +3,7 @@ Map<String, dynamic> generateHealthReport(Map<String, dynamic>? userData) {
     'userInfo': {
       'reportId': 'HR${DateTime.now().millisecondsSinceEpoch}',
       'date': DateTime.now().toIso8601String(),
-      'name': 'Evans Achien\'g',
+      'name': 'Evans Acheampong',
     },
     'vitals': {
       'temperature': {

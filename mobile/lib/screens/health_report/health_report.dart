@@ -309,7 +309,7 @@ class HealthReport extends StatelessWidget {
             showDialog(
               context: context,
               builder: (context) => HealthReportModal(
-                userData: {'name': 'Evans Achien\'g'},
+                userData: {'name': 'Evans Acheampongg'},
               ),
             );
           },
