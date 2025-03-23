@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../providers/emergency_contact_provider.dart';
+import 'package:provider/provider.dart';
 
 class ContactCard extends StatelessWidget {
   final Map<String, dynamic> contact;
@@ -87,24 +89,17 @@ class ContactCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                IconButton(
-                  icon: const Icon(Icons.phone, color: Colors.green),
-                  onPressed: () async {
-                    final url = Uri.parse('tel:${contact['phone']}');
-                    if (await canLaunchUrl(url)) {
-                      await launchUrl(url);
-                    }
-                  },
+                ElevatedButton.icon(
+                  onPressed: () => _sendTestAlert(context),
+                  icon: const Icon(Icons.warning, size: 16),
+                  label: const Text('Test Alert'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.sms, color: Colors.blue),
-                  onPressed: () async {
-                    final url = Uri.parse('sms:${contact['phone']}');
-                    if (await canLaunchUrl(url)) {
-                      await launchUrl(url);
-                    }
-                  },
-                ),
+                const SizedBox(width: 8),
               ],
             ),
           ],
@@ -136,6 +131,38 @@ class ContactCard extends StatelessWidget {
         return Colors.green;
       default:
         return Colors.grey;
+    }
+  }
+
+  Future<void> _sendTestAlert(BuildContext context) async {
+    try {
+      final contactId = contact['Id']?.toString() ?? contact['_id']?.toString();
+      if (contactId == null) {
+        throw Exception('Contact ID not found');
+      }
+
+      await context.read<EmergencyContactProvider>().sendEmergencyAlert(
+        isTest: true,
+        contactId: contactId,
+      );
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Test alert sent successfully'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to send test alert: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 }

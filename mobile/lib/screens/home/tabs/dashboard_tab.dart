@@ -215,29 +215,11 @@ class _DashboardTabState extends State<DashboardTab> {
                   ),
                 ),
                 ElevatedButton.icon(
-                  onPressed: () async {
-                    try {
-                      final provider = Provider.of<EmergencyContactProvider>(
-                        context, 
-                        listen: false
-                      );
-                      await provider.sendEmergencyAlert();
-                      if (context.mounted) {
-                        Navigator.pushNamed(context, '/emergency-contacts');
-                      }
-                    } catch (e) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Failed to send alert: $e'),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      }
-                    }
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/emergency-contacts');
                   },
                   icon: const Icon(Icons.warning_amber_rounded),
-                  label: const Text('ALERT'),
+                  label: const Text('EMERGENCY'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
