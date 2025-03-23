@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lifeguard/providers/auth_provider.dart';
+import 'package:lifeguard/providers/emergency_contact_provider.dart';
 import 'package:lifeguard/screens/bmr_calculator/bmr_calculator.dart';
 import 'package:lifeguard/screens/exercise_routines/exercise_routines.dart';
 import 'package:lifeguard/screens/health_tips/health_tips.dart';
@@ -202,13 +203,51 @@ class _DashboardTabState extends State<DashboardTab> {
             const SizedBox(height: 24),
 
             // Environmental Metrics
-            Text(
-              'Environmental Metrics',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : Colors.black,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Environmental Metrics',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    try {
+                      final provider = Provider.of<EmergencyContactProvider>(
+                        context, 
+                        listen: false
+                      );
+                      await provider.sendEmergencyAlert();
+                      if (context.mounted) {
+                        Navigator.pushNamed(context, '/emergency-contacts');
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Failed to send alert: $e'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    }
+                  },
+                  icon: const Icon(Icons.warning_amber_rounded),
+                  label: const Text('ALERT'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             GridView.count(
