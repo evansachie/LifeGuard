@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:lifeguard/providers/emergency_contact_provider.dart';
 import 'package:lifeguard/providers/memo_provider.dart';
 import 'package:lifeguard/screens/auth/forgot_password_screen.dart';
 import 'package:lifeguard/screens/auth/login_screen.dart';
 import 'package:lifeguard/screens/auth/otp_verification_screen.dart';
 import 'package:lifeguard/screens/auth/register_screen.dart';
+import 'package:lifeguard/screens/emergency_contacts/emergency_contacts_screen.dart';
 import 'package:lifeguard/screens/home/home_screen.dart';
 import 'package:lifeguard/screens/memos/memos_screen.dart';
 import 'package:lifeguard/screens/onboarding/onboarding_screen1.dart';
@@ -50,6 +52,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => QuoteProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => MemoProvider()),
+        ChangeNotifierProvider(create: (_) => EmergencyContactProvider()), // Add this line
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) => MaterialApp(
@@ -81,6 +84,7 @@ class MyApp extends StatelessWidget {
               final email = ModalRoute.of(context)?.settings.arguments as String?;
               return OTPVerificationScreen(email: email);
             },
+            '/emergency-contacts': (context) => const EmergencyContactsScreen(),
           },
         ),
       ),
