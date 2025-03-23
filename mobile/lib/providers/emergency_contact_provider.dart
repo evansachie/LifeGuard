@@ -30,14 +30,15 @@ class EmergencyContactProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> sendEmergencyAlert() async {
+  Future<void> sendEmergencyAlert({bool isTest = false, String? contactId}) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
 
       if (token == null) throw Exception('No authentication token');
 
-      await _service.sendEmergencyAlert(token);
+      // Pass the contactId for test alerts
+      await _service.sendEmergencyAlert(token, isTest: isTest, contactId: contactId);
     } catch (e) {
       rethrow;
     }

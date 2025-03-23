@@ -28,7 +28,6 @@ class EmergencyContactService {
 
   Future<Map<String, dynamic>> createContact(String token, Map<String, dynamic> contact) async {
     try {
-      // Convert priority string to number
       int priorityNumber;
       switch (contact['priority'].toLowerCase()) {
         case 'high':
@@ -95,17 +94,26 @@ class EmergencyContactService {
     }
   }
 
-  Future<bool> sendEmergencyAlert(String token) async {
+  Future<bool> sendEmergencyAlert(String token, {bool isTest = false, String? contactId}) async {
     try {
+      final endpoint = isTest 
+          ? '$baseUrl/api/emergency-contacts/test-alert/${contactId}'
+          : '$baseUrl/api/emergency-contacts/alert';
+
       final response = await http.post(
-        Uri.parse('$baseUrl/api/emergency-contacts/alert'),
+        Uri.parse(endpoint),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
       );
 
-      return response.statusCode == 200;
+      if (response.statusCode == 200) {
+        return true;
+      }
+      
+      final error = json.decode(response.body);
+      throw Exception(error['message'] ?? 'Failed to send alert');
     } catch (e) {
       throw Exception('Failed to send emergency alert: $e');
     }
