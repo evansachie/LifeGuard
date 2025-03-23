@@ -26,7 +26,7 @@ class _MemosScreenState extends State<MemosScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Private Memos'),
+        title: const Text('Sticky Notes'),
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
