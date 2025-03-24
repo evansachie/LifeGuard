@@ -18,9 +18,7 @@ class MemoCard extends StatelessWidget {
     final text = memo['Text']?.toString() ?? memo['memo']?.toString() ?? '';
     final isDone = memo['Done'] ?? memo['done'] ?? false;
     final createdAtStr = memo['CreatedAt']?.toString() ?? memo['createdAt']?.toString() ?? DateTime.now().toIso8601String();
-    final DateTime createdAt = createdAtStr != null 
-        ? DateTime.parse(createdAtStr)
-        : DateTime.now();
+    final DateTime createdAt = DateTime.parse(createdAtStr);
     final formattedDate = DateFormat('MMM d, y').format(createdAt);
 
     return Dismissible(
