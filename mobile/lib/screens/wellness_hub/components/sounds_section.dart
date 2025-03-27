@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:provider/provider.dart';
 import '../../../models/sound.dart';
 import 'sounds_section/sound_card.dart';
 import 'sounds_section/sound_filters.dart';
 import 'sounds_section/player_controls.dart';
+import '../../../providers/sound_provider.dart';
 
 class SoundsSection extends StatefulWidget {
   final bool isDark;
@@ -32,45 +34,40 @@ class SoundsSection extends StatefulWidget {
 }
 
 class _SoundsSectionState extends State<SoundsSection> {
-  SoundCategory _selectedCategory = SoundCategory.all;
-  String _searchQuery = '';
-  List<Sound> _sounds = [
-    Sound(
-      id: '1',
-      title: 'Forest Rain',
-      location: 'Amazon Rainforest',
-      category: 'nature',
-      audioURL: 'assets/sounds/forest-rain.mp3',
-      imageName: 'forest-rain.jpg',
-    ),
-    Sound(
-      id: '2',
-      title: 'Ocean Waves',
-      location: 'Pacific Coast',
-      category: 'nature',
-      audioURL: 'assets/sounds/ocean-waves.mp3',
-      imageName: 'ocean-waves.jpg',
-    ),
-    // Add more sounds as needed
-  ];
+  final _scrollController = ScrollController();
 
-  List<Sound> get _filteredSounds {
-    return _sounds.where((sound) {
-      if (_selectedCategory != SoundCategory.all && 
-          sound.category != _selectedCategory.toString().split('.').last) {
-        return false;
-      }
-      if (_searchQuery.isNotEmpty) {
-        final query = _searchQuery.toLowerCase();
-        return sound.title.toLowerCase().contains(query) ||
-               sound.location.toLowerCase().contains(query);
-      }
-      return true;
-    }).toList();
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+    // Use Future.microtask to avoid calling setState during build
+    Future.microtask(() {
+      final provider = Provider.of<SoundProvider>(context, listen: false);
+      provider.searchSounds();
+    });
   }
 
-  Future<void> _playSound(Sound sound) async {
+  void _onScroll() {
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      final provider = Provider.of<SoundProvider>(context, listen: false);
+      if (!provider.isLoading && provider.hasMore) {
+        provider.searchSounds();
+      }
+    }
+  }
+
+  Future<void> _playSound(Map<String, dynamic> soundData) async {
     try {
+      final Sound sound = Sound(
+        id: soundData['id'].toString(),
+        title: soundData['name'] ?? '',
+        location: soundData['username'] ?? 'Unknown',
+        category: soundData['category'] ?? 'unknown',
+        audioURL: soundData['previews']['preview-hq-mp3'] ?? '',
+        imageName: soundData['images']['waveform_m'] ?? '',
+        duration: soundData['duration']?.toDouble(),
+      );
+
       if (widget.currentSound == sound.title && widget.isPlaying) {
         widget.audioRef.pause();
         widget.setIsPlaying(false);
@@ -91,80 +88,123 @@ class _SoundsSectionState extends State<SoundsSection> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          'Relaxation Sounds',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: widget.isDark ? Colors.white : Colors.black,
-          ),
-        ),
-        const SizedBox(height: 24),
-        SoundFilters(
-          selectedCategory: _selectedCategory,
-          onCategoryChanged: (category) => setState(() => _selectedCategory = category),
-          onSearchChanged: (query) => setState(() => _searchQuery = query),
-        ),
-        const SizedBox(height: 24),
-        if (_filteredSounds.isEmpty)
-          Center(
-            child: Column(
-              children: [
-                Icon(
-                  Icons.music_off,
-                  size: 64,
-                  color: widget.isDark ? Colors.white38 : Colors.grey[400],
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'No sounds found',
-                  style: TextStyle(
-                    color: widget.isDark ? Colors.white38 : Colors.grey[600],
-                  ),
-                ),
-              ],
-            ),
-          )
-        else
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 1,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-            ),
-            itemCount: _filteredSounds.length,
-            itemBuilder: (context, index) {
-              final sound = _filteredSounds[index];
-              return SoundCard(
-                sound: sound,
-                isPlaying: widget.currentSound == sound.title && widget.isPlaying,
-                onPlay: () => _playSound(sound),
-                onToggleFavorite: () {
-                  // TODO: Implement favorite toggle
-                },
-              );
-            },
-          ),
+    return Consumer<SoundProvider>(
+      builder: (context, provider, child) {
+        final sounds = provider.sounds;
 
-        if (widget.currentSound != null)
-          PlayerControls(
-            player: widget.audioRef,
-            currentSoundTitle: widget.currentSound!,
-            volume: widget.volume,
-            onVolumeChanged: widget.setVolume,
-            onClose: () {
-              widget.audioRef.stop();
-              widget.setCurrentSound(null);
-              widget.setIsPlaying(false);
-            },
-          ),
-      ],
+        return Column(
+          children: [
+            Text(
+              'Relaxation Sounds',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: widget.isDark ? Colors.white : Colors.black,
+              ),
+            ),
+            const SizedBox(height: 24),
+            SoundFilters(
+              selectedCategory: _parseCategory(provider.category),
+              onCategoryChanged: (category) => provider.setCategory(category.toString().split('.').last),
+              onSearchChanged: provider.setSearchQuery,
+            ),
+            const SizedBox(height: 24),
+            if (provider.isLoading && sounds.isEmpty)
+              const Center(child: CircularProgressIndicator())
+            else if (sounds.isEmpty)
+              Center(
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.music_off,
+                      size: 64,
+                      color: widget.isDark ? Colors.white38 : Colors.grey[400],
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No sounds found',
+                      style: TextStyle(
+                        color: widget.isDark ? Colors.white38 : Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            else
+              Expanded(
+                child: ListView.builder(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: sounds.length + (provider.hasMore ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index == sounds.length) {
+                      return const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(16),
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+
+                    final soundData = sounds[index];
+                    final sound = Sound(
+                      id: soundData['id'].toString(),
+                      title: soundData['name'] ?? '',
+                      location: soundData['username'] ?? 'Unknown',
+                      category: soundData['category'] ?? 'unknown',
+                      audioURL: soundData['previews']['preview-hq-mp3'] ?? '',
+                      imageName: soundData['images']['waveform_m'] ?? '',
+                      duration: soundData['duration']?.toDouble(),
+                    );
+                    return SoundCard(
+                      sound: sound,
+                      isPlaying: widget.currentSound == sound.title && widget.isPlaying,
+                      onPlay: () => _playSound(soundData),
+                      onToggleFavorite: () {
+                        // TODO: Implement favorite toggle
+                      },
+                    );
+                  },
+                ),
+              ),
+
+            if (widget.currentSound != null)
+              PlayerControls(
+                player: widget.audioRef,
+                currentSoundTitle: widget.currentSound!,
+                volume: widget.volume,
+                onVolumeChanged: widget.setVolume,
+                onClose: () {
+                  widget.audioRef.stop();
+                  widget.setCurrentSound(null);
+                  widget.setIsPlaying(false);
+                },
+              ),
+          ],
+        );
+      },
     );
+  }
+
+  SoundCategory _parseCategory(String category) {
+    switch (category.toLowerCase()) {
+      case 'nature':
+        return SoundCategory.nature;
+      case 'ambient':
+        return SoundCategory.ambient;
+      case 'meditation':
+        return SoundCategory.meditation;
+      case 'binaural':
+        return SoundCategory.binaural;
+      default:
+        return SoundCategory.all;
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
   }
 }

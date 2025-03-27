@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lifeguard/providers/emergency_contact_provider.dart';
 import 'package:lifeguard/providers/memo_provider.dart';
+import 'package:lifeguard/providers/sound_provider.dart';
 import 'package:lifeguard/screens/auth/forgot_password_screen.dart';
 import 'package:lifeguard/screens/auth/login_screen.dart';
 import 'package:lifeguard/screens/auth/otp_verification_screen.dart';
@@ -52,7 +53,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => QuoteProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => MemoProvider()),
-        ChangeNotifierProvider(create: (_) => EmergencyContactProvider()), // Add this line
+        ChangeNotifierProvider(create: (_) => EmergencyContactProvider()),
+        ChangeNotifierProvider(create: (_) => SoundProvider()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) => MaterialApp(
