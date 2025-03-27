@@ -4,7 +4,7 @@ import '../services/freesound_service.dart';
 
 class SoundProvider extends ChangeNotifier {
   final FreesoundService _service = FreesoundService();
-  List<Map<String, dynamic>> _sounds = [];
+  final List<Map<String, dynamic>> _sounds = [];
   bool _isLoading = false;
   String _category = 'all';
   String _searchQuery = '';

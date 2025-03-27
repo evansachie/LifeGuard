@@ -35,8 +35,8 @@ class SectionNavigation extends StatelessWidget {
         selected: {activeSection},
         onSelectionChanged: (selection) => onSectionChange(selection.first),
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.resolveWith((states) {
-            if (states.contains(MaterialState.selected)) {
+          backgroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
               return const Color(0xFF4285F4);
             }
             return null;
