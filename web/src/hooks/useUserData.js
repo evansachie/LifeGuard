@@ -20,22 +20,31 @@ const useUserData = () => {
         const userId = localStorage.getItem('userId');
         
         if (!userId) {
+          setError('No user ID found');
           setIsLoading(false);
           return;
         }
 
-        const data = await fetchWithAuth(`${API_ENDPOINTS.GET_USER(userId)}`);
+        const response = await fetchWithAuth(API_ENDPOINTS.GET_USER(userId));
         
-        if (data) {
-          setUserData(data);
-          localStorage.setItem('userName', data.userName);
+        if (response && (response.userName || response.email)) {
+          setUserData({
+            userName: response.userName,
+            email: response.email
+          });
+          
+          if (response.userName) {
+            localStorage.setItem('userName', response.userName);
+          }
           
           await fetchUserProfilePhoto(userId);
+        } else {
+          throw new Error('Invalid user data response');
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
+        setError(error.message || 'Failed to load user data');
         toast.error('Failed to fetch user data');
-        setError('Failed to load user data');
       } finally {
         setIsLoading(false);
       }

@@ -10,6 +10,7 @@ import ImageSlider from "../../../components/ImageSlider/ImageSlider";
 import { loginUser } from "../../../utils/auth";
 import InputField from '../../../components/InputField/InputField';
 import ThemeToggle from '../../../contexts/ThemeToggle';
+import { Logo } from "../../../components/Logo/Logo";
 import "./LogIn.css";
 
 export default function LogIn({ isDarkMode, toggleTheme }) {
@@ -48,14 +49,13 @@ export default function LogIn({ isDarkMode, toggleTheme }) {
     return (
         <div className={`login-container ${isDarkMode ? "dark-mode" : "light-mode"}`}>
             <ThemeToggle isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
-
             <div className="login-illustration">
                 <ImageSlider images={sliderImages} />
             </div>
 
             <div className="login-form-container">
                 <div className="login-form-card">
-                    <img src="/images/lifeguard-2.svg" alt="lhp logo" className="logo" />
+                    <Logo />
                     <h2 className="login-heading">Welcome Back</h2>
 
                     <form onSubmit={handleSubmit}>

@@ -6,9 +6,16 @@ import { fetchWithAuth, API_ENDPOINTS, QUOTE_API_URL } from './api';
  * @returns {Promise<Object>} User data
  */
 export const fetchUserData = async (userId) => {
+  if (!userId) {
+    throw new Error('User ID is required');
+  }
+
   try {
-    const userData = await fetchWithAuth(`${API_ENDPOINTS.GET_USER(userId)}`);
-    return userData;
+    const response = await fetchWithAuth(`${API_ENDPOINTS.GET_USER(userId)}`);
+    return {
+      userName: response.userName,
+      email: response.email
+    };
   } catch (error) {
     console.error('Error fetching user data:', error);
     throw error;

@@ -42,6 +42,23 @@ export const API_ENDPOINTS = {
     RAG_PROCESS_PROFILES: `${NODE_API_URL}/api/rag/process/profiles`,
 };
 
+export const handleApiResponse = async (response) => {
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({
+            message: `HTTP error! status: ${response.status}`
+        }));
+        throw new Error(error.message || `Request failed with status ${response.status}`);
+    }
+    
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+        const data = await response.json();
+        return data;
+    }
+    
+    return null;
+};
+
 export const fetchApi = async (endpoint, options = {}) => {
     const defaultHeaders = options.body instanceof FormData
         ? { 'Accept': 'application/json' }
@@ -67,20 +84,8 @@ export const fetchApi = async (endpoint, options = {}) => {
             credentials: 'omit'
         });
 
-        let data;
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-            data = await response.json();
-        } else {
-            data = await response.text();
-        }
-        
+        const data = await handleApiResponse(response);
         console.log('Response:', data);
-
-        if (!response.ok) {
-            throw new Error(typeof data === 'string' ? data : (data.message || data.error || `Error: ${response.statusText}`));
-        }
-
         return data;
     } catch (error) {
         console.error('API Error:', {
@@ -88,7 +93,6 @@ export const fetchApi = async (endpoint, options = {}) => {
             error,
             requestBody: options.body
         });
-        console.log(error.message || 'An error occurred');
         throw error;
     }
 };
@@ -104,33 +108,40 @@ const PUBLIC_ENDPOINTS = [
 ];
 
 export const fetchWithAuth = async (endpoint, options = {}) => {
-    // Check if endpoint is public
     const isPublicEndpoint = PUBLIC_ENDPOINTS.some(publicEndpoint => 
         endpoint.includes(publicEndpoint)
     );
 
     const token = localStorage.getItem('token');
+    
+    // For non-public endpoints, require token
     if (!token && !isPublicEndpoint) {
-        throw new Error('No authentication token found');
+        console.error('No auth token found for protected endpoint:', endpoint);
+        throw new Error('Authentication required');
     }
 
-    return fetchApi(endpoint, {
-        ...options,
-        headers: {
-            ...options.headers,
-            ...(token && !isPublicEndpoint && { 'Authorization': `Bearer ${token}` })
+    // Add authorization header for authenticated requests
+    const headers = {
+        ...options.headers,
+        ...(token && !isPublicEndpoint && { 
+            'Authorization': `Bearer ${token}`
+        })
+    };
+
+    try {
+        return await fetchApi(endpoint, {
+            ...options,
+            headers
+        });
+    } catch (error) {
+        if (error.message.includes('401')) {
+            // Clear invalid auth data
+            localStorage.removeItem('token');
+            localStorage.removeItem('userId');
+            window.location.href = '/log-in';
         }
-    });
-};
-
-export const handleApiResponse = async (response) => {
-    const data = await response.json();
-    
-    if (!response.ok) {
-        throw new Error(data.message || 'An error occurred');
+        throw error;
     }
-    
-    return data;
 };
 
 export const getResetPasswordUrl = (email, token) => {
