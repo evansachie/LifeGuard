@@ -35,16 +35,16 @@ export default function SignUp({ isDarkMode, toggleTheme }) {
 
         setIsLoading(true);
         try {
-            const data = await registerUser(formData.name, formData.email, formData.password);
-
-            if (data.userId) {
-                localStorage.setItem("userId", data.userId);
+            const { userId } = await registerUser(formData.name, formData.email, formData.password);
+            if (userId) {
+                localStorage.setItem("userId", userId);
                 navigate("/verify-otp", { state: { email: formData.email } });
+                toast.success("Registration successful! Please verify your email.");
             } else {
-                setErrors((prev) => ({ ...prev, submit: data.message || "Registration failed" }));
+                throw new Error("Registration failed - no user ID received");
             }
         } catch (error) {
-            toast.error("Error during Registration");
+            toast.error(error.message || "Registration failed");
             setErrors((prev) => ({ ...prev, submit: error.message || "Registration failed. Please try again." }));
         } finally {
             setIsLoading(false);
