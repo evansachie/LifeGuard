@@ -42,6 +42,16 @@ export const API_ENDPOINTS = {
     RAG_PROCESS_PROFILES: `${NODE_API_URL}/api/rag/process/profiles`,
 };
 
+export const handleApiResponse = async (response) => {
+    const data = await response.json();
+    
+    if (!response.ok || (data.statusCode && data.statusCode !== 200)) {
+        throw new Error(data.message || 'An error occurred');
+    }
+    
+    return data.isSuccess !== undefined ? data : { isSuccess: true, data };
+};
+
 export const fetchApi = async (endpoint, options = {}) => {
     const defaultHeaders = options.body instanceof FormData
         ? { 'Accept': 'application/json' }
@@ -67,20 +77,8 @@ export const fetchApi = async (endpoint, options = {}) => {
             credentials: 'omit'
         });
 
-        let data;
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-            data = await response.json();
-        } else {
-            data = await response.text();
-        }
-        
+        const data = await handleApiResponse(response);
         console.log('Response:', data);
-
-        if (!response.ok) {
-            throw new Error(typeof data === 'string' ? data : (data.message || data.error || `Error: ${response.statusText}`));
-        }
-
         return data;
     } catch (error) {
         console.error('API Error:', {
@@ -88,7 +86,6 @@ export const fetchApi = async (endpoint, options = {}) => {
             error,
             requestBody: options.body
         });
-        console.log(error.message || 'An error occurred');
         throw error;
     }
 };
@@ -121,16 +118,6 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
             ...(token && !isPublicEndpoint && { 'Authorization': `Bearer ${token}` })
         }
     });
-};
-
-export const handleApiResponse = async (response) => {
-    const data = await response.json();
-    
-    if (!response.ok) {
-        throw new Error(data.message || 'An error occurred');
-    }
-    
-    return data;
 };
 
 export const getResetPasswordUrl = (email, token) => {
