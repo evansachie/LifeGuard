@@ -7,6 +7,7 @@ import { resetUserPassword } from '../../../utils/auth';
 import { validatePassword } from '../../../utils/validatePassword';
 import InputField from '../../../components/InputField/InputField';
 import ThemeToggle from '../../../contexts/ThemeToggle';
+import { Logo } from "../../../components/Logo/Logo";
 import './ResetPassword.css';
 
 export default function ResetPassword({ isDarkMode, toggleTheme }) {
@@ -68,7 +69,7 @@ export default function ResetPassword({ isDarkMode, toggleTheme }) {
 
             <div className="reset-password-form-container">
                 <div className="reset-password-form-card">
-                    <img src="/images/lifeguard-2.svg" alt="lhp logo" className="logo" />
+                    <Logo />
                     <h2 className="reset-password-heading">Reset Password</h2>
                     <p className="reset-password-subheading">Please enter your new password</p>
 

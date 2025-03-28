@@ -6,6 +6,7 @@ import forgotPasswordIllustration from '../../../assets/auth/forgot-password.svg
 import { requestPasswordReset } from '../../../utils/auth';
 import InputField from '../../../components/InputField/InputField';
 import ThemeToggle from '../../../contexts/ThemeToggle';
+import { Logo } from "../../../components/Logo/Logo";
 import './ForgotPassword.css';
 
 export default function ForgotPassword({ isDarkMode, toggleTheme }) {
@@ -35,7 +36,7 @@ export default function ForgotPassword({ isDarkMode, toggleTheme }) {
 
             <div className="forgot-password-form-container">
                 <div className="forgot-password-form-card">
-                    <img src="/images/lifeguard-2.svg" alt="lhp logo" className="logo" />
+                    <Logo />
                     <h2 className="forgot-password-heading">Forgot Password?</h2>
                     <p className="forgot-password-subheading">
                         Enter your email address and we'll send you a link to reset your password.

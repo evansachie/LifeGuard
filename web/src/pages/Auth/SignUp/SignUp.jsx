@@ -11,6 +11,7 @@ import { registerUser } from "../../../utils/auth";
 import { validateSignUpForm } from "../../../utils/validateForm";
 import InputField from "../../../components/InputField/InputField";
 import ThemeToggle from "../../../contexts/ThemeToggle";
+import { Logo } from "../../../components/Logo/Logo";
 import "./SignUp.css";
 
 export default function SignUp({ isDarkMode, toggleTheme }) {
@@ -63,7 +64,7 @@ export default function SignUp({ isDarkMode, toggleTheme }) {
 
             <div className="signup-form-container">
                 <div className="signup-form-card">
-                    <img src="/images/lifeguard-2.svg" alt="lhp logo" className="logo" />
+                    <Logo />
                     <h2 className="signup-heading">Start your journey!</h2>
 
                     <form onSubmit={handleSubmit}>
