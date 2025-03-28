@@ -23,8 +23,13 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
 
       final response = await _authService.login(email, password);
-      final prefs = await SharedPreferences.getInstance();
       
+      // Validate required fields
+      if (response['token'] == null || response['id'] == null || response['userName'] == null) {
+        throw Exception('Invalid login response data');
+      }
+
+      final prefs = await SharedPreferences.getInstance();
       await prefs.setString('token', response['token']);
       await prefs.setString('userId', response['id']);
       await prefs.setString('userName', response['userName']);
@@ -49,8 +54,15 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
 
       final response = await _authService.register(name, email, password);
+      final userId = response['userId'];
+      
+      if (userId == null) {
+        throw Exception('Registration failed - no user ID received');
+      }
+      
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('userId', response['userId']);
+      await prefs.setString('userId', userId);
+      _userId = userId;
 
     } catch (e) {
       rethrow;

@@ -16,10 +16,16 @@ class AuthService {
         }),
       );
 
-      if (response.statusCode == 200) {
-        return json.decode(response.body);
+      final responseData = json.decode(response.body);
+      
+      if (response.statusCode == 200 && responseData['isSuccess'] == true) {
+        final authData = responseData['data'];
+        if (authData == null || authData['token'] == null) {
+          throw Exception('Invalid login response format');
+        }
+        return authData;
       } else {
-        throw Exception(json.decode(response.body)['message'] ?? 'Login failed');
+        throw Exception(responseData['message'] ?? 'Login failed');
       }
     } catch (e) {
       throw Exception('Failed to connect to server: $e');
@@ -38,10 +44,12 @@ class AuthService {
         }),
       );
 
-      if (response.statusCode == 200) {
-        return json.decode(response.body);
+      final responseData = json.decode(response.body);
+      
+      if (response.statusCode == 200 && responseData['isSuccess'] == true) {
+        return {'userId': responseData['data']};
       } else {
-        throw Exception(json.decode(response.body)['message'] ?? 'Registration failed');
+        throw Exception(responseData['message'] ?? 'Registration failed');
       }
     } catch (e) {
       throw Exception('Failed to connect to server: $e');
