@@ -11,6 +11,7 @@ import { registerUser } from "../../../utils/auth";
 import { validateSignUpForm } from "../../../utils/validateForm";
 import InputField from "../../../components/InputField/InputField";
 import ThemeToggle from "../../../contexts/ThemeToggle";
+import { Logo } from "../../../components/Logo/Logo";
 import "./SignUp.css";
 
 export default function SignUp({ isDarkMode, toggleTheme }) {
@@ -35,16 +36,16 @@ export default function SignUp({ isDarkMode, toggleTheme }) {
 
         setIsLoading(true);
         try {
-            const data = await registerUser(formData.name, formData.email, formData.password);
-
-            if (data.userId) {
-                localStorage.setItem("userId", data.userId);
+            const { userId } = await registerUser(formData.name, formData.email, formData.password);
+            if (userId) {
+                localStorage.setItem("userId", userId);
                 navigate("/verify-otp", { state: { email: formData.email } });
+                toast.success("Registration successful! Please verify your email.");
             } else {
-                setErrors((prev) => ({ ...prev, submit: data.message || "Registration failed" }));
+                throw new Error("Registration failed - no user ID received");
             }
         } catch (error) {
-            toast.error("Error during Registration");
+            toast.error(error.message || "Registration failed");
             setErrors((prev) => ({ ...prev, submit: error.message || "Registration failed. Please try again." }));
         } finally {
             setIsLoading(false);
@@ -63,7 +64,7 @@ export default function SignUp({ isDarkMode, toggleTheme }) {
 
             <div className="signup-form-container">
                 <div className="signup-form-card">
-                    <img src="/images/lifeguard-2.svg" alt="lhp logo" className="logo" />
+                    <Logo />
                     <h2 className="signup-heading">Start your journey!</h2>
 
                     <form onSubmit={handleSubmit}>

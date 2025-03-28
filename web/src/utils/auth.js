@@ -28,28 +28,43 @@ export async function resetUserPassword(email, token, newPassword, confirmPasswo
 }
 
 export async function loginUser(email, password) {
-    const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.LOGIN}`, {
+    const response = await fetchApi(API_ENDPOINTS.LOGIN, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
     });
 
-    const data = await response.json();
-    
-    if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
+    // Check if response is in the Result wrapper format
+    if (!response.isSuccess || !response.data) {
+        throw new Error(response.message || 'Login failed');
     }
 
-    return data; // Return token and user info
+    const { data } = response;
+    
+    // Validate auth data
+    if (!data.token || !data.id || !data.userName) {
+        throw new Error('Invalid login response data');
+    }
+
+    // Save auth data
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('userId', data.id);
+    localStorage.setItem('userName', data.userName);
+
+    return data;
 }
 
 export async function registerUser(name, email, password) {
-    return fetchWithAuth(API_ENDPOINTS.REGISTER, {
+    const response = await fetchApi(API_ENDPOINTS.REGISTER, {
         method: 'POST',
         body: JSON.stringify({ name, email, password }),
     });
-}
 
+    if (!response.isSuccess) {
+        throw new Error(response.message || 'Registration failed');
+    }
+
+    return { userId: response.data };
+}
 
 export async function verifyOTP(email, otp) {
     return fetchWithAuth(API_ENDPOINTS.VERIFY_OTP, {
@@ -63,4 +78,16 @@ export async function resendOTP(email) {
         method: 'POST',
         body: JSON.stringify({ email }),
     });
+}
+
+export async function getUserById(id) {
+    if (!id) {
+        throw new Error('User ID is required');
+    }
+    
+    const response = await fetchWithAuth(API_ENDPOINTS.GET_USER(id));
+    return {
+        userName: response.userName,
+        email: response.email
+    };
 }

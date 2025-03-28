@@ -6,6 +6,7 @@ import otpIllustration from '../../../assets/auth/otp.svg';
 import { verifyOTP, resendOTP } from '../../../utils/auth';
 import OTPInput from '../../../components/OTPInput/OTPInput';
 import ThemeToggle from '../../../contexts/ThemeToggle';
+import { Logo } from "../../../components/Logo/Logo";
 import './OTPVerification.css';
 
 export default function OTPVerification({ isDarkMode, toggleTheme }) {
@@ -70,7 +71,7 @@ export default function OTPVerification({ isDarkMode, toggleTheme }) {
 
             <div className="otp-form-container">
                 <div className="otp-form-card">
-                    <img src="/images/lifeguard-2.svg" alt="lhp logo" className="logo" />
+                    <Logo />
                     <h2>Verify Your Email</h2>
                     <p>Please enter the 6-digit code sent to your email</p>
 
