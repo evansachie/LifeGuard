@@ -1,7 +1,6 @@
 ﻿using DotNetEnv;
 using Identity.Models;
 using Microsoft.AspNetCore.Identity;
-using Sprache;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
@@ -44,21 +43,20 @@ namespace Identity.Services
 
         }
 
-        public async Task<AuthResponse> Login(AuthRequest request)
+        public async Task<Result> Login(AuthRequest request)
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
 
             if (user == null)
             {
-                throw new Exception($"User with {request.Email} not found");
+                return new Result(false, ResultStatusCode.NotFound, $"User with {request.Email} not found");  
             }
 
             var result = await _signInManager.PasswordSignInAsync(user.UserName, request.Password, false, false);
 
             if (!result.Succeeded)
             {
-                throw new Exception($"Credentials for {request.Email} not valid");
-            }
+                return new Result(false, ResultStatusCode.BadRequest, $"Credentials for {request.Email} not valid");      }
 
             JwtSecurityToken jwtSecurityToken = await GenerateToken(user);
 
@@ -71,10 +69,7 @@ namespace Identity.Services
                 UserName = user.UserName
             };
 
-            return response;
-
-
-
+            return new Result<AuthResponse>(true, ResultStatusCode.Success, response, "Login Successful");
 
         }
 
@@ -119,13 +114,13 @@ namespace Identity.Services
         }
 
 
-        public async Task<RegistrationResponse> Register(RegistrationRequest request)
+        public async Task<Result> Register(RegistrationRequest request)
         {
             var existingUser = await _userManager.FindByEmailAsync(request.Email);
 
             if (existingUser != null)
             {
-                throw new Exception($"Username {request.Name} already exists.");
+                return new Result(false, ResultStatusCode.Conflict, $"Username {request.Name} already exists.");
             }
 
             var user = new ApplicationUser
@@ -141,7 +136,7 @@ namespace Identity.Services
 
             if (existingEmail != null)
             {
-                throw new Exception($"Email {request.Email} already exists.");
+                return new Result(false, ResultStatusCode.Conflict, $"Email {request.Email} already exists.");
             }
             else
             {
@@ -155,11 +150,11 @@ namespace Identity.Services
 
                     await _oTPService.SendOtpEmailAsync(user.Email, user.SecretKey);
 
-                    return new RegistrationResponse { UserId = user.Id };
+                    return new Result<string>(true, ResultStatusCode.Success,user.Id );
                 }
                 else
                 {
-                    throw new Exception(string.Join(",", result.Errors.Select(e => e.Description)));
+                    return  new Result<string> (false, ResultStatusCode.BadRequest,string.Join(",", result.Errors.Select(e => e.Description)));
                 }
 
             }
