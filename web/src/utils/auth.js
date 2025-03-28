@@ -44,12 +44,17 @@ export async function loginUser(email, password) {
 }
 
 export async function registerUser(name, email, password) {
-    return fetchWithAuth(API_ENDPOINTS.REGISTER, {
+    const response = await fetchApi(API_ENDPOINTS.REGISTER, {
         method: 'POST',
         body: JSON.stringify({ name, email, password }),
     });
-}
 
+    if (!response.isSuccess) {
+        throw new Error(response.message || 'Registration failed');
+    }
+
+    return { userId: response.data };
+}
 
 export async function verifyOTP(email, otp) {
     return fetchWithAuth(API_ENDPOINTS.VERIFY_OTP, {
