@@ -26,11 +26,13 @@ class SoundProvider extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
 
-      if (token == null) throw Exception('No authentication token');
+      if (token == null) {
+        throw Exception('Authentication required');
+      }
 
       if (refresh) {
         _currentPage = 1;
-        _sounds.clear(); // Use clear() instead of reassignment
+        _sounds.clear();
         notifyListeners();
       }
 
@@ -51,6 +53,8 @@ class SoundProvider extends ChangeNotifier {
     } catch (e) {
       _hasMore = false;
       print('Error searching sounds: $e');
+      // Don't rethrow here, just notify listeners
+      _sounds.clear();
     } finally {
       _isLoading = false;
       notifyListeners();
