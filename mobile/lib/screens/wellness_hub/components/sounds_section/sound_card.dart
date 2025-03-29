@@ -29,8 +29,11 @@ class SoundCard extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/sounds/${sound.imageName}'),
+                // Change from AssetImage to NetworkImage
+                image: NetworkImage(sound.imageName),
                 fit: BoxFit.cover,
+                // Add error handling
+                onError: (_, __) => const Icon(Icons.music_note),
               ),
             ),
           ),
