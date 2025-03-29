@@ -97,7 +97,7 @@ class EmergencyContactService {
   Future<bool> sendEmergencyAlert(String token, {bool isTest = false, String? contactId}) async {
     try {
       final endpoint = isTest 
-          ? '$baseUrl/api/emergency-contacts/test-alert/${contactId}'
+          ? '$baseUrl/api/emergency-contacts/test-alert/$contactId'
           : '$baseUrl/api/emergency-contacts/alert';
 
       final response = await http.post(

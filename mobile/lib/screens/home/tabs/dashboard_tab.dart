@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lifeguard/providers/auth_provider.dart';
-import 'package:lifeguard/providers/emergency_contact_provider.dart';
 import 'package:lifeguard/screens/bmr_calculator/bmr_calculator.dart';
 import 'package:lifeguard/screens/exercise_routines/exercise_routines.dart';
 import 'package:lifeguard/screens/health_tips/health_tips.dart';

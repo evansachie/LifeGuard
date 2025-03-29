@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lifeguard/providers/emergency_contact_provider.dart';
 import 'package:lifeguard/providers/memo_provider.dart';
+import 'package:lifeguard/providers/sound_provider.dart';
 import 'package:lifeguard/screens/auth/forgot_password_screen.dart';
 import 'package:lifeguard/screens/auth/login_screen.dart';
 import 'package:lifeguard/screens/auth/otp_verification_screen.dart';
@@ -15,28 +16,25 @@ import 'package:lifeguard/providers/auth_provider.dart';
 import 'package:lifeguard/screens/splash/splash_screen.dart';
 import 'package:lifeguard/providers/quote_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:lifeguard/providers/audio_provider.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
 
   try {
     await JustAudioBackground.init(
-      androidNotificationChannelId: 'com.example.lifeguard.audio',
+      androidNotificationChannelId: 'com.lifeguard.audio.channel.id',
       androidNotificationChannelName: 'LifeGuard Audio',
-      androidNotificationChannelDescription: 'Audio playback notification',
       androidNotificationOngoing: true,
-      androidShowNotificationBadge: true,
       androidStopForegroundOnPause: true,
-      preloadArtwork: true,
-      artDownscaleWidth: 300,
-      artDownscaleHeight: 300,
+      androidNotificationIcon: 'mipmap/ic_launcher',
+      notificationColor: const Color(0xFF2196f3),
     );
   } catch (e) {
-    debugPrint('Error initializing audio service: $e');
+    debugPrint('Audio service initialization error: $e');
   }
-
-  await dotenv.load(fileName: ".env");
 
   runApp(const MyApp());
 }
@@ -52,15 +50,16 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => QuoteProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => MemoProvider()),
-        ChangeNotifierProvider(create: (_) => EmergencyContactProvider()), // Add this line
+        ChangeNotifierProvider(create: (_) => EmergencyContactProvider()),
+        ChangeNotifierProvider(create: (_) => SoundProvider()),
+        ChangeNotifierProvider(create: (_) => AudioProvider()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) => MaterialApp(
           title: 'LifeGuard',
           themeMode: themeProvider.themeMode,
           theme: ThemeData(
-            colorScheme:
-                ColorScheme.fromSeed(seedColor: const Color(0xFF4285F4)),
+            colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF4285F4)),
             useMaterial3: true,
           ),
           darkTheme: ThemeData(
