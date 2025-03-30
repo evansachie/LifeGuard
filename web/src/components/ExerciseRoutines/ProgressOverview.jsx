@@ -4,8 +4,10 @@ import { FaFire, FaDumbbell, FaTrophy } from 'react-icons/fa';
 import { BiTargetLock } from 'react-icons/bi';
 import StatsCard from './StatsCard';
 import exerciseService from '../../services/exerciseService';
+import { toast } from 'react-toastify';
+import GoalsModal from './GoalsModal';
 
-const ProgressOverview = () => {
+const ProgressOverview = ({ isDarkMode }) => {
   const [stats, setStats] = useState({
     caloriesBurned: 0,
     workoutsCompleted: 0,
@@ -13,6 +15,7 @@ const ProgressOverview = () => {
     currentGoal: 'Not set'
   });
   const [loading, setLoading] = useState(true);
+  const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -28,6 +31,17 @@ const ProgressOverview = () => {
 
     fetchStats();
   }, []);
+
+  const handleGoalSelect = async (goalType) => {
+    try {
+      await exerciseService.setGoal(goalType);
+      setStats(prev => ({ ...prev, currentGoal: goalType }));
+      toast.success('Workout goal updated successfully!');
+    } catch (error) {
+      console.error('Error setting goal:', error);
+      toast.error('Failed to update workout goal');
+    }
+  };
 
   return (
     <section className="space-y-6">
@@ -56,6 +70,8 @@ const ProgressOverview = () => {
           title="Current Goal"
           value={stats.currentGoal}
           color="from-cyan-500 to-cyan-400"
+          onClick={() => setIsGoalModalOpen(true)}
+          clickable={true}
         />
         <StatsCard 
           icon={FaTrophy}
@@ -64,6 +80,13 @@ const ProgressOverview = () => {
           color="from-amber-500 to-amber-400"
         />
       </div>
+
+      <GoalsModal
+        isOpen={isGoalModalOpen}
+        onClose={() => setIsGoalModalOpen(false)}
+        onSelectGoal={handleGoalSelect}
+        isDarkMode={isDarkMode}
+      />
     </section>
   );
 };
