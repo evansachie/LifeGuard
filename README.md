@@ -353,6 +353,10 @@ These endpoints are served from the Node-Server (hosted at `https://lifeguard-no
 | POST       | `/api/rag/process/environmental`                  | Process environmental data via the RAG API                 |
 | POST       | `/api/rag/process/medical`                        | Process medical data via the RAG API                       |
 | POST       | `/api/rag/process/profiles`                       | Process profile data via the RAG API                       |
+| GET       | `/api/exercise/stats/profiles`                       | Retrieve user's exercise statistics and streak information                       |
+| POST       | `/api/exercise/complete`                       | Record a completed workout session                       |
+| POST       | `/api/exercise/goals`                       | Set or update user's workout goals                       |
+
 
 *Note: The HTTP methods for `/api/memos` and `/api/emergency-contacts` depend on the specific operation (e.g., GET for retrieval, POST for creation).
 
