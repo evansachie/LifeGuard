@@ -10,6 +10,13 @@ const exerciseService = {
             method: 'POST',
             body: JSON.stringify(workoutData)
         });
+    },
+
+    setGoal: async (goalType) => {
+        return await fetchWithAuth(`${NODE_API_URL}/api/exercise/goals`, {
+            method: 'POST',
+            body: JSON.stringify({ goalType })
+        });
     }
 };
 
