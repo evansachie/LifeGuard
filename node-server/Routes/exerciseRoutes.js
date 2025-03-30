@@ -69,6 +69,33 @@ module.exports = (pool) => {
         }
     });
 
+    // Add new goal endpoint
+    router.post('/goals', async (req, res) => {
+        try {
+            const token = req.headers.authorization.split(' ')[1];
+            const decoded = jwt.decode(token);
+            const userId = decoded.uid;
+            const { goalType } = req.body;
+
+            // Set any existing goals to inactive
+            await pool.query(
+                'UPDATE "WorkoutGoals" SET "Status" = $1 WHERE "UserId" = $2 AND "Status" = $3',
+                ['completed', userId, 'active']
+            );
+
+            // Add new goal
+            const { rows } = await pool.query(
+                'INSERT INTO "WorkoutGoals" ("UserId", "GoalType", "StartDate", "Status") VALUES ($1, $2, CURRENT_DATE, $3) RETURNING *',
+                [userId, goalType, 'active']
+            );
+
+            res.json(rows[0]);
+        } catch (error) {
+            console.error('Error setting workout goal:', error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    });
+
     return router;
 };
 
