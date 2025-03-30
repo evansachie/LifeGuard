@@ -1,11 +1,48 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { MdOutlineFitnessCenter } from "react-icons/md";
 import { FaFire, FaDumbbell, FaTrophy } from 'react-icons/fa';
 import { BiTargetLock } from 'react-icons/bi';
 import StatsCard from './StatsCard';
+import exerciseService from '../../services/exerciseService';
+import { toast } from 'react-toastify';
+import GoalsModal from './GoalsModal';
 
-const ProgressOverview = () => {
-  
+const ProgressOverview = ({ isDarkMode }) => {
+  const [stats, setStats] = useState({
+    caloriesBurned: 0,
+    workoutsCompleted: 0,
+    currentStreak: 0,
+    currentGoal: 'Not set'
+  });
+  const [loading, setLoading] = useState(true);
+  const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await exerciseService.getStats();
+        setStats(data);
+      } catch (error) {
+        console.error('Error fetching exercise stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  const handleGoalSelect = async (goalType) => {
+    try {
+      await exerciseService.setGoal(goalType);
+      setStats(prev => ({ ...prev, currentGoal: goalType }));
+      toast.success('Workout goal updated successfully!');
+    } catch (error) {
+      console.error('Error setting goal:', error);
+      toast.error('Failed to update workout goal');
+    }
+  };
+
   return (
     <section className="space-y-6">
       <div className="flex justify-between items-center">
@@ -19,28 +56,37 @@ const ProgressOverview = () => {
         <StatsCard 
           icon={FaFire}
           title="Calories Burned"
-          value="324 kcal"
+          value={`${stats.caloriesBurned} kcal`}
           color="from-red-500 to-red-400"
         />
         <StatsCard 
           icon={FaDumbbell}
           title="Workouts Completed"
-          value="12 this week"
+          value={`${stats.workoutsCompleted} this week`}
           color="from-blue-500 to-blue-400"
         />
         <StatsCard 
           icon={BiTargetLock}
           title="Current Goal"
-          value="Build Strength"
+          value={stats.currentGoal}
           color="from-cyan-500 to-cyan-400"
+          onClick={() => setIsGoalModalOpen(true)}
+          clickable={true}
         />
         <StatsCard 
           icon={FaTrophy}
           title="Streak"
-          value="5 days"
+          value={`${stats.currentStreak} days`}
           color="from-amber-500 to-amber-400"
         />
       </div>
+
+      <GoalsModal
+        isOpen={isGoalModalOpen}
+        onClose={() => setIsGoalModalOpen(false)}
+        onSelectGoal={handleGoalSelect}
+        isDarkMode={isDarkMode}
+      />
     </section>
   );
 };

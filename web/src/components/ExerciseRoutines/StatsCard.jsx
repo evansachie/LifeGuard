@@ -1,14 +1,15 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const StatsCard = ({ icon: Icon, title, value, color = 'from-blue-500 to-blue-400' }) => {
+const StatsCard = ({ icon: Icon, title, value, color = 'from-blue-500 to-blue-400', onClick, clickable }) => {
   return (
     <motion.div 
-      className={`rounded-xl p-4 bg-gradient-to-r ${color} text-white shadow-md relative overflow-hidden`}
-      whileHover={{ 
-        y: -5,
-        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
-      }}
+      className={`rounded-xl p-4 bg-gradient-to-r ${color} text-white shadow-md relative overflow-hidden ${
+        clickable ? 'cursor-pointer hover:shadow-lg' : ''
+      }`}
+      onClick={clickable ? onClick : undefined}
+      whileHover={clickable ? { scale: 1.02 } : {}}
+      whileTap={clickable ? { scale: 0.98 } : {}}
       transition={{ type: "spring", stiffness: 300 }}
     >
       <div className="flex items-center gap-4">

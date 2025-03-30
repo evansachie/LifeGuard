@@ -1,11 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaPlay, FaPause, FaRedo, FaStopCircle } from 'react-icons/fa';
+import { toast } from 'react-toastify';
+import exerciseService from '../../services/exerciseService';
 
-const WorkoutTimer = ({ activeWorkout, workoutTimer, isTimerRunning, onToggleTimer, onResetTimer, onEndWorkout }) => {
+const WorkoutTimer = ({ 
+  activeWorkout, 
+  workoutTimer, 
+  isTimerRunning, 
+  onToggleTimer, 
+  onResetTimer, 
+  onEndWorkout,
+  isDarkMode
+}) => {
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [showConfirm, setShowConfirm] = useState(false);
-  
+
   useEffect(() => {
     if (activeWorkout) {
       const durationParts = activeWorkout.duration.split(' ');
@@ -14,6 +24,13 @@ const WorkoutTimer = ({ activeWorkout, workoutTimer, isTimerRunning, onToggleTim
       setTimeRemaining(Math.max(0, totalSeconds - workoutTimer));
     }
   }, [activeWorkout, workoutTimer]);
+
+  useEffect(() => {
+    if (activeWorkout && timeRemaining === 0 && isTimerRunning) {
+      handleWorkoutComplete(true);
+      onToggleTimer();
+    }
+  }, [timeRemaining]);
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -25,6 +42,85 @@ const WorkoutTimer = ({ activeWorkout, workoutTimer, isTimerRunning, onToggleTim
     if (timeRemaining < 60) return 'text-red-500';
     if (timeRemaining < 180) return 'text-amber-500';
     return 'text-white';
+  };
+
+  const calculateCompletionStats = () => {
+    const totalSeconds = parseInt(activeWorkout.duration) * 60;
+    const completionPercentage = (workoutTimer / totalSeconds) * 100;
+    const adjustedCalories = Math.floor((workoutTimer / totalSeconds) * activeWorkout.calories);
+
+    return {
+      completionPercentage,
+      adjustedCalories,
+      duration: Math.floor(workoutTimer / 60)
+    };
+  };
+
+  const handleWorkoutComplete = async (isFullyCompleted = false) => {
+    try {
+      const stats = calculateCompletionStats();
+
+      if (!isFullyCompleted && stats.completionPercentage < 80) {
+        toast.warn("You need to complete at least 80% of the workout for it to count!");
+        return false;
+      }
+
+      // Stop the timer first
+      if (isTimerRunning) {
+        onToggleTimer();
+      }
+
+      await exerciseService.completeWorkout({
+        workout_id: activeWorkout.id,
+        workout_type: activeWorkout.title,
+        calories_burned: stats.adjustedCalories,
+        duration_minutes: stats.duration
+      });
+
+      if (isFullyCompleted) {
+        toast.success("🎉 Workout completed successfully!");
+      } else {
+        toast.info(`Workout ended at ${Math.round(stats.completionPercentage)}% completion`);
+      }
+
+      onEndWorkout();
+      return true;
+    } catch (error) {
+      console.error('Error completing workout:', error);
+      toast.error("Failed to save workout progress");
+      return false;
+    }
+  };
+
+  const handleEndWorkout = async () => {
+    try {
+      const stats = calculateCompletionStats();
+
+      if (stats.completionPercentage < 80) {
+        toast.warn("You need to complete at least 80% of the workout for it to count!");
+        setShowConfirm(false);
+        return;
+      }
+
+      await exerciseService.completeWorkout({
+        workout_id: activeWorkout.id,
+        workout_type: activeWorkout.title,
+        calories_burned: stats.adjustedCalories,
+        duration_minutes: stats.duration
+      });
+
+      // Stop the timer before closing
+      if (isTimerRunning) {
+        onToggleTimer();
+      }
+      
+      toast.info(`Workout ended at ${Math.round(stats.completionPercentage)}% completion`);
+      setShowConfirm(false);
+      onEndWorkout(); // This will close the timer
+    } catch (error) {
+      console.error('Error completing workout:', error);
+      toast.error("Failed to save workout progress");
+    }
   };
 
   return (
@@ -117,28 +213,45 @@ const WorkoutTimer = ({ activeWorkout, workoutTimer, isTimerRunning, onToggleTim
       <AnimatePresence>
         {showConfirm && (
           <motion.div 
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm rounded-xl flex items-center justify-center p-6 z-10"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
+            className="fixed inset-0 z-50 flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
           >
-            <div className="bg-white rounded-xl p-6 max-w-xs w-full text-center">
-              <p className="text-gray-800 text-lg font-medium mb-6">Are you sure you want to end this workout?</p>
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowConfirm(false)} />
+            <motion.div
+              className={`relative max-w-md w-full m-4 ${
+                isDarkMode ? 'bg-gray-800' : 'bg-white'
+              } rounded-xl p-6 shadow-xl`}
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+            >
+              <p className={`text-lg font-medium mb-3 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                Are you sure you want to end this workout early?
+              </p>
+              <p className={`text-sm mb-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                You need to complete at least 80% of the workout for it to count towards your progress.
+              </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <button 
                   className="flex-1 py-2 px-4 bg-red-500 text-white rounded-full font-medium hover:bg-red-600 transition-colors"
-                  onClick={onEndWorkout}
+                  onClick={handleEndWorkout}
                 >
                   Yes, End Workout
                 </button>
                 <button 
-                  className="flex-1 py-2 px-4 bg-gray-200 text-gray-800 rounded-full font-medium hover:bg-gray-300 transition-colors"
+                  className={`flex-1 py-2 px-4 ${
+                    isDarkMode 
+                      ? 'bg-gray-700 text-white hover:bg-gray-600' 
+                      : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                  } rounded-full font-medium transition-colors`}
                   onClick={() => setShowConfirm(false)}
                 >
                   Continue
                 </button>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
