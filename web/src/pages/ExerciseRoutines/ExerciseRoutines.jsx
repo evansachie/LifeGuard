@@ -50,17 +50,22 @@ function ExerciseRoutines({ isDarkMode }) {
     setActiveWorkout(exercise);
     setWorkoutProgress(0);
     setWorkoutTimer(0);
-    toggleTimer();
   };
 
   const handleCategoryChange = (categoryId) => {
     setSelectedCategory(categoryId);
-    // Reset active workout when changing categories
     if (activeWorkout) {
       setActiveWorkout(null);
       setActiveExercise(null);
       resetTimer();
     }
+  };
+
+  const handleEndWorkout = () => {
+    setActiveWorkout(null);
+    setActiveExercise(null);
+    resetTimer();
+    setWorkoutProgress(0);
   };
 
   if (isLoading) {
@@ -77,7 +82,7 @@ function ExerciseRoutines({ isDarkMode }) {
       <div className="max-w-7xl mx-auto px-4 py-8 lg:px-8">
         {/* Header Section with Progress Overview */}
         <div className="mb-8">
-          <ProgressOverview />
+          <ProgressOverview isDarkMode={isDarkMode} />
         </div>
         
         {/* Workout Tip - Conditional */}
@@ -174,10 +179,8 @@ function ExerciseRoutines({ isDarkMode }) {
               isTimerRunning={isTimerRunning}
               onToggleTimer={toggleTimer}
               onResetTimer={resetTimer}
-              onEndWorkout={() => {
-                setActiveWorkout(null);
-                setWorkoutProgress(0);
-              }}
+              onEndWorkout={handleEndWorkout}
+              isDarkMode={isDarkMode}
             />
             <div className="mt-3 px-1">
               <div className="flex justify-between mb-2 text-sm font-medium">
