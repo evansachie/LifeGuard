@@ -40,6 +40,10 @@ export const API_ENDPOINTS = {
     RAG_PROCESS_ENVIRONMENTAL: `${NODE_API_URL}/api/rag/process/environmental`,
     RAG_PROCESS_MEDICAL: `${NODE_API_URL}/api/rag/process/medical`,
     RAG_PROCESS_PROFILES: `${NODE_API_URL}/api/rag/process/profiles`,
+    
+    // Exercise endpoints
+    EXERCISE_STATS: `${NODE_API_URL}/api/exercise/stats`,
+    EXERCISE_COMPLETE: `${NODE_API_URL}/api/exercise/complete`,
 };
 
 export const handleApiResponse = async (response) => {
