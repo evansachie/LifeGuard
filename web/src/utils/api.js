@@ -33,7 +33,6 @@ export const API_ENDPOINTS = {
     GET_USER_FAVORITES: (userId) => `${NODE_API_URL}/api/favorite-sounds/${userId}`,
     REMOVE_FAVORITE: (userId, soundId) => `${NODE_API_URL}/api/favorite-sounds/${userId}/${soundId}`,
 
-    // RAG API Endpoints
     RAG_QUERY: `${NODE_API_URL}/api/rag/query`,
     RAG_INITIALIZE: `${NODE_API_URL}/api/rag/initialize`,
     RAG_PROCESS_HEALTH: `${NODE_API_URL}/api/rag/process/health`,
@@ -41,9 +40,9 @@ export const API_ENDPOINTS = {
     RAG_PROCESS_MEDICAL: `${NODE_API_URL}/api/rag/process/medical`,
     RAG_PROCESS_PROFILES: `${NODE_API_URL}/api/rag/process/profiles`,
     
-    // Exercise endpoints
     EXERCISE_STATS: `${NODE_API_URL}/api/exercise/stats`,
     EXERCISE_COMPLETE: `${NODE_API_URL}/api/exercise/complete`,
+    EXERCISE_GOALS: `${NODE_API_URL}/api/exercise/goals`,
 };
 
 export const handleApiResponse = async (response) => {
