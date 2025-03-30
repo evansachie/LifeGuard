@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaPlay, FaPause, FaRedo, FaStopCircle } from 'react-icons/fa';
+import exerciseService from '../../services/exerciseService';
 
 const WorkoutTimer = ({ activeWorkout, workoutTimer, isTimerRunning, onToggleTimer, onResetTimer, onEndWorkout }) => {
   const [timeRemaining, setTimeRemaining] = useState(0);
@@ -25,6 +26,23 @@ const WorkoutTimer = ({ activeWorkout, workoutTimer, isTimerRunning, onToggleTim
     if (timeRemaining < 60) return 'text-red-500';
     if (timeRemaining < 180) return 'text-amber-500';
     return 'text-white';
+  };
+
+  const handleEndWorkout = async () => {
+    try {
+      await exerciseService.completeWorkout({
+        workout_id: activeWorkout.id,
+        workout_type: activeWorkout.title,
+        calories_burned: activeWorkout.calories,
+        duration_minutes: parseInt(activeWorkout.duration)
+      });
+      
+      onEndWorkout();
+      // Optionally trigger a refresh of the ProgressOverview stats
+    } catch (error) {
+      console.error('Error completing workout:', error);
+      // Handle error (show toast notification, etc.)
+    }
   };
 
   return (
@@ -127,7 +145,7 @@ const WorkoutTimer = ({ activeWorkout, workoutTimer, isTimerRunning, onToggleTim
               <div className="flex flex-col sm:flex-row gap-3">
                 <button 
                   className="flex-1 py-2 px-4 bg-red-500 text-white rounded-full font-medium hover:bg-red-600 transition-colors"
-                  onClick={onEndWorkout}
+                  onClick={handleEndWorkout}
                 >
                   Yes, End Workout
                 </button>
