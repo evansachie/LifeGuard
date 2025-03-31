@@ -36,13 +36,18 @@ export default function SignUp({ isDarkMode, toggleTheme }) {
 
         setIsLoading(true);
         try {
-            const { userId } = await registerUser(formData.name, formData.email, formData.password);
-            if (userId) {
-                localStorage.setItem("userId", userId);
-                navigate("/verify-otp", { state: { email: formData.email } });
-                toast.success("Registration successful! Please verify your email.");
-            } else {
-                throw new Error("Registration failed - no user ID received");
+            const response = await registerUser(formData.name, formData.email, formData.password);
+            
+            if (response.userId) {
+                localStorage.setItem("userId", response.userId);
+                
+                if (response.emailVerified) {
+                    navigate("/verify-otp", { state: { email: formData.email } });
+                    toast.success("Registration successful! Please verify your email.");
+                } else {
+                    toast.info(response.message || "Account created! You can now log in while email verification is pending.");
+                    navigate("/log-in");
+                }
             }
         } catch (error) {
             toast.error(error.message || "Registration failed");

@@ -21,6 +21,7 @@ export const API_ENDPOINTS = {
     DELETE_USER: (id) => `/Account/${id}`,
 
     MEMOS: `${NODE_API_URL}/api/memos`,
+    MEMOS_UNDONE_COUNT: `${NODE_API_URL}/api/memos/undone/count`,
     EMERGENCY_CONTACTS: `${NODE_API_URL}/api/emergency-contacts`,
     EMERGENCY_ALERTS: `${NODE_API_URL}/api/emergency-contacts/alert`,
 
