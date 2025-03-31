@@ -53,18 +53,25 @@ export async function loginUser(email, password) {
     return data;
 }
 
-export async function registerUser(name, email, password) {
-    const response = await fetchApi(API_ENDPOINTS.REGISTER, {
-        method: 'POST',
-        body: JSON.stringify({ name, email, password }),
-    });
+export const registerUser = async (name, email, password) => {
+    try {
+        const response = await fetchWithAuth(API_ENDPOINTS.REGISTER, {
+            method: 'POST',
+            body: JSON.stringify({ name, email, password })
+        });
 
-    if (!response.isSuccess) {
-        throw new Error(response.message || 'Registration failed');
+        if (response?.data?.userId) {
+            return response.data;
+        }
+        throw new Error(response?.message || 'Registration failed');
+    } catch (error) {
+        // If we get a 500 error but with a proper response, it might be the email service
+        if (error.response?.data?.userId) {
+            return error.response.data;
+        }
+        throw error;
     }
-
-    return { userId: response.data };
-}
+};
 
 export async function verifyOTP(email, otp) {
     return fetchWithAuth(API_ENDPOINTS.VERIFY_OTP, {
