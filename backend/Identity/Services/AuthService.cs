@@ -151,22 +151,18 @@ namespace Identity.Services
                             UserId = user.Id,
                             EmailVerified = true,
                             AccountCreated = true,
-                            Message = "Registration successful. Please verify your email."
+                            Message = "Registration successful! Please verify your email."
                         });
                     }
                     catch (Exception ex)
                     {
-                        if (ex.Message.Contains("not on your authorized recipients"))
-                        {
-                            return new Result<RegistrationResponse>(true, ResultStatusCode.Success, new RegistrationResponse 
-                            { 
-                                UserId = user.Id,
-                                EmailVerified = false,
-                                AccountCreated = true,
-                                Message = "Account created successfully. Email verification is currently unavailable."
-                            });
-                        }
-                        throw;
+                        return new Result<RegistrationResponse>(true, ResultStatusCode.Success, new RegistrationResponse 
+                        { 
+                            UserId = user.Id,
+                            EmailVerified = false,
+                            AccountCreated = true,
+                            Message = "Account created successfully! Email verification is currently unavailable. You may proceed to login."
+                        });
                     }
                 }
                 else
