@@ -134,32 +134,54 @@ namespace Identity.Services
 
             var existingEmail = await _userManager.FindByEmailAsync(request.Email);
 
-            if (existingEmail != null)
-            {
-                return new Result(false, ResultStatusCode.Conflict, $"Email {request.Email} already exists.");
-            }
-            else
+            if (existingEmail == null)
             {
                 var result = await _userManager.CreateAsync(user);
 
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, "Student");
-
                     await _userManager.UpdateAsync(user);
 
-                    await _oTPService.SendOtpEmailAsync(user.Email, user.SecretKey);
-
-                    return new Result<string>(true, ResultStatusCode.Success,user.Id );
+                    try 
+                    {
+                        await _oTPService.SendOtpEmailAsync(user.Email, user.SecretKey);
+                        return new Result<RegistrationResponse>(true, ResultStatusCode.Success, new RegistrationResponse 
+                        { 
+                            UserId = user.Id,
+                            EmailVerified = true,
+                            AccountCreated = true,
+                            Message = "Registration successful. Please verify your email."
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex.Message.Contains("not on your authorized recipients"))
+                        {
+                            return new Result<RegistrationResponse>(true, ResultStatusCode.Success, new RegistrationResponse 
+                            { 
+                                UserId = user.Id,
+                                EmailVerified = false,
+                                AccountCreated = true,
+                                Message = "Account created successfully. Email verification is currently unavailable."
+                            });
+                        }
+                        throw;
+                    }
                 }
                 else
                 {
-                    return  new Result<string> (false, ResultStatusCode.BadRequest,string.Join(",", result.Errors.Select(e => e.Description)));
+                    return new Result<RegistrationResponse>(false, ResultStatusCode.BadRequest, new RegistrationResponse 
+                    { 
+                        AccountCreated = false,
+                        Message = string.Join(",", result.Errors.Select(e => e.Description))
+                    });
                 }
-
             }
-
-
+            else
+            {
+                return new Result(false, ResultStatusCode.Conflict, $"Email {request.Email} already exists.");
+            }
         }
 
 
