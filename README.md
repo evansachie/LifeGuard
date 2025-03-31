@@ -348,7 +348,8 @@ These endpoints are served from the Node-Server (hosted at `https://lifeguard-no
 
 | **Method** | **Endpoint**                                      | **Description**                                            |
 |------------|---------------------------------------------------|------------------------------------------------------------|
-| GET/POST*  | `/api/memos`                                      | Retrieve or manage memos                                   |
+| GET/POST*  | `/api/memos`                                      | Retrieve or manage memos          
+| GET  | `/api/memos/undone/count`                         | Retrieve the count of undone memos                         |
 | GET/POST*  | `/api/emergency-contacts`                         | Retrieve or manage emergency contacts                      |
 | POST       | `/api/freesound/audio-proxy`                                  | Proxy for streaming audio files from Freesound |                   |
 | GET       | `/api/exercise/stats/profiles`                       | Retrieve user's exercise statistics and streak information                       |
