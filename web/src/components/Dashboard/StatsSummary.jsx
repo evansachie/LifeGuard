@@ -1,13 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaChartLine, FaExclamationTriangle, FaBell, FaClipboardCheck } from 'react-icons/fa';
+import memoService from '../../services/memoService';
 import './StatsSummary.css';
 
 const StatsSummary = ({ isDarkMode, stats = {} }) => {
+  const [undoneTasks, setUndoneTasks] = useState(0);
+
+  useEffect(() => {
+    const fetchUndoneTasks = async () => {
+      try {
+        const count = await memoService.getUndoneMemoCount();
+        setUndoneTasks(count);
+      } catch (error) {
+        console.error('Error fetching undone tasks:', error);
+      }
+    };
+
+    fetchUndoneTasks();
+  }, []);
+
   const defaultStats = {
     readings: stats.readings || 124,
     alerts: stats.alerts || 2,
     notifications: stats.notifications || 5,
-    tasks: stats.tasks || 3
+    tasks: undoneTasks
   };
   
   return (
