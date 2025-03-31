@@ -314,7 +314,11 @@ lifeguard/
 
 Below is an overview of the core endpoints for the LifeGuard API.
 
-### Main Service Endpoints (Hosted on Render)
+### Main Service Endpoints 
+
+These endpoints are served from the .NET-Server (hosted at `https://lifeguard-hiij.onrender.com`):
+
+### Auth Endpoints
 
 | **Method** | **Endpoint**                         | **Description**                                      |
 |------------|--------------------------------------|------------------------------------------------------|
@@ -346,13 +350,7 @@ These endpoints are served from the Node-Server (hosted at `https://lifeguard-no
 |------------|---------------------------------------------------|------------------------------------------------------------|
 | GET/POST*  | `/api/memos`                                      | Retrieve or manage memos                                   |
 | GET/POST*  | `/api/emergency-contacts`                         | Retrieve or manage emergency contacts                      |
-| POST       | `/api/freesound/audio-proxy`                                  | Proxy for streaming audio files from Freesound |
-| POST       | `/api/rag/query`                                  | Submit a query to the RAG (Retrieval-Augmented Generation) API |
-| POST       | `/api/rag/initialize`                             | Initialize the RAG system                                  |
-| POST       | `/api/rag/process/health`                         | Process health data via the RAG API                        |
-| POST       | `/api/rag/process/environmental`                  | Process environmental data via the RAG API                 |
-| POST       | `/api/rag/process/medical`                        | Process medical data via the RAG API                       |
-| POST       | `/api/rag/process/profiles`                       | Process profile data via the RAG API                       |
+| POST       | `/api/freesound/audio-proxy`                                  | Proxy for streaming audio files from Freesound |                   |
 | GET       | `/api/exercise/stats/profiles`                       | Retrieve user's exercise statistics and streak information                       |
 | POST       | `/api/exercise/complete`                       | Record a completed workout session                       |
 | POST       | `/api/exercise/goals`                       | Set or update user's workout goals                       |
