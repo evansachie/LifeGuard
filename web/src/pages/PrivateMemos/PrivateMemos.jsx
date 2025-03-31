@@ -1,105 +1,65 @@
-import * as React from "react";
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FaStickyNote } from 'react-icons/fa';
-import { NODE_API_URL } from "../../utils/api";
-import { toast } from 'react-toastify';
-import Spinner from '../../components/Spinner/Spinner';
+import React, { useState, useEffect, useRef } from 'react';
 import './PrivateMemos.css';
-import EmptyState from '../../assets/empty-state.svg';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal/DeleteConfirmationModal';
+import {FaStickyNote, FaSearch, FaPlus} from 'react-icons/fa';
+import { useMemos } from '../../hooks/useMemos';
+
+import FilterBar from '../../components/PrivateMemos/FilterBar';
+import MemoForm from '../../components/PrivateMemos/MemoForm';
+import MemoList from '../../components/PrivateMemos/MemoList';
 
 const PrivateMemos = ({ isDarkMode }) => {
     const [memo, setMemo] = useState('');
-    const [savedMemos, setSavedMemos] = useState([]);
-    const [editingMemoId, setEditingMemoId] = useState(null);
-    const [error, setError] = useState('');
-    const navigate = useNavigate();
-    const [doneMemos, setDoneMemos] = useState([]);
-    const [filter, setFilter] = useState('all'); // 'all', 'active', 'completed'
+    const [filter, setFilter] = useState('all');
+    const [sortOrder, setSortOrder] = useState('newest');
     const [searchTerm, setSearchTerm] = useState('');
-    const [tags, setTags] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
+    const [showNewNoteForm, setShowNewNoteForm] = useState(false);
+    const [editingMemoId, setEditingMemoId] = useState(null);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [deletingMemo, setDeletingMemo] = useState(null);
-    const [isDeleting, setIsDeleting] = useState(false);
+    
+    const searchInputRef = useRef(null);
+    
+    const { 
+      isLoading, 
+      error, 
+      saving, 
+      isDeleting,
+      createMemo, 
+      updateMemo, 
+      deleteMemo, 
+      toggleDone,
+      getFilteredAndSortedMemos 
+    } = useMemos();
+
+    const filteredMemos = getFilteredAndSortedMemos(filter, sortOrder, searchTerm);
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            navigate('/log-in');
-            return;
-        }
-
-        const fetchMemos = async () => {
-            try {
-                const response = await fetch(`${NODE_API_URL}/api/memos`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
-                    if (response.status === 401) {
-                        localStorage.removeItem('token');
-                        navigate('/log-in');
-                        toast.error('Session expired. Please login again.');
-                        return;
-                    }
-                    throw new Error(`HTTP error! status: ${response.status}`);
+        const handleKeyDown = (e) => {
+            // "/" to focus search
+            if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
+                if (document.activeElement !== searchInputRef.current) {
+                    e.preventDefault();
+                    searchInputRef.current?.focus();
                 }
-
-                const memos = await response.json();
-                setSavedMemos(memos);
-            } catch (error) {
-                console.error('Error fetching memos:', error);
-                toast.error('Failed to load memos. Please try again.');
-                setError('An error occurred while fetching memos. Please try again later.');
-            } finally {
-                setIsLoading(false);
+            }
+            
+            // Ctrl/⌘ + N to create new note
+            if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                e.preventDefault();
+                setShowNewNoteForm(true);
             }
         };
-        fetchMemos();
-    }, [navigate]);
-
-    const handleMemoChange = (e) => {
-        setMemo(e.target.value);
-    };
+        
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, []);
 
     const handleSaveMemo = async () => {
-        if (memo.trim() !== '') {
-            setSaving(true);
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    navigate('/log-in');
-                    return;
-                }
-
-                const response = await fetch(`${NODE_API_URL}/api/memos`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                    },
-                    body: JSON.stringify({ memo }),
-                });
-
-                if (response.ok) {
-                    const newMemo = await response.json();
-                    console.log('New memo saved:', newMemo);
-                    setSavedMemos([...savedMemos, newMemo]);
-                    setMemo('');
-                } else {
-                    console.error('Error saving memo:', response.status);
-                }
-            } catch (error) {
-                console.error('Error saving memo:', error);
-            } finally {
-                setSaving(false);
-            }
+        const success = await createMemo(memo);
+        if (success) {
+            setMemo('');
+            setShowNewNoteForm(false);
         }
     };
 
@@ -109,128 +69,32 @@ const PrivateMemos = ({ isDarkMode }) => {
     };
 
     const confirmDelete = async () => {
-        if (!deletingMemo) return;
+        if (!deletingMemo?.Id) return;
         
-        setIsDeleting(true);
-        try {
-            const token = localStorage.getItem('token');
-            await fetch(`${NODE_API_URL}/api/memos/${deletingMemo.id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-            });
-            setSavedMemos(savedMemos.filter((m) => m.id !== deletingMemo.id));
-            toast.success('Note deleted successfully!');
+        const success = await deleteMemo(deletingMemo.Id);
+        if (success) {
             setDeleteModalOpen(false);
-        } catch (error) {
-            console.error('Error deleting memo:', error);
-            toast.error('Failed to delete note');
-        } finally {
-            setIsDeleting(false);
             setDeletingMemo(null);
         }
     };
 
-    const handleEditMemo = (id) => {
-        setEditingMemoId(id);
-    };
-
-    const handleCancelEdit = () => {
-        setEditingMemoId(null);
-        setMemo('');
-    };
-
-    const handleDoneChange = async (id, done) => {
-        try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                navigate('/log-in');
-                return;
-            }
-
-            const response = await fetch(`${NODE_API_URL}/api/memos/${id}/done`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify({ done }),
-            });
-
-            if (response.ok) {
-                const updatedMemo = await response.json();
-                setSavedMemos(
-                    savedMemos.map((m) => (m.id === id ? updatedMemo : m))
-                );
-            } else {
-                const errorData = await response.json();
-                console.error('Error updating memo done state:', errorData.error);
-                setError(`Error updating memo done state: ${errorData.error}`);
-            }
-        } catch (error) {
-            console.error('Error updating memo done state:', error);
-            setError('An error occurred while updating the memo done state. Please try again later.');
+    const handleUpdateMemo = async (id, updatedText) => {
+        const success = await updateMemo(id, updatedText);
+        if (success) {
+            setEditingMemoId(null);
         }
     };
 
-    const handleDoneMemo = (id) => {
-        handleDoneChange(id, true);
+    const handleToggleDone = async (id, isDone) => {
+        await toggleDone(id, isDone);
     };
 
-    const handleUndoneMemo = (id) => {
-        handleDoneChange(id, false);
-    };
-
-    const handleUpdateMemo = async (id, event) => {
-        const updatedMemo = event.target.parentElement.parentElement.querySelector('.edit-memo-input').value;
-
-        try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                navigate('/log-in');
-                return;
-            }
-
-            const response = await fetch(`${NODE_API_URL}/api/memos/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify({ memo: updatedMemo }),
-            });
-
-            if (response.ok) {
-                const updatedMemoData = await response.json();
-
-                setSavedMemos(
-                    savedMemos.map((m) => (m.id === id ? updatedMemoData : m))
-                );
-
-                setEditingMemoId(null);
-            } else {
-                const errorData = await response.json();
-                console.error('Error updating memo:', errorData.error);
-                setError(`Error updating memo: ${errorData.error}`);
-            }
-        } catch (error) {
-            console.error('Error updating memo:', error);
-            setError('An error occurred while updating the memo. Please try again later.');
+    const toggleNewNoteForm = () => {
+        setShowNewNoteForm(!showNewNoteForm);
+        if (!showNewNoteForm) {
+            setMemo('');
         }
     };
-
-    // Filter memos based on current filter and search term
-    const filteredMemos = savedMemos.filter(memo => {
-        const matchesFilter = 
-            filter === 'all' ? true :
-            filter === 'active' ? !memo.done :
-            filter === 'completed' ? memo.done : true;
-
-        const matchesSearch = memo.memo.toLowerCase().includes(searchTerm.toLowerCase());
-        
-        return matchesFilter && matchesSearch;
-    });
 
     return (
         <div className={`private-memos ${isDarkMode ? 'dark-mode' : ''}`}>
@@ -239,95 +103,59 @@ const PrivateMemos = ({ isDarkMode }) => {
                     <FaStickyNote className="icon" />
                     <h1 className="page-title">Sticky Notes</h1>
                 </div>
-                <div className="search-bar">
-                    <input
-                        type="text"
-                        placeholder="🔍 Search notes..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+                <div className="header-actions">
+                    <div className="search-container">
+                        <FaSearch className="search-icon" />
+                        <input
+                            ref={searchInputRef}
+                            type="text"
+                            placeholder="Press / to focus"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="search-input"
+                        />
+                    </div>
+                    <button 
+                        className="action-button new-note-button"
+                        onClick={() => setShowNewNoteForm(!showNewNoteForm)}
+                        title="Create new note (Ctrl+N)"
+                    >
+                        <FaPlus /> <span>New Note</span>
+                    </button>
                 </div>
             </div>
 
-            <div className="memo-input-container">
-                <textarea
-                    className="memo-input"
-                    value={memo}
-                    onChange={handleMemoChange}
-                    placeholder="Write your personal notes here..."
-                />
-                <button 
-                    className="save-memo-button" 
-                    onClick={handleSaveMemo}
-                    disabled={saving}
-                >
-                    {saving ? <Spinner size="small" color="white" /> : 'Save Note'}
-                </button>
-            </div>
+            <FilterBar 
+                filter={filter}
+                setFilter={setFilter}
+                sortOrder={sortOrder}
+                setSortOrder={setSortOrder}
+            />
 
-            <div className="saved-memos-container">
-                {isLoading ? (
-                    <div className="flex justify-center items-center h-64">
-                        <Spinner size="large" color={isDarkMode ? '#fff' : '#4285F4'} />
-                    </div>
-                ) : filteredMemos.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-64">
-                        <img src={EmptyState} alt="No memos" className="w-64 mb-4" />
-                        <p className="text-lg text-gray-500">No notes found</p>
-                    </div>
-                ) : (
-                    filteredMemos.map(({ id, memo, done, created_at }) => (
-                        <div key={id} className={`saved-memo ${done ? 'done' : ''}`}>
-                            {editingMemoId === id ? (
-                                <div className="edit-memo-container">
-                                    <textarea
-                                        className="edit-memo-input"
-                                        defaultValue={memo}
-                                    />
-                                    <div className="edit-actions">
-                                        <button 
-                                            className="memo-button edit-button"
-                                            onClick={(e) => handleUpdateMemo(id, e)}
-                                        >
-                                            Save
-                                        </button>
-                                        <button 
-                                            className="memo-button cancel-button"
-                                            onClick={handleCancelEdit}
-                                        >
-                                            Cancel
-                                        </button>
-                                    </div>
-                                </div>
-                            ) : (
-                                <>
-                                    <div className="memo-content">{memo}</div>
-                                    <div className="memo-actions">
-                                        <button 
-                                            className="memo-button edit-button" 
-                                            onClick={() => handleEditMemo(id)}
-                                        >
-                                            Edit
-                                        </button>
-                                        <button 
-                                            className="memo-button delete-button" 
-                                            onClick={() => handleDeleteMemo({ id, memo })}
-                                        >
-                                            Delete
-                                        </button>
-                                        <button 
-                                            className="memo-button done-button"
-                                            onClick={() => done ? handleUndoneMemo(id) : handleDoneMemo(id)}
-                                        >
-                                            {done ? 'Undone' : 'Done'}
-                                        </button>
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                    ))
-                )}
-            </div>
+            {showNewNoteForm && (
+                <MemoForm 
+                    memo={memo}
+                    setMemo={setMemo}
+                    handleSave={handleSaveMemo}
+                    handleCancel={toggleNewNoteForm}
+                    saving={saving}
+                />
+            )}
+
+            {error && <div className="error-message">{error}</div>}
+
+            <MemoList 
+                memos={filteredMemos}
+                isLoading={isLoading}
+                editingMemoId={editingMemoId}
+                setEditingMemoId={setEditingMemoId}
+                handleDeleteMemo={handleDeleteMemo}
+                handleToggleDone={handleToggleDone}
+                handleUpdateMemo={handleUpdateMemo}
+                showNewNoteForm={showNewNoteForm}
+                setShowNewNoteForm={setShowNewNoteForm}
+                isDarkMode={isDarkMode}
+            />
 
             <DeleteConfirmationModal 
                 isOpen={deleteModalOpen}
@@ -335,12 +163,13 @@ const PrivateMemos = ({ isDarkMode }) => {
                 onConfirm={confirmDelete}
                 title="Delete Note"
                 message="Are you sure you want to delete this note?"
-                itemName={deletingMemo?.memo}
+                itemName={deletingMemo?.Text}
                 isLoading={isDeleting}
                 isDarkMode={isDarkMode}
             />
+            
         </div>
     );
-}
+};
 
 export default PrivateMemos;

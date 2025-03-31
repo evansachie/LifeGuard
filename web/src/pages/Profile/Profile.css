@@ -12,6 +12,10 @@
     --dark-text-color: #f5f5f5;
     --success-color: #28a745;
     --error-color: #dc3545;
+    --primary-hover-color: #3367d6;
+    --danger-color: #dc3545;
+    --danger-hover-color: #c82333;
+    --disabled-color: #6c757d;
 }
 
 body {
@@ -50,13 +54,19 @@ body {
     background: #2D2D2D;
 }
 
-.profile-avatar {
+.profile-avatar-container {
+    position: relative;
     width: 150px;
     height: 150px;
-    margin: 0 auto 1rem;
+    margin: 0 auto 2rem;
+}
+
+.profile-avatar {
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
     overflow: hidden;
-    border: 4px solid #4285F4;
+    position: relative;
 }
 
 .profile-avatar img {
@@ -65,18 +75,71 @@ body {
     object-fit: cover;
 }
 
-.profile-header h1 {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-    color: #2d3748;
+.avatar-actions {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 8px;
+    z-index: 10;
 }
 
-.dark .profile-header h1 {
-    color: #e2e8f0;
+.edit-image-button,
+.delete-image-button {
+    background: transparent;
+    color: white;
+    border: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+    font-size: 1.2rem;
+    border-radius: 50%;
 }
 
-.profile-header p {
-    color: #718096;
+.edit-image-button:hover,
+.delete-image-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.edit-image-button:hover {
+    color: var(--primary-color);
+}
+
+.delete-image-button:hover {
+    color: var(--danger-color);
+}
+
+.edit-image-button:disabled,
+.delete-image-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.profile-avatar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.profile-avatar:hover::before {
+    opacity: 1;
 }
 
 .profile-content {
@@ -110,13 +173,15 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 1.5rem;
     background-color: #4285F4;
     color: white;
     border: none;
     border-radius: 0.5rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    font-size: 1.1rem;
+    padding: 0.75rem 1.25rem;
 }
 
 .edit-button:hover {
@@ -160,6 +225,7 @@ body {
     background-color: white;
     color: #2d3748;
     transition: all 0.3s ease;
+    font-size: 1.1rem;
 }
 
 .form-group input:disabled,
@@ -182,7 +248,7 @@ body {
 .dark .form-group textarea:disabled,
 .dark .form-group select:disabled {
     background-color: #1a202c;
-    color: #e2e8f0;
+    color: #718096;
 }
 
 .form-actions {
@@ -202,6 +268,7 @@ body {
     border-radius: 0.5rem;
     cursor: pointer;
     transition: all 0.3s ease;
+    font-size: 1.1rem;
 }
 
 .save-button {
@@ -239,71 +306,6 @@ body {
 
 .dark .health-info-section h3 {
     color: #e2e8f0;
-}
-
-@media (max-width: 768px) {
-    .profile-page {
-        padding: 1rem;
-    }
-
-    .profile-header {
-        padding: 1.5rem;
-    }
-
-    .profile-avatar {
-        width: 100px;
-        height: 100px;
-    }
-
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .form-actions {
-        flex-direction: column;
-    }
-
-    .save-button,
-    .cancel-button {
-        width: 100%;
-        justify-content: center;
-    }
-}
-
-/* Add these new styles */
-.profile-avatar-container {
-    position: relative;
-    width: fit-content;
-    margin: 0 auto;
-}
-
-.edit-image-button {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    background: #4285F4;
-    color: white;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: 3px solid white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.dark .edit-image-button {
-    border-color: #2d3748;
-}
-
-.edit-image-button:hover {
-    background: #3367d6;
-}
-
-.hidden {
-    display: none;
 }
 
 .physical-info-section {
@@ -459,10 +461,59 @@ body {
     cursor: pointer;
     text-decoration: none;
     transition: background-color 0.3s ease;
+    font-size: 1.1rem;
+    padding: 0.75rem 1.25rem;
 }
 
 .add-contacts-button:hover {
     background-color: #3367d6;
+}
+
+.hidden {
+    display: none !important;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* Loading spinner containers */
+.avatar-spinner-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 50%;
+}
+
+.form-loading-container, 
+.contacts-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+  min-height: 200px;
+}
+
+.form-loading-container p,
+.contacts-loading-container p {
+  margin-top: 1rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.dark .form-loading-container,
+.dark .contacts-loading-container {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark .form-loading-container p,
+.dark .contacts-loading-container p {
+  color: #aaa;
 }
 
 /* Mobile responsiveness improvements */
@@ -524,4 +575,146 @@ body {
 .dark .contact-name strong,
 .dark .contact-phone span {
     color: #e2e8f0;
+}
+
+/* Add these to your existing Profile.css */
+
+.profile-info-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.profile-info-loading p {
+  color: #6B7280;
+  font-size: 0.9rem;
+}
+
+.dark .profile-info-loading p {
+  color: #9CA3AF;
+}
+
+.avatar-spinner-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 50%;
+}
+
+.dark .avatar-spinner-container {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.form-loading-container, 
+.contacts-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+  min-height: 200px;
+}
+
+.form-loading-container p,
+.contacts-loading-container p {
+  margin-top: 1rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.dark .form-loading-container,
+.dark .contacts-loading-container {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark .form-loading-container p,
+.dark .contacts-loading-container p {
+  color: #aaa;
+}
+
+.save-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* Delete Account Section */
+.delete-account-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.dark .delete-account-section {
+    border-color: #4a5568;
+}
+
+.delete-account-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 1rem;
+}
+
+.dark .delete-account-card {
+    background: #2D2D2D;
+}
+
+.delete-account-content {
+    text-align: center;
+}
+
+.delete-account-content p {
+    margin-bottom: 1.5rem;
+    color: #718096;
+}
+
+.dark .delete-account-content p {
+    color: #a0aec0;
+}
+
+.delete-account-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: #e53e3e;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+    margin: 0 auto;
+}
+
+.delete-account-button:hover {
+    background-color: #c53030;
+}
+
+.delete-account-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Responsive styles for delete account section */
+@media (max-width: 768px) {
+    .delete-account-card {
+        padding: 1rem;
+    }
+
+    .delete-account-button {
+        width: 100%;
+    }
 }

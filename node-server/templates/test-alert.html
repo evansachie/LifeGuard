@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Emergency Alert</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+            background-color: #4285F4;
+            color: white;
+            border-radius: 8px 8px 0 0;
+        }
+        .header img {
+            max-width: 150px;
+            height: auto;
+            background-color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .content {
+            padding: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            color: #888;
+            font-size: 12px;
+            border-top: 1px solid #eee;
+        }
+        .test-box {
+            background-color: #f0f7ff;
+            border-left: 4px solid #4285F4;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://res.cloudinary.com/dat7slh1u/image/upload/v1740908768/logo_moe3jm.png" alt="LifeGuard Logo" style="max-width: 200px; margin-bottom: 20px;">
+            <h1>Test Emergency Alert</h1>
+        </div>
+        <div class="content">
+            <div class="test-box">
+                <p><strong>This is a TEST alert only.</strong></p>
+                <p>No action is required. This is not a real emergency.</p>
+            </div>
+            
+            <p>Hello {{contactName}},</p>
+            
+            <p>You are receiving this test alert because <strong>{{userName}}</strong> has you listed as an emergency contact in the LifeGuard application.</p>
+            
+            <p>This test confirms that:</p>
+            <ul>
+                <li>Your contact information is correctly registered in the system</li>
+                <li>The emergency alert system is functioning properly</li>
+                <li>You will receive notifications in case of a real emergency</li>
+            </ul>
+            
+            <p>In a real emergency, you would receive detailed information about {{userName}}'s situation, location, and any relevant medical information.</p>
+            
+            <p>Thank you for being an emergency contact. Your role is crucial in helping ensure the safety of someone who trusts you.</p>
+            
+            <p>Best regards,<br>The LifeGuard Team</p>
+        </div>
+        <div class="footer">
+            <p>&copy; {{currentYear}} LifeGuard. All rights reserved.</p>
+            <p>This is a test alert. No action is required.</p>
+        </div>
+    </div>
+</body>
+</html>

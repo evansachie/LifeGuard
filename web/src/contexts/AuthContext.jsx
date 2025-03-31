@@ -8,17 +8,17 @@ export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
 
     const logout = useCallback(() => {
-        // Clear all auth data
-        localStorage.clear();
-        setIsAuthenticated(false);
+        const theme = localStorage.getItem('theme');
         
-        // Clean navigation
+        localStorage.clear();
+        localStorage.setItem('theme', theme);
+        
+        setIsAuthenticated(false);
         navigate('/log-in', { replace: true });
     }, [navigate]);
 
     const login = useCallback((token, userData) => {
         localStorage.setItem('token', token);
-        // Set other user data...
         setIsAuthenticated(true);
     }, []);
 

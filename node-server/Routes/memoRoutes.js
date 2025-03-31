@@ -13,21 +13,14 @@ module.exports = (pool) => {
             }
 
             const token = authHeader.split(' ')[1];
-            
-            // Decode the token without verification first to get the payload
             const decoded = jwt.decode(token);
-            if (!decoded) {
-                return res.status(401).json({ error: 'Invalid token format' });
-            }
-
-            // Extract user ID from the token claims
-            // .NET tokens store the user ID in the 'nameid' claim
-            const userId = decoded.nameid || decoded.sub;
+            
+            // Get the correct ID claim from the token
+            const userId = decoded.uid;
             if (!userId) {
                 return res.status(401).json({ error: 'Invalid token claims' });
             }
 
-            // Store userId in request object
             req.userId = userId;
             next();
         } catch (error) {
@@ -40,7 +33,7 @@ module.exports = (pool) => {
     router.get('/', verifyToken, async (req, res) => {
         try {
             const { rows } = await pool.query(
-                'SELECT * FROM memos WHERE user_id = $1 ORDER BY created_at DESC',
+                'SELECT "Id", "Text", "Done", "UserId", "CreatedAt", "UpDatedAt" FROM "Memos" WHERE "UserId" = $1 ORDER BY "CreatedAt" DESC',
                 [req.userId]
             );
             res.json(rows);
@@ -59,8 +52,8 @@ module.exports = (pool) => {
             }
 
             const { rows } = await pool.query(
-                'INSERT INTO memos (user_id, memo) VALUES ($1, $2) RETURNING *',
-                [req.userId, memo]
+                'INSERT INTO "Memos" ("Text", "UserId", "Done", "CreatedAt", "UpDatedAt") VALUES ($1, $2, false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *',
+                [memo, req.userId]
             );
             res.status(201).json(rows[0]);
         } catch (error) {
@@ -76,7 +69,7 @@ module.exports = (pool) => {
             const { memo } = req.body;
 
             const { rows } = await pool.query(
-                'UPDATE memos SET memo = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 AND user_id = $3 RETURNING *',
+                'UPDATE "Memos" SET "Text" = $1, "UpDatedAt" = CURRENT_TIMESTAMP WHERE "Id" = $2 AND "UserId" = $3 RETURNING *',
                 [memo, id, req.userId]
             );
 
@@ -97,7 +90,7 @@ module.exports = (pool) => {
             const { done } = req.body;
 
             const { rows } = await pool.query(
-                'UPDATE memos SET done = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 AND user_id = $3 RETURNING *',
+                'UPDATE "Memos" SET "Done" = $1, "UpDatedAt" = CURRENT_TIMESTAMP WHERE "Id" = $2 AND "UserId" = $3 RETURNING *',
                 [done, id, req.userId]
             );
 
@@ -116,7 +109,7 @@ module.exports = (pool) => {
         try {
             const { id } = req.params;
             const { rowCount } = await pool.query(
-                'DELETE FROM memos WHERE id = $1 AND user_id = $2',
+                'DELETE FROM "Memos" WHERE "Id" = $1 AND "UserId" = $2',
                 [id, req.userId]
             );
 

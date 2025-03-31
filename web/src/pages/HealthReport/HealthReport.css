@@ -24,9 +24,17 @@
     margin: 0;
 }
 
+.dark-mode .header-left .page-title {
+    color: #e2e8f0;
+}
+
 .header-left .subtitle {
     color: #636e72;
     margin: 0.5rem 0 0 0;
+}
+
+.dark-mode .header-left .page-title{
+    color: #e2e8f0;
 }
 
 .header-right .date-picker {

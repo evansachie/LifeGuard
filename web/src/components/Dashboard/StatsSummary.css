@@ -1,0 +1,88 @@
+.stats-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  padding: 1.25rem;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.stat-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  margin-right: 1rem;
+  color: white;
+}
+
+.stat-icon.readings {
+  background-color: #3b82f6;
+}
+
+.stat-icon.alerts {
+  background-color: #f59e0b;
+}
+
+.stat-icon.notifications {
+  background-color: #8b5cf6;
+}
+
+.stat-icon.tasks {
+  background-color: #10b981;
+}
+
+.stat-content h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  color: #1f2937;
+}
+
+.stat-content p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+/* Dark mode styles */
+.stats-summary.dark-mode .stat-item {
+  background-color: #2D2D2D;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.stats-summary.dark-mode .stat-content h3 {
+  color: #f3f4f6;
+}
+
+.stats-summary.dark-mode .stat-content p {
+  color: #9ca3af;
+}
+
+/* Responsive styles */
+@media (max-width: 1024px) {
+  .stats-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .stats-summary {
+    grid-template-columns: 1fr;
+  }
+}

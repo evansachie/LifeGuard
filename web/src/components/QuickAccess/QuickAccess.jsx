@@ -3,18 +3,18 @@ import { Link } from "react-router-dom";
 import './QuickAccess.css';
 import { GiMeditation } from 'react-icons/gi';
 import { IoMdFitness } from "react-icons/io";
-import { FaBurn } from 'react-icons/fa';
+import { MdOutlineHealthAndSafety } from "react-icons/md";
 
 function HealthTracker({ isDarkMode }) {
     return (
         <div className={`health-tracker ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
             <h2 className="health-tracker-heading">Quick Access Tabs</h2>
             <div className="health-tracker-grid">
-                <Link to="/bmr-calculator" className="health-tracker-card">
+                <Link to="/health-metrics" className="health-tracker-card">
                     <div className="health-tracker-icon">
-                        <FaBurn />
+                        <MdOutlineHealthAndSafety />
                     </div>
-                    <h3>BMR Calculator</h3>
+                    <h3>Health Metrics</h3>
                     <p>Discover your daily calorie needs and optimize your health goals.</p>
                 </Link>
                 

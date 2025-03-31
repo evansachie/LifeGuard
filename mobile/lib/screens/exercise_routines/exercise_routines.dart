@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:lifeguard/data/exercise_data.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class ExerciseRoutines extends StatefulWidget {
   const ExerciseRoutines({super.key});
@@ -32,14 +33,20 @@ class _ExerciseRoutinesState extends State<ExerciseRoutines> {
     {'id': 'cooldown', 'icon': Icons.ac_unit, 'label': 'Cool Down'},
   ];
 
+  final Map<String, YoutubePlayerController> _videoControllers = {};
+
   @override
   void initState() {
     super.initState();
     _loadData();
+    _initializeControllersForCategory();
   }
 
   @override
   void dispose() {
+    for (var controller in _videoControllers.values) {
+      controller.close();
+    }
     _timer?.cancel();
     super.dispose();
   }
@@ -87,6 +94,56 @@ class _ExerciseRoutinesState extends State<ExerciseRoutines> {
         }
       });
     });
+  }
+
+  void _initializeVideoController(Exercise exercise) async {
+    try {
+      debugPrint('Initializing video for: ${exercise.title}');
+      debugPrint('Video URL: ${exercise.videoUrl}');
+
+      final videoId = YoutubePlayerController.convertUrlToId(exercise.videoUrl);
+      debugPrint('Extracted Video ID: $videoId');
+
+      if (videoId != null && !_videoControllers.containsKey(exercise.id)) {
+        final controller = YoutubePlayerController.fromVideoId(
+          videoId: videoId,
+          autoPlay: false,
+          params: const YoutubePlayerParams(
+            showControls: true,
+            showFullscreenButton: true,
+            mute: false,
+            strictRelatedVideos: true,
+            enableJavaScript: true,
+            origin: 'https://www.youtube.com',
+            interfaceLanguage: 'en',
+            pointerEvents: PointerEvents.auto,
+          ),
+        );
+
+        // Set up full screen listener without awaiting
+        controller.setFullScreenListener((isFullScreen) {
+          debugPrint('Is full screen: $isFullScreen');
+        });
+
+        if (mounted) {
+          setState(() {
+            _videoControllers[exercise.id] = controller;
+          });
+        }
+
+        debugPrint('Controller initialized for: ${exercise.title}');
+      }
+    } catch (e) {
+      debugPrint(
+          'Error initializing video controller for ${exercise.title}: $e');
+    }
+  }
+
+  void _initializeControllersForCategory() {
+    final exercises = workoutData[selectedLevel]?[selectedCategory] ?? [];
+    for (var exercise in exercises) {
+      _initializeVideoController(exercise);
+    }
   }
 
   @override
@@ -204,8 +261,11 @@ class _ExerciseRoutinesState extends State<ExerciseRoutines> {
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                      setState(() => selectedCategory =
-                                          category['id'] as String);
+                                      setState(() {
+                                        selectedCategory =
+                                            category['id'] as String;
+                                        _initializeControllersForCategory();
+                                      });
                                     },
                                     child: Container(
                                       padding: const EdgeInsets.all(16),
@@ -322,11 +382,62 @@ class _ExerciseRoutinesState extends State<ExerciseRoutines> {
   }
 
   Widget _buildExerciseCard(Exercise exercise, bool isDark) {
+    final videoId = YoutubePlayerController.convertUrlToId(exercise.videoUrl);
+    debugPrint('Building card for: ${exercise.title}, Video ID: $videoId');
+
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (videoId != null)
+            FutureBuilder(
+              future: _ensureControllerInitialized(exercise),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done &&
+                    _videoControllers.containsKey(exercise.id)) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: YoutubePlayerControllerProvider(
+                        controller: _videoControllers[exercise.id]!,
+                        child: YoutubePlayer(
+                          controller: _videoControllers[exercise.id]!,
+                          aspectRatio: 16 / 9,
+                          enableFullScreenOnVerticalDrag: true,
+                        ),
+                      ),
+                    ),
+                  );
+                } else {
+                  return Container(
+                    height: 200,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }
+              },
+            )
+          else
+            Container(
+              height: 200,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Center(
+                child: Icon(Icons.video_library, size: 48),
+              ),
+            ),
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -379,6 +490,14 @@ class _ExerciseRoutinesState extends State<ExerciseRoutines> {
         ],
       ),
     );
+  }
+
+  Future<void> _ensureControllerInitialized(Exercise exercise) async {
+    if (!_videoControllers.containsKey(exercise.id)) {
+      _initializeVideoController(exercise);
+      // Add a small delay to ensure the controller is ready
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
   }
 
   Widget _buildWorkoutOverlay() {

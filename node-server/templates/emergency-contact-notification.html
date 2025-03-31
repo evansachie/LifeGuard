@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Contact Notification</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .header img {
+            max-width: 150px;
+            height: auto;
+        }
+        .content {
+            padding: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            color: #888;
+            font-size: 12px;
+            border-top: 1px solid #eee;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #4285F4;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .button:hover {
+            background-color: #3367d6;
+        }
+        .alert-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid #4285F4;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://res.cloudinary.com/dat7slh1u/image/upload/v1740908768/logo_moe3jm.png" alt="LifeGuard Logo" style="max-width: 200px; margin-bottom: 20px;">
+            <h1>Emergency Contact Request</h1>
+        </div>
+        <div class="content">
+            <p>Hello {{contactName}},</p>
+            <p><strong>{{userName}}</strong> has added you as an emergency contact on LifeGuard, a health and wellness application designed to provide assistance during emergencies.</p>
+            
+            <div class="alert-box">
+                <p>As an emergency contact, you may receive:</p>
+                <ul>
+                    <li>Emergency alerts if {{userName}} needs help</li>
+                    <li>Location information during emergencies</li>
+                    <li>Medical information that could be critical in an emergency</li>
+                </ul>
+            </div>
+            
+            <p>Please verify that you agree to be an emergency contact for {{userName}} by clicking the button below:</p>
+            
+            <div style="text-align: center;">
+                <a href="{{verificationLink}}" class="button">Verify Emergency Contact</a>
+            </div>
+            
+            <p>If you did not expect this request or do not wish to be an emergency contact, you can ignore this email or click the verification link and choose to decline.</p>
+            
+            <p>Thank you for being there for someone who considers you a trusted emergency contact.</p>
+            
+            <p>Best regards,<br>The LifeGuard Team</p>
+        </div>
+        <div class="footer">
+            <p>&copy; {{currentYear}} LifeGuard. All rights reserved.</p>
+            <p>This email was sent to you because someone added you as an emergency contact.</p>
+        </div>
+    </div>
+</body>
+</html>

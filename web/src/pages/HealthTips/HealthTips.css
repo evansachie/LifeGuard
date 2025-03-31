@@ -1,4 +1,4 @@
-/* Health Tips Container */
+/* Base container */
 .health-tips-container {
   min-height: 100vh;
   padding: 2rem;
@@ -52,6 +52,13 @@
   border-radius: 20px;
   overflow: hidden;
   min-height: 400px;
+  box-shadow: 0 10px 20px rgba(0, 122, 255, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.featured-tip:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 122, 255, 0.3);
 }
 
 .featured-content {
@@ -66,18 +73,25 @@
   font-size: 2.5rem;
   margin-bottom: 1rem;
   font-weight: 700;
+  line-height: 1.2;
 }
 
 .featured-content p {
   font-size: 1.1rem;
   margin-bottom: 2rem;
   opacity: 0.9;
+  line-height: 1.6;
 }
 
 .featured-image {
   background-size: cover;
   background-position: center;
   min-height: 100%;
+  transition: transform 1s ease;
+}
+
+.featured-tip:hover .featured-image {
+  transform: scale(1.05);
 }
 
 .learn-more-btn {
@@ -88,15 +102,22 @@
   border-radius: 30px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: all 0.3s ease;
   align-self: flex-start;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 .learn-more-btn:hover {
   transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+  background: rgba(255,255,255,0.9);
 }
 
-/* Controls Section */
+.learn-more-btn:active {
+  transform: translateY(1px);
+}
+
+/* Enhanced Controls Section */
 .controls-section {
   margin-bottom: 2rem;
 }
@@ -106,66 +127,52 @@
   margin-bottom: 1.5rem;
 }
 
-.search-bar input {
+.search-input {
   width: 100%;
   padding: 1rem 1rem 1rem 3rem;
-  border: none;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
   background-color: white;
   font-size: 1rem;
   transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
-.dark-mode .search-bar input {
+.search-bar input:focus {
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  outline: none;
+}
+
+.dark-mode .search-input {
   background-color: #2d2d2d;
   color: #e0e0e0;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
-.search-icon {
+.dark-mode .search-bar input:focus {
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
+
+.search-input::placeholder {
+  color: #a0aec0;
+}
+
+.search-bar::before {
   position: absolute;
   left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #666;
+  color: #a0aec0;
+  pointer-events: none;
 }
 
-.categories {
-  display: flex;
-  gap: 1rem;
-  overflow-x: auto;
-  padding-bottom: 1rem;
-}
-
-.category-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 30px;
-  background-color: white;
-  color: #333;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-}
-
-.dark-mode .category-btn {
-  background-color: #2d2d2d;
-  color: #e0e0e0;
-}
-
-.category-btn.active {
-  background-color: #007AFF;
-  color: white;
-}
-
-.category-btn:hover {
-  transform: translateY(-2px);
-}
-
-/* Tips Grid */
+/* Tips Grid with HealthTipCard component */
 .tips-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -173,16 +180,12 @@
   margin-bottom: 3rem;
 }
 
-.tip-card {
-  background: white;
-  border-radius: 12px;
-  padding: 0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+.tip-card-container {
   height: 100%;
+}
+
+.tip-card:hover {
+  transform: translateY(-5px);
 }
 
 .tip-card-image {
@@ -205,64 +208,92 @@
   top: 1rem;
   right: 1rem;
   font-size: 1.5rem;
-  color: #007AFF;
-}
-
-.tip-card h3 {
-  font-size: 1.25rem;
   margin-bottom: 1rem;
-  color: #333;
+  color: #4a5568;
 }
 
-.dark-mode .tip-card h3 {
-  color: #fff;
+.dark-mode .no-results h3 {
+  color: #e2e8f0;
 }
 
-.tip-card p {
-  color: #666;
-  margin-bottom: 1.5rem;
-  line-height: 1.6;
+.no-results p {
+  color: #718096;
 }
 
-.dark-mode .tip-card p {
-  color: #e0e0e0;
+.dark-mode .no-results p {
+  color: #a0aec0;
 }
 
-.tip-footer {
+/* Enhanced Pagination */
+.pagination {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  margin: 2rem 0;
+  gap: 0.5rem;
 }
 
-.tip-category {
+.page-numbers {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.pagination-button {
   padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.875rem;
+  border: none;
+  background: white;
+  color: #333;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   font-weight: 500;
 }
 
-.tip-category.emergency { background-color: #FFE5E5; color: #FF4444; }
-.tip-category.fitness { background-color: #E5FFE5; color: #44FF44; }
-.tip-category.nutrition { background-color: #FFE5FF; color: #FF44FF; }
-.tip-category.mental { background-color: #E5E5FF; color: #4444FF; }
-.tip-category.prevention { background-color: #FFFFE5; color: black; }
-.tip-category.resources { background-color: #E5FFFF; color: #44FFFF; }
-
-.dark-mode .tip-category {
-  opacity: 0.8;
+.prev-button, .next-button {
+  padding: 0.5rem 1.25rem;
 }
 
-.read-more {
-  background: none;
-  border: none;
-  color: #007AFF;
-  font-weight: 600;
-  cursor: pointer;
+.pagination-button.active {
+  background: #3b82f6;
+  color: white;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
 }
 
-/* Video Section */
+.pagination-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.pagination-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dark-mode .pagination-button {
+  background: #2d3748;
+  color: #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .pagination-button.active {
+  background: #4299e1;
+  color: white;
+}
+
+.pagination-ellipsis {
+  color: #718096;
+  padding: 0.5rem 0.25rem;
+  user-select: none;
+}
+
+.dark-mode .pagination-ellipsis {
+  color: #a0aec0;
+}
+
+/* Enhanced Video Section */
 .video-section {
-  margin-top: 2rem;
+  margin-top: 3rem;
 }
 
 .video-section h2 {
@@ -286,12 +317,16 @@
   background: white;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .video-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .video-thumbnail {
@@ -322,18 +357,36 @@
 }
 
 .video-info {
-  padding: 1rem;
+  padding: 1.25rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .video-info h3 {
-  margin: 0 0 0.5rem;
+  margin: 0 0 0.75rem;
   font-size: 1.1rem;
+  color: #333;
+  line-height: 1.4;
 }
 
 .video-info p {
   margin: 0;
   color: #666;
   font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.dark-mode .video-card {
+  background: #2d2d2d;
+}
+
+.dark-mode .video-info h3 {
+  color: #e0e0e0;
+}
+
+.dark-mode .video-info p {
+  color: #b0b0b0;
 }
 
 /* Dark mode styles */
@@ -451,27 +504,42 @@
   border: none;
   background: white;
   color: #333;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.pagination-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: #f5f5f5;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 .pagination-button.active {
   background: #407CE2;
   color: white;
+  box-shadow: 0 3px 6px rgba(64,124,226,0.3);
 }
 
 .pagination-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .dark-mode .pagination-button {
   background: #2d2d2d;
   color: #e0e0e0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.dark-mode .pagination-button:hover:not(:disabled) {
+  background: #3a3a3a;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
 .dark-mode .pagination-button.active {
@@ -558,4 +626,19 @@
 
 .tip-card:hover {
   transform: translateY(-5px);
+}
+
+/* No Results Message */
+.no-results {
+  grid-column: 1 / -1;
+  padding: 3rem;
+  text-align: center;
+  background: rgba(0,0,0,0.03);
+  border-radius: 12px;
+  color: #555;
+}
+
+.dark-mode .no-results {
+  background: rgba(255,255,255,0.05);
+  color: #aaa;
 }

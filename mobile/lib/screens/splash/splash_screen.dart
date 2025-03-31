@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../providers/auth_provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:lifeguard/screens/onboarding/onboarding_screen1.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -13,16 +15,38 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _navigateToOnboarding();
+    _checkAuthAndNavigate();
   }
 
-  _navigateToOnboarding() async {
-    await Future.delayed(const Duration(seconds: 3));
-    if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const OnboardingScreen1()),
-      );
+  Future<void> _checkAuthAndNavigate() async {
+    await Future.delayed(const Duration(seconds: 4));
+
+    if (!mounted) return;
+
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final prefs = await SharedPreferences.getInstance();
+    
+    // Check if user is logged in first
+    final token = prefs.getString('token');
+    final userId = prefs.getString('userId');
+    
+    if (token != null && userId != null) {
+      // User has valid credentials, verify with provider
+      final isLoggedIn = await authProvider.isLoggedIn();
+      if (isLoggedIn && mounted) {
+        Navigator.pushReplacementNamed(context, '/home');
+        return;
+      }
+    }
+
+    // If not logged in, check onboarding status
+    final hasSeenOnboarding = prefs.getBool('hasSeenOnboarding') ?? false;
+    if (!mounted) return;
+
+    if (hasSeenOnboarding) {
+      Navigator.pushReplacementNamed(context, '/welcome');
+    } else {
+      Navigator.pushReplacementNamed(context, '/onboarding');
     }
   }
 

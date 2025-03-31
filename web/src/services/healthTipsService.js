@@ -113,9 +113,15 @@ const getCategoryFromTitle = (title = '', description = '') => {
 };
 
 const formatHealthTips = (resources) => {
+    const defaultImage = 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800';
+    
     return resources.map(resource => {
         const title = resource.Title || '';
         const description = resource.Categories || '';
+        
+        // Validate image URL before assigning
+        const imageUrl = resource.ImageUrl || defaultImage;
+        const validatedImageUrl = imageUrl.startsWith('http') ? imageUrl : defaultImage;
         
         return {
             id: resource.Id || Math.random().toString(),
@@ -124,8 +130,10 @@ const formatHealthTips = (resources) => {
             description: description,
             type: 'article',
             url: resource.AccessibleVersion,
-            imageUrl: resource.ImageUrl || 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800',
-            imageAlt: resource.ImageAlt || title
+            imageUrl: validatedImageUrl,
+            imageAlt: resource.ImageAlt || title,
+            // Add placeholder while image loads
+            placeholderImage: defaultImage
         };
     });
 };
@@ -182,4 +190,4 @@ const getFallbackData = () => ({
             duration: '6:42'
         }
     ]
-}); 
+});
