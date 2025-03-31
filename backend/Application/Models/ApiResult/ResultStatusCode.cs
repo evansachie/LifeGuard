@@ -35,6 +35,9 @@ namespace Application.Models.ApiResult
         [Display(Name = "Not Acceptable")]
         NotAcceptable = 406,
 
+        [Display(Name = "Conflict")]
+        Conflict = 409,
+
         [Display(Name = "Failed Dependency")]
         FailedDependency = 424,
 

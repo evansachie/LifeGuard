@@ -12,9 +12,9 @@ namespace Application.Contracts
     public interface IAuthService
     {
 
-        Task<AuthResponse> Login(AuthRequest request);
+        Task<Result> Login(AuthRequest request);
 
-        Task<RegistrationResponse> Register(RegistrationRequest request);
+        Task<Result> Register(RegistrationRequest request);
 
         Task<Result<string>> ForgotPasswordAsync(ForgotPasswordRequest request);
 

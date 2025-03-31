@@ -1,4 +1,5 @@
-﻿using Application.Models.Photos;
+﻿using Application.Models.ApiResult;
+using Application.Models.Photos;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -10,8 +11,8 @@ namespace Application.Contracts.Photos
 {
     public interface IUserPhotoService
     {
-        Task<PhotoUploadResult> AddUserPhotoAsync(string userId, IFormFile file);
-        Task DeleteUserPhotoAsync(string userId);
-        Task<PhotoUploadResult> GetUserPhotoAsync(string userId);   
+        Task<Result> AddUserPhotoAsync(string userId, IFormFile file);
+        Task<Result?> DeleteUserPhotoAsync(string userId);
+        Task<Result> GetUserPhotoAsync(string userId);   
     }
 }

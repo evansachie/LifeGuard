@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.Photos;
+using Application.Models.ApiResult;
 using Application.Models.Photos;
 using Identity.Models;
 using Microsoft.AspNetCore.Http;
@@ -24,12 +25,12 @@ namespace Identity.Services
         }
 
 
-        public async Task<PhotoUploadResult> AddUserPhotoAsync(string userId, IFormFile file)
+        public async Task<Result> AddUserPhotoAsync(string userId, IFormFile file)
         {
             var user = await _userManager.FindByIdAsync(userId);
 
             if (user == null)
-                throw new Exception("User not found");
+               return new Result(false, ResultStatusCode.NotFound, "User not found");
 
             var photoResult = await _photoAccessor.AddPhoto(file);
 
@@ -42,26 +43,26 @@ namespace Identity.Services
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
             {
-                throw new Exception($"Problem updating user photo {result.Errors} "); ;
+               return new Result(false, ResultStatusCode.BadRequest,$"Problem updating user \n {result.Errors} ");
             }
 
-            return photoResult;
+            return new Result<PhotoUploadResult> (true, ResultStatusCode.Success, photoResult);
 
         }
 
 
-        public async Task DeleteUserPhotoAsync(string userId)
+        public async Task<Result?> DeleteUserPhotoAsync(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
-                throw new Exception("User not found");
+                return new Result(false, ResultStatusCode.NotFound, "User not found");
 
             if (string.IsNullOrEmpty(user.PhotoPublicId))
-                throw new Exception("User does not have a photo");
+                return new Result(false, ResultStatusCode.NotFound, "User does not have a photo");
 
             var deletionResult = await _photoAccessor.DeletePhoto(user.PhotoPublicId);
             if (deletionResult == null)
-                throw new Exception("Problem deleting photo");
+                return new Result(false, ResultStatusCode.BadRequest, $"Problem deleting photo");
 
 
             user.PhotoUrl = null;
@@ -69,30 +70,32 @@ namespace Identity.Services
 
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
-                throw new Exception("Problem updating user photo");
+                return new Result(false, ResultStatusCode.BadRequest, $"Problem updating user \n {result.Errors} ");
+
+            return null;
         }
 
-        public async Task<PhotoUploadResult> GetUserPhotoAsync(string userId)
+        public async Task<Result> GetUserPhotoAsync(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
 
             if (user == null)
             {
-                throw new Exception("User not found");
+                return new Result(false, ResultStatusCode.NotFound, "User not found");
             }
 
             if (string.IsNullOrEmpty(user.PhotoPublicId))
             {
-                throw new Exception("User does not have a photo");
+                return new Result(false, ResultStatusCode.NotFound, "User does not have a photo");
             }
 
             var  result = await _photoAccessor.GetPhoto(user.PhotoPublicId);
             if (result == null)
             {
-                throw new Exception("User does not have a photo");
+                return new Result(false, ResultStatusCode.NotFound, "User does not have a photo");
             }
 
-            return result;
+            return new Result<PhotoUploadResult>(true, ResultStatusCode.Success, result);
         }
            
     }
