@@ -45,7 +45,6 @@ export const API_ENDPOINTS = {
     EXERCISE_COMPLETE: `${NODE_API_URL}/api/exercise/complete`,
     EXERCISE_GOALS: `${NODE_API_URL}/api/exercise/goals`,
 
-    // Add health metrics endpoints using NODE API URL
     HEALTH_METRICS: {
         LATEST: `${NODE_API_URL}/api/health-metrics/latest`,
         SAVE: `${NODE_API_URL}/api/health-metrics/save`,
