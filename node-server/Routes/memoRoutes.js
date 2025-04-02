@@ -123,5 +123,19 @@ module.exports = (pool) => {
         }
     });
 
+    // Get count of undone memos
+    router.get('/undone/count', verifyToken, async (req, res) => {
+        try {
+            const { rows } = await pool.query(
+                'SELECT COUNT(*) as count FROM "Memos" WHERE "UserId" = $1 AND "Done" = false',
+                [req.userId]
+            );
+            res.json({ count: parseInt(rows[0].count) });
+        } catch (error) {
+            console.error('Error fetching undone memos count:', error);
+            res.status(500).json({ error: 'Failed to fetch undone memos count' });
+        }
+    });
+
     return router;
 };
