@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import { fetchWithAuth } from '../../utils/api';
 import { calculateBMR, calculateTDEE, calculateMacros, calculateIdealWeight } from '../../utils/healthMetricsUtils';
 import UnitToggle from '../../components/HealthMetrics/UnitToggle';
 import MetricsForm from '../../components/HealthMetrics/MetricsForm';
 import ResultsSection from '../../components/HealthMetrics/ResultsSection';
+import MetricsHistory from '../../components/HealthMetrics/MetricsHistory';
 import './HealthMetrics.css';
 
 function HealthMetrics({ isDarkMode }) {
@@ -25,6 +27,53 @@ function HealthMetrics({ isDarkMode }) {
 
     const [showResults, setShowResults] = useState(false);
     const [unit, setUnit] = useState('imperial'); // imperial or metric
+    const [isLoading, setIsLoading] = useState(true);
+    const [metricsHistory, setMetricsHistory] = useState([]);
+
+    useEffect(() => {
+        fetchLatestMetrics();
+        fetchMetricsHistory();
+    }, []);
+
+    const fetchLatestMetrics = async () => {
+        try {
+            const response = await fetchWithAuth('/api/health-metrics/latest');
+            if (response) {
+                setFormData(prev => ({
+                    ...prev,
+                    age: response.Age || '',
+                    weight: response.Weight || '',
+                    height: response.Height || '',
+                    gender: response.Gender || 'male',
+                    activityLevel: response.ActivityLevel || 'sedentary',
+                    goal: response.Goal || 'maintain'
+                }));
+
+                if (response.BMR && response.TDEE) {
+                    setMetrics({
+                        bmr: response.BMR,
+                        tdee: response.TDEE,
+                        macros: calculateMacros(response.TDEE, response.Goal),
+                        idealWeight: calculateIdealWeight(response.Height, response.Gender)
+                    });
+                    setShowResults(true);
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching metrics:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const fetchMetricsHistory = async () => {
+        try {
+            const response = await fetchWithAuth('/api/health-metrics/history');
+            setMetricsHistory(response);
+        } catch (error) {
+            console.error('Error fetching metrics history:', error);
+        }
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -35,7 +84,7 @@ function HealthMetrics({ isDarkMode }) {
         setShowResults(false);
     };
 
-    const calculateMetrics = () => {
+    const calculateMetrics = async () => {
         if (!formData.age || !formData.weight || !formData.height) {
             toast.info('Please fill in all fields');
             return;
@@ -46,13 +95,27 @@ function HealthMetrics({ isDarkMode }) {
         const macros = calculateMacros(tdee, formData.goal);
         const idealWeight = calculateIdealWeight(formData.height, formData.gender);
 
-        setMetrics({
-            bmr,
-            tdee,
-            macros,
-            idealWeight
-        });
+        const newMetrics = { bmr, tdee, macros, idealWeight };
+        setMetrics(newMetrics);
         setShowResults(true);
+
+        // Save metrics to database
+        try {
+            await fetchWithAuth('/api/health-metrics/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...formData,
+                    bmr,
+                    tdee,
+                    unit
+                })
+            });
+            toast.success('Metrics saved successfully!');
+            fetchMetricsHistory(); // Refresh history
+        } catch (error) {
+            toast.error('Failed to save metrics');
+        }
     };
 
     return (
@@ -79,6 +142,12 @@ function HealthMetrics({ isDarkMode }) {
                         isDarkMode={isDarkMode} 
                     />
                 )}
+
+                <MetricsHistory 
+                    history={metricsHistory}
+                    isDarkMode={isDarkMode}
+                    unit={unit}
+                />
             </div>
         </div>
     );

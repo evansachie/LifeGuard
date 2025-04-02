@@ -21,6 +21,11 @@
     margin-bottom: 2rem;
 }
 
+h2 {
+    font-size: 1.5rem;
+    color: #333;
+}
+
 .unit-toggle {
     display: flex;
     gap: 0.5rem;
