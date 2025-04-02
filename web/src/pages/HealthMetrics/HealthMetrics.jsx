@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { fetchWithAuth } from '../../utils/api';
 import { calculateBMR, calculateTDEE, calculateMacros, calculateIdealWeight } from '../../utils/healthMetricsUtils';
+import { API_ENDPOINTS } from '../../utils/api';
 import UnitToggle from '../../components/HealthMetrics/UnitToggle';
 import MetricsForm from '../../components/HealthMetrics/MetricsForm';
 import ResultsSection from '../../components/HealthMetrics/ResultsSection';
@@ -26,7 +27,7 @@ function HealthMetrics({ isDarkMode }) {
     });
 
     const [showResults, setShowResults] = useState(false);
-    const [unit, setUnit] = useState('imperial'); // imperial or metric
+    const [unit, setUnit] = useState('imperial');
     const [isLoading, setIsLoading] = useState(true);
     const [metricsHistory, setMetricsHistory] = useState([]);
 
@@ -37,7 +38,7 @@ function HealthMetrics({ isDarkMode }) {
 
     const fetchLatestMetrics = async () => {
         try {
-            const response = await fetchWithAuth('/api/health-metrics/latest');
+            const response = await fetchWithAuth(API_ENDPOINTS.HEALTH_METRICS.LATEST);
             if (response) {
                 setFormData(prev => ({
                     ...prev,
@@ -68,7 +69,7 @@ function HealthMetrics({ isDarkMode }) {
 
     const fetchMetricsHistory = async () => {
         try {
-            const response = await fetchWithAuth('/api/health-metrics/history');
+            const response = await fetchWithAuth(API_ENDPOINTS.HEALTH_METRICS.HISTORY);
             setMetricsHistory(response);
         } catch (error) {
             console.error('Error fetching metrics history:', error);
@@ -101,7 +102,7 @@ function HealthMetrics({ isDarkMode }) {
 
         // Save metrics to database
         try {
-            await fetchWithAuth('/api/health-metrics/save', {
+            await fetchWithAuth(API_ENDPOINTS.HEALTH_METRICS.SAVE, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
