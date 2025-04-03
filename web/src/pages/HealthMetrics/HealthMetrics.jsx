@@ -1,4 +1,6 @@
 import React from 'react';
+import { FaCalculator } from 'react-icons/fa';
+import Spinner from '../../components/Spinner/Spinner';
 import useHealthMetricsState from '../../hooks/useHealthMetricsState';
 import useHealthMetricsData from '../../hooks/useHealthMetricsData';
 import PageHeader from '../../components/HealthMetrics/PageHeader';
@@ -33,12 +35,21 @@ function HealthMetrics({ isDarkMode }) {
         setMetrics: metrics.setMetrics,
         setShowResults,
         unit,
-        setMetricsHistory
+        setMetricsHistory,
+        setIsLoading
     });
 
     React.useEffect(() => {
-        fetchLatestMetrics();
-        fetchMetricsHistory();
+        const loadData = async () => {
+            setIsLoading(true);
+            await Promise.all([
+                fetchLatestMetrics(),
+                fetchMetricsHistory()
+            ]);
+            setIsLoading(false);
+        };
+        
+        loadData();
     }, []);
 
     return (
@@ -46,28 +57,56 @@ function HealthMetrics({ isDarkMode }) {
             <div className="health-metrics-content">
                 <PageHeader unit={unit} setUnit={setUnit} />
 
-                <MetricsForm 
-                    formData={formData} 
-                    handleInputChange={handleInputChange} 
-                    unit={unit} 
-                    isDarkMode={isDarkMode} 
-                    calculateMetrics={calculateMetrics} 
-                />
+                {isLoading ? (
+                    <div className="metrics-loading">
+                        <Spinner size="large" />
+                        <p>Loading your health metrics...</p>
+                    </div>
+                ) : (
+                    <>
+                        <MetricsForm 
+                            formData={formData} 
+                            handleInputChange={handleInputChange} 
+                            unit={unit} 
+                            isDarkMode={isDarkMode} 
+                            calculateMetrics={calculateMetrics}
+                            isLoading={isLoading}
+                        >
+                            <button 
+                                className={`calculate-btn ${isLoading ? 'loading' : ''}`}
+                                onClick={calculateMetrics}
+                                disabled={isLoading}
+                            >
+                                {isLoading ? (
+                                    <>
+                                        <Spinner size="small" />
+                                        <span>Calculating...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <FaCalculator />
+                                        <span>Calculate Metrics</span>
+                                    </>
+                                )}
+                            </button>
+                        </MetricsForm>
 
-                {showResults && (
-                    <ResultsSection 
-                        metrics={metrics.data} 
-                        formData={formData} 
-                        unit={unit} 
-                        isDarkMode={isDarkMode} 
-                    />
+                        {showResults && (
+                            <ResultsSection 
+                                metrics={metrics.data} 
+                                formData={formData} 
+                                unit={unit} 
+                                isDarkMode={isDarkMode} 
+                            />
+                        )}
+
+                        <MetricsHistory 
+                            history={metricsHistory}
+                            isDarkMode={isDarkMode}
+                            unit={unit}
+                        />
+                    </>
                 )}
-
-                <MetricsHistory 
-                    history={metricsHistory}
-                    isDarkMode={isDarkMode}
-                    unit={unit}
-                />
             </div>
         </div>
     );
