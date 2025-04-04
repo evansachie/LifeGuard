@@ -355,6 +355,9 @@ These endpoints are served from the Node-Server (hosted at `https://lifeguard-no
 | GET       | `/api/exercise/stats/profiles`                       | Retrieve user's exercise statistics and streak information                       |
 | POST       | `/api/exercise/complete`                       | Record a completed workout session                       |
 | POST       | `/api/exercise/goals`                       | Set or update user's workout goals                       |
+| GET       | `/api/health-metrics/latest`                       | Get the latest health metrics for current user                       |
+| POST       | `/api/health-metrics/save`                       | Save new health metrics for current user                       |
+| GET       | `/api/health-metrics/history`                       | Get health metrics history (last 10 entries)                      |
 
 
 *Note: The HTTP methods for `/api/memos` and `/api/emergency-contacts` depend on the specific operation (e.g., GET for retrieval, POST for creation).
