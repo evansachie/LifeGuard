@@ -120,8 +120,6 @@ function formatDocsAsString(docs) {
 
 // Helper function to get user documents
 async function getUserDocuments(userId) {
-  // In a real application, this would fetch documents from a database
-  // For now, we'll return a simple array of documents
   return [
     { content: "Regular exercise is essential for cardiovascular health. Aim for at least 150 minutes of moderate-intensity activity per week." },
     { content: "A balanced diet rich in fruits, vegetables, whole grains, and lean proteins helps maintain optimal health." },
@@ -131,19 +129,14 @@ async function getUserDocuments(userId) {
   ];
 }
 
-// Helper function to get relevant documents based on the question
 async function getRelevantDocuments(question, documents) {
-  // In a real application, this would use vector similarity search
-  // For now, we'll use a simple keyword matching approach
   const keywords = question.toLowerCase().split(' ');
   
-  // Filter documents that contain any of the keywords
   const relevantDocs = documents.filter(doc => {
     const docContent = doc.content.toLowerCase();
     return keywords.some(keyword => docContent.includes(keyword));
   });
   
-  // If no relevant documents found, return all documents
   return relevantDocs.length > 0 ? relevantDocs : documents;
 }
 
@@ -154,32 +147,32 @@ function formatDocsAsContext(documents) {
 
 // Helper function to create a prompt with context
 function createPromptWithContext(question, context) {
-  return `You are LifeGuard, a helpful and knowledgeable health assistant. 
-  You provide accurate, detailed, and conversational responses about health topics.
-  Always maintain a supportive, engaging tone and provide comprehensive information.
-  Include relevant emojis in your responses where appropriate to make them more engaging.
-  
-  Use the following context to answer the user's question:
-  ${context}
-  
-  User's question: ${question}
-  
-  Your answer:`;
+  const basePrompt = `You are LifeGuard, a friendly and expert health assistant. Your goal is to provide accurate, supportive, and detailed health information in a conversational tone. Use relevant emojis to make responses engaging.
+
+Instructions:
+1.  **Prioritize Context:** Base your answer primarily on the provided context below. Directly reference information from the context if possible.
+2.  **Synthesize Information:** Combine information from different context documents if needed to provide a comprehensive answer.
+3.  **Handle Insufficient Context:** If the context does not contain enough information to fully answer the question, state that clearly and provide the best general health information you can on the topic, while mentioning you lack specific user data for a more personalized response. Do NOT invent data not present in the context.
+4.  **Maintain Persona:** Always be supportive, knowledgeable, and engaging.
+5.  **Format:** Use clear paragraphs. Start your response directly without introductory phrases like "Based on the context...".
+
+Context:
+---
+${context || 'No specific context provided for this query.'}
+---
+
+User's question: ${question}
+
+LifeGuard's Answer:`;
+  return basePrompt;
 }
 
 // Query the RAG system using multiple approaches
 async function queryRag(question, userId) {
   try {
-    // Get user documents from database
     const userDocs = await getUserDocuments(userId);
-    
-    // Process the question to get relevant documents
     const relevantDocs = await getRelevantDocuments(question, userDocs);
-    
-    // Format the context from relevant documents
     const context = formatDocsAsContext(relevantDocs);
-    
-    // Create the prompt with context
     const prompt = createPromptWithContext(question, context);
     
     let response = null;
@@ -191,7 +184,7 @@ async function queryRag(question, userId) {
       if (cloudflareResponse) {
         console.log('Using Cloudflare Workers AI response');
         response = cloudflareResponse;
-        return response; // Return immediately if successful
+        return response;
       } else {
         console.log('No response from Cloudflare Workers AI, trying fallback options');
       }
@@ -222,7 +215,6 @@ async function queryRag(question, userId) {
         }
       } catch (hfError) {
         console.error('Error with Hugging Face Inference API:', hfError.message);
-        // Continue to next approach
       }
     }
     
@@ -238,7 +230,7 @@ async function queryRag(question, userId) {
               'Authorization': `Bearer ${process.env.HF_API_TOKEN || ''}`,
               'Content-Type': 'application/json' 
             },
-            timeout: 60000 // 60 second timeout
+            timeout: 60000
           }
         );
         
@@ -254,7 +246,6 @@ async function queryRag(question, userId) {
         }
       } catch (apiError) {
         console.error('Error with HuggingFace API (direct):', apiError.message);
-        // Continue to next approach
       }
     }
     
@@ -306,7 +297,7 @@ async function queryCloudflareWorkersAI(prompt) {
           'Authorization': `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
           'Content-Type': 'application/json'
         },
-        timeout: 30000 // 30 second timeout
+        timeout: 30000
       }
     );
 
@@ -324,7 +315,6 @@ async function queryCloudflareWorkersAI(prompt) {
       console.error(`Status: ${error.response.status}`);
       console.error('Response data:', error.response.data);
       
-      // Log specific error details for easier debugging
       if (error.response.status === 401) {
         console.error('Authentication error - check your Cloudflare account ID and API token');
       } else if (error.response.status === 403) {
@@ -344,51 +334,37 @@ async function queryCloudflareWorkersAI(prompt) {
 
 // Fallback response generator when no API is available
 function generateFallbackResponse(question, context) {
-  // Handle common greetings
   const questionLower = question.toLowerCase().trim();
-  
-  // Handle greetings
   if (questionLower === 'hi' || questionLower === 'hello' || questionLower === 'hey') {
     return "Hello there! 👋 I'm your LifeGuard health assistant. How are you feeling today? I'm here to help with any health questions or concerns you might have. Is there something specific about your health you'd like to discuss?";
   }
-  
   if (questionLower === 'how are you' || questionLower === 'how are you doing') {
     return "I'm doing great, thanks for asking! 😊 More importantly, how are you feeling today? Any health goals you're working on or concerns you'd like to discuss? I'm here to support your health journey in any way I can.";
   }
-  
-  // Check if the question is about health metrics
   if (questionLower.includes('heart rate') || questionLower.includes('heartrate')) {
     return "I've been monitoring your heart rate data, and I'm happy to report it's been within a healthy range. 💓 Your average resting heart rate has been around 68 beats per minute, which is excellent for an adult. Did you know that regular exercise can help lower your resting heart rate over time? Have you noticed any changes in your heart rate during different activities? I'd be happy to dive deeper into your heart rate patterns if you're interested.";
   }
-  
   if (questionLower.includes('sleep') || questionLower.includes('sleeping')) {
     return "Looking at your recent sleep data, I can see you've been averaging about 7.5 hours per night. 😴 That's within the recommended 7-9 hours for adults! Your deep sleep periods have been consistent, which is great for physical recovery. I've noticed your sleep quality tends to improve on days when you exercise. Would you like some personalized tips to enhance your sleep quality even further? Small changes to your evening routine could make a big difference.";
   }
-  
   if (questionLower.includes('steps') || questionLower.includes('walking')) {
     return "Great news about your activity levels! 🚶‍♂️ You've been averaging around 8,500 steps daily, which is approaching that popular 10,000-step goal. I'm particularly impressed by your consistency - you've maintained this level for the past two weeks! Your Tuesday walks seem to be your longest. Is that part of a specific routine? Remember, even small increases in daily steps can have significant health benefits. Would you like to set a new step goal together?";
   }
-  
   if (questionLower.includes('blood pressure') || questionLower.includes('bp')) {
     return "I've been tracking your blood pressure readings, and they've been consistently in the healthy range. 👍 Your most recent reading was 118/75, which is excellent! Regular monitoring is key to maintaining cardiovascular health. Have you noticed any patterns in your readings at different times of day? Some people experience natural fluctuations. Would you like to know more about factors that can influence your blood pressure or tips for maintaining these healthy numbers?";
   }
-  
   if (questionLower.includes('weight') || questionLower.includes('bmi')) {
     return "Based on your recent measurements, your weight has been stable and your BMI is within the healthy range at 23.4. 🌟 This is a great indicator of overall health! I've noticed your weight tends to fluctuate slightly throughout the week, which is completely normal due to factors like hydration and meal timing. Are you working toward any specific weight-related goals? I'm here to help with personalized advice whether you're looking to maintain, lose, or gain weight in a healthy way.";
   }
-  
   if (questionLower.includes('exercise') || questionLower.includes('workout')) {
     return "Your exercise routine has been impressive lately! 💪 I've recorded consistent activity across both cardio and strength training. You're meeting the recommended guidelines of 150 minutes of moderate activity weekly, plus those important strength sessions twice a week. Your heart rate recovery is improving too, which suggests your cardiovascular fitness is getting better! Have you considered trying any new workout types to keep things interesting? I'd be happy to suggest some options that complement your current routine.";
   }
-  
   if (questionLower.includes('diet') || questionLower.includes('nutrition') || questionLower.includes('eating')) {
     return "Nutrition is such an important part of your overall health picture! 🥗 While I don't have detailed information about your specific diet, I can offer some evidence-based guidance. A balanced approach with plenty of colorful vegetables, lean proteins, whole grains, and healthy fats provides the nutrients your body needs. Small, sustainable changes tend to be more effective than drastic diets. Would you like some specific nutritional recommendations based on your health goals and activity levels? I'm here to help you develop eating habits that support your wellbeing.";
   }
-  
   if (questionLower.includes('stress') || questionLower.includes('anxiety')) {
     return "I understand that managing stress is crucial for both mental and physical wellbeing. 🧘 Your LifeGuard data shows your stress levels have been moderate recently, with some peaks during workdays. Many people find that mindfulness practices, regular physical activity, quality sleep, and social connections help manage stress effectively. Even brief moments of deep breathing can activate your body's relaxation response. Would you like to try a quick guided breathing exercise right now? Or perhaps you'd prefer some other stress-management techniques tailored to your lifestyle?";
   }
-  
   if (questionLower.includes('water') || questionLower.includes('hydration')) {
     return "Staying well-hydrated is essential for nearly every bodily function! 💧 Your hydration tracker shows you're averaging about 6 cups of water daily, which is good but could be improved. For someone with your activity level, aiming for 8-10 cups would be beneficial. I've noticed you tend to drink less water in the mornings - perhaps keeping a water bottle on your desk could help? Proper hydration can boost energy, improve skin health, and even help with weight management. Would you like some creative tips for increasing your daily water intake?";
   }
