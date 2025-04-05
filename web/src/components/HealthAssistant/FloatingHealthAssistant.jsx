@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import './FloatingHealthAssistant.css';
 
 import { useSpeechRecognition } from '../../hooks/useSpeechRecognition';
@@ -151,43 +152,69 @@ const FloatingHealthAssistant = ({ isDarkMode }) => {
     <div className={`floating-health-assistant ${isDarkMode ? 'dark-mode' : ''}`}>
       <ChatButton 
         isOpen={isOpen} 
-        toggleChat={toggleChat} 
+        toggleChat={toggleChat}
       />
-      
-      <div className={`chat-window ${isOpen ? 'open' : ''}`}>
-        <ChatHeader 
-          toggleChat={toggleChat}
-          toggleTextToSpeech={toggleTextToSpeech}
-          textToSpeechEnabled={textToSpeechEnabled}
-          toggleShowShortcuts={() => setShowShortcuts(!showShortcuts)}
-        />
-        
-        <ShortcutsPanel showShortcuts={showShortcuts} />
-        
-        <ChatMessages 
-          chatHistory={chatHistory} 
-          loading={loading}
-          isDarkMode={isDarkMode}
-          onExampleClick={handleExampleClick}
-        />
-        
-        <ChatActions 
-          chatHistory={chatHistory}
-          onClearHistory={clearHistory}
-        />
-        
-        <ChatInputForm 
-          query={query}
-          onQueryChange={setQuery}
-          onSubmit={handleSubmit}
-          isLoading={loading}
-          isListening={isListening}
-          toggleListening={toggleListening}
-          inputRef={inputRef}
-        />
-      </div>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            className="chat-window"
+            initial="closed"
+            animate="open"
+            exit="closed"
+            variants={chatWindowVariants}
+            transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+          >
+            <ChatHeader
+              toggleChat={toggleChat}
+              toggleTextToSpeech={toggleTextToSpeech}
+              textToSpeechEnabled={textToSpeechEnabled}
+              toggleShowShortcuts={() => setShowShortcuts(!showShortcuts)}
+            />
+
+            <ShortcutsPanel showShortcuts={showShortcuts} />
+
+            <ChatMessages
+              chatHistory={chatHistory}
+              loading={loading}
+              isDarkMode={isDarkMode}
+              onExampleClick={handleExampleClick}
+            />
+
+            <ChatActions
+              chatHistory={chatHistory}
+              onClearHistory={clearHistory}
+            />
+
+            <ChatInputForm
+              query={query}
+              onQueryChange={setQuery}
+              onSubmit={handleSubmit}
+              isLoading={loading}
+              isListening={isListening}
+              toggleListening={toggleListening}
+              inputRef={inputRef}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
+};
+
+const chatWindowVariants = {
+  closed: {
+    opacity: 0,
+    y: 20,
+    scale: 0.95,
+    transition: { duration: 0.2, ease: "easeOut" }
+  },
+  open: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.25, ease: "easeOut" }
+  }
 };
 
 export default FloatingHealthAssistant;

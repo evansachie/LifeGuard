@@ -15,9 +15,11 @@ export const API_ENDPOINTS = {
     
     GET_USER: (id) => `/Account/${id}`,
     GET_PROFILE: (id) => `/Account/GetProfile/${id}`,
+    
     GET_PHOTO: (id) => `${BASE_URL}/${id}/photo`,
     UPLOAD_PHOTO: (id) => `${BASE_URL}/${id}/photo`,
     DELETE_PHOTO: (id) => `${BASE_URL}/${id}/photo`,
+    
     DELETE_USER: (id) => `/Account/${id}`,
 
     MEMOS: `${NODE_API_URL}/api/memos`,
@@ -78,8 +80,14 @@ export const fetchApi = async (endpoint, options = {}) => {
         };
 
     try {
-        const baseUrl = endpoint.startsWith('http') ? '' : API_BASE_URL;
-        const url = `${baseUrl}${endpoint}`;
+        let url;
+        if (endpoint.startsWith('http')) {
+            url = endpoint;
+        } else if (endpoint.startsWith('/')) {
+            url = `${API_BASE_URL}${endpoint}`;
+        } else {
+            url = `${API_BASE_URL}/${endpoint}`;
+        }
         
         console.log('Making request to:', url);
         console.log('Request payload:', options.body);
@@ -156,4 +164,14 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
 
 export const getResetPasswordUrl = (email, token) => {
     return `${FRONTEND_URL}/reset-password?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`;
+};
+
+export const extractPhotoUrl = (response) => {
+    if (!response) return null;
+    
+    if (response.isSuccess && response.data) {
+        return response.data.url || null;
+    }
+    
+    return null;
 };

@@ -70,6 +70,13 @@ h2 {
     border: 1px solid #ddd;
     border-radius: 8px;
     font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(64, 124, 226, 0.15);
 }
 
 .calculate-btn {
@@ -84,6 +91,30 @@ h2 {
     cursor: pointer;
     transition: all 0.3s ease;
     margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.calculate-btn.loading {
+    background: #2B5BBF;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.calculate-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.calculate-btn:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(64, 124, 226, 0.3);
+}
+
+.calculate-btn svg {
+    font-size: 1.2rem;
 }
 
 .calculate-btn:hover {
@@ -92,7 +123,7 @@ h2 {
 }
 
 .results-section {
-    animation: fadeIn 0.5s ease;
+    animation: slideUp 0.5s ease;
 }
 
 .metrics-grid {
@@ -176,7 +207,24 @@ h2 {
     border-bottom: none;
 }
 
-/* Dark mode styles */
+.metrics-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 12px;
+    min-height: 200px;
+}
+
+.metrics-loading p {
+    margin-top: 1rem;
+    color: #666;
+    font-size: 0.9rem;
+}
+
 .dark-mode {
     background-color: #1a1a1a;
 }
@@ -202,9 +250,38 @@ h2 {
     border-color: #444;
 }
 
+.dark-mode .metrics-loading {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode .metrics-loading p {
+    color: #aaa;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.loading-pulse {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @media (max-width: 768px) {
@@ -221,4 +298,4 @@ h2 {
     .macros-grid {
         grid-template-columns: 1fr;
     }
-} 
+}

@@ -14,7 +14,8 @@ const useHealthMetricsData = ({
     setMetrics,
     setShowResults,
     unit,
-    setMetricsHistory
+    setMetricsHistory,
+    setIsLoading
 }) => {
     /**
      * Fetch the latest metrics from API
@@ -45,6 +46,8 @@ const useHealthMetricsData = ({
             }
         } catch (error) {
             console.error('Error fetching metrics:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -103,7 +106,7 @@ const useHealthMetricsData = ({
                 })
             });
             toast.success('Metrics saved successfully!');
-            fetchMetricsHistory(); // Refresh history
+            fetchMetricsHistory();
         } catch (error) {
             toast.error('Failed to save metrics');
         }

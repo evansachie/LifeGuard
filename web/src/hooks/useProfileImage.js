@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { API_ENDPOINTS, fetchWithAuth } from '../utils/api';
+import { API_ENDPOINTS, fetchWithAuth, extractPhotoUrl } from '../utils/api';
 import { uploadToCloudinary } from '../utils/cloudinary';
 
 export const useProfileImage = (userId) => {
@@ -27,13 +27,11 @@ export const useProfileImage = (userId) => {
                 }
             );
 
-            if (!apiResponse) {
-                throw new Error('Failed to update profile photo');
+            const cloudinaryUrl = extractPhotoUrl(apiResponse);
+            if (!cloudinaryUrl) {
+                throw new Error('Failed to get photo URL from response');
             }
 
-            // Upload to Cloudinary
-            const cloudinaryUrl = await uploadToCloudinary(file);
-            
             toast.success('Profile photo updated successfully!');
             return { previewUrl, cloudinaryUrl };
         } catch (error) {

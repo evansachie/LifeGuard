@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { fetchWithAuth, API_ENDPOINTS } from '../utils/api';
-import { fetchProfilePhoto } from '../utils/profileUtils';
+import { generateAvatarUrl } from '../utils/profileUtils';
 
 /**
  * Custom hook to fetch and manage user data
@@ -12,73 +12,73 @@ const useUserData = () => {
   const [profilePhotoUrl, setProfilePhotoUrl] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  
-  useEffect(() => {
-    const loadUserData = async () => {
-      try {
-        setIsLoading(true);
-        const userId = localStorage.getItem('userId');
-        
-        if (!userId) {
-          setError('No user ID found');
-          setIsLoading(false);
-          return;
-        }
 
-        const response = await fetchWithAuth(API_ENDPOINTS.GET_USER(userId));
-        
-        if (response && (response.userName || response.email)) {
-          setUserData({
-            userName: response.userName,
-            email: response.email
-          });
-          
-          if (response.userName) {
-            localStorage.setItem('userName', response.userName);
-          }
-          
-          await fetchUserProfilePhoto(userId);
-        } else {
-          throw new Error('Invalid user data response');
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-        setError(error.message || 'Failed to load user data');
-        toast.error('Failed to fetch user data');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    loadUserData();
-  }, []);
-
-  const fetchUserProfilePhoto = async (userId) => {
+  const fetchUserProfilePhoto = async () => {
     try {
-      const photoUrl = await fetchProfilePhoto(userId);
-      
-      if (photoUrl) {
-        setProfilePhotoUrl(photoUrl);
-      } else {
-        try {
-          const profileResponse = await fetchWithAuth(API_ENDPOINTS.GET_PROFILE(userId));
-          if (profileResponse?.data?.profileImage) {
-            setProfilePhotoUrl(profileResponse.data.profileImage);
-          }
-        } catch (profileError) {
-          console.log('Could not fetch profile data for photo');
-        }
+      const userId = localStorage.getItem('userId');
+      if (!userId) return;
+
+      const response = await fetchWithAuth(API_ENDPOINTS.GET_PHOTO(userId));
+
+      // Check if we have a valid photo URL in the response
+      if (response?.isSuccess && response?.data?.url) {
+        return response.data.url;
       }
+      return null;
     } catch (error) {
       console.error('Error fetching profile photo:', error);
+      return null;
     }
   };
+
+  const loadUserData = async () => {
+    try {
+      setIsLoading(true);
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        setError('No user ID found');
+        setIsLoading(false);
+        return;
+      }
+
+      // Fetch both user data and photo in parallel
+      const [userDataResponse, photoUrl] = await Promise.all([
+        fetchWithAuth(API_ENDPOINTS.GET_USER(userId)),
+        fetchUserProfilePhoto()
+      ]);
+
+      if (userDataResponse && (userDataResponse.userName || userDataResponse.email)) {
+        setUserData({
+          userName: userDataResponse.userName,
+          email: userDataResponse.email
+        });
+
+        if (userDataResponse.userName) {
+          localStorage.setItem('userName', userDataResponse.userName);
+        }
+
+        setProfilePhotoUrl(photoUrl || profilePhotoUrl);
+      } else {
+        throw new Error('Invalid user data response');
+      }
+    } catch (error) {
+      console.error('Error loading user data:', error);
+      setError(error.message || 'Failed to load user data');
+      toast.error('Failed to fetch user data');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadUserData();
+  }, []);
 
   const getDisplayName = () => {
     if (!userData?.userName) return 'User';
     return userData.userName.split(' ')[0];
   };
-  
+
   return {
     userData,
     profilePhotoUrl,
