@@ -5,7 +5,6 @@ import { IoFootstepsOutline } from "react-icons/io5";
 import { MdCo2, MdAir } from "react-icons/md";
 import { WiBarometer, WiHumidity } from "react-icons/wi";
 import { formatValue, getAQIColor } from '../../utils/dataUtils';
-import './Dashboard.css';
 import { matchesShortcut, KEYBOARD_SHORTCUTS } from '../../utils/keyboardShortcuts';
 import KeyboardShortcutsHelp from '../../components/Dashboard/KeyboardShortcutsHelp';
 import {
@@ -22,6 +21,7 @@ import {
     sortableKeyboardCoordinates,
     rectSortingStrategy,
 } from '@dnd-kit/sortable';
+import './Dashboard.css';
 
 // Components
 import QuickAccess from '../../components/QuickAccess/QuickAccess';

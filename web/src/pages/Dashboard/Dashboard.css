@@ -46,6 +46,8 @@
     flex-direction: row;
     align-items: center;
     padding: 1.25rem;
+    height: auto;
+    min-height: 80px;
 }
 
 .list-view .dashboard-card h2 {
@@ -77,6 +79,7 @@
 /* Drag and Drop styles */
 .sortable-card {
     touch-action: none;
+    height: 100%;
 }
 
 .sortable-card.is-dragging {
@@ -100,6 +103,9 @@
     animation: fadeIn 0.5s ease forwards;
     position: relative;
     overflow: hidden;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
 }
 
 .dashboard-card::before {
@@ -630,4 +636,10 @@
 .dashboard.dark-mode .floating-health-assistant .floating-button {
   background-color: #4a90e2 !important;
   color: white !important;
+}
+
+.sortable-card .drag-handle {
+    top: 8px;
+    right: 8px;
+    position: absolute;
 }
