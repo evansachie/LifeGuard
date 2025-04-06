@@ -1,12 +1,27 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
+import SortableCard from '../../components/Dashboard/SortableCard';
 import { FaTemperatureHigh } from 'react-icons/fa';
 import { IoFootstepsOutline } from "react-icons/io5";
 import { MdCo2, MdAir } from "react-icons/md";
 import { WiBarometer, WiHumidity } from "react-icons/wi";
 import { formatValue, getAQIColor } from '../../utils/dataUtils';
-import './Dashboard.css';
 import { matchesShortcut, KEYBOARD_SHORTCUTS } from '../../utils/keyboardShortcuts';
 import KeyboardShortcutsHelp from '../../components/Dashboard/KeyboardShortcutsHelp';
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+} from '@dnd-kit/core';
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    rectSortingStrategy,
+} from '@dnd-kit/sortable';
+import './Dashboard.css';
 
 // Components
 import QuickAccess from '../../components/QuickAccess/QuickAccess';
@@ -24,7 +39,7 @@ import RemindersCard from '../../components/Dashboard/RemindersCard';
 import PollutantsCard from '../../components/Dashboard/PollutantsCard';
 import AlertsSection from '../../components/Dashboard/AlertsSection';
 import { alerts, getAlertsByTimeframe } from '../../data/alerts';
-import BluetoothButton from '../../components/Dashboard/BluetoothButton';
+import BluetoothButton from '../../components/Buttons/BluetoothButton';
 
 // Custom hooks
 import useUserData from '../../hooks/useUserData';
@@ -34,6 +49,37 @@ import usePollutionData from '../../hooks/usePollutionData';
 import useDashboardTour from '../../hooks/useDashboardTour';
 
 function Dashboard({ isDarkMode }) {
+    const [cardOrder, setCardOrder] = useState(() => {
+        const savedOrder = localStorage.getItem('dashboardCardOrder');
+        return savedOrder ? JSON.parse(savedOrder) : [
+            'temperature', 'humidity', 'pressure', 'activities',
+            'quote', 'reminders', 'aqi', 'co2', 'pollutants'
+        ];
+    });
+
+    // Save card order to localStorage whenever it changes
+    useEffect(() => {
+        localStorage.setItem('dashboardCardOrder', JSON.stringify(cardOrder));
+    }, [cardOrder]);
+
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
+
+    const handleDragEnd = (event) => {
+        const { active, over } = event;
+
+        if (active.id !== over.id) {
+            setCardOrder((items) => {
+                const oldIndex = items.indexOf(active.id);
+                const newIndex = items.indexOf(over.id);
+                return arrayMove(items, oldIndex, newIndex);
+            });
+        }
+    };
     // BLE Context
     const { bleDevice, isConnecting, sensorData, connectToDevice, disconnectDevice } = useBLE();
     
@@ -209,91 +255,127 @@ function Dashboard({ isDarkMode }) {
                 }}
             />
 
-            <div className={`dashboard-grid ${viewMode === 'list' ? 'list-layout' : ''}`}>
-                {filteredDashboard.showTemperature && (
-                    <DataCard 
-                        title="Atmospheric Temperature"
-                        icon={FaTemperatureHigh}
-                        value={formatValue(pollutionData.temperature)}
-                        unit="°C"
-                        className="temperature-card"
-                    />
-                )}
-
-                {filteredDashboard.showHumidity && (
-                    <DataCard 
-                        title="Humidity" 
-                        icon={WiHumidity}
-                        value={formatValue(pollutionData.humidity, 0)} 
-                        unit="%"
-                        className="humidity-card" 
-                    />
-                )}
-
-                {filteredDashboard.showPressure && (
-                    <DataCard 
-                        title="Atmospheric Pressure" 
-                        icon={WiBarometer}
-                        value={formatValue(pollutionData.pressure, 0)} 
-                        unit=" hPa" 
-                        className="pressure-card"
-                    />
-                )}
-
-                {filteredDashboard.showActivities && (
-                    <DataCard 
-                        title="Activities" 
-                        icon={IoFootstepsOutline}
-                        value={formatValue(pollutionData.steps)} 
-                        unit=" K steps"
-                        className="wind-card" 
-                    />
-                )}
-
-                {filteredDashboard.showQuote && (
-                    <QuoteCard 
-                        quote={quote} 
-                        loading={quotesLoading} 
-                        isDarkMode={isDarkMode} 
-                    />
-                )}
-
-                {filteredDashboard.showReminders && (
-                    <RemindersCard 
-                        memos={savedMemos} 
-                        loading={memosLoading} 
-                        isDarkMode={isDarkMode} 
-                    />
-                )}
-
-                {filteredDashboard.showAqi && (
-                    <DataCard 
-                        title="Air Quality Index" 
-                        icon={MdAir}
-                        value={formatValue(pollutionData.aqi, 0)} 
-                        unit=" ppm"
-                        valueColor={getAQIColor(pollutionData.aqi)}
-                        className="aqi-card" 
-                    />
-                )}
-
-                {filteredDashboard.showCo2 && (
-                    <DataCard 
-                        title="Carbon Dioxide (CO2)" 
-                        icon={MdCo2}
-                        value={formatValue(pollutionData.co2, 0)} 
-                        unit=" ppm" 
-                        className="pressure-card"
-                    />
-                )}
-
-                {filteredDashboard.showPollutants && (
-                    <PollutantsCard 
-                        pollutionData={pollutionData} 
-                        formatValue={formatValue} 
-                    />
-                )}
-            </div>
+            <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+            >
+                <SortableContext
+                    items={cardOrder}
+                    strategy={rectSortingStrategy}
+                >
+                    <div className={`dashboard-grid ${viewMode === 'list' ? 'list-layout' : ''}`}>
+                            {cardOrder.map((cardId) => {
+                                switch (cardId) {
+                                    case 'temperature':
+                                        return filteredDashboard.showTemperature && (
+                                            <SortableCard key={cardId} id={cardId}>
+                                                <DataCard 
+                                                    title="Atmospheric Temperature" 
+                                                    icon={FaTemperatureHigh}
+                                                    value={formatValue(pollutionData.temperature)} 
+                                                    unit="°C" 
+                                                    className="temperature-card"
+                                                />
+                                            </SortableCard>
+                                        );
+                                    case 'humidity':
+                                        return filteredDashboard.showHumidity && (
+                                            <SortableCard key={cardId} id={cardId}>
+                                                <DataCard 
+                                                    title="Humidity" 
+                                                    icon={WiHumidity}
+                                                    value={formatValue(pollutionData.humidity)} 
+                                                    unit="%" 
+                                                    className="humidity-card"
+                                                />
+                                            </SortableCard>
+                                        );
+                                    case 'pressure':
+                                        return filteredDashboard.showPressure && (
+                                            <SortableCard key={cardId} id={cardId}>
+                                                <DataCard 
+                                                    title="Atmospheric Pressure" 
+                                                    icon={WiBarometer}
+                                                    value={formatValue(pollutionData.pressure)} 
+                                                    unit=" hPa" 
+                                                    className="pressure-card"
+                                                />
+                                            </SortableCard>
+                                        );
+                                    case 'activities':
+                                        return filteredDashboard.showActivities && (
+                                            <SortableCard key={cardId} id={cardId}>
+                                                <DataCard 
+                                                    title="Activities" 
+                                                    icon={IoFootstepsOutline}
+                                                    value={formatValue(pollutionData.steps)} 
+                                                    unit=" K steps"
+                                                    className="wind-card" 
+                                                />
+                                            </SortableCard>
+                                        );
+                                    case 'quote':
+                                        return filteredDashboard.showQuote && (
+                                            <SortableCard key={cardId} id={cardId}>
+                                                <QuoteCard 
+                                                    quote={quote} 
+                                                    loading={quotesLoading} 
+                                                    isDarkMode={isDarkMode} 
+                                                />
+                                            </SortableCard>
+                                        );
+                                    case 'reminders':
+                                        return filteredDashboard.showReminders && (
+                                            <SortableCard key={cardId} id={cardId}>
+                                                <RemindersCard 
+                                                    memos={savedMemos} 
+                                                    loading={memosLoading} 
+                                                    isDarkMode={isDarkMode} 
+                                                />
+                                            </SortableCard>
+                                        );
+                                    case 'aqi':
+                                        return filteredDashboard.showAqi && (
+                                            <SortableCard key={cardId} id={cardId}>
+                                                <DataCard 
+                                                    title="Air Quality Index" 
+                                                    icon={MdAir}
+                                                    value={formatValue(pollutionData.aqi, 0)} 
+                                                    unit=" ppm"
+                                                    valueColor={getAQIColor(pollutionData.aqi)}
+                                                    className="aqi-card" 
+                                                />
+                                            </SortableCard>
+                                        );
+                                    case 'co2':
+                                        return filteredDashboard.showCo2 && (
+                                            <SortableCard key={cardId} id={cardId}>
+                                                <DataCard 
+                                                    title="Carbon Dioxide (CO2)" 
+                                                    icon={MdCo2}
+                                                    value={formatValue(pollutionData.co2, 0)} 
+                                                    unit=" ppm" 
+                                                    className="pressure-card"
+                                                />
+                                            </SortableCard>
+                                        );
+                                    case 'pollutants':
+                                        return filteredDashboard.showPollutants && (
+                                            <SortableCard key={cardId} id={cardId}>
+                                                <PollutantsCard 
+                                                    pollutionData={pollutionData} 
+                                                    formatValue={formatValue} 
+                                                />
+                                            </SortableCard>
+                                        );
+                                    default:
+                                        return null;
+                                }
+                            })}
+                        </div>
+                </SortableContext>
+            </DndContext>
 
             {filterOptions.alerts && (
                 <AlertsSection alerts={filteredAlerts} />

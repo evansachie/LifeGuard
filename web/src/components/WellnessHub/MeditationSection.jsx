@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { FaPlay, FaPause, FaRedo } from 'react-icons/fa';
-import { meditationPresets } from '../../utils/meditationPresets';
+import { meditationPresets } from '../../data/meditationPresets';
 import { formatTime } from '../../utils/formatTime';
 
 const MeditationSection = ({ isDarkMode }) => {

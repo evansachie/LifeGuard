@@ -46,6 +46,8 @@
     flex-direction: row;
     align-items: center;
     padding: 1.25rem;
+    height: auto;
+    min-height: 80px;
 }
 
 .list-view .dashboard-card h2 {
@@ -74,6 +76,23 @@
     width: 100%;
 }
 
+/* Drag and Drop styles */
+.sortable-card {
+    touch-action: none;
+    height: 100%;
+}
+
+.sortable-card.is-dragging {
+    z-index: 1;
+    cursor: grabbing;
+}
+
+.sortable-card.is-dragging .dashboard-card {
+    opacity: 0.8;
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
 /* Card styles */
 .dashboard-card {
     background: #fff;
@@ -84,6 +103,9 @@
     animation: fadeIn 0.5s ease forwards;
     position: relative;
     overflow: hidden;
+    height: 220px;
+    display: flex;
+    flex-direction: column;
 }
 
 .dashboard-card::before {
@@ -221,6 +243,7 @@
     margin-bottom: 2rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     animation: fadeIn 0.5s ease forwards;
+    height: auto;
 }
 
 .alerts-section h2 {
@@ -284,6 +307,9 @@
     line-height: 1.6;
     font-size: 1.1rem;
     color: #4a5568;
+    height: auto;
+    min-height: 220px;
+    max-height: none;
 }
 
 .dark-mode .quote-card {
@@ -551,12 +577,47 @@
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
 }
 
+/* Drag handle styles */
+.drag-handle {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    color: #718096;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    cursor: grab;
+    z-index: 10;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.sortable-card:hover .drag-handle {
+    opacity: 1;
+}
+
+.sortable-card.is-dragging .drag-handle {
+    opacity: 1;
+    cursor: grabbing;
+}
+
+.dark-mode .drag-handle {
+    color: #a0aec0;
+}
+
+.drag-handle:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode .drag-handle:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
 /* Fix for floating health assistant */
 .dashboard .floating-health-assistant .floating-button,
 .dashboard.dark-mode .floating-health-assistant .floating-button {
-  /* Remove the transparent background */
-  /* background: transparent !important; */
-  /* box-shadow: none !important; */
+    background-color: #4a90e2 !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
 }
 
 .dashboard .floating-health-assistant .floating-button::before {
@@ -565,11 +626,10 @@
 }
 
 .dashboard.dark-mode .floating-health-assistant .floating-button::before {
-  /* Remove the pseudo-element approach */
   display: none;
 }
 
-/* Add direct styling for the floating button in dashboard context */
+/* Styling for the floating button in dashboard context */
 .dashboard .floating-health-assistant .floating-button {
   background-color: #4a90e2 !important;
   color: white !important;
@@ -580,3 +640,4 @@
   background-color: #4a90e2 !important;
   color: white !important;
 }
+
