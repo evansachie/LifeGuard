@@ -243,6 +243,7 @@
     margin-bottom: 2rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     animation: fadeIn 0.5s ease forwards;
+    height: auto;
 }
 
 .alerts-section h2 {
@@ -306,6 +307,9 @@
     line-height: 1.6;
     font-size: 1.1rem;
     color: #4a5568;
+    height: auto;
+    min-height: 220px;
+    max-height: none;
 }
 
 .dark-mode .quote-card {
@@ -622,7 +626,6 @@
 }
 
 .dashboard.dark-mode .floating-health-assistant .floating-button::before {
-  /* Remove the pseudo-element approach */
   display: none;
 }
 
