@@ -39,7 +39,7 @@ import RemindersCard from '../../components/Dashboard/RemindersCard';
 import PollutantsCard from '../../components/Dashboard/PollutantsCard';
 import AlertsSection from '../../components/Dashboard/AlertsSection';
 import { alerts, getAlertsByTimeframe } from '../../data/alerts';
-import BluetoothButton from '../../components/Dashboard/BluetoothButton';
+import BluetoothButton from '../../components/Buttons/BluetoothButton';
 
 // Custom hooks
 import useUserData from '../../hooks/useUserData';
