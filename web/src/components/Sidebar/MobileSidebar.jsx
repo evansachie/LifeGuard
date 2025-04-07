@@ -3,7 +3,6 @@ import UserProfileSection from './UserProfileSection';
 import ThemeToggle from '../../contexts/ThemeToggle';
 import NavigationLinks from './NavigationLinks';
 import LogoutButton from './LogoutButton';
-import ProfileMenu from './ProfileMenu';
 
 const MobileSidebar = ({ 
   isOpen,
@@ -11,10 +10,6 @@ const MobileSidebar = ({
   isDarkMode,
   displayName,
   profilePhotoUrl,
-  toggleProfileMenu,
-  isProfileMenuOpen,
-  profileMenuRef,
-  handleProfileMenuItemClick,
   navItems,
   handleLogout,
   toggleTheme
@@ -29,20 +24,12 @@ const MobileSidebar = ({
           <UserProfileSection 
             displayName={displayName}
             profilePhotoUrl={profilePhotoUrl}
-            toggleProfileMenu={toggleProfileMenu}
           />
           <ThemeToggle 
             isDarkMode={isDarkMode} 
             toggleTheme={toggleTheme} 
           />
         </div>
-        
-        {isProfileMenuOpen && (
-          <ProfileMenu 
-            ref={profileMenuRef}
-            onMenuItemClick={handleProfileMenuItemClick}
-          />
-        )}
         
         <NavigationLinks 
           navItems={navItems} 

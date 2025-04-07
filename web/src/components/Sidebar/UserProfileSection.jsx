@@ -1,21 +1,27 @@
 import React from 'react';
 import { generateAvatarUrl } from '../../utils/profileUtils';
+import {Link} from 'react-router-dom';
 
-const UserProfileSection = ({ profilePhotoUrl, displayName, toggleProfileMenu }) => {
+const UserProfileSection = ({ profilePhotoUrl, displayName }) => {
   return (
-    <div className="user-info" onClick={toggleProfileMenu}>
+    <div className="user-info">
       <div className="profile-picture-container">
-        <img 
-          src={profilePhotoUrl || generateAvatarUrl(displayName)}
-          alt="Profile" 
-          className="profile-picture" 
-          onError={(e) => {
-            e.target.onerror = null; 
-            e.target.src = generateAvatarUrl(displayName);
-          }}
-        />
+        <Link to='/profile'>
+          <img 
+            src={profilePhotoUrl || generateAvatarUrl(displayName)}
+            alt="Profile" 
+            className="profile-picture" 
+            onError={(e) => {
+              e.target.onerror = null; 
+              e.target.src = generateAvatarUrl(displayName);
+            }}
+          />
+        </Link>
+        
       </div>
-      <span className="username">{displayName}</span>
+      <Link to='/profile'>
+        <span className="username">{displayName}</span>
+      </Link>
     </div>
   );
 };
