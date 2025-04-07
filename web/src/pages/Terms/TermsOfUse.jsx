@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { BackButton } from '../../components/Buttons/backButton';
+import { BackButton } from '../../components/Buttons/BackButton';
 
 const TermsOfUse = ({ isDarkMode }) => {
   return (

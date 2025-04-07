@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useBLE } from '../../contexts/BLEContext';
 import { TABS } from '../../utils/constants';
-import TabNavigation from '../../components/PollutionTracker/TabNavigation';
-import TabContent from '../../components/PollutionTracker/TabContent';
+import TabNavigation from '../../components/Analytics/TabNavigation';
+import TabContent from '../../components/Analytics/TabContent';
 import useSensorHistory from '../../hooks/useSensorHistory';
 import registerCharts from '../../utils/registerCharts';
 import './Analytics.css';
