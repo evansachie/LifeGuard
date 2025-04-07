@@ -5,7 +5,7 @@ import { LuBrainCircuit } from "react-icons/lu";
 import { searchSounds, getProxiedAudioUrl } from '../../services/freesoundService';
 import SoundFilters from './SoundFilters';
 import { debounce } from 'lodash';
-import categoryBackgrounds from './SoundBackgrounds';
+import getBackgroundStyle from '../../utils/getBackgroundStyle';
 import KeyboardShortcuts from './KeyboardShortcuts';
 import { useAudioPlayer } from '../../contexts/AudioPlayerContext';
 import { getFavorites, addToFavorites, removeFromFavorites } from '../../services/favoriteSoundsService';
@@ -204,15 +204,6 @@ const SoundsSection = ({ isDarkMode }) => {
         }
     };
 
-    const getBackgroundStyle = (sound) => {
-        const bg = categoryBackgrounds[activeCategory] || categoryBackgrounds.nature;
-        return {
-            backgroundImage: `${bg.gradient}, url(${bg.image}?auto=format&fit=crop&w=600&q=80)`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-        };
-    };
-
     const renderContent = () => {
         if (loading) {
             return (
@@ -252,7 +243,7 @@ const SoundsSection = ({ isDarkMode }) => {
                         <motion.div
                             key={sound.id}
                             className={`sound-card ${currentSound === sound.name ? 'playing' : ''}`}
-                            style={getBackgroundStyle(sound)}
+                            style={getBackgroundStyle(sound, activeCategory)}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
