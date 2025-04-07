@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaPlay, FaPause, FaRedo, FaStopCircle } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import exerciseService from '../../services/exerciseService';
+import { formatTime } from '../../utils/formatTime';
 
 const WorkoutTimer = ({ 
   activeWorkout, 
@@ -31,12 +32,6 @@ const WorkoutTimer = ({
       onToggleTimer();
     }
   }, [timeRemaining]);
-
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
 
   const getTimerColor = () => {
     if (timeRemaining < 60) return 'text-red-500';
