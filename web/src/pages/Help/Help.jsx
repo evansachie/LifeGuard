@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import SearchBar from '../../components/Help/SearchBar';
 import CategoryCard from '../../components/Help/CategoryCard';
 import InteractiveGuide from '../../components/Help/InteractiveGuide';
+import { IoMdHelp } from "react-icons/io";
 import { helpCategories } from '../../data/help-categories';
 
 const Help = ({ isDarkMode }) => {
@@ -37,7 +38,12 @@ const Help = ({ isDarkMode }) => {
   return (
     <div className={`min-h-screen ${isDarkMode ? 'dark-mode' : 'bg-gray-50 text-gray-900'}`}>
       <header className="p-6 border-b border-gray-200 dark:border-gray-700">
-        <h1 className="text-3xl font-bold mb-4">Help Center</h1>
+
+        <div className='flex items-center gap-2'>
+          <IoMdHelp size={32}/>
+          <h1 className="text-3xl font-bold py-4">Help Center</h1>
+        </div>
+        
         <SearchBar
           searchQuery={searchQuery}
           onSearchChange={handleSearchChange}

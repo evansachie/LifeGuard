@@ -3,6 +3,7 @@ import { FaCalendarAlt } from 'react-icons/fa';
 import { StatCard } from '../../components/HealthReport/StatCard';
 import { ReportCard } from '../../components/HealthReport/ReportCard';
 import { healthData } from '../../data/health-report-data';
+import { RiHealthBookFill } from "react-icons/ri";
 import HealthReportModal from '../../components/HealthReportModal/HealthReportModal';
 import './HealthReport.css';
 
@@ -15,6 +16,7 @@ export default function HealthReport({ isDarkMode }) {
         {/* Header Section */}
         <div className="header-section">
           <div className="header-left">
+            <RiHealthBookFill size={32} />
             <h1 className="page-title">Health Report</h1>
             <p className="subtitle">Track your health metrics and environmental conditions</p>
           </div>

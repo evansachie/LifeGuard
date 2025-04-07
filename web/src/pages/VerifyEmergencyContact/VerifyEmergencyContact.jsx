@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { FaCheckCircle, FaTimesCircle, FaSpinner, FaMoon, FaSun } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import verifyContactImage from '../../assets/verifyContactImage.svg';
+import { Logo } from '../../components/Logo/Logo';
 import { API_ENDPOINTS } from '../../utils/api';
 import './VerifyEmergencyContact.css';
 
@@ -83,7 +84,7 @@ function VerifyEmergencyContact({ isDarkMode, toggleTheme }) {
 
       <div className="verify-contact-form-container">
         <div className="verify-contact-form-card">
-          <img src="lifeguard-2.svg" alt="LifeGuard Logo" className="logo" />
+          <Logo />
           
           {verificationStatus === 'loading' && (
             <div className="verification-status">
