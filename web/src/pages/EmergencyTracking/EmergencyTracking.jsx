@@ -24,7 +24,7 @@ function EmergencyTracking({ isDarkMode, toggleTheme }) {
   const mapContainer = useRef(null);
   const map = useRef(null);
 
-  const accraCoordinates = [-0.1870, 5.6037]; // this would be changes later to use location in user profile
+  const accraCoordinates = [-0.1870, 5.6037]; // this would be changed later to use location in user profile
 
   useEffect(() => {
     const fetchUserData = async () => {
