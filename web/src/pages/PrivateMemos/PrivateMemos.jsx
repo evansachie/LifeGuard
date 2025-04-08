@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import './PrivateMemos.css';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal/DeleteConfirmationModal';
 import {FaStickyNote, FaSearch, FaPlus} from 'react-icons/fa';
 import { useMemos } from '../../hooks/useMemos';
@@ -7,6 +6,8 @@ import { useMemos } from '../../hooks/useMemos';
 import FilterBar from '../../components/PrivateMemos/FilterBar';
 import MemoForm from '../../components/PrivateMemos/MemoForm';
 import MemoList from '../../components/PrivateMemos/MemoList';
+
+import './PrivateMemos.css';
 
 const PrivateMemos = ({ isDarkMode }) => {
     const [memo, setMemo] = useState('');

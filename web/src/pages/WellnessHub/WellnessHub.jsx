@@ -6,9 +6,9 @@ import BreathingSection from '../../components/WellnessHub/BreathingSection';
 import MeditationSection from '../../components/WellnessHub/MeditationSection';
 import SoundsSection from '../../components/WellnessHub/SoundsSection';
 import soundsData from '../../data/sound-data.json';
-import './WellnessHub.css';
 import ParticleBackground from '../../components/WellnessHub/ParticleBackground';
 import AudioVisualizer from '../../components/WellnessHub/AudioVisualizer';
+import './WellnessHub.css';
 
 const WellnessHub = ({ isDarkMode }) => {
     const [activeSection, setActiveSection] = useState(() => {
