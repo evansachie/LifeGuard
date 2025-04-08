@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaUserPlus } from 'react-icons/fa';
+import { MdOutlineContactEmergency } from "react-icons/md";
 import EmergencyButton from './EmergencyButton';
 
 const PageHeader = ({ onAddClick, onEmergencyAlert }) => {
@@ -7,7 +8,8 @@ const PageHeader = ({ onAddClick, onEmergencyAlert }) => {
     <>
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
-          <h1 className="text-3xl font-bold mb-4">Emergency Contacts</h1>
+          <MdOutlineContactEmergency className="text-3xl" />
+          <h1 className="text-3xl font-bold">Emergency Contacts</h1>
         </div>
         <EmergencyButton onClick={onEmergencyAlert} />
       </div>

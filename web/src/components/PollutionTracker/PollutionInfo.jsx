@@ -1,19 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaThermometerHalf, FaMask, FaWind } from 'react-icons/fa';
-
-const getPollutionLevel = (value, type) => {
-  switch(type) {
-    case 'aqi':
-      return value > 150 ? 'high' : value > 50 ? 'medium' : 'low';
-    case 'pm25':
-      return value > 35 ? 'high' : value > 12 ? 'medium' : 'low';
-    case 'pm10':
-      return value > 150 ? 'high' : value > 50 ? 'medium' : 'low';
-    default:
-      return 'medium';
-  }
-};
+import { getPollutionLevel } from '../../utils/getPollutionLevel';
 
 const PollutionInfo = ({ zone }) => (
   <motion.div

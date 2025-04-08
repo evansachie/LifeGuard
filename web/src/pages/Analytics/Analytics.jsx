@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useBLE } from '../../contexts/BLEContext';
 import { TABS } from '../../utils/constants';
-import TabNavigation from '../../components/PollutionTracker/TabNavigation';
-import TabContent from '../../components/PollutionTracker/TabContent';
+import TabNavigation from '../../components/Analytics/TabNavigation';
+import TabContent from '../../components/Analytics/TabContent';
 import useSensorHistory from '../../hooks/useSensorHistory';
 import registerCharts from '../../utils/registerCharts';
+import { IoMdAnalytics } from "react-icons/io";
 import './Analytics.css';
 
 registerCharts();
@@ -18,14 +19,18 @@ function Analytics({ isDarkMode }) {
 
     return (
         <div className={`analytics-container ${isDarkMode ? 'dark-mode' : ''}`}>
-            <div className="analytics-header">
-                <h1>Sensor Analytics</h1>
-                <TabNavigation 
-                    activeTab={activeTab} 
-                    onTabChange={setActiveTab} 
-                    tabs={TABS} 
-                />
+            <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                    <IoMdAnalytics className="text-3xl" />
+                    <h1 className="text-3xl font-semibold">Sensor Analytics</h1>
+                </div>
             </div>
+            
+            <TabNavigation 
+                activeTab={activeTab} 
+                onTabChange={setActiveTab} 
+                tabs={TABS} 
+            />
 
             <div className="analytics-content">
                 <TabContent 

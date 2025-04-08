@@ -1,5 +1,5 @@
-import EnvironmentCharts from '../../components/Analytics/EnvironmentCharts';
-import AirQualityCharts from '../../components/Analytics/AirQualityCharts';
+import EnvironmentCharts from './EnvironmentCharts';
+import AirQualityCharts from './AirQualityCharts';
 import ReportsSection from './ReportsSection';
 
 const TabContent = ({ activeTab, historicalData, dateRange, onDateRangeChange }) => {

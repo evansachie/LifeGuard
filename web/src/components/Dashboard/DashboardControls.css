@@ -53,7 +53,7 @@
 /* Filter and Sort Containers */
 .filter-container, .sort-container {
   position: relative;
-  z-index: 100; /* Higher than default, but lower than dropdowns */
+  z-index: 100;
 }
 
 .control-btn {
@@ -81,7 +81,7 @@
   position: absolute;
   top: calc(100% + 0.5rem);
   right: 0;
-  z-index: 1000; /* Much higher z-index to appear above all components */
+  z-index: 1000;
   width: 240px;
   padding: 1rem;
   margin-top: 0.25rem;
@@ -239,7 +239,7 @@
 /* Make sure the buttons that open the dropdowns have a higher z-index */
 .control-btn.active {
   position: relative;
-  z-index: 1001; /* Slightly higher than dropdown */
+  z-index: 1001;
   background-color: #e5e7eb;
 }
 

@@ -55,27 +55,27 @@ const AppRoutes = ({ isDarkMode, toggleTheme }) => {
         element={<SignUp isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
       />
       <Route 
-        path="/log-in" 
+        path="/log-in"
         element={<LogIn isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
       />
       <Route 
-        path="/verify-otp" 
+        path="/verify-otp"
         element={<OTPVerification isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
       />
       <Route 
-        path="/forgot-password" 
+        path="/forgot-password"
         element={<ForgotPassword isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
       />
       <Route 
-        path="/reset-password" 
+        path="/reset-password"
         element={<ResetPassword isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
       />
       <Route 
-        path="/verify-emergency-contact" 
+        path="/verify-emergency-contact"
         element={<VerifyEmergencyContact isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
       />
       <Route 
-        path="/emergency-tracking" 
+        path="/emergency-tracking"
         element={<EmergencyTracking isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
       />
 
@@ -86,6 +86,7 @@ const AppRoutes = ({ isDarkMode, toggleTheme }) => {
             </AppLayout>
           </ProtectedRoute>
       }>
+
         <Route path="/dashboard" element={<Dashboard isDarkMode={isDarkMode} />} />
         <Route path="/sticky-notes" element={<PrivateMemos isDarkMode={isDarkMode} />} />
         <Route path="/health-report" element={<HealthReport isDarkMode={isDarkMode} />} />
@@ -100,6 +101,7 @@ const AppRoutes = ({ isDarkMode, toggleTheme }) => {
         <Route path="/help" element={<Help isDarkMode={isDarkMode} />} />
         <Route path="/terms-of-use" element={<TermsOfUse isDarkMode={isDarkMode} />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy isDarkMode={isDarkMode} />} />
+        
         <Route 
           path="/analytics" 
           element={
@@ -108,6 +110,7 @@ const AppRoutes = ({ isDarkMode, toggleTheme }) => {
             </ProtectedRoute>
           } 
         />
+
       </Route>
       <Route path="*" element={<NotFound isDarkMode={isDarkMode} />} />
     </Routes>

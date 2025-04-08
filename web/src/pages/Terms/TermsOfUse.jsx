@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { BackButton } from '../../components/Buttons/backButton';
+import { BackButton } from '../../components/Buttons/BackButton';
+import { FaFileContract } from 'react-icons/fa';
 
 const TermsOfUse = ({ isDarkMode }) => {
   return (
@@ -31,9 +32,12 @@ const TermsOfUse = ({ isDarkMode }) => {
               : 'bg-white/90 hover:bg-white/95'
           } transition-all duration-300`}
         >
-          <h1 className={`text-3xl font-bold mb-6 ${
-            isDarkMode ? 'text-gray-100' : 'text-gray-800'
-          }`}>Terms of Use</h1>
+          <div className="flex items-center gap-3">
+            <FaFileContract className="text-2xl text-green-500" />
+            <h1 className={`text-3xl font-bold py-6 ${
+              isDarkMode ? 'text-gray-100' : 'text-gray-800'
+            }`}>Terms of Use</h1>
+          </div>
           
           <div className="space-y-6">
             <section className={`p-6 rounded-lg ${

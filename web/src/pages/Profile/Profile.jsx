@@ -8,13 +8,13 @@ import { useProfileImage } from '../../hooks/useProfileImage';
 import { updateUserProfile, deleteUserAccount } from '../../services/profileService';
 import { FaSave, FaTimesCircle } from 'react-icons/fa';
 
-import './Profile.css';
-
 import ProfileHeader from '../../components/Profile/ProfileHeader';
 import PersonalInformationForm from '../../components/Profile/PersonalInformationForm';
 import PhysicalInformationSection from '../../components/Profile/PhysicalInformationSection';
 import EmergencyContactsSection from '../../components/Profile/EmergencyContactsSection';
 import DeleteAccountSection from '../../components/Profile/DeleteAccountSection';
+
+import './Profile.css';
 
 function Profile({ isDarkMode }) {
     const navigate = useNavigate();

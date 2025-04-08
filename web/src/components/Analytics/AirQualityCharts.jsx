@@ -18,6 +18,7 @@ const AirQualityCharts = ({ historicalData, chartOptions }) => (
                 options={chartOptions}
             />
         </div>
+        
         <div className="chart-container">
             <h3>Gas Composition</h3>
             <Line 

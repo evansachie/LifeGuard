@@ -1,13 +1,18 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaPlay, FaPause, FaTimes, FaVolumeUp, FaVolumeMute } from 'react-icons/fa';
+import { FaPlay, FaPause, FaVolumeUp, FaVolumeMute } from 'react-icons/fa';
 import { useAudioPlayer } from '../../contexts/AudioPlayerContext';
 import { Link } from 'react-router-dom';
+import getBackgroundStyle from '../../utils/getBackgroundStyle';
 
-const FloatingAudioPlayer = ({ isDarkMode }) => {
+const FloatingAudioPlayer = ({ isDarkMode, activeCategory = 'nature' }) => {
   const { currentSound, isPlaying, setIsPlaying, volume, setVolume, audioRef } = useAudioPlayer();
 
   if (!currentSound) return null;
+
+  const soundObject = typeof currentSound === 'object' ? currentSound : { name: currentSound };
+  
+  const backgroundStyle = getBackgroundStyle(soundObject, activeCategory);
 
   const handlePlayPause = () => {
     if (audioRef.current) {
@@ -37,9 +42,7 @@ const FloatingAudioPlayer = ({ isDarkMode }) => {
             <Link to="/wellness-hub" className="block w-12 h-12 rounded-md overflow-hidden hover:opacity-80 transition-opacity">
               <div
                 className="w-full h-full bg-cover bg-center"
-                style={{
-                  backgroundImage: `url(${currentSound.imageUrl || '/images/default-sound.jpg'})`
-                }}
+                style={backgroundStyle}
               />
             </Link>
           </div>
@@ -50,7 +53,7 @@ const FloatingAudioPlayer = ({ isDarkMode }) => {
               className={`block text-sm font-medium truncate hover:text-blue-500 
                 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
             >
-              {currentSound}
+              {typeof currentSound === 'object' ? currentSound.name : currentSound}
             </Link>
             <p className={`text-xs truncate ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
               Now Playing

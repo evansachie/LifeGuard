@@ -1,5 +1,5 @@
-import ReportHeader from '../../components/Analytics/ReportHeader';
-import SummaryCards from '../../components/Analytics/SummaryCards';
+import ReportHeader from './ReportHeader';
+import SummaryCards from './SummaryCards';
 import { exportToCSV } from '../../utils/exportUtils';
 
 const ReportsSection = ({ dateRange, onDateRangeChange, historicalData }) => (

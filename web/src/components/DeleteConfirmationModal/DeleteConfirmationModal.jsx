@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaExclamationTriangle } from 'react-icons/fa';
 import Spinner from '../Spinner/Spinner';
+import { stripHtmlAndTrim } from '../../utils/htmlUtils';
 import './DeleteConfirmationModal.css';
 
 const DeleteConfirmationModal = ({ 
@@ -15,6 +16,8 @@ const DeleteConfirmationModal = ({
     isDarkMode 
 }) => {
     if (!isOpen) return null;
+
+    const displayName = itemName ? stripHtmlAndTrim(itemName, 30) : '';
 
     return (
         <AnimatePresence>
@@ -34,8 +37,8 @@ const DeleteConfirmationModal = ({
                         <FaExclamationTriangle className="warning-icon" />
                         <h2>{title}</h2>
                         <p>{message}</p>
-                        {itemName && (
-                            <p className="item-name">"{itemName}"</p>
+                        {displayName && (
+                            <p className="item-name">"{displayName}"</p>
                         )}
                         <div className="delete-modal-actions">
                             <button 
@@ -60,4 +63,4 @@ const DeleteConfirmationModal = ({
     );
 };
 
-export default DeleteConfirmationModal; 
+export default DeleteConfirmationModal;

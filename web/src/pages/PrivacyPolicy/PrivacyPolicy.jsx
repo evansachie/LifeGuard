@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from 'framer-motion';
 import { FaShieldAlt, FaUserShield, FaDatabase, FaLock, FaShareAlt, FaUserCog, FaHistory, FaEnvelope } from 'react-icons/fa';
 import { Section } from "../../components/PrivacyPolicy/Section";
-import { BackButton } from "../../components/Buttons/backButton";
+import { BackButton } from "../../components/Buttons/BackButton";
 
 const PrivacyPolicy = ({ isDarkMode }) => {
     return (

@@ -1,14 +1,8 @@
 import React from 'react';
+import { timeframes } from '../../data/timeframes';
 import './TimeframeSelector.css';
 
 const TimeframeSelector = ({ isDarkMode, selectedTimeframe = 'today', onTimeframeChange }) => {
-  const timeframes = [
-    { id: 'today', label: 'Today' },
-    { id: 'week', label: 'This Week' },
-    { id: 'month', label: 'This Month' },
-    { id: 'quarter', label: 'This Quarter' },
-    { id: 'year', label: 'This Year' }
-  ];
   
   return (
     <div className={`timeframe-selector ${isDarkMode ? 'dark-mode' : ''}`}>
