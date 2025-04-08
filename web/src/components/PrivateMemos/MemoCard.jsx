@@ -42,13 +42,17 @@ const MemoCard = ({
           handleSave={handleSaveEdit}
           handleCancel={handleCancelEdit}
           isEditing={true}
+          isDarkMode={isDarkMode}
         />
       ) : (
         <>
-          <div className="memo-content">{memo.Text}</div>
+          <div 
+            className="memo-content" 
+            dangerouslySetInnerHTML={{ __html: memo.Text }} 
+          />
           <div className="memo-date">{formatDate(memo.CreatedAt)}</div>
           <div className="memo-actions">
-            <button 
+            <button
               className="memo-button edit-button" 
               onClick={() => onEdit(memo.Id)}
               title="Edit note"
