@@ -140,6 +140,7 @@ const PrivateMemos = ({ isDarkMode }) => {
                     handleSave={handleSaveMemo}
                     handleCancel={toggleNewNoteForm}
                     saving={saving}
+                    isDarkMode={isDarkMode}
                 />
             )}
 
