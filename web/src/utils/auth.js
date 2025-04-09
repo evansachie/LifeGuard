@@ -1,4 +1,4 @@
-import { API_ENDPOINTS, fetchApi, fetchWithAuth, API_BASE_URL } from '../utils/api';
+import { API_ENDPOINTS, fetchApi, fetchWithAuth } from '../utils/api';
 
 export const isAuthenticated = () => {
     const token = localStorage.getItem('token');
