@@ -651,3 +651,14 @@
   color: white !important;
 }
 
+/* Fix for floating health assistant */
+.dashboard .floating-health-assistant {
+  bottom: 100px !important;
+  right: 100px !important;
+}
+
+.dashboard .floating-health-assistant .chat-window {
+  bottom: 120px !important;
+  right: 40px !important;
+}
+

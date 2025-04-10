@@ -1,8 +1,8 @@
 /* Floating Health Assistant Styles */
 .floating-health-assistant {
   position: fixed;
-  bottom: 20px;
-  right: 30px;
+  bottom: 40px; 
+  right: 40px;
   z-index: 1500;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -39,8 +39,8 @@
 /* Chat Window */
 .chat-window {
   position: fixed;
-  bottom: 100px;
-  right: 30px;
+  bottom: 120px;
+  right: 40px;
   width: 360px;
   height: 550px;
   background-color: white;
