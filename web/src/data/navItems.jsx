@@ -1,6 +1,6 @@
 import { FaHome, FaStickyNote, FaCog, FaQuestionCircle } from 'react-icons/fa';
 import { TbReportAnalytics } from "react-icons/tb";
-import { MdContactEmergency, MdHealthAndSafety, MdOutlineAnalytics } from "react-icons/md";
+import { MdContactEmergency, MdHealthAndSafety, MdOutlineAnalytics, MdMedication } from "react-icons/md";
 import { FaMap } from "react-icons/fa";
 
 export const navItems = [
@@ -11,6 +11,7 @@ export const navItems = [
     { path: '/pollution-tracker', icon: <FaMap />, label: 'Pollution Tracker' },
     { path: '/health-tips', icon: <MdHealthAndSafety />, label: 'Health Tips' },
     { path: '/emergency-contacts', icon: <MdContactEmergency />, label: 'Emergency Contacts' },
+    { path: '/medication-tracker', icon: <MdMedication />, label: 'Medication Tracker' },
     { path: '/settings', icon: <FaCog />, label: 'Settings' },
     { path: '/help', icon: <FaQuestionCircle />, label: 'Help' },
 ];
