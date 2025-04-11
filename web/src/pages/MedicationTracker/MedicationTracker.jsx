@@ -69,7 +69,7 @@ const MedicationTracker = ({ isDarkMode }) => {
 
   return (
     <motion.div 
-      className={`min-h-screen p-6 ${isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'}`}
+      className={`min-h-screen p-6 ${isDarkMode ? 'dark-mode text-gray-100' : 'bg-gray-50 text-gray-900'}`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -90,7 +90,7 @@ const MedicationTracker = ({ isDarkMode }) => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <motion.div
             className={`p-6 rounded-xl shadow-lg ${
-              isDarkMode ? 'bg-gray-800' : 'bg-white'
+              isDarkMode ? 'bg-dark-card' : 'bg-white'
             }`}
             whileHover={{ y: -5 }}
           >
@@ -107,7 +107,7 @@ const MedicationTracker = ({ isDarkMode }) => {
 
           <motion.div
             className={`p-6 rounded-xl shadow-lg ${
-              isDarkMode ? 'bg-gray-800' : 'bg-white'
+              isDarkMode ? 'bg-dark-card' : 'bg-white'
             }`}
             whileHover={{ y: -5 }}
           >
@@ -124,7 +124,7 @@ const MedicationTracker = ({ isDarkMode }) => {
 
           <motion.div
             className={`p-6 rounded-xl shadow-lg ${
-              isDarkMode ? 'bg-gray-800' : 'bg-white'
+              isDarkMode ? 'bg-dark-card' : 'bg-white'
             }`}
             whileHover={{ y: -5 }}
           >
@@ -142,8 +142,7 @@ const MedicationTracker = ({ isDarkMode }) => {
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Medication List */}
-          <div className={`lg:col-span-2 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow-lg p-6`}>
+          <div className={`lg:col-span-2 ${isDarkMode ? 'bg-dark-card' : 'bg-white'} rounded-xl shadow-lg p-6`}>
             <h2 className="text-xl font-bold mb-4">Current Medications</h2>
             {loading ? (
               <div className="flex justify-center items-center h-64">
@@ -198,7 +197,7 @@ const MedicationTracker = ({ isDarkMode }) => {
           </div>
 
           {/* Add Medication Form */}
-          <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow-lg p-6`}>
+          <div className={`${isDarkMode ? 'bg-dark-card' : 'bg-white'} rounded-xl shadow-lg p-6`}>
             <h2 className="text-xl font-bold mb-4">Add New Medication</h2>
             <AddMedicationForm onSubmit={handleAddMedication} isDarkMode={isDarkMode} />
           </div>
