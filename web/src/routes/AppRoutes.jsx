@@ -26,6 +26,7 @@ import ExerciseRoutines from "../pages/ExerciseRoutines/ExerciseRoutines";
 import WellnessHub from "../pages/WellnessHub/WellnessHub";
 import EmergencyContacts from "../pages/EmergencyContacts/EmergencyContacts";
 import HealthMetrics from "../pages/HealthMetrics/HealthMetrics";
+import MedicationTracker from '../pages/MedicationTracker/MedicationTracker';
 
 import Profile from "../pages/Profile/Profile";
 import Settings from "../pages/Settings/Settings";
@@ -101,6 +102,7 @@ const AppRoutes = ({ isDarkMode, toggleTheme }) => {
         <Route path="/help" element={<Help isDarkMode={isDarkMode} />} />
         <Route path="/terms-of-use" element={<TermsOfUse isDarkMode={isDarkMode} />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy isDarkMode={isDarkMode} />} />
+        <Route path="/medication-tracker" element={<MedicationTracker isDarkMode={isDarkMode} />} />
         
         <Route 
           path="/analytics" 

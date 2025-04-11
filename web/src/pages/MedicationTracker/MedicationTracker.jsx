@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { fetchWithAuth, API_ENDPOINTS } from '../../utils/api';
 import { FaPills, FaClipboardList, FaChartLine } from 'react-icons/fa';
-import AddMedicationForm from './components/AddMedicationForm';
+import AddMedicationForm from '../../components/MedicationTracker/AddMedicationForm';
 
 const MedicationTracker = ({ isDarkMode }) => {
   const [medications, setMedications] = useState([]);
