@@ -126,6 +126,27 @@ module.exports = (pool) => {
             const userId = decoded.uid;
             const { medicationId, scheduledTime, taken } = req.body;
 
+            // Validate input
+            if (!medicationId || !scheduledTime) {
+                return res.status(400).json({ 
+                    success: false, 
+                    error: 'Missing required fields' 
+                });
+            }
+
+            // Verify medication belongs to user
+            const medicationCheck = await pool.query(
+                `SELECT "Id" FROM "Medications" WHERE "Id" = $1 AND "UserId" = $2`,
+                [medicationId, userId]
+            );
+
+            if (medicationCheck.rows.length === 0) {
+                return res.status(404).json({
+                    success: false,
+                    error: 'Medication not found'
+                });
+            }
+
             const result = await pool.query(
                 `INSERT INTO "MedicationTracking" 
                 ("UserId", "MedicationId", "ScheduledTime", "Taken", "TakenAt")
@@ -137,7 +158,11 @@ module.exports = (pool) => {
             res.json({ success: true, data: result.rows[0] });
         } catch (error) {
             console.error('Error tracking medication:', error);
-            res.status(500).json({ success: false, error: 'Failed to track medication' });
+            res.status(500).json({ 
+                success: false, 
+                error: 'Failed to track medication',
+                details: error.message 
+            });
         }
     });
 
