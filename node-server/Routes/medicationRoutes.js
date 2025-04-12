@@ -118,6 +118,51 @@ module.exports = (pool) => {
         }
     });
 
+    // Delete medication
+    router.delete('/:id', async (req, res) => {
+        const client = await pool.connect();
+        try {
+            const token = req.headers.authorization.split(' ')[1];
+            const decoded = jwt.decode(token);
+            const userId = decoded.uid;
+            const { id } = req.params;
+
+            await client.query('BEGIN');
+
+            // Delete reminders first
+            await client.query(
+                `DELETE FROM "MedicationReminders" WHERE "MedicationId" = $1`,
+                [id]
+            );
+
+            // Delete tracking records
+            await client.query(
+                `DELETE FROM "MedicationTracking" WHERE "MedicationId" = $1`,
+                [id]
+            );
+
+            // Delete medication
+            const result = await client.query(
+                `DELETE FROM "Medications" WHERE "Id" = $1 AND "UserId" = $2 RETURNING *`,
+                [id, userId]
+            );
+
+            await client.query('COMMIT');
+
+            if (result.rows.length === 0) {
+                return res.status(404).json({ success: false, error: 'Medication not found' });
+            }
+
+            res.json({ success: true, data: result.rows[0] });
+        } catch (error) {
+            await client.query('ROLLBACK');
+            console.error('Error deleting medication:', error);
+            res.status(500).json({ success: false, error: 'Failed to delete medication' });
+        } finally {
+            client.release();
+        }
+    });
+
     // Track medication dose
     router.post('/track', async (req, res) => {
         try {
