@@ -13,6 +13,7 @@ const MedicationTracker = ({ isDarkMode }) => {
   const [loading, setLoading] = useState(true);
   const [complianceRate, setComplianceRate] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingMedication, setEditingMedication] = useState(null);
 
   useEffect(() => {
     fetchMedications();
@@ -71,6 +72,34 @@ const MedicationTracker = ({ isDarkMode }) => {
     }
   };
 
+  const handleEditMedication = async (medicationData) => {
+    try {
+      await fetchWithAuth(`${API_ENDPOINTS.MEDICATIONS.UPDATE}/${medicationData.Id}`, {
+        method: 'PUT',
+        body: JSON.stringify(medicationData)
+      });
+      fetchMedications();
+      toast.success('Medication updated successfully');
+      setEditingMedication(null);
+    } catch (error) {
+      toast.error('Failed to update medication');
+    }
+  };
+
+  const handleDeleteMedication = async (medicationId) => {
+    if (window.confirm('Are you sure you want to delete this medication?')) {
+      try {
+        await fetchWithAuth(`${API_ENDPOINTS.MEDICATIONS.DELETE}/${medicationId}`, {
+          method: 'DELETE'
+        });
+        fetchMedications();
+        toast.success('Medication deleted successfully');
+      } catch (error) {
+        toast.error('Failed to delete medication');
+      }
+    }
+  };
+
   return (
     <motion.div 
       className={`min-h-screen p-6 ${isDarkMode ? 'bg-dark-mode text-gray-100' : 'bg-gray-50 text-gray-900'}`}
@@ -119,6 +148,8 @@ const MedicationTracker = ({ isDarkMode }) => {
             medications={medications}
             loading={loading}
             onTrackDose={handleTrackDose}
+            onEdit={setEditingMedication}
+            onDelete={handleDeleteMedication}
             isDarkMode={isDarkMode}
           />
         </div>
@@ -182,6 +213,64 @@ const MedicationTracker = ({ isDarkMode }) => {
                         isDarkMode={isDarkMode}
                       />
                     </div>
+                  </div>
+                </motion.div>
+              </div>
+            </>
+          )}
+        </AnimatePresence>
+
+        {/* Edit Modal */}
+        <AnimatePresence>
+          {editingMedication && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
+                onClick={() => setEditingMedication(null)}
+              />
+              
+              <div className="fixed inset-0 flex items-center justify-center z-[70] p-4">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                  transition={{ 
+                    type: "spring", 
+                    stiffness: 300, 
+                    damping: 30 
+                  }}
+                  className={`w-full max-w-2xl max-h-[90vh] rounded-2xl overflow-hidden shadow-2xl 
+                    ${isDarkMode ? 'bg-dark-card' : 'bg-white'}`}
+                >
+                  <div className={`sticky top-0 px-6 py-4 border-b ${
+                    isDarkMode ? 'border-gray-700/50' : 'border-gray-200'
+                  } bg-opacity-80 backdrop-blur-sm`}>
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-xl font-semibold flex items-center gap-3">
+                        <div className="w-1 h-6 bg-blue-500 rounded-full"></div>
+                        Edit Medication
+                      </h2>
+                      <button
+                        onClick={() => setEditingMedication(null)}
+                        className={`rounded-full p-2 hover:bg-opacity-10 
+                          ${isDarkMode ? 'hover:bg-white' : 'hover:bg-black'}`}
+                      >
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="p-6">
+                    <AddMedicationForm 
+                      initialData={editingMedication}
+                      onSubmit={handleEditMedication}
+                      isDarkMode={isDarkMode}
+                    />
                   </div>
                 </motion.div>
               </div>
