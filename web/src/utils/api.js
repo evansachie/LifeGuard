@@ -52,6 +52,18 @@ export const API_ENDPOINTS = {
         SAVE: `${NODE_API_URL}/api/health-metrics/save`,
         HISTORY: `${NODE_API_URL}/api/health-metrics/history`
     },
+
+    MEDICATIONS: {
+        LIST: `${NODE_API_URL}/api/medications`,
+        ADD: `${NODE_API_URL}/api/medications/add`,
+        UPDATE: (id) => `${NODE_API_URL}/api/medications/${id}`,
+        DELETE: (id) => `${NODE_API_URL}/api/medications/${id}`,
+        SCHEDULE: `${NODE_API_URL}/api/medications/schedule`,
+        TRACK: `${NODE_API_URL}/api/medications/track`,
+        REMINDERS: `${NODE_API_URL}/api/medications/reminders`,
+        COMPLIANCE: `${NODE_API_URL}/api/medications/compliance`,
+        HISTORY: `${NODE_API_URL}/api/medications/history`,
+    },
 };
 
 export const handleApiResponse = async (response) => {

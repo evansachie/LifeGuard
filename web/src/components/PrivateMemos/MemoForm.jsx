@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import Spinner from '../Spinner/Spinner';
 
@@ -11,6 +11,7 @@ const MemoForm = ({
   isEditing = false, 
   saving = false,
 }) => {
+  const [isEditorLoading, setIsEditorLoading] = useState(true);
 
   const handleEditorChange = (content, editor) => {
     setMemo(content);
@@ -18,10 +19,16 @@ const MemoForm = ({
 
   return (
     <div className="memo-input-container">
+      {isEditorLoading && (
+        <div className="flex justify-center items-center h-16">
+          <Spinner size="large" color={isDarkMode ? '#fff' : '#4285F4'} />
+        </div>
+      )}
       <Editor
         apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
         value={memo}
         onEditorChange={handleEditorChange}
+        onInit={() => setIsEditorLoading(false)}
         init={{
           height: isEditing ? 250 : 200,
           menubar: false,

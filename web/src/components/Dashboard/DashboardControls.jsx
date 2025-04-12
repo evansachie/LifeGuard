@@ -83,31 +83,22 @@ const DashboardControls = forwardRef(({
   
   const handleFilterOptionChange = (e) => {
     const { id, checked } = e.target;
-    setLocalFilters(prev => ({
-      ...prev,
+    const newFilters = {
+      ...localFilters,
       [id]: checked
-    }));
-  };
-  
-  const applyFilters = () => {
+    };
+    setLocalFilters(newFilters);
     if (onFilterChange) {
-      Object.entries(localFilters).forEach(([key, value]) => {
-        onFilterChange(key, value);
-      });
+      onFilterChange(id, checked);
     }
-    setIsFilterMenuOpen(false);
   };
   
   const handleSortOptionChange = (e) => {
     const { id } = e.target;
     setLocalSort(id);
-  };
-  
-  const applySort = () => {
     if (onSortChange) {
-      onSortChange(localSort);
+      onSortChange(id);
     }
-    setIsSortMenuOpen(false);
   };
 
   const handleViewChange = (view) => {
@@ -198,7 +189,6 @@ const DashboardControls = forwardRef(({
                 />
                 <div className={`${isDarkMode ? 'text-white' : 'text-black'}`} htmlFor="alerts">Alerts</div>
               </div>
-              <button className="apply-btn" onClick={applyFilters}>Apply Filters</button>
             </div>
           )}
         </div>
@@ -247,7 +237,6 @@ const DashboardControls = forwardRef(({
                 />
                 <div className={`${isDarkMode ? 'text-white' : 'text-black'}`} htmlFor="priority">Priority</div>
               </div>
-              <button className="apply-btn" onClick={applySort}>Apply Sort</button>
             </div>
           )}
         </div>

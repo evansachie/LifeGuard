@@ -12,8 +12,8 @@ const freesoundRoutes = require('./Routes/freesoundRoutes');
 const favoriteSoundsRoutes = require('./Routes/favoriteSoundsRoutes');
 const exerciseRoutes = require('./Routes/exerciseRoutes');
 const healthMetricsRoutes = require('./Routes/healthMetricsRoutes');
+const medicationRoutes = require('./Routes/medicationRoutes');
 const { connectToDatabase } = require('./config/mongodb');
-const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -105,6 +105,7 @@ app.use('/api/freesound', freesoundRoutes(pool));
 app.use('/api/favorite-sounds', favoriteSoundsRoutes(pool));
 app.use('/api/exercise', exerciseRoutes(pool));
 app.use('/api/health-metrics', healthMetricsRoutes(pool));
+app.use('/api/medications', medicationRoutes(pool));
 
 app.get('/', (req, res) => {
     res.send('LifeGuard API is running!');

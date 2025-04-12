@@ -15,7 +15,7 @@ const DashboardHeader = ({ userData, dataLoading }) => {
 
     return (
         <header className="dashboard-header">
-            <h1>Welcome {dataLoading ? '...' : getFirstName(userData?.userName)}!</h1>
+            <h1>Hello, {dataLoading ? '...' : getFirstName(userData?.userName)}!</h1>
             <p className="date">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
         </header>
     );
