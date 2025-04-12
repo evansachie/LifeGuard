@@ -11,7 +11,7 @@ const MedicationCard = ({ medication, onTrackDose, isDarkMode, index }) => {
       transition={{ delay: index * 0.1 }}
       className={`p-6 rounded-lg border ${
         isDarkMode 
-          ? 'border-gray-700 hover:border-gray-600 bg-gray-900' 
+          ? 'border-gray-700 hover:border-gray-600 bg-dark-card' 
           : 'border-gray-200 hover:border-gray-300 bg-white'
       } transition-all shadow-lg hover:shadow-xl`}
     >
@@ -32,7 +32,7 @@ const MedicationCard = ({ medication, onTrackDose, isDarkMode, index }) => {
                 key={index}
                 className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${
                   isDarkMode 
-                    ? 'bg-gray-800 text-gray-300' 
+                    ? 'bg-black text-gray-300' 
                     : 'bg-blue-100 text-blue-800'
                 }`}
               >

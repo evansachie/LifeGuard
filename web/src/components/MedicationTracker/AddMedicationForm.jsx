@@ -89,7 +89,7 @@ const AddMedicationForm = ({ onSubmit, isDarkMode }) => {
             onChange={(e) => setFormData(prev => ({ ...prev, frequency: e.target.value }))}
             className={`w-full rounded-lg p-2.5 border transition-colors ${
               isDarkMode 
-                ? 'bg-gray-800 border-gray-700 text-white focus:border-blue-500' 
+                ? 'bg-dark-card border-gray-700 text-white focus:border-blue-500' 
                 : 'bg-white border-gray-300 focus:border-blue-500'
             }`}
           >
@@ -177,7 +177,7 @@ const AddMedicationForm = ({ onSubmit, isDarkMode }) => {
             onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
             className={`w-full rounded-lg p-2.5 border transition-colors ${
               isDarkMode 
-                ? 'bg-gray-800 border-gray-700 text-white focus:border-blue-500' 
+                ? 'bg-dark-card border-gray-700 text-white focus:border-blue-500' 
                 : 'bg-white border-gray-300 focus:border-blue-500'
             }`}
             rows="3"
