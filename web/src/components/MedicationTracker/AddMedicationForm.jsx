@@ -2,36 +2,44 @@ import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { FaPlus, FaTrash, FaClock } from 'react-icons/fa';
 
-const AddMedicationForm = ({ onSubmit, isDarkMode }) => {
-  const [formData, setFormData] = useState({
-    name: '',
-    dosage: '',
-    frequency: 'daily',
-    times: ['08:00'],
-    startDate: new Date().toISOString().split('T')[0],
-    endDate: '',
-    notes: ''
+const defaultFormData = {
+  name: '',
+  dosage: '',
+  frequency: 'daily',
+  times: ['08:00'],
+  startDate: new Date().toISOString().split('T')[0],
+  endDate: '',
+  notes: '',
+  active: true
+};
+
+const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
+  const [formData, setFormData] = useState(() => {
+    if (initialData) {
+      // Ensure all required fields are present when editing
+      return {
+        ...defaultFormData,
+        ...initialData,
+        // Convert array fields if they're null or undefined
+        times: initialData.Time || defaultFormData.times
+      };
+    }
+    return defaultFormData;
   });
 
   const isFormValid = useMemo(() => {
-    return formData.name.trim() !== '' && 
-           formData.dosage.trim() !== '' && 
-           formData.times.length > 0 && 
-           formData.times.every(time => time !== '');
+    return formData?.name?.trim() !== '' && 
+           formData?.dosage?.trim() !== '' && 
+           formData?.times?.length > 0 && 
+           formData?.times?.every(time => time !== '');
   }, [formData]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
-    setFormData({
-      name: '',
-      dosage: '',
-      frequency: 'daily',
-      times: ['08:00'],
-      startDate: new Date().toISOString().split('T')[0],
-      endDate: '',
-      notes: ''
-    });
+    onSubmit(initialData ? { ...formData, Id: initialData.Id } : formData);
+    if (!initialData) {
+      setFormData(defaultFormData);
+    }
   };
 
   const addTimeSlot = () => {

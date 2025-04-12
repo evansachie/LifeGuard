@@ -107,7 +107,7 @@ const MedicationCard = ({ medication, onTrackDose, onEdit, onDelete, isDarkMode,
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => onDelete(medication.Id)}
+              onClick={() => onDelete(medication)} // Pass the entire medication object
               className={`p-2 rounded-md text-sm font-medium transition-colors ${
                 isDarkMode 
                   ? 'bg-red-900/50 hover:bg-red-900 text-red-200' 

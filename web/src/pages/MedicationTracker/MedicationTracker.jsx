@@ -7,6 +7,7 @@ import { FaPlus } from 'react-icons/fa';
 import MedicationList from '../../components/MedicationTracker/MedicationList';
 import MedicationStats from '../../components/MedicationTracker/MedicationStats';
 import AddMedicationForm from '../../components/MedicationTracker/AddMedicationForm';
+import DeleteConfirmationModal from '../../components/DeleteConfirmationModal/DeleteConfirmationModal';
 
 const MedicationTracker = ({ isDarkMode }) => {
   const [medications, setMedications] = useState([]);
@@ -14,6 +15,8 @@ const MedicationTracker = ({ isDarkMode }) => {
   const [complianceRate, setComplianceRate] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMedication, setEditingMedication] = useState(null);
+  const [medicationToDelete, setMedicationToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchMedications();
@@ -87,16 +90,18 @@ const MedicationTracker = ({ isDarkMode }) => {
   };
 
   const handleDeleteMedication = async (medicationId) => {
-    if (window.confirm('Are you sure you want to delete this medication?')) {
-      try {
-        await fetchWithAuth(`${API_ENDPOINTS.MEDICATIONS.DELETE}/${medicationId}`, {
-          method: 'DELETE'
-        });
-        fetchMedications();
-        toast.success('Medication deleted successfully');
-      } catch (error) {
-        toast.error('Failed to delete medication');
-      }
+    setIsDeleting(true);
+    try {
+      await fetchWithAuth(`${API_ENDPOINTS.MEDICATIONS.DELETE}/${medicationId}`, {
+        method: 'DELETE'
+      });
+      fetchMedications();
+      toast.success('Medication deleted successfully');
+      setMedicationToDelete(null);
+    } catch (error) {
+      toast.error('Failed to delete medication');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -149,7 +154,7 @@ const MedicationTracker = ({ isDarkMode }) => {
             loading={loading}
             onTrackDose={handleTrackDose}
             onEdit={setEditingMedication}
-            onDelete={handleDeleteMedication}
+            onDelete={(med) => setMedicationToDelete(med)}
             isDarkMode={isDarkMode}
           />
         </div>
@@ -244,6 +249,7 @@ const MedicationTracker = ({ isDarkMode }) => {
                   }}
                   className={`w-full max-w-2xl max-h-[90vh] rounded-2xl overflow-hidden shadow-2xl 
                     ${isDarkMode ? 'bg-dark-card' : 'bg-white'}`}
+                  onClick={(e) => e.stopPropagation()}
                 >
                   <div className={`sticky top-0 px-6 py-4 border-b ${
                     isDarkMode ? 'border-gray-700/50' : 'border-gray-200'
@@ -251,7 +257,7 @@ const MedicationTracker = ({ isDarkMode }) => {
                     <div className="flex items-center justify-between">
                       <h2 className="text-xl font-semibold flex items-center gap-3">
                         <div className="w-1 h-6 bg-blue-500 rounded-full"></div>
-                        Edit Medication
+                        Edit {editingMedication.Name}
                       </h2>
                       <button
                         onClick={() => setEditingMedication(null)}
@@ -265,9 +271,12 @@ const MedicationTracker = ({ isDarkMode }) => {
                     </div>
                   </div>
 
-                  <div className="p-6">
+                  <div className="p-6 overflow-y-auto" style={{ maxHeight: 'calc(90vh - 80px)' }}>
                     <AddMedicationForm 
-                      initialData={editingMedication}
+                      initialData={{
+                        ...editingMedication,
+                        times: editingMedication.Time || [], // Fix the field name here
+                      }}
                       onSubmit={handleEditMedication}
                       isDarkMode={isDarkMode}
                     />
@@ -277,6 +286,18 @@ const MedicationTracker = ({ isDarkMode }) => {
             </>
           )}
         </AnimatePresence>
+
+        {/* Delete Confirmation Modal */}
+        <DeleteConfirmationModal
+          isOpen={!!medicationToDelete}
+          onClose={() => setMedicationToDelete(null)}
+          onConfirm={() => handleDeleteMedication(medicationToDelete?.Id)}
+          title="Delete Medication"
+          message="Are you sure you want to delete this medication? This action cannot be undone."
+          itemName={medicationToDelete?.Name}
+          isLoading={isDeleting}
+          isDarkMode={isDarkMode}
+        />
       </div>
     </motion.div>
   );
