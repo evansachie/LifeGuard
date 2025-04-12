@@ -16,12 +16,15 @@ const defaultFormData = {
 const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
   const [formData, setFormData] = useState(() => {
     if (initialData) {
-      // Ensure all required fields are present when editing
       return {
-        ...defaultFormData,
-        ...initialData,
-        // Convert array fields if they're null or undefined
-        times: initialData.Time || defaultFormData.times
+        name: initialData.Name || '',
+        dosage: initialData.Dosage || '',
+        frequency: initialData.Frequency || 'daily',
+        times: initialData.Time || ['08:00'],
+        startDate: initialData.StartDate?.split('T')[0] || defaultFormData.startDate,
+        endDate: initialData.EndDate?.split('T')[0] || '',
+        notes: initialData.Notes || '',
+        active: initialData.Active ?? true
       };
     }
     return defaultFormData;
@@ -36,7 +39,13 @@ const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(initialData ? { ...formData, Id: initialData.Id } : formData);
+    const submissionData = {
+      ...formData,
+      // If endDate is empty string, set it to null
+      endDate: formData.endDate || null
+    };
+    
+    onSubmit(initialData ? { ...submissionData, Id: initialData.Id } : submissionData);
     if (!initialData) {
       setFormData(defaultFormData);
     }
@@ -164,7 +173,7 @@ const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
             />
           </div>
           <div>
-            <div className="text-sm font-medium mb-1">End Date (Optional)</div>
+            <div className="text-sm font-medium mb-1">End Date</div>
             <input
               type="date"
               value={formData.endDate}
@@ -209,7 +218,7 @@ const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
           disabled={!isFormValid}
         >
           <FaPlus />
-          Add Medication
+          {initialData ? 'Update Medication' : 'Add Medication'}
         </motion.button>
       </div>
     </form>
