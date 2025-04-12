@@ -9,9 +9,9 @@ export const navItems = [
     { path: '/sticky-notes', icon: <FaStickyNote />, label: 'Sticky Notes' },
     { path: '/health-report', icon: <TbReportAnalytics />, label: 'Health Report' },
     { path: '/pollution-tracker', icon: <FaMap />, label: 'Pollution Tracker' },
+    { path: '/medication-tracker', icon: <MdMedication />, label: 'Medication Tracker' },
     { path: '/health-tips', icon: <MdHealthAndSafety />, label: 'Health Tips' },
     { path: '/emergency-contacts', icon: <MdContactEmergency />, label: 'Emergency Contacts' },
-    { path: '/medication-tracker', icon: <MdMedication />, label: 'Medication Tracker' },
     { path: '/settings', icon: <FaCog />, label: 'Settings' },
     { path: '/help', icon: <FaQuestionCircle />, label: 'Help' },
 ];
