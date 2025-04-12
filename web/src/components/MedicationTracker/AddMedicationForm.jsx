@@ -49,7 +49,7 @@ const AddMedicationForm = ({ onSubmit, isDarkMode }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-4">
         <div>
           <div className="text-sm font-medium mb-1">Medication Name</div>
@@ -187,7 +187,7 @@ const AddMedicationForm = ({ onSubmit, isDarkMode }) => {
 
         <motion.button
           type="submit"
-          className={`w-full py-3 px-4 rounded-lg font-medium flex items-center justify-center gap-2 transition-all ${
+          className={`w-full py-4 px-6 rounded-lg font-medium flex items-center justify-center gap-2 transition-all ${
             isFormValid
               ? isDarkMode
                 ? 'bg-blue-600 hover:bg-blue-700 text-white'

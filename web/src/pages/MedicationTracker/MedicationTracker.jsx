@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { fetchWithAuth, API_ENDPOINTS } from '../../utils/api';
+import { FaPlus } from 'react-icons/fa';
+
 import MedicationList from '../../components/MedicationTracker/MedicationList';
 import MedicationStats from '../../components/MedicationTracker/MedicationStats';
 import AddMedicationForm from '../../components/MedicationTracker/AddMedicationForm';
@@ -10,6 +12,7 @@ const MedicationTracker = ({ isDarkMode }) => {
   const [medications, setMedications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [complianceRate, setComplianceRate] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetchMedications();
@@ -75,7 +78,6 @@ const MedicationTracker = ({ isDarkMode }) => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
         <div className="text-center mb-8">
@@ -94,30 +96,98 @@ const MedicationTracker = ({ isDarkMode }) => {
           isDarkMode={isDarkMode}
         />
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <MedicationList
-              medications={medications}
-              loading={loading}
-              onTrackDose={handleTrackDose}
-              isDarkMode={isDarkMode}
-            />
-          </div>
-          
-          <div className={`${
-            isDarkMode ? 'bg-dark-card' : 'bg-white'
-          } rounded-xl shadow-lg p-6 h-fit sticky top-6`}>
-            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-              <span className="w-1 h-6 bg-blue-500 rounded-full"></span>
-              Add New Medication
-            </h2>
-            <AddMedicationForm 
-              onSubmit={handleAddMedication}
-              isDarkMode={isDarkMode}
-            />
-          </div>
+        {/* Add Medication Button */}
+        <div className="mb-8">
+          <motion.button
+            onClick={() => setIsModalOpen(true)}
+            className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium ${
+              isDarkMode 
+                ? 'bg-blue-600 hover:bg-blue-700' 
+                : 'bg-blue-500 hover:bg-blue-600'
+            } text-white transition-colors`}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <FaPlus />
+            Add New Medication
+          </motion.button>
         </div>
+
+        {/* Medication List */}
+        <div className="w-full">
+          <MedicationList
+            medications={medications}
+            loading={loading}
+            onTrackDose={handleTrackDose}
+            isDarkMode={isDarkMode}
+          />
+        </div>
+
+        {/* Modal */}
+        <AnimatePresence>
+          {isModalOpen && (
+            <>
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
+                onClick={() => setIsModalOpen(false)}
+              />
+              
+              {/* Modal Container */}
+              <div className="fixed inset-0 flex items-center justify-center z-[70] p-4">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                  transition={{ 
+                    type: "spring", 
+                    stiffness: 300, 
+                    damping: 30 
+                  }}
+                  className={`w-full max-w-2xl max-h-[90vh] rounded-2xl overflow-hidden shadow-2xl 
+                    ${isDarkMode ? 'bg-dark-card' : 'bg-white'}`}
+                >
+                  {/* Modal Header */}
+                  <div className={`sticky top-0 px-6 py-4 border-b ${
+                    isDarkMode ? 'border-gray-700/50' : 'border-gray-200'
+                  } bg-opacity-80 backdrop-blur-sm`}>
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-xl font-semibold flex items-center gap-3">
+                        <div className="w-1 h-6 bg-blue-500 rounded-full"></div>
+                        Add New Medication
+                      </h2>
+                      <button
+                        onClick={() => setIsModalOpen(false)}
+                        className={`rounded-full p-2 hover:bg-opacity-10 
+                          ${isDarkMode ? 'hover:bg-white' : 'hover:bg-black'}`}
+                      >
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Modal Content */}
+                  <div className="overflow-y-auto" style={{ maxHeight: 'calc(90vh - 80px)' }}>
+                    <div className="p-6">
+                      <AddMedicationForm 
+                        onSubmit={(data) => {
+                          handleAddMedication(data);
+                          setIsModalOpen(false);
+                        }}
+                        isDarkMode={isDarkMode}
+                      />
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            </>
+          )}
+        </AnimatePresence>
       </div>
     </motion.div>
   );
