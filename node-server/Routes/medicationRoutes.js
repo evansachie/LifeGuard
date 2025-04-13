@@ -38,6 +38,7 @@ module.exports = (pool) => {
             const token = req.headers.authorization.split(' ')[1];
             const decoded = jwt.decode(token);
             const userId = decoded.uid;
+            const userEmail = decoded.email; // Get email from JWT token
             const { name, dosage, frequency, times, startDate, endDate, notes } = req.body;
 
             await client.query('BEGIN');
@@ -51,8 +52,13 @@ module.exports = (pool) => {
                 [userId, name, dosage, frequency, times, startDate, endDate, notes]
             );
 
+            // Add email to medication data for notifications
+            const medication = {
+                ...medicationResult.rows[0],
+                email: userEmail
+            };
+
             // Set up reminders
-            const medication = medicationResult.rows[0];
             await Promise.all(times.map(time => 
                 client.query(
                     `INSERT INTO "MedicationReminders" ("UserId", "MedicationId", "ReminderTime")
