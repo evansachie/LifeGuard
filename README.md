@@ -332,7 +332,7 @@ These endpoints are served from the .NET-Server (hosted at `https://lifeguard-hi
 | POST       | `/api/Account/CompleteProfile`       | Submit additional profile details                    |
 | GET        | `/api/Account/{id}`                  | Retrieve basic account information by ID             |
 | GET        | `/api/Account/GetProfile/{id}`       | Retrieve detailed user profile information   
-| DELETE        | `/api/Account/{id}`       | Delete user profile information by ID             |
+| DELETE     | `/api/Account/{id}`                  | Delete user profile information by ID             |
 
 ### Photo Endpoints
 
@@ -346,33 +346,71 @@ These endpoints are served from the .NET-Server (hosted at `https://lifeguard-hi
 
 These endpoints are served from the Node-Server (hosted at `https://lifeguard-node.onrender.com`):
 
-| **Method** | **Endpoint**                                      | **Description**                                            |
-|------------|---------------------------------------------------|------------------------------------------------------------|
-| GET/POST*  | `/api/memos`                                      | Retrieve or manage memos          
-| GET  | `/api/memos/undone/count`                         | Retrieve the count of undone memos                         |
-| GET/POST*  | `/api/emergency-contacts`                         | Retrieve or manage emergency contacts                      |
-| POST       | `/api/freesound/audio-proxy`                                  | Proxy for streaming audio files from Freesound |                   |
-| GET       | `/api/exercise/stats/profiles`                       | Retrieve user's exercise statistics and streak information                       |
-| POST       | `/api/exercise/complete`                       | Record a completed workout session                       |
-| POST       | `/api/exercise/goals`                       | Set or update user's workout goals                       |
-| GET       | `/api/health-metrics/latest`                       | Get the latest health metrics for current user                       |
-| POST       | `/api/health-metrics/save`                       | Save new health metrics for current user                       |
-| GET       | `/api/health-metrics/history`                       | Get health metrics history (last 10 entries)                      |
+### Memo Endpoints
 
+| **Method** | **Endpoint**              | **Description**                        |
+|------------|---------------------------|----------------------------------------|
+| GET        | `/api/memos`              | Retrieve user memos                    |
+| POST       | `/api/memos`              | Create a new memo                      |
+| GET        | `/api/memos/undone/count` | Retrieve the count of undone memos     |
 
-*Note: The HTTP methods for `/api/memos` and `/api/emergency-contacts` depend on the specific operation (e.g., GET for retrieval, POST for creation).
+### Emergency Contact Endpoints
+
+| **Method** | **Endpoint**                              | **Description**                                    |
+|------------|-------------------------------------------|---------------------------------------------------|
+| GET        | `/api/emergency-contacts`                 | Retrieve user's emergency contacts                 |
+| POST       | `/api/emergency-contacts`                 | Add a new emergency contact                        |
+| POST       | `/api/emergency-contacts/alert`           | Send emergency alert to contacts                   |
+| GET        | `/api/emergency-contacts/test-alert/{id}` | Send test alert to specific contact                |
+| GET        | `/api/emergency-contacts/verify`          | Verify emergency contact with token                |
+| GET        | `/api/emergency-contacts/alerts`          | Get history of sent emergency alerts               |
+
+### Health Metrics Endpoints
+
+| **Method** | **Endpoint**                        | **Description**                              |
+|------------|-------------------------------------|----------------------------------------------|
+| GET        | `/api/health-metrics/latest`        | Get the latest health metrics for user       |
+| POST       | `/api/health-metrics/save`          | Save new health metrics for user             |
+| GET        | `/api/health-metrics/history`       | Get health metrics history (last 10 entries) |
+
+### Exercise Endpoints
+
+| **Method** | **Endpoint**              | **Description**                                   |
+|------------|---------------------------|---------------------------------------------------|
+| GET        | `/api/exercise/stats`     | Retrieve user's exercise statistics and streaks   |
+| POST       | `/api/exercise/complete`  | Record a completed workout session                |
+| POST       | `/api/exercise/goals`     | Set or update user's workout goals                |
+
+### Medication Endpoints
+
+| **Method** | **Endpoint**              | **Description**                                   |
+|------------|---------------------------|---------------------------------------------------|
+| GET        | `/api/medications`        | Get all medications for current user              |
+| POST       | `/api/medications/add`    | Add a new medication                              |
+| PUT        | `/api/medications/:id`    | Update medication by ID                           |
+| DELETE     | `/api/medications/:id`    | Delete medication by ID                           |
+| POST       | `/api/medications/track`  | Track medication dose (taken or skipped)          |
+| GET        | `/api/medications/compliance` | Get medication compliance rate                |
+
+### Sound & Wellness Endpoints
+
+| **Method** | **Endpoint**                                  | **Description**                                |
+|------------|-----------------------------------------------|-------------------------------------------------|
+| POST       | `/api/freesound/audio-proxy`                  | Proxy for streaming audio files from Freesound |
+| GET        | `/api/favorite-sounds`                        | Get all favorite sounds                        |
+| GET        | `/api/favorite-sounds/{userId}`               | Get user's favorite sounds                     |
+| DELETE     | `/api/favorite-sounds/{userId}/{soundId}`     | Remove a sound from favorites                  |
 
 ### RAG System Routes
 
-| **Method** | **Endpoint**                    | **Description**                                                   |
-|------------|---------------------------------|-------------------------------------------------------------------|
-| POST       | `/initialize`                   | Initialize the RAG system (admin only)                            |
-| POST       | `/query`                        | Query the RAG system (authenticated users)                        |
-| POST       | `/process/health`               | Process health data (authenticated users)                         |
-| POST       | `/process/environmental`        | Process environmental data (authenticated users)                  |
-| POST       | `/process/medical`              | Process medical knowledge (admin only)                            |
-| POST       | `/process/profiles`             | Process user profiles (authenticated users)                       |
-
+| **Method** | **Endpoint**                    | **Description**                                      |
+|------------|---------------------------------|------------------------------------------------------|
+| POST       | `/api/rag/initialize`           | Initialize the RAG system (admin only)               |
+| POST       | `/api/rag/query`                | Query the RAG system (authenticated users)           |
+| POST       | `/api/rag/process/health`       | Process health data (authenticated users)            |
+| POST       | `/api/rag/process/environmental`| Process environmental data (authenticated users)     |
+| POST       | `/api/rag/process/medical`      | Process medical knowledge (admin only)               |
+| POST       | `/api/rag/process/profiles`     | Process user profiles (authenticated users)          |
 
 Complete API documentation would be posted soon...
 
