@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { fetchWithAuth, API_ENDPOINTS } from '../../utils/api';
-import { FaPlus } from 'react-icons/fa';
+import { FaPlus, FaBell } from 'react-icons/fa';
 
 import MedicationList from '../../components/MedicationTracker/MedicationList';
 import MedicationStats from '../../components/MedicationTracker/MedicationStats';
 import AddMedicationForm from '../../components/MedicationTracker/AddMedicationForm';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal/DeleteConfirmationModal';
 import SearchAndFilter from '../../components/MedicationTracker/SearchAndFilter';
+import NotificationPreferences from '../../components/MedicationTracker/NotificationPreferences';
 
 const MedicationTracker = ({ isDarkMode }) => {
   const [medications, setMedications] = useState([]);
@@ -24,6 +25,7 @@ const MedicationTracker = ({ isDarkMode }) => {
     frequency: '',
     timeOfDay: ''
   });
+  const [isNotificationSettingsOpen, setIsNotificationSettingsOpen] = useState(false);
 
   useEffect(() => {
     fetchMedications();
@@ -146,14 +148,28 @@ const MedicationTracker = ({ isDarkMode }) => {
       exit={{ opacity: 0 }}
     >
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
-            Medication Tracker
-          </h1>
-          <p className={`text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-            Stay on top of your medication schedule with ease
-          </p>
+        {/* Header with Notification Settings Button */}
+        <div className="flex justify-between items-center mb-8">
+          <div className="text-center flex-1">
+            <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+              Medication Tracker
+            </h1>
+            <p className={`text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              Stay on top of your medication schedule with ease
+            </p>
+          </div>
+          <motion.button
+            onClick={() => setIsNotificationSettingsOpen(true)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className={`p-3 rounded-full ${
+              isDarkMode 
+                ? 'bg-gray-800 hover:bg-gray-700' 
+                : 'bg-white hover:bg-gray-50'
+            } shadow-lg`}
+          >
+            <FaBell className="text-blue-500" />
+          </motion.button>
         </div>
 
         {/* Stats Overview */}
@@ -323,6 +339,41 @@ const MedicationTracker = ({ isDarkMode }) => {
                       isDarkMode={isDarkMode}
                     />
                   </div>
+                </motion.div>
+              </div>
+            </>
+          )}
+        </AnimatePresence>
+
+        {/* Notification Preferences Modal */}
+        <AnimatePresence>
+          {isNotificationSettingsOpen && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
+                onClick={() => setIsNotificationSettingsOpen(false)}
+              />
+              
+              <div className="fixed inset-0 flex items-center justify-center z-[70] p-4">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                  className={`w-full max-w-md rounded-2xl overflow-hidden shadow-2xl 
+                    ${isDarkMode ? 'bg-dark-card' : 'bg-white'}`}
+                >
+                  <div className={`px-6 py-4 border-b ${
+                    isDarkMode ? 'border-gray-700' : 'border-gray-200'
+                  }`}>
+                    <h2 className="text-xl font-semibold">Notification Settings</h2>
+                  </div>
+                  <NotificationPreferences
+                    isDarkMode={isDarkMode}
+                    onClose={() => setIsNotificationSettingsOpen(false)}
+                  />
                 </motion.div>
               </div>
             </>
