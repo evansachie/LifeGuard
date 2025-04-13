@@ -3,6 +3,8 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 
 module.exports = (pool) => {
+    const notificationService = new NotificationService(pool);
+
     // Get all medications for a user
     router.get('/', async (req, res) => {
         try {
@@ -58,6 +60,8 @@ module.exports = (pool) => {
                 )
             ));
 
+            await notificationService.scheduleRemindersForDay();
+
             await client.query('COMMIT');
             res.json({ success: true, data: medication });
         } catch (error) {
@@ -106,6 +110,8 @@ module.exports = (pool) => {
                     )
                 ));
             }
+
+            await notificationService.scheduleRemindersForDay();
 
             await client.query('COMMIT');
             res.json({ success: true, data: result.rows[0] });

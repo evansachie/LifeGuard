@@ -3,6 +3,7 @@ const { Pool } = require('pg');
 require('dotenv').config();
 
 const cors = require('cors');
+
 const memoRoutes = require('./Routes/memoRoutes');
 const bmrCalculatorRoutes = require('./Routes/bmrCalculatorRoutes')
 const settingsRoutes = require('./Routes/bmrCalculatorRoutes');
@@ -13,7 +14,11 @@ const favoriteSoundsRoutes = require('./Routes/favoriteSoundsRoutes');
 const exerciseRoutes = require('./Routes/exerciseRoutes');
 const healthMetricsRoutes = require('./Routes/healthMetricsRoutes');
 const medicationRoutes = require('./Routes/medicationRoutes');
+const userPreferencesRoutes = require('./Routes/userPreferencesRoutes');
+
 const { connectToDatabase } = require('./config/mongodb');
+const nodemailer = require('nodemailer');
+const NotificationService = require('./services/NotificationService');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -34,7 +39,7 @@ const corsOptions = {
       callback(null, true);
     } else {
       console.log("CORS blocked origin:", origin);
-      callback(null, true); // Temporarily allow all origins for debugging
+      callback(null, true);
     }
   },
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
@@ -81,12 +86,47 @@ const pool = new Pool({
     connectionTimeoutMillis: 10000,
 });
 
-// Test db connection
+// Initialize notification service with email transport
+const notificationService = new NotificationService(pool, nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD
+    }
+}));
+
+// Enhanced notification scheduling
+const scheduleNotifications = () => {
+    try {
+        notificationService.scheduleRemindersForDay();
+        console.log('Initial medication reminders scheduled');
+
+        const now = new Date();
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
+        const delay = tomorrow.getTime() - now.getTime();
+
+        setTimeout(() => {
+            notificationService.scheduleRemindersForDay();
+            setInterval(() => {
+                notificationService.scheduleRemindersForDay();
+                console.log('Daily medication reminders scheduled');
+            }, 24 * 60 * 60 * 1000);
+            console.log('Notification scheduler initialized');
+        }, delay);
+    } catch (error) {
+        console.error('Error setting up notification scheduler:', error);
+    }
+};
+
+// Test db connection and initialize services
 pool.connect((err, client, release) => {
     if (err) {
         console.error('Error connecting to the database:', err.stack);
     } else {
         console.log('Connected to database successfully!');
+        scheduleNotifications();
         release();
     }
 });
@@ -106,9 +146,18 @@ app.use('/api/favorite-sounds', favoriteSoundsRoutes(pool));
 app.use('/api/exercise', exerciseRoutes(pool));
 app.use('/api/health-metrics', healthMetricsRoutes(pool));
 app.use('/api/medications', medicationRoutes(pool));
+app.use('/api/user-preferences', userPreferencesRoutes(pool));
 
 app.get('/', (req, res) => {
     res.send('LifeGuard API is running!');
+});
+
+// Health check endpoint for notification service
+app.get('/api/notifications/health', (req, res) => {
+    res.json({ 
+        status: 'healthy',
+        emailConfigured: !!process.env.EMAIL_USER && !!process.env.EMAIL_PASSWORD
+    });
 });
 
 // Error handling middleware
