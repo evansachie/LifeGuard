@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const NotificationService = require('../services/NotificationService');
 
 module.exports = (pool) => {
     const notificationService = new NotificationService(pool);
