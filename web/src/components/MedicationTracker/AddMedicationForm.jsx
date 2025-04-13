@@ -2,36 +2,53 @@ import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { FaPlus, FaTrash, FaClock } from 'react-icons/fa';
 
-const AddMedicationForm = ({ onSubmit, isDarkMode }) => {
-  const [formData, setFormData] = useState({
-    name: '',
-    dosage: '',
-    frequency: 'daily',
-    times: ['08:00'],
-    startDate: new Date().toISOString().split('T')[0],
-    endDate: '',
-    notes: ''
+const defaultFormData = {
+  name: '',
+  dosage: '',
+  frequency: 'daily',
+  times: ['08:00'],
+  startDate: new Date().toISOString().split('T')[0],
+  endDate: '',
+  notes: '',
+  active: true
+};
+
+const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
+  const [formData, setFormData] = useState(() => {
+    if (initialData) {
+      return {
+        name: initialData.Name || '',
+        dosage: initialData.Dosage || '',
+        frequency: initialData.Frequency || 'daily',
+        times: initialData.Time || ['08:00'],
+        startDate: initialData.StartDate?.split('T')[0] || defaultFormData.startDate,
+        endDate: initialData.EndDate?.split('T')[0] || '',
+        notes: initialData.Notes || '',
+        active: initialData.Active ?? true
+      };
+    }
+    return defaultFormData;
   });
 
   const isFormValid = useMemo(() => {
-    return formData.name.trim() !== '' && 
-           formData.dosage.trim() !== '' && 
-           formData.times.length > 0 && 
-           formData.times.every(time => time !== '');
+    return formData?.name?.trim() !== '' && 
+           formData?.dosage?.trim() !== '' && 
+           formData?.times?.length > 0 && 
+           formData?.times?.every(time => time !== '');
   }, [formData]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
-    setFormData({
-      name: '',
-      dosage: '',
-      frequency: 'daily',
-      times: ['08:00'],
-      startDate: new Date().toISOString().split('T')[0],
-      endDate: '',
-      notes: ''
-    });
+    const submissionData = {
+      ...formData,
+      // If endDate is empty string, set it to null
+      endDate: formData.endDate || null
+    };
+    
+    onSubmit(initialData ? { ...submissionData, Id: initialData.Id } : submissionData);
+    if (!initialData) {
+      setFormData(defaultFormData);
+    }
   };
 
   const addTimeSlot = () => {
@@ -156,7 +173,7 @@ const AddMedicationForm = ({ onSubmit, isDarkMode }) => {
             />
           </div>
           <div>
-            <div className="text-sm font-medium mb-1">End Date (Optional)</div>
+            <div className="text-sm font-medium mb-1">End Date</div>
             <input
               type="date"
               value={formData.endDate}
@@ -201,7 +218,7 @@ const AddMedicationForm = ({ onSubmit, isDarkMode }) => {
           disabled={!isFormValid}
         >
           <FaPlus />
-          Add Medication
+          {initialData ? 'Update Medication' : 'Add Medication'}
         </motion.button>
       </div>
     </form>

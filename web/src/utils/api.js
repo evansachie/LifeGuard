@@ -56,14 +56,18 @@ export const API_ENDPOINTS = {
     MEDICATIONS: {
         LIST: `${NODE_API_URL}/api/medications`,
         ADD: `${NODE_API_URL}/api/medications/add`,
-        UPDATE: (id) => `${NODE_API_URL}/api/medications/${id}`,
-        DELETE: (id) => `${NODE_API_URL}/api/medications/${id}`,
+        UPDATE: `${NODE_API_URL}/api/medications`,
+        DELETE: `${NODE_API_URL}/api/medications`,
         SCHEDULE: `${NODE_API_URL}/api/medications/schedule`,
         TRACK: `${NODE_API_URL}/api/medications/track`,
         REMINDERS: `${NODE_API_URL}/api/medications/reminders`,
         COMPLIANCE: `${NODE_API_URL}/api/medications/compliance`,
         HISTORY: `${NODE_API_URL}/api/medications/history`,
     },
+
+    USER_PREFERENCES: {
+        NOTIFICATIONS: `${NODE_API_URL}/api/user-preferences/notifications`
+    }
 };
 
 export const handleApiResponse = async (response) => {

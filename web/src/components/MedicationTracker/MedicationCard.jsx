@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaClock, FaCheck, FaTimes, FaCalendar } from 'react-icons/fa';
+import { FaClock, FaCheck, FaTimes, FaEdit, FaTrash } from 'react-icons/fa';
 
-const MedicationCard = ({ medication, onTrackDose, isDarkMode, index }) => {
+const MedicationCard = ({ medication, onTrackDose, onEdit, onDelete, isDarkMode, index }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -49,44 +49,74 @@ const MedicationCard = ({ medication, onTrackDose, isDarkMode, index }) => {
           )}
         </div>
 
-        <div className="flex gap-2">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => onTrackDose(medication.Id, true)}
-            disabled={!medication.Active}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${
-              medication.Active
-                ? isDarkMode 
-                  ? 'bg-green-600 hover:bg-green-700 text-white'
-                  : 'bg-green-500 hover:bg-green-600 text-white'
-                : isDarkMode
-                  ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
-                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-            }`}
-          >
-            <FaCheck />
-            Taken
-          </motion.button>
-          
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => onTrackDose(medication.Id, false)}
-            disabled={!medication.Active}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${
-              medication.Active
-                ? isDarkMode 
-                  ? 'bg-red-600 hover:bg-red-700 text-white'
-                  : 'bg-red-500 hover:bg-red-600 text-white'
-                : isDarkMode
-                  ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
-                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-            }`}
-          >
-            <FaTimes />
-            Missed
-          </motion.button>
+        <div className="flex flex-col gap-2">
+          <div className="flex gap-2">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => onTrackDose(medication.Id, true)}
+              disabled={!medication.Active}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${
+                medication.Active
+                  ? isDarkMode 
+                    ? 'bg-green-600 hover:bg-green-700 text-white'
+                    : 'bg-green-500 hover:bg-green-600 text-white'
+                  : isDarkMode
+                    ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
+                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              }`}
+            >
+              <FaCheck />
+              Taken
+            </motion.button>
+            
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => onTrackDose(medication.Id, false)}
+              disabled={!medication.Active}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${
+                medication.Active
+                  ? isDarkMode 
+                    ? 'bg-red-600 hover:bg-red-700 text-white'
+                    : 'bg-red-500 hover:bg-red-600 text-white'
+                  : isDarkMode
+                    ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
+                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              }`}
+            >
+              <FaTimes />
+              Missed
+            </motion.button>
+          </div>
+
+          <div className="flex gap-4 mb-2 py-2 justify-end">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => onEdit(medication)}
+              className={`p-2 rounded-md text-sm font-medium transition-colors ${
+                isDarkMode 
+                  ? 'bg-gray-700 hover:bg-gray-600 text-gray-200' 
+                  : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+              }`}
+            >
+              <FaEdit />
+            </motion.button>
+            
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => onDelete(medication)} // Pass the entire medication object
+              className={`p-2 rounded-md text-sm font-medium transition-colors ${
+                isDarkMode 
+                  ? 'bg-red-900/50 hover:bg-red-900 text-red-200' 
+                  : 'bg-red-100 hover:bg-red-200 text-red-700'
+              }`}
+            >
+              <FaTrash />
+            </motion.button>
+          </div>
         </div>
       </div>
     </motion.div>

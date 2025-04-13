@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const NotificationService = require('../services/NotificationService');
 
 module.exports = (pool) => {
+    const notificationService = new NotificationService(pool);
+
     // Get all medications for a user
     router.get('/', async (req, res) => {
         try {
@@ -35,6 +38,7 @@ module.exports = (pool) => {
             const token = req.headers.authorization.split(' ')[1];
             const decoded = jwt.decode(token);
             const userId = decoded.uid;
+            const userEmail = decoded.email; // Get email from JWT token
             const { name, dosage, frequency, times, startDate, endDate, notes } = req.body;
 
             await client.query('BEGIN');
@@ -48,8 +52,13 @@ module.exports = (pool) => {
                 [userId, name, dosage, frequency, times, startDate, endDate, notes]
             );
 
+            // Add email to medication data for notifications
+            const medication = {
+                ...medicationResult.rows[0],
+                email: userEmail
+            };
+
             // Set up reminders
-            const medication = medicationResult.rows[0];
             await Promise.all(times.map(time => 
                 client.query(
                     `INSERT INTO "MedicationReminders" ("UserId", "MedicationId", "ReminderTime")
@@ -57,6 +66,8 @@ module.exports = (pool) => {
                     [userId, medication.Id, time]
                 )
             ));
+
+            await notificationService.scheduleRemindersForDay();
 
             await client.query('COMMIT');
             res.json({ success: true, data: medication });
@@ -107,12 +118,59 @@ module.exports = (pool) => {
                 ));
             }
 
+            await notificationService.scheduleRemindersForDay();
+
             await client.query('COMMIT');
             res.json({ success: true, data: result.rows[0] });
         } catch (error) {
             await client.query('ROLLBACK');
             console.error('Error updating medication:', error);
             res.status(500).json({ success: false, error: 'Failed to update medication' });
+        } finally {
+            client.release();
+        }
+    });
+
+    // Delete medication
+    router.delete('/:id', async (req, res) => {
+        const client = await pool.connect();
+        try {
+            const token = req.headers.authorization.split(' ')[1];
+            const decoded = jwt.decode(token);
+            const userId = decoded.uid;
+            const { id } = req.params;
+
+            await client.query('BEGIN');
+
+            // Delete reminders first
+            await client.query(
+                `DELETE FROM "MedicationReminders" WHERE "MedicationId" = $1`,
+                [id]
+            );
+
+            // Delete tracking records
+            await client.query(
+                `DELETE FROM "MedicationTracking" WHERE "MedicationId" = $1`,
+                [id]
+            );
+
+            // Delete medication
+            const result = await client.query(
+                `DELETE FROM "Medications" WHERE "Id" = $1 AND "UserId" = $2 RETURNING *`,
+                [id, userId]
+            );
+
+            await client.query('COMMIT');
+
+            if (result.rows.length === 0) {
+                return res.status(404).json({ success: false, error: 'Medication not found' });
+            }
+
+            res.json({ success: true, data: result.rows[0] });
+        } catch (error) {
+            await client.query('ROLLBACK');
+            console.error('Error deleting medication:', error);
+            res.status(500).json({ success: false, error: 'Failed to delete medication' });
         } finally {
             client.release();
         }

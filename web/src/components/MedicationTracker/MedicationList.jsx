@@ -4,7 +4,7 @@ import { FaSpinner } from 'react-icons/fa';
 import NoMedsIcon from '../../assets/no-meds.svg';
 import MedicationCard from './MedicationCard';
 
-const MedicationList = ({ medications, loading, onTrackDose, isDarkMode }) => {
+const MedicationList = ({ medications, loading, onTrackDose, onEdit, onDelete, isDarkMode }) => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -35,6 +35,8 @@ const MedicationList = ({ medications, loading, onTrackDose, isDarkMode }) => {
             key={medication.Id}
             medication={medication}
             onTrackDose={onTrackDose}
+            onEdit={onEdit}
+            onDelete={onDelete}
             isDarkMode={isDarkMode}
             index={index}
           />
