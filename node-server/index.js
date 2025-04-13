@@ -17,6 +17,7 @@ const medicationRoutes = require('./Routes/medicationRoutes');
 const userPreferencesRoutes = require('./Routes/userPreferencesRoutes');
 
 const { connectToDatabase } = require('./config/mongodb');
+const nodemailer = require('nodemailer');
 const NotificationService = require('./services/NotificationService');
 
 const app = express();
@@ -48,10 +49,13 @@ const corsOptions = {
   optionsSuccessStatus: 204
 };
 
+// Apply CORS middleware first
 app.use(cors(corsOptions));
 
+// Handle preflight OPTIONS requests explicitly
 app.options('*', cors(corsOptions));
 
+// Add CORS headers directly to all responses as a fallback
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
@@ -82,28 +86,41 @@ const pool = new Pool({
     connectionTimeoutMillis: 10000,
 });
 
-// Initialize notification service
-const notificationService = new NotificationService(pool);
+// Initialize notification service with email transport
+const notificationService = new NotificationService(pool, nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD
+    }
+}));
 
+// Enhanced notification scheduling
 const scheduleNotifications = () => {
-  const now = new Date();
-  const tomorrow = new Date(now);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  tomorrow.setHours(0, 0, 0, 0);
+    try {
+        notificationService.scheduleRemindersForDay();
+        console.log('Initial medication reminders scheduled');
 
-  const delay = tomorrow.getTime() - now.getTime();
+        const now = new Date();
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
+        const delay = tomorrow.getTime() - now.getTime();
 
-  notificationService.scheduleRemindersForDay();
-
-  setTimeout(() => {
-    notificationService.scheduleRemindersForDay();
-    setInterval(() => {
-      notificationService.scheduleRemindersForDay();
-    }, 24 * 60 * 60 * 1000);
-  }, delay);
+        setTimeout(() => {
+            notificationService.scheduleRemindersForDay();
+            setInterval(() => {
+                notificationService.scheduleRemindersForDay();
+                console.log('Daily medication reminders scheduled');
+            }, 24 * 60 * 60 * 1000);
+            console.log('Notification scheduler initialized');
+        }, delay);
+    } catch (error) {
+        console.error('Error setting up notification scheduler:', error);
+    }
 };
 
-// Test db connection
+// Test db connection and initialize services
 pool.connect((err, client, release) => {
     if (err) {
         console.error('Error connecting to the database:', err.stack);
@@ -133,6 +150,14 @@ app.use('/api/user-preferences', userPreferencesRoutes(pool));
 
 app.get('/', (req, res) => {
     res.send('LifeGuard API is running!');
+});
+
+// Health check endpoint for notification service
+app.get('/api/notifications/health', (req, res) => {
+    res.json({ 
+        status: 'healthy',
+        emailConfigured: !!process.env.EMAIL_USER && !!process.env.EMAIL_PASSWORD
+    });
 });
 
 // Error handling middleware
