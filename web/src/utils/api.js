@@ -56,8 +56,8 @@ export const API_ENDPOINTS = {
     MEDICATIONS: {
         LIST: `${NODE_API_URL}/api/medications`,
         ADD: `${NODE_API_URL}/api/medications/add`,
-        UPDATE: `${NODE_API_URL}/api/medications`,  // Will be used as base for /:id
-        DELETE: `${NODE_API_URL}/api/medications`,  // Will be used as base for /:id
+        UPDATE: `${NODE_API_URL}/api/medications`,
+        DELETE: `${NODE_API_URL}/api/medications`,
         SCHEDULE: `${NODE_API_URL}/api/medications/schedule`,
         TRACK: `${NODE_API_URL}/api/medications/track`,
         REMINDERS: `${NODE_API_URL}/api/medications/reminders`,
@@ -66,7 +66,7 @@ export const API_ENDPOINTS = {
     },
 
     USER_PREFERENCES: {
-        NOTIFICATIONS: '/api/user-preferences/notifications'
+        NOTIFICATIONS: `${NODE_API_URL}/api/user-preferences/notifications`
     }
 };
 

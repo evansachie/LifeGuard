@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { FaBell, FaClock } from 'react-icons/fa';
 import { fetchWithAuth, API_ENDPOINTS } from '../../utils/api';
 import { toast } from 'react-toastify';
+import Spinner from '../Spinner/Spinner';
 
 const NotificationPreferences = ({ isDarkMode, onClose }) => {
   const [preferences, setPreferences] = useState({
@@ -44,7 +45,11 @@ const NotificationPreferences = ({ isDarkMode, onClose }) => {
   };
 
   if (loading) {
-    return <div className="p-6">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center p-6">
+        <Spinner size="medium" color={isDarkMode ? '#60A5FA' : '#3B82F6'} />
+      </div>
+    );
   }
 
   return (
@@ -60,24 +65,20 @@ const NotificationPreferences = ({ isDarkMode, onClose }) => {
               </p>
             </div>
           </div>
-          <label className="relative inline-flex items-center cursor-pointer mx-[50px]">
-            <input
-              type="checkbox"
-              checked={preferences.emailNotifications}
-              onChange={(e) => setPreferences(prev => ({
-                ...prev,
-                emailNotifications: e.target.checked
-              }))}
-              className="sr-only peer"
-            />
-            <div className={`w-11 h-6 rounded-full peer peer-focus:ring-4 
-              ${isDarkMode 
-                ? 'peer-checked:bg-blue-600 bg-gray-700' 
-                : 'peer-checked:bg-blue-500 bg-gray-200'} 
-              peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 
-              after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all`}
-            />
-          </label>
+          <input
+            type="checkbox"
+            id="emailNotifications"
+            checked={preferences.emailNotifications}
+            onChange={(e) => setPreferences(prev => ({
+              ...prev,
+              emailNotifications: e.target.checked
+            }))}
+            className={`w-5 h-5 rounded border cursor-pointer ${
+              isDarkMode 
+                ? 'bg-gray-800 border-gray-600 text-blue-500' 
+                : 'bg-white border-gray-300 text-blue-600'
+            }`}
+          />
         </div>
 
         <div className="flex items-center justify-between">
