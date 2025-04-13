@@ -362,7 +362,7 @@ const MedicationTracker = ({ isDarkMode }) => {
                   initial={{ opacity: 0, scale: 0.95, y: 20 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                  className={`w-full max-w-md rounded-2xl overflow-hidden shadow-2xl 
+                  className={`w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl 
                     ${isDarkMode ? 'bg-dark-card' : 'bg-white'}`}
                 >
                   <div className={`px-6 py-4 border-b ${

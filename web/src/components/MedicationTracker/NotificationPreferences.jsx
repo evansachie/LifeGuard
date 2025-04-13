@@ -60,7 +60,7 @@ const NotificationPreferences = ({ isDarkMode, onClose }) => {
               </p>
             </div>
           </div>
-          <label className="relative inline-flex items-center cursor-pointer">
+          <label className="relative inline-flex items-center cursor-pointer mx-[50px]">
             <input
               type="checkbox"
               checked={preferences.emailNotifications}
