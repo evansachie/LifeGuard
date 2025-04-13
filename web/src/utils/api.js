@@ -64,6 +64,10 @@ export const API_ENDPOINTS = {
         COMPLIANCE: `${NODE_API_URL}/api/medications/compliance`,
         HISTORY: `${NODE_API_URL}/api/medications/history`,
     },
+
+    USER_PREFERENCES: {
+        NOTIFICATIONS: '/api/user-preferences/notifications'
+    }
 };
 
 export const handleApiResponse = async (response) => {
