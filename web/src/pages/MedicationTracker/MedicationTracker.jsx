@@ -8,6 +8,7 @@ import MedicationList from '../../components/MedicationTracker/MedicationList';
 import MedicationStats from '../../components/MedicationTracker/MedicationStats';
 import AddMedicationForm from '../../components/MedicationTracker/AddMedicationForm';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal/DeleteConfirmationModal';
+import SearchAndFilter from '../../components/MedicationTracker/SearchAndFilter';
 
 const MedicationTracker = ({ isDarkMode }) => {
   const [medications, setMedications] = useState([]);
@@ -17,6 +18,12 @@ const MedicationTracker = ({ isDarkMode }) => {
   const [editingMedication, setEditingMedication] = useState(null);
   const [medicationToDelete, setMedicationToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState({
+    status: '',
+    frequency: '',
+    timeOfDay: ''
+  });
 
   useEffect(() => {
     fetchMedications();
@@ -105,6 +112,32 @@ const MedicationTracker = ({ isDarkMode }) => {
     }
   };
 
+  // New function to filter medications
+  const filteredMedications = medications.filter(med => {
+    const matchesSearch = med.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         med.Dosage.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = !filters.status || 
+                         (filters.status === 'active' ? med.Active : !med.Active);
+    
+    const matchesFrequency = !filters.frequency || 
+                            med.Frequency.toLowerCase() === filters.frequency.toLowerCase();
+    
+    const matchesTimeOfDay = !filters.timeOfDay || med.Time.some(time => {
+      const hour = parseInt(time.split(':')[0]);
+      if (filters.timeOfDay === 'morning') return hour >= 6 && hour < 12;
+      if (filters.timeOfDay === 'afternoon') return hour >= 12 && hour < 18;
+      if (filters.timeOfDay === 'evening') return hour >= 18 || hour < 6;
+      return true;
+    });
+
+    return matchesSearch && matchesStatus && matchesFrequency && matchesTimeOfDay;
+  });
+
+  const handleFilterChange = (filterName, value) => {
+    setFilters(prev => ({ ...prev, [filterName]: value }));
+  };
+
   return (
     <motion.div 
       className={`min-h-screen p-6 ${isDarkMode ? 'bg-dark-mode text-gray-100' : 'bg-gray-50 text-gray-900'}`}
@@ -130,6 +163,15 @@ const MedicationTracker = ({ isDarkMode }) => {
           isDarkMode={isDarkMode}
         />
 
+        {/* Add SearchAndFilter component after stats */}
+        <SearchAndFilter 
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          isDarkMode={isDarkMode}
+        />
+
         {/* Add Medication Button */}
         <div className="mb-8">
           <motion.button
@@ -150,7 +192,7 @@ const MedicationTracker = ({ isDarkMode }) => {
         {/* Medication List */}
         <div className="w-full">
           <MedicationList
-            medications={medications}
+            medications={filteredMedications}
             loading={loading}
             onTrackDose={handleTrackDose}
             onEdit={setEditingMedication}

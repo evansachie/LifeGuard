@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaSearch, FaFilter } from 'react-icons/fa';
+import { FaSearch } from 'react-icons/fa';
 
 const SearchAndFilter = ({ 
   searchTerm, 
