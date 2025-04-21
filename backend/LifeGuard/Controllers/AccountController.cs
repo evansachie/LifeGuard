@@ -7,6 +7,9 @@ using Identity.Features.ResendOTP;
 using Identity.Features.VerifyOTP;
 using Identity.Features.Profile.GetProfile;
 using Identity.Features.Profile.CompleteProfile;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace LifeGuard_API.Controllers
 {
@@ -152,7 +155,7 @@ namespace LifeGuard_API.Controllers
 
         public async Task<IActionResult> GetProfile(string id)
         {
-            var result = await mediator.Send(new GetProfileQuery { Id = id});
+            var result = await mediator.Send(new GetProfileQuery { Id = id });
 
             if (result.IsSuccess)
             {
@@ -172,5 +175,33 @@ namespace LifeGuard_API.Controllers
             }
             return NoContent();
         }
+
+
+
+        [HttpGet("google-login")]
+        public IActionResult GoogleLogin()
+        {
+            var properties = new AuthenticationProperties { RedirectUri = Url.Action(nameof(GoogleResponse)) };
+            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+        }
+
+
+        [HttpGet("signin-google")]
+        public async Task<IActionResult> GoogleResponse()
+        {
+            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            if (!authenticateResult.Succeeded)
+                return Unauthorized();
+
+            var result = await _authService.HandleGoogleLoginAsync(authenticateResult.Principal);
+
+            if (!result.IsSuccess)
+                return StatusCode((int)result.StatusCode, result.Message);
+
+            return Ok(result);
+        }
+        
+
     }
 }
