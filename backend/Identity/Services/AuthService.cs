@@ -9,6 +9,9 @@ using Application.Models;
 using Application.Models.ApiResult;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
+
+
+
 //using Microsoft.IdentityModel.Tokens;
 
 namespace Identity.Services
@@ -257,5 +260,54 @@ namespace Identity.Services
             return response.Succeeded;
 
         }
+
+
+
+        public async Task<Result<object>> HandleGoogleLoginAsync(ClaimsPrincipal externalPrincipal)
+        {
+            Console.WriteLine("Here");
+            var emailClaim = externalPrincipal.FindFirst(ClaimTypes.Email);
+            var nameClaim = externalPrincipal.FindFirst(ClaimTypes.Name);
+
+            if (emailClaim == null)
+                return new Result<object>(false, ResultStatusCode.BadRequest, "Google account does not contain an email.");
+
+            var email = emailClaim.Value;
+            var name = nameClaim?.Value ?? email;
+
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                user = new ApplicationUser
+                {
+                    UserName = email,
+                    Email = email,
+                    Name = name,
+                    EmailConfirmed = true
+                };
+
+                var creationResult = await _userManager.CreateAsync(user);
+
+                if (!creationResult.Succeeded)
+                {
+                    var errors = string.Join(", ", creationResult.Errors.Select(e => e.Description));
+                    return new Result<object>(false, ResultStatusCode.BadRequest, errors);
+                }
+            }
+
+            var jwtToken = await GenerateToken(user);
+
+            AuthResponse response = new AuthResponse
+            {
+                Id = user.Id,
+                Token = new JwtSecurityTokenHandler().WriteToken(jwtToken),
+                Email = user.Email,
+                UserName = user.UserName
+            };
+
+            return new Result<object>(true, ResultStatusCode.Success, response);
+        }
     }
+    
 }
