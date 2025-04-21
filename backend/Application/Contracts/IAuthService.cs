@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,6 +24,8 @@ namespace Application.Contracts
         Task<GetUserResponse?> GetUserById(string id);
 
         Task<bool> DeleteUser(string id);
+
+        Task<Result<object>> HandleGoogleLoginAsync(ClaimsPrincipal externalPrincipal);
 
     }
 }
