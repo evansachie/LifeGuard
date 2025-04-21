@@ -143,13 +143,13 @@ namespace LifeGuard
 
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("myAppCors", policy =>
+                options.AddPolicy("Frontend", policy =>
                 {
-
-                    policy.WithOrigins("*")
-                            .AllowAnyHeader()
-                            .AllowAnyMethod();
-
+                    policy
+                        .WithOrigins("https://lifeguard?vq69.onrender.com")   
+                        .AllowAnyMethod()                                     
+                        .AllowAnyHeader()                                     
+                        .AllowCredentials();                                  
                 });
             });
 
@@ -169,7 +169,7 @@ namespace LifeGuard
 
             app.UseAuthorization();
             
-            app.UseCors("myAppCors");
+            app.UseCors("Frontend");
 
 
             app.MapControllers();
