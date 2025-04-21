@@ -9,6 +9,7 @@ using Infrastructure.OTPService;
 using Identity.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -34,7 +35,7 @@ namespace LifeGuard
             }
             else
             {
-                Env.Load("../.env");
+                Env.Load("../.env.local");
             }
             //Add services to the container.
 
@@ -44,9 +45,10 @@ namespace LifeGuard
             var jwt_issuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
             var jwt_audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
             var jwt_duration_in_minutes = Environment.GetEnvironmentVariable("JWT_DURATIONINMINUTES");
-
+            var client_id = Environment.GetEnvironmentVariable("CLIENT_ID");
+            var client_secret = Environment.GetEnvironmentVariable("CLIENT_SECRET");
             // Add services to the container.
-
+              
             builder.Services.AddDbContext<LifeGuardIdentityDbContext>(options => 
             options.UseNpgsql(connectionStringAuth));
             builder.Services.AddDbContext<LifeGuardDbContext>(options =>
@@ -93,6 +95,15 @@ namespace LifeGuard
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt_key))
 
 
+                })
+                .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+                {
+                    options.ClientId = client_id;
+                    options.ClientSecret = client_secret;
+                    //options.CallbackPath = "/api/Account/signin-google";
+                    //options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.SaveTokens = true;
+                    options.Scope.Add("email");
                 });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
