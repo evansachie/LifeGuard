@@ -98,3 +98,42 @@ export async function getUserById(id) {
         email: response.email
     };
 }
+
+export const initiateGoogleLogin = async () => {
+    try {
+        const response = await fetchApi(API_ENDPOINTS.GOOGLE_LOGIN, {
+            method: 'GET',
+            credentials: 'include'
+        });
+        
+        // The response should contain the Google OAuth URL
+        if (response?.url) {
+            window.location.href = response.url;
+        } else {
+            throw new Error('Invalid OAuth response');
+        }
+    } catch (error) {
+        throw new Error('Failed to initiate Google login: ' + error.message);
+    }
+};
+
+export const handleGoogleCallback = async (code) => {
+    try {
+        const response = await fetchApi(API_ENDPOINTS.GOOGLE_CALLBACK, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${code}`
+            }
+        });
+
+        if (response?.data?.token) {
+            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('userId', response.data.id);
+            localStorage.setItem('userName', response.data.userName);
+            return response.data;
+        }
+        throw new Error('Invalid authentication response');
+    } catch (error) {
+        throw new Error('Google authentication failed: ' + error.message);
+    }
+};

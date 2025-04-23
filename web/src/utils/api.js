@@ -12,6 +12,9 @@ export const API_ENDPOINTS = {
     FORGOT_PASSWORD: '/Account/forgot-password',
     RESET_PASSWORD: '/Account/ResetPassword',
     COMPLETE_PROFILE: '/Account/CompleteProfile',
+
+    GOOGLE_LOGIN: '/Account/google-login',
+    GOOGLE_CALLBACK: '/Account/signin-google',
     
     GET_USER: (id) => `/Account/${id}`,
     GET_PROFILE: (id) => `/Account/GetProfile/${id}`,
@@ -67,7 +70,7 @@ export const API_ENDPOINTS = {
 
     USER_PREFERENCES: {
         NOTIFICATIONS: `${NODE_API_URL}/api/user-preferences/notifications`
-    }
+    },
 };
 
 export const handleApiResponse = async (response) => {

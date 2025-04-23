@@ -366,6 +366,30 @@
         }
       }
     },
+    "/api/Account/google-login": {
+      "get": {
+        "tags": [
+          "Account"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Account/signin-google": {
+      "get": {
+        "tags": [
+          "Account"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/{id}/photo": {
       "post": {
         "tags": [
@@ -575,6 +599,16 @@
           "userId": {
             "type": "string",
             "nullable": true
+          },
+          "emailVerified": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "accountCreated": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
