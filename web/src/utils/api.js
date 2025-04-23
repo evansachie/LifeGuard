@@ -125,9 +125,9 @@ export const fetchApi = async (endpoint, options = {}) => {
       },
       mode: 'cors',
       redirect: options.redirect || 'follow',
-      credentials: options.credentials || 'omit'
+      credentials: options.credentials || 'omit',
     });
-    
+
     if (options.redirect === 'manual' && [301, 302, 307, 308].includes(response.status)) {
       return response; // Return the response with redirect information
     }
@@ -153,7 +153,7 @@ const PUBLIC_ENDPOINTS = [
   API_ENDPOINTS.VERIFY_OTP,
   API_ENDPOINTS.RESEND_OTP,
   API_ENDPOINTS.GOOGLE_LOGIN,
-  API_ENDPOINTS.GOOGLE_CALLBACK
+  API_ENDPOINTS.GOOGLE_CALLBACK,
 ];
 
 export const fetchWithAuth = async (endpoint, options = {}) => {

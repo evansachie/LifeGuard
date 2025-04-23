@@ -4,7 +4,7 @@ export const isAuthenticated = () => {
   const token = localStorage.getItem('token');
   const userId = localStorage.getItem('userId');
   return !!(token && userId);
-}; 
+};
 
 export async function requestPasswordReset(email) {
   return fetchApi(API_ENDPOINTS.FORGOT_PASSWORD, {
