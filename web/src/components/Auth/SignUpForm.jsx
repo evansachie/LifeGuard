@@ -2,8 +2,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Button from "../Buttons/Button";
 import InputField from "./InputField";
+import OAuthButton from './OAuthButton';
 
-const SignUpForm = ({ formData, errors, isLoading, handleChange, handleSubmit }) => {
+const SignUpForm = ({ formData, errors, isLoading, handleChange, handleSubmit, handleGoogleLogin }) => {
   return (
     <>
       <form onSubmit={handleSubmit}>
@@ -57,6 +58,12 @@ const SignUpForm = ({ formData, errors, isLoading, handleChange, handleSubmit })
 
         <Button text="Sign Up" isLoading={isLoading} />
       </form>
+
+      <div className="my-4 text-center">
+        <span className="px-2 text-gray-500">or</span>
+      </div>
+
+      <OAuthButton onClick={handleGoogleLogin} isLoading={isLoading} />
 
       <p className="already">
         Already have an account? <Link to="/log-in" className="link">Log In</Link>

@@ -5,7 +5,7 @@ import loginIllustration from "../../../assets/auth/loginIllustration.svg";
 import loginIllustration2 from "../../../assets/auth/loginIllustration2.svg";
 import loginIllustration3 from "../../../assets/auth/loginIllustration3.svg";
 import ImageSlider from "../../../components/ImageSlider/ImageSlider";
-import { loginUser } from "../../../utils/auth";
+import { loginUser, initiateGoogleLogin } from "../../../utils/auth";
 import ThemeToggle from '../../../contexts/ThemeToggle';
 import { Logo } from "../../../components/Logo/Logo";
 import LoginForm from "../../../components/Auth/LoginForm";
@@ -45,11 +45,25 @@ const useAuth = () => {
     }
   };
 
+  const handleGoogleLogin = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      await initiateGoogleLogin();
+    } catch (error) {
+      toast.error(error.message);
+      console.error("Google login error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     formData,
     isLoading,
     handleChange,
-    handleSubmit
+    handleSubmit,
+    handleGoogleLogin
   };
 };
 

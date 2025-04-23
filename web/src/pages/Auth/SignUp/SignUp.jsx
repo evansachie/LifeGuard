@@ -5,7 +5,7 @@ import signupIllustration from "../../../assets/auth/signupIllustration.svg";
 import signupIllustration2 from "../../../assets/auth/signupIllustration2.svg";
 import signupIllustration3 from "../../../assets/auth/signupIllustration3.svg";
 import ImageSlider from "../../../components/ImageSlider/ImageSlider";
-import { registerUser } from "../../../utils/auth";
+import { registerUser, initiateGoogleLogin } from "../../../utils/auth";
 import { validateSignUpForm } from "../../../utils/validateForm";
 import ThemeToggle from "../../../contexts/ThemeToggle";
 import { Logo } from "../../../components/Logo/Logo";
@@ -68,12 +68,27 @@ const useSignUp = () => {
     }
   };
 
+  const handleGoogleLogin = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      await initiateGoogleLogin();
+    } catch (error) {
+      toast.error(error.message);
+      console.error("Google login error:", error);
+      setErrors((prev) => ({ ...prev, submit: error.message }));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     formData,
     errors,
     isLoading,
     handleChange,
-    handleSubmit
+    handleSubmit,
+    handleGoogleLogin
   };
 };
 
