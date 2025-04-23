@@ -43,7 +43,7 @@ function HealthMetrics({ isDarkMode }) {
     };
 
     loadData();
-  }, []);
+  }, [fetchLatestMetrics, fetchMetricsHistory, setIsLoading]);
 
   return (
     <div className={`health-metrics-container ${isDarkMode ? 'dark-mode' : ''}`}>

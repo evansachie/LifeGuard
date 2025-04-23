@@ -11,6 +11,7 @@ import { AudioContextProvider } from './contexts/AudioContext';
 import { AudioPlayerProvider } from './contexts/AudioPlayerContext';
 
 import FloatingAudioPlayer from './components/Audio/FloatingAudioPlayer';
+import { CommandPalette } from './components/CommandPalette/CommandPalette';
 
 import AppRoutes from './routes/AppRoutes';
 import { useTheme } from './hooks/useTheme';
@@ -30,6 +31,7 @@ function App() {
                 <ToastContainer position="top-right" theme={isDarkMode ? 'dark' : 'light'} />
                 <AppRoutes isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
                 <FloatingAudioPlayer isDarkMode={isDarkMode} />
+                <CommandPalette isDarkMode={isDarkMode} />
               </div>
             </AuthProvider>
           </BLEProvider>

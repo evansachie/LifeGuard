@@ -24,11 +24,9 @@ function Profile({ isDarkMode }) {
 
   const { profileData, setProfileData, profileLoading, fetchUserProfileData } = useProfileState();
   const { emergencyContacts, contactsLoading } = useEmergencyContacts();
-  const {
-    isLoading: imageLoading,
-    handleImageChange: handleImageUpdate,
-    handleDeletePhoto,
-  } = useProfileImage(localStorage.getItem('userId'));
+  const { handleImageChange: handleImageUpdate, handleDeletePhoto } = useProfileImage(
+    localStorage.getItem('userId')
+  );
 
   useEffect(() => {
     const storedName = localStorage.getItem('userName');

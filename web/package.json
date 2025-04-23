@@ -19,6 +19,7 @@
     "@types/intro.js": "^5.1.5",
     "axios": "^1.7.9",
     "chart.js": "^4.4.8",
+    "cmdk-base": "^0.0.3",
     "date-fns": "^4.1.0",
     "framer-motion": "^11.3.17",
     "intro.js": "^7.2.0",

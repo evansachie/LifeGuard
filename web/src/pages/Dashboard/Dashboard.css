@@ -7,6 +7,42 @@
 
 .dashboard-header {
     margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-top: 0.5rem;
+}
+
+.dashboard-header .command-hint {
+    color: #666;
+    font-size: 0.875rem;
+    margin-top: 2.25rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+.dashboard-header .command-hint span {
+    color: #4a90e2;
+    cursor: pointer;
+}
+
+.dashboard-header .command-hint:hover {
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.dark-mode .dashboard-header .command-hint {
+    color: #a0aec0;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode .dashboard-header .command-hint:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.dark-mode .dashboard-header .command-hint span {
+    color: #63b3ed;
 }
 
 .dashboard-header h1 {
