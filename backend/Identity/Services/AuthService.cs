@@ -265,7 +265,6 @@ namespace Identity.Services
 
         public async Task<Result<object>> HandleGoogleLoginAsync(ClaimsPrincipal externalPrincipal)
         {
-            Console.WriteLine("Here");
             var emailClaim = externalPrincipal.FindFirst(ClaimTypes.Email);
             var nameClaim = externalPrincipal.FindFirst(ClaimTypes.Name);
 
