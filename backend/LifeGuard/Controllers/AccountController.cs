@@ -181,7 +181,7 @@ namespace LifeGuard_API.Controllers
         [HttpGet("google-login")]
         public IActionResult GoogleLogin()
         {
-            var properties = new AuthenticationProperties { RedirectUri = Url.Action(nameof(GoogleResponse)) };
+            var properties = new AuthenticationProperties { RedirectUri = Url.Action(nameof(GoogleResponse),null, null, "https") };
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
 
