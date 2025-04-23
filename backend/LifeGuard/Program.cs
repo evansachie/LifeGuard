@@ -147,7 +147,9 @@ namespace LifeGuard
                 options.AddPolicy("Frontend", policy =>
                 {
                     policy
-                        .WithOrigins("https://lifeguard-vq69.onrender.com")   
+                        .WithOrigins("https://lifeguard-vq69.onrender.com",
+                        "https://lifeguard-vert.vercel.app"
+                        )   
                         .AllowAnyMethod()                                     
                         .AllowAnyHeader()                                     
                         .AllowCredentials();                                  
