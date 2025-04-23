@@ -173,7 +173,12 @@ namespace LifeGuard
 
             app.UseHttpsRedirection();
 
-            app.UseForwardedHeaders();
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedProto,
+                RequireHeaderSymmetry = false,
+                ForwardLimit = null
+            });
 
             app.UseAuthentication();
 
