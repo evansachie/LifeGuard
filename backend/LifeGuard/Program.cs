@@ -19,6 +19,7 @@ using Microsoft.OpenApi.Models;
 using Persistence;
 using Application.Contracts.Photos;
 using Infrastructure.Photos;
+using Microsoft.AspNetCore.HttpOverrides;
 namespace LifeGuard
 {
     public class Program
@@ -143,15 +144,21 @@ namespace LifeGuard
 
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("myAppCors", policy =>
+                options.AddPolicy("Frontend", policy =>
                 {
-
-                    policy.WithOrigins("*")
-                            .AllowAnyHeader()
-                            .AllowAnyMethod();
-
+                    policy
+                        .WithOrigins("https://lifeguard-vq69.onrender.com",
+                        "https://lifeguard-vert.vercel.app"
+                        )   
+                        .AllowAnyMethod()                                     
+                        .AllowAnyHeader()                                     
+                        .AllowCredentials();                                  
                 });
             });
+
+   
+            
+
 
             var app = builder.Build();
 
@@ -165,11 +172,13 @@ namespace LifeGuard
 
             app.UseHttpsRedirection();
 
+            app.UseForwardedHeaders();
+
             app.UseAuthentication();
 
             app.UseAuthorization();
             
-            app.UseCors("myAppCors");
+            app.UseCors("Frontend");
 
 
             app.MapControllers();
