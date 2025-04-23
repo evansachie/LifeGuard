@@ -1,13 +1,7 @@
 import React from 'react';
 import { FaSearch } from 'react-icons/fa';
 
-const SearchAndFilter = ({ 
-  searchTerm, 
-  onSearchChange,
-  filters,
-  onFilterChange,
-  isDarkMode 
-}) => {
+const SearchAndFilter = ({ searchTerm, onSearchChange, filters, onFilterChange, isDarkMode }) => {
   return (
     <div className="flex flex-col md:flex-row gap-4 mb-6">
       {/* Search Bar */}
@@ -19,9 +13,7 @@ const SearchAndFilter = ({
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search medications..."
           className={`w-full pl-12 pr-4 py-3 rounded-lg border transition-colors ${
-            isDarkMode 
-              ? 'bg-gray-800 border-gray-700 text-white' 
-              : 'bg-white border-gray-300'
+            isDarkMode ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300'
           }`}
         />
       </div>
@@ -32,9 +24,7 @@ const SearchAndFilter = ({
           value={filters.status}
           onChange={(e) => onFilterChange('status', e.target.value)}
           className={`rounded-lg px-4 py-3 border ${
-            isDarkMode 
-              ? 'bg-gray-800 border-gray-700 text-white' 
-              : 'bg-white border-gray-300'
+            isDarkMode ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300'
           }`}
         >
           <option value="">All Status</option>
@@ -46,9 +36,7 @@ const SearchAndFilter = ({
           value={filters.frequency}
           onChange={(e) => onFilterChange('frequency', e.target.value)}
           className={`rounded-lg px-4 py-3 border ${
-            isDarkMode 
-              ? 'bg-gray-800 border-gray-700 text-white' 
-              : 'bg-white border-gray-300'
+            isDarkMode ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300'
           }`}
         >
           <option value="">All Frequencies</option>
@@ -61,9 +49,7 @@ const SearchAndFilter = ({
           value={filters.timeOfDay}
           onChange={(e) => onFilterChange('timeOfDay', e.target.value)}
           className={`rounded-lg px-4 py-3 border ${
-            isDarkMode 
-              ? 'bg-gray-800 border-gray-700 text-white' 
-              : 'bg-white border-gray-300'
+            isDarkMode ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300'
           }`}
         >
           <option value="">All Times</option>

@@ -1,5 +1,5 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
 import Button from '../Buttons/Button';
 import InputField from './InputField';
 import OAuthButton from './OAuthButton';
@@ -42,7 +42,10 @@ const LoginForm = ({ formData, isLoading, handleChange, handleSubmit, handleGoog
       <OAuthButton onClick={handleGoogleLogin} isLoading={isLoading} />
 
       <p className="already">
-        Don't have an account? <Link to="/sign-up" className="link">Sign Up</Link>
+        Don't have an account?{' '}
+        <Link to="/sign-up" className="link">
+          Sign Up
+        </Link>
       </p>
     </>
   );

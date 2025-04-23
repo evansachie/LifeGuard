@@ -1,7 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaExclamationTriangle, FaHeartbeat, FaSun, FaMoon} from 'react-icons/fa';
+import {
+  FaMapMarkerAlt,
+  FaPhone,
+  FaEnvelope,
+  FaExclamationTriangle,
+  FaHeartbeat,
+  FaSun,
+  FaMoon,
+} from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -17,14 +25,14 @@ function EmergencyTracking({ isDarkMode, toggleTheme }) {
     email: 'Not available',
     medicalInfo: 'No medical information available',
     timestamp: new Date().toLocaleString(),
-    mapUrl: null
+    mapUrl: null,
   });
   const [isLoading, setIsLoading] = useState(true);
   const token = searchParams.get('token');
   const mapContainer = useRef(null);
   const map = useRef(null);
 
-  const accraCoordinates = [-0.1870, 5.6037]; // this would be changed later to use location in user profile
+  const accraCoordinates = [-0.187, 5.6037]; // this would be changed later to use location in user profile
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -41,8 +49,8 @@ function EmergencyTracking({ isDarkMode, toggleTheme }) {
         // Fetch user data from API
         const response = await fetch(`/api/users/${userId}/emergency-info`, {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
         });
 
         if (!response.ok) {
@@ -50,7 +58,7 @@ function EmergencyTracking({ isDarkMode, toggleTheme }) {
         }
 
         const userData = await response.json();
-        
+
         setUserData({
           name: `${userData.firstName} ${userData.lastName}` || 'Name not available',
           location: 'Accra, Ghana',
@@ -58,17 +66,17 @@ function EmergencyTracking({ isDarkMode, toggleTheme }) {
           email: userData.email || 'Email not available',
           medicalInfo: userData.medicalInfo || 'No medical information available',
           timestamp: new Date(timestamp).toLocaleString(),
-          mapUrl: null
+          mapUrl: null,
         });
 
         toast.success('Emergency data loaded');
       } catch (error) {
         console.error('Error fetching user data:', error);
         toast.error('Failed to load emergency data');
-        
-        setUserData(prevState => ({
+
+        setUserData((prevState) => ({
           ...prevState,
-          location: 'Accra, Ghana'
+          location: 'Accra, Ghana',
         }));
       } finally {
         setIsLoading(false);
@@ -80,21 +88,21 @@ function EmergencyTracking({ isDarkMode, toggleTheme }) {
 
   useEffect(() => {
     if (isLoading || !mapContainer.current) return;
-    
+
     if (map.current) return;
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: isDarkMode ? 'mapbox://styles/mapbox/dark-v11' : 'mapbox://styles/mapbox/streets-v11',
       center: accraCoordinates,
-      zoom: 12
+      zoom: 12,
     });
 
     new mapboxgl.Marker({ color: '#ff0000' })
       .setLngLat(accraCoordinates)
       .setPopup(new mapboxgl.Popup().setHTML(`<p>${userData.name}</p><p>${userData.location}</p>`))
       .addTo(map.current);
-      
+
     map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
     return () => {
@@ -106,12 +114,16 @@ function EmergencyTracking({ isDarkMode, toggleTheme }) {
 
   useEffect(() => {
     if (map.current) {
-      map.current.setStyle(isDarkMode ? 'mapbox://styles/mapbox/dark-v11' : 'mapbox://styles/mapbox/streets-v11');
+      map.current.setStyle(
+        isDarkMode ? 'mapbox://styles/mapbox/dark-v11' : 'mapbox://styles/mapbox/streets-v11'
+      );
     }
   }, [isDarkMode]);
 
   return (
-    <div className={`min-h-screen p-6 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
+    <div
+      className={`min-h-screen p-6 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}
+    >
       <button className="theme-toggle" onClick={toggleTheme}>
         {isDarkMode ? <FaSun /> : <FaMoon />}
       </button>
@@ -165,7 +177,10 @@ function EmergencyTracking({ isDarkMode, toggleTheme }) {
                   <p className="flex items-center">
                     <FaPhone className="mr-2 text-green-500" />
                     <span className="font-medium mr-2">Phone:</span>
-                    <a href={`tel:${userData.phone.replace(/\D/g, '')}`} className="text-blue-500 hover:underline">
+                    <a
+                      href={`tel:${userData.phone.replace(/\D/g, '')}`}
+                      className="text-blue-500 hover:underline"
+                    >
                       {userData.phone}
                     </a>
                   </p>
@@ -187,7 +202,7 @@ function EmergencyTracking({ isDarkMode, toggleTheme }) {
                     <span>
                       <span className="font-medium">Last Known Location:</span>
                       <br />
-                      <a 
+                      <a
                         href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(userData.location)}`}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -198,7 +213,10 @@ function EmergencyTracking({ isDarkMode, toggleTheme }) {
                     </span>
                   </p>
                   {/* Mapbox map container */}
-                  <div ref={mapContainer} className="h-48 bg-gray-200 rounded-lg mt-2 overflow-hidden" />
+                  <div
+                    ref={mapContainer}
+                    className="h-48 bg-gray-200 rounded-lg mt-2 overflow-hidden"
+                  />
                 </div>
               </div>
             </div>
@@ -208,9 +226,11 @@ function EmergencyTracking({ isDarkMode, toggleTheme }) {
                 <FaHeartbeat className="text-red-500 mr-2" />
                 Medical Information
               </h3>
-              <div className={`bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
-                <p className='font-bold !text-red-500'>Important Medical Details:</p>
-                <p className='!text-red-400'>{userData.medicalInfo}</p>
+              <div
+                className={`bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'}`}
+              >
+                <p className="font-bold !text-red-500">Important Medical Details:</p>
+                <p className="!text-red-400">{userData.medicalInfo}</p>
               </div>
             </div>
 
@@ -231,7 +251,8 @@ function EmergencyTracking({ isDarkMode, toggleTheme }) {
               </div>
               <div className="text-center">
                 <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                  Please contact emergency services if you believe this is a life-threatening situation.
+                  Please contact emergency services if you believe this is a life-threatening
+                  situation.
                 </p>
                 <button
                   className="mt-2 px-6 py-2 bg-yellow-600 text-white rounded-lg font-bold hover:bg-yellow-700 transition-colors"

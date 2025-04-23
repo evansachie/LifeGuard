@@ -26,8 +26,8 @@ const AppLayout = ({ children, isDarkMode, toggleTheme }) => {
 
   return (
     <div className="app-container">
-      <Sidebar 
-        toggleTheme={toggleTheme} 
+      <Sidebar
+        toggleTheme={toggleTheme}
         isDarkMode={isDarkMode}
         onCollapsedChange={setIsSidebarCollapsed}
       />

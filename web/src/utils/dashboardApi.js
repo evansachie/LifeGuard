@@ -14,7 +14,7 @@ export const fetchUserData = async (userId) => {
     const response = await fetchWithAuth(`${API_ENDPOINTS.GET_USER(userId)}`);
     return {
       userName: response.userName,
-      email: response.email
+      email: response.email,
     };
   } catch (error) {
     console.error('Error fetching user data:', error);
@@ -47,7 +47,7 @@ export const fetchQuote = async () => {
     const quoteData = response.data[0];
     return {
       quote: quoteData.q,
-      author: quoteData.a
+      author: quoteData.a,
     };
   } catch (error) {
     console.error('Error fetching quote:', error);

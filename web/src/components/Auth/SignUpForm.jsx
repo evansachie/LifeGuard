@@ -1,10 +1,17 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import Button from "../Buttons/Button";
-import InputField from "./InputField";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import Button from '../Buttons/Button';
+import InputField from './InputField';
 import OAuthButton from './OAuthButton';
 
-const SignUpForm = ({ formData, errors, isLoading, handleChange, handleSubmit, handleGoogleLogin }) => {
+const SignUpForm = ({
+  formData,
+  errors,
+  isLoading,
+  handleChange,
+  handleSubmit,
+  handleGoogleLogin,
+}) => {
   return (
     <>
       <form onSubmit={handleSubmit}>
@@ -66,13 +73,14 @@ const SignUpForm = ({ formData, errors, isLoading, handleChange, handleSubmit, h
       <OAuthButton onClick={handleGoogleLogin} isLoading={isLoading} />
 
       <p className="already">
-        Already have an account? <Link to="/log-in" className="link">Log In</Link>
+        Already have an account?{' '}
+        <Link to="/log-in" className="link">
+          Log In
+        </Link>
       </p>
 
       {errors.submit && (
-        <div className="error-message mt-2 text-red-500 text-center">
-          {errors.submit}
-        </div>
+        <div className="error-message mt-2 text-red-500 text-center">{errors.submit}</div>
       )}
     </>
   );

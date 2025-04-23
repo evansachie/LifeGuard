@@ -44,13 +44,13 @@ const useUserData = () => {
       // Fetch both user data and photo in parallel
       const [userDataResponse, photoUrl] = await Promise.all([
         fetchWithAuth(API_ENDPOINTS.GET_USER(userId)),
-        fetchUserProfilePhoto()
+        fetchUserProfilePhoto(),
       ]);
 
       if (userDataResponse && (userDataResponse.userName || userDataResponse.email)) {
         setUserData({
           userName: userDataResponse.userName,
-          email: userDataResponse.email
+          email: userDataResponse.email,
         });
 
         if (userDataResponse.userName) {
@@ -84,7 +84,7 @@ const useUserData = () => {
     profilePhotoUrl,
     isLoading,
     error,
-    getDisplayName
+    getDisplayName,
   };
 };
 

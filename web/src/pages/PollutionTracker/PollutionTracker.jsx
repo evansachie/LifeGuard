@@ -16,11 +16,9 @@ const PollutionTracker = ({ isDarkMode }) => {
   const [userLocation, setUserLocation] = useState(null);
 
   useEffect(() => {
-    import('mapbox-gl/dist/mapbox-gl-csp-worker').then(
-      (workerModule) => {
-        mapboxgl.workerClass = workerModule.default;
-      }
-    );
+    import('mapbox-gl/dist/mapbox-gl-csp-worker').then((workerModule) => {
+      mapboxgl.workerClass = workerModule.default;
+    });
   }, []);
 
   useEffect(() => {
@@ -28,10 +26,10 @@ const PollutionTracker = ({ isDarkMode }) => {
       navigator.geolocation.getCurrentPosition((position) => {
         const { latitude, longitude } = position.coords;
         setUserLocation({ latitude, longitude });
-        setViewState(prev => ({
+        setViewState((prev) => ({
           ...prev,
           latitude,
-          longitude
+          longitude,
         }));
       });
     }
@@ -52,7 +50,9 @@ const PollutionTracker = ({ isDarkMode }) => {
           {...viewState}
           onMove={(evt) => setViewState(evt.viewState)}
           style={{ width: '100%', height: '100%' }}
-          mapStyle={isDarkMode ? "mapbox://styles/mapbox/dark-v10" : "mapbox://styles/mapbox/light-v10"}
+          mapStyle={
+            isDarkMode ? 'mapbox://styles/mapbox/dark-v10' : 'mapbox://styles/mapbox/light-v10'
+          }
           mapboxAccessToken={MAPBOX_API_KEY}
           onClick={handleMapClick}
         >

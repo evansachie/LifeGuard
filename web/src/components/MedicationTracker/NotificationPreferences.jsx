@@ -8,7 +8,7 @@ import Spinner from '../Spinner/Spinner';
 const NotificationPreferences = ({ isDarkMode, onClose }) => {
   const [preferences, setPreferences] = useState({
     emailNotifications: true,
-    reminderLeadTime: 15
+    reminderLeadTime: 15,
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -33,7 +33,7 @@ const NotificationPreferences = ({ isDarkMode, onClose }) => {
     try {
       await fetchWithAuth(API_ENDPOINTS.USER_PREFERENCES.NOTIFICATIONS, {
         method: 'PUT',
-        body: JSON.stringify(preferences)
+        body: JSON.stringify(preferences),
       });
       toast.success('Preferences saved successfully');
       onClose();
@@ -69,13 +69,15 @@ const NotificationPreferences = ({ isDarkMode, onClose }) => {
             type="checkbox"
             id="emailNotifications"
             checked={preferences.emailNotifications}
-            onChange={(e) => setPreferences(prev => ({
-              ...prev,
-              emailNotifications: e.target.checked
-            }))}
+            onChange={(e) =>
+              setPreferences((prev) => ({
+                ...prev,
+                emailNotifications: e.target.checked,
+              }))
+            }
             className={`w-5 h-5 rounded border cursor-pointer ${
-              isDarkMode 
-                ? 'bg-gray-800 border-gray-600 text-blue-500' 
+              isDarkMode
+                ? 'bg-gray-800 border-gray-600 text-blue-500'
                 : 'bg-white border-gray-300 text-blue-600'
             }`}
           />
@@ -93,14 +95,14 @@ const NotificationPreferences = ({ isDarkMode, onClose }) => {
           </div>
           <select
             value={preferences.reminderLeadTime}
-            onChange={(e) => setPreferences(prev => ({
-              ...prev,
-              reminderLeadTime: Number(e.target.value)
-            }))}
+            onChange={(e) =>
+              setPreferences((prev) => ({
+                ...prev,
+                reminderLeadTime: Number(e.target.value),
+              }))
+            }
             className={`rounded-lg px-3 py-2 border ${
-              isDarkMode 
-                ? 'bg-gray-800 border-gray-700 text-white' 
-                : 'bg-white border-gray-300'
+              isDarkMode ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300'
             }`}
           >
             <option value={5}>5 minutes</option>

@@ -3,18 +3,23 @@ import { FaSearch, FaFilter, FaStar } from 'react-icons/fa';
 
 const SoundFilters = ({ filters, setFilters, onSearch, isDarkMode }) => {
   return (
-    <div className={`
+    <div
+      className={`
       w-full p-6 rounded-xl shadow-lg backdrop-blur-md
       transition-all duration-300 mb-8
-      ${isDarkMode 
-        ? 'bg-gray-800/30 border border-gray-700/50' 
-        : 'bg-white/30 border border-gray-200/50'
+      ${
+        isDarkMode
+          ? 'bg-gray-800/30 border border-gray-700/50'
+          : 'bg-white/30 border border-gray-200/50'
       }
-    `}>
+    `}
+    >
       {/* Search Box */}
       <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
         <div className="relative w-full md:w-96">
-          <FaSearch className={`absolute left-4 top-3.5 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
+          <FaSearch
+            className={`absolute left-4 top-3.5 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}
+          />
           <input
             type="text"
             placeholder="Search sounds..."
@@ -24,9 +29,10 @@ const SoundFilters = ({ filters, setFilters, onSearch, isDarkMode }) => {
             className={`
               w-full pl-11 pr-4 py-3 rounded-lg
               focus:ring-2 focus:outline-none transition-colors
-              ${isDarkMode
-                ? 'bg-gray-900/50 text-gray-100 placeholder-gray-500 border-gray-600 focus:ring-blue-500'
-                : 'bg-white/50 text-gray-800 placeholder-gray-400 border-gray-300 focus:ring-blue-400'
+              ${
+                isDarkMode
+                  ? 'bg-gray-900/50 text-gray-100 placeholder-gray-500 border-gray-600 focus:ring-blue-500'
+                  : 'bg-white/50 text-gray-800 placeholder-gray-400 border-gray-300 focus:ring-blue-400'
               } border
             `}
           />
@@ -35,7 +41,9 @@ const SoundFilters = ({ filters, setFilters, onSearch, isDarkMode }) => {
         {/* Filter Controls */}
         <div className="flex flex-wrap gap-4 w-full md:w-auto">
           {/* Duration Filter */}
-          <div className={`flex items-center gap-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+          <div
+            className={`flex items-center gap-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+          >
             <div className="flex items-center gap-2">
               <FaFilter className={`text-sm ${isDarkMode ? 'text-blue-400' : 'text-blue-500'}`} />
               <span className="font-medium">Duration:</span>
@@ -46,9 +54,10 @@ const SoundFilters = ({ filters, setFilters, onSearch, isDarkMode }) => {
               className={`
                 rounded-lg border py-2 px-3 cursor-pointer
                 focus:ring-2 focus:outline-none transition-colors
-                ${isDarkMode
-                  ? 'bg-gray-900/50 text-gray-100 border-gray-600 focus:ring-blue-500'
-                  : 'bg-white/50 text-gray-800 border-gray-300 focus:ring-blue-400'
+                ${
+                  isDarkMode
+                    ? 'bg-gray-900/50 text-gray-100 border-gray-600 focus:ring-blue-500'
+                    : 'bg-white/50 text-gray-800 border-gray-300 focus:ring-blue-400'
                 }
               `}
             >
@@ -60,7 +69,9 @@ const SoundFilters = ({ filters, setFilters, onSearch, isDarkMode }) => {
           </div>
 
           {/* Rating Filter */}
-          <div className={`flex items-center gap-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+          <div
+            className={`flex items-center gap-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+          >
             <div className="flex items-center gap-2">
               <FaStar className={`text-sm ${isDarkMode ? 'text-yellow-400' : 'text-yellow-500'}`} />
               <span className="font-medium">Rating:</span>
@@ -71,9 +82,10 @@ const SoundFilters = ({ filters, setFilters, onSearch, isDarkMode }) => {
               className={`
                 rounded-lg border py-2 px-3 cursor-pointer
                 focus:ring-2 focus:outline-none transition-colors
-                ${isDarkMode
-                  ? 'bg-gray-900/50 text-gray-100 border-gray-600 focus:ring-blue-500'
-                  : 'bg-white/50 text-gray-800 border-gray-300 focus:ring-blue-400'
+                ${
+                  isDarkMode
+                    ? 'bg-gray-900/50 text-gray-100 border-gray-600 focus:ring-blue-500'
+                    : 'bg-white/50 text-gray-800 border-gray-300 focus:ring-blue-400'
                 }
               `}
             >

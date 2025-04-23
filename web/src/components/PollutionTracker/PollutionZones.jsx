@@ -14,11 +14,11 @@ const PollutionZones = ({ onZoneClick }) => {
             type: 'Feature',
             geometry: {
               type: 'Point',
-              coordinates: [zone.coordinates[1], zone.coordinates[0]]
+              coordinates: [zone.coordinates[1], zone.coordinates[0]],
             },
             properties: {
-              level: zone.level
-            }
+              level: zone.level,
+            },
           }}
         >
           <Layer
@@ -29,8 +29,10 @@ const PollutionZones = ({ onZoneClick }) => {
                 'interpolate',
                 ['linear'],
                 ['zoom'],
-                10, zone.radius / 100,
-                15, zone.radius / 50
+                10,
+                zone.radius / 100,
+                15,
+                zone.radius / 50,
               ],
               'circle-color': getPollutionColor(zone.level),
               'circle-opacity': 0.6,

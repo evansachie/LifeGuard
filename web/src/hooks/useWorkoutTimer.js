@@ -8,7 +8,7 @@ export const useWorkoutTimer = () => {
     let interval;
     if (isTimerRunning) {
       interval = setInterval(() => {
-        setWorkoutTimer(prev => prev + 1);
+        setWorkoutTimer((prev) => prev + 1);
       }, 1000);
     }
     return () => clearInterval(interval);
@@ -22,6 +22,6 @@ export const useWorkoutTimer = () => {
     isTimerRunning,
     toggleTimer,
     resetTimer,
-    setWorkoutTimer
+    setWorkoutTimer,
   };
 };

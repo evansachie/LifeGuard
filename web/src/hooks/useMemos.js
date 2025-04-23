@@ -22,9 +22,9 @@ export function useMemos() {
       try {
         const response = await fetch(`${NODE_API_URL}/api/memos`, {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
         });
 
         if (!response.ok) {
@@ -47,7 +47,7 @@ export function useMemos() {
         setIsLoading(false);
       }
     };
-    
+
     fetchMemos();
   }, [navigate]);
 
@@ -56,7 +56,7 @@ export function useMemos() {
       toast.info('Please enter some text before saving');
       return false;
     }
-    
+
     setSaving(true);
     try {
       const token = localStorage.getItem('token');
@@ -69,14 +69,14 @@ export function useMemos() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ memo }),
       });
 
       if (response.ok) {
         const newMemo = await response.json();
-        setMemos(prevMemos => [newMemo, ...prevMemos]);
+        setMemos((prevMemos) => [newMemo, ...prevMemos]);
         toast.success('Note saved successfully!');
         return true;
       } else {
@@ -97,14 +97,10 @@ export function useMemos() {
     try {
       const response = await fetchWithAuth(`${NODE_API_URL}/api/memos/${id}`, {
         method: 'PUT',
-        body: JSON.stringify({ memo: text })
+        body: JSON.stringify({ memo: text }),
       });
 
-      setMemos(prevMemos => 
-        prevMemos.map(memo => 
-          memo.Id === id ? response : memo
-        )
-      );
+      setMemos((prevMemos) => prevMemos.map((memo) => (memo.Id === id ? response : memo)));
       toast.success('Note updated successfully!');
       return true;
     } catch (error) {
@@ -119,14 +115,14 @@ export function useMemos() {
       toast.error('Invalid memo ID');
       return false;
     }
-    
+
     setIsDeleting(true);
     try {
       await fetchWithAuth(`${NODE_API_URL}/api/memos/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
-      
-      setMemos(prevMemos => prevMemos.filter(m => m.Id !== id));
+
+      setMemos((prevMemos) => prevMemos.filter((m) => m.Id !== id));
       toast.success('Note deleted successfully!');
       return true;
     } catch (error) {
@@ -142,13 +138,11 @@ export function useMemos() {
     try {
       const response = await fetchWithAuth(`${NODE_API_URL}/api/memos/${id}/done`, {
         method: 'PUT',
-        body: JSON.stringify({ done: isDone })
+        body: JSON.stringify({ done: isDone }),
       });
-      
-      setMemos(prevMemos => 
-        prevMemos.map(memo => 
-          memo.Id === id ? { ...memo, Done: isDone } : memo
-        )
+
+      setMemos((prevMemos) =>
+        prevMemos.map((memo) => (memo.Id === id ? { ...memo, Done: isDone } : memo))
       );
       toast.success(isDone ? 'Note marked as done!' : 'Note marked as undone!');
       return true;
@@ -160,19 +154,23 @@ export function useMemos() {
   };
 
   const getFilteredAndSortedMemos = (filter = 'all', sortOrder = 'newest', searchTerm = '') => {
-    const filteredByStatus = memos.filter(memo => {
-      return filter === 'all' ? true :
-             filter === 'active' ? !memo.Done :
-             filter === 'completed' ? memo.Done : true;
+    const filteredByStatus = memos.filter((memo) => {
+      return filter === 'all'
+        ? true
+        : filter === 'active'
+          ? !memo.Done
+          : filter === 'completed'
+            ? memo.Done
+            : true;
     });
-    
-    const filteredBySearch = filteredByStatus.filter(memo => 
+
+    const filteredBySearch = filteredByStatus.filter((memo) =>
       memo.Text.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return sortMemos(filteredBySearch, sortOrder);
   };
-  
+
   const sortMemos = (memos, sortOrder) => {
     switch (sortOrder) {
       case 'oldest':
@@ -195,6 +193,6 @@ export function useMemos() {
     updateMemo,
     deleteMemo,
     toggleDone,
-    getFilteredAndSortedMemos
+    getFilteredAndSortedMemos,
   };
 }

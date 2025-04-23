@@ -7,19 +7,16 @@ const AppearanceSection = ({ isDarkMode, handleThemeToggle }) => (
   <SettingSection title="Appearance" isDarkMode={isDarkMode}>
     <div className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-100/5 transition-colors">
       <div className="flex items-center gap-4">
-        {isDarkMode 
-          ? <FaMoon className="text-2xl text-yellow-500" /> 
-          : <FaSun className="text-2xl text-yellow-500" />
-        }
+        {isDarkMode ? (
+          <FaMoon className="text-2xl text-yellow-500" />
+        ) : (
+          <FaSun className="text-2xl text-yellow-500" />
+        )}
         <span className={`text-lg ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
           Dark Mode
         </span>
       </div>
-      <ToggleSwitch 
-        enabled={isDarkMode} 
-        onChange={handleThemeToggle}
-        isDarkMode={isDarkMode}
-      />
+      <ToggleSwitch enabled={isDarkMode} onChange={handleThemeToggle} isDarkMode={isDarkMode} />
     </div>
   </SettingSection>
 );

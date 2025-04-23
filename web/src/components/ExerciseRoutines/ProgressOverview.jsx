@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { MdOutlineFitnessCenter } from "react-icons/md";
+import { MdOutlineFitnessCenter } from 'react-icons/md';
 import { FaFire, FaDumbbell, FaTrophy } from 'react-icons/fa';
 import { BiTargetLock } from 'react-icons/bi';
 import StatsCard from './StatsCard';
@@ -12,7 +12,7 @@ const ProgressOverview = ({ isDarkMode }) => {
     caloriesBurned: 0,
     workoutsCompleted: 0,
     currentStreak: 0,
-    currentGoal: 'Not set'
+    currentGoal: 'Not set',
   });
   const [loading, setLoading] = useState(true);
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
@@ -35,7 +35,7 @@ const ProgressOverview = ({ isDarkMode }) => {
   const handleGoalSelect = async (goalType) => {
     try {
       await exerciseService.setGoal(goalType);
-      setStats(prev => ({ ...prev, currentGoal: goalType }));
+      setStats((prev) => ({ ...prev, currentGoal: goalType }));
       toast.success('Workout goal updated successfully!');
     } catch (error) {
       console.error('Error setting goal:', error);
@@ -51,21 +51,21 @@ const ProgressOverview = ({ isDarkMode }) => {
           <h1 className="text-3xl font-semibold">Exercuse Routines</h1>
         </div>
       </div>
-      
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatsCard 
+        <StatsCard
           icon={FaFire}
           title="Calories Burned"
           value={`${stats.caloriesBurned} kcal`}
           color="from-red-500 to-red-400"
         />
-        <StatsCard 
+        <StatsCard
           icon={FaDumbbell}
           title="Workouts Completed"
           value={`${stats.workoutsCompleted} this week`}
           color="from-blue-500 to-blue-400"
         />
-        <StatsCard 
+        <StatsCard
           icon={BiTargetLock}
           title="Current Goal"
           value={stats.currentGoal}
@@ -73,7 +73,7 @@ const ProgressOverview = ({ isDarkMode }) => {
           onClick={() => setIsGoalModalOpen(true)}
           clickable={true}
         />
-        <StatsCard 
+        <StatsCard
           icon={FaTrophy}
           title="Streak"
           value={`${stats.currentStreak} days`}

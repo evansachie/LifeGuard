@@ -2,7 +2,7 @@ import React from 'react';
 
 const MacrosDisplay = ({ macros }) => {
   if (!macros) return null;
-  
+
   return (
     <div className="macros-section">
       <h3>Daily Macro Nutrients</h3>

@@ -8,7 +8,7 @@ import { fetchUserMemos } from '../utils/dashboardApi';
 const useMemoData = () => {
   const [memos, setMemos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   useEffect(() => {
     const loadMemos = async () => {
       try {
@@ -22,10 +22,10 @@ const useMemoData = () => {
         setIsLoading(false);
       }
     };
-    
+
     loadMemos();
   }, []);
-  
+
   return { memos, isLoading };
 };
 

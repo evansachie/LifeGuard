@@ -20,7 +20,7 @@ const Header = ({ searchTerm, setSearchTerm, toggleNewNoteForm, searchInputRef }
             className="search-input"
           />
         </div>
-        <button 
+        <button
           className="action-button new-note-button"
           onClick={toggleNewNoteForm}
           title="Create new note (Ctrl+N)"

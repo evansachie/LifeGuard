@@ -11,7 +11,7 @@ const FloatingAudioPlayer = ({ isDarkMode, activeCategory = 'nature' }) => {
   if (!currentSound) return null;
 
   const soundObject = typeof currentSound === 'object' ? currentSound : { name: currentSound };
-  
+
   const backgroundStyle = getBackgroundStyle(soundObject, activeCategory);
 
   const handlePlayPause = () => {
@@ -39,17 +39,17 @@ const FloatingAudioPlayer = ({ isDarkMode, activeCategory = 'nature' }) => {
       >
         <div className="flex items-center gap-3">
           <div className="flex-shrink-0">
-            <Link to="/wellness-hub" className="block w-12 h-12 rounded-md overflow-hidden hover:opacity-80 transition-opacity">
-              <div
-                className="w-full h-full bg-cover bg-center"
-                style={backgroundStyle}
-              />
+            <Link
+              to="/wellness-hub"
+              className="block w-12 h-12 rounded-md overflow-hidden hover:opacity-80 transition-opacity"
+            >
+              <div className="w-full h-full bg-cover bg-center" style={backgroundStyle} />
             </Link>
           </div>
 
           <div className="flex-grow min-w-0">
-            <Link 
-              to="/wellness-hub" 
+            <Link
+              to="/wellness-hub"
               className={`block text-sm font-medium truncate hover:text-blue-500 
                 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
             >

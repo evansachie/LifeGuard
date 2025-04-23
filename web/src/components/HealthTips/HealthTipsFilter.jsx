@@ -3,12 +3,7 @@ import PropTypes from 'prop-types';
 import { FaThLarge } from 'react-icons/fa';
 import './HealthTipsFilter.css';
 
-const HealthTipsFilter = ({ 
-  categories, 
-  selectedCategory, 
-  onCategoryChange, 
-  isDarkMode,
-}) => {
+const HealthTipsFilter = ({ categories, selectedCategory, onCategoryChange, isDarkMode }) => {
   return (
     <div className={`health-tips-filter ${isDarkMode ? 'dark-mode' : ''}`}>
       <div className="filter-categories">
@@ -20,8 +15,8 @@ const HealthTipsFilter = ({
           <FaThLarge />
           <span className="category-label">All</span>
         </button>
-        
-        {categories.map(category => (
+
+        {categories.map((category) => (
           <button
             key={category.id}
             className={`category-btn ${selectedCategory === category.id ? 'active' : ''}`}
@@ -43,14 +38,14 @@ HealthTipsFilter.propTypes = {
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       icon: PropTypes.node.isRequired,
-      label: PropTypes.string.isRequired
+      label: PropTypes.string.isRequired,
     })
   ).isRequired,
   selectedCategory: PropTypes.string.isRequired,
   onCategoryChange: PropTypes.func.isRequired,
   isDarkMode: PropTypes.bool,
   onSortChange: PropTypes.func,
-  currentSort: PropTypes.string
+  currentSort: PropTypes.string,
 };
 
 export default HealthTipsFilter;

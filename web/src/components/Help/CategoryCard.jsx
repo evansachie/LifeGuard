@@ -14,9 +14,7 @@ const CategoryCard = ({ category, isActive, toggleActive, isDarkMode }) => {
       onClick={() => toggleActive(category.id)}
     >
       <div className="flex items-center gap-3 mb-4">
-        <div className={`text-2xl ${category.color}`}>
-          {category.icon}
-        </div>
+        <div className={`text-2xl ${category.color}`}>{category.icon}</div>
         <h2 className="text-xl font-semibold">{category.title}</h2>
       </div>
       <AnimatePresence>

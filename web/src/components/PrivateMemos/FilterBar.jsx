@@ -5,45 +5,45 @@ const FilterBar = ({ filter, setFilter, sortOrder, setSortOrder }) => {
   return (
     <div className="filters-bar">
       <div className="filter-tabs">
-        <button 
+        <button
           className={`filter-tab ${filter === 'all' ? 'active' : ''}`}
           onClick={() => setFilter('all')}
         >
           All
         </button>
-        <button 
+        <button
           className={`filter-tab ${filter === 'active' ? 'active' : ''}`}
           onClick={() => setFilter('active')}
         >
           Active
         </button>
-        <button 
+        <button
           className={`filter-tab ${filter === 'completed' ? 'active' : ''}`}
           onClick={() => setFilter('completed')}
         >
           Completed
         </button>
       </div>
-      
+
       <div className="sort-controls">
         <div className="sort-dropdown">
           <button className="sort-button">
             <MdSort /> Sort: {sortOrder.charAt(0).toUpperCase() + sortOrder.slice(1)}
           </button>
           <div className="sort-dropdown-content">
-            <button 
+            <button
               className={sortOrder === 'newest' ? 'active' : ''}
               onClick={() => setSortOrder('newest')}
             >
               Newest First
             </button>
-            <button 
+            <button
               className={sortOrder === 'oldest' ? 'active' : ''}
               onClick={() => setSortOrder('oldest')}
             >
               Oldest First
             </button>
-            <button 
+            <button
               className={sortOrder === 'alphabetical' ? 'active' : ''}
               onClick={() => setSortOrder('alphabetical')}
             >

@@ -17,7 +17,9 @@ const MedicationList = ({ medications, loading, onTrackDose, onEdit, onDelete, i
     return (
       <div className="flex flex-col items-center justify-center py-12">
         <img src={NoMedsIcon} alt="No medications" className="w-64 h-64 mb-6" />
-        <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+        <h3
+          className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}
+        >
           No Medications Added
         </h3>
         <p className={`text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>

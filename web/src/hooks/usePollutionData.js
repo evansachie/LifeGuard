@@ -16,23 +16,23 @@ const usePollutionData = (sensorData) => {
     pm10: 45.8,
     no2: 25.4,
     co2: 400,
-    gas: 0
+    gas: 0,
   });
-  
+
   // Update pollutionData when sensorData changes
   useEffect(() => {
     if (sensorData) {
-      setPollutionData(prev => ({
+      setPollutionData((prev) => ({
         ...prev,
         temperature: sensorData.temperature || prev.temperature,
         humidity: sensorData.humidity || prev.humidity,
         pressure: sensorData.pressure || prev.pressure,
         co2: sensorData.co2 || prev.co2,
-        gas: sensorData.gas || prev.gas
+        gas: sensorData.gas || prev.gas,
       }));
     }
   }, [sensorData]);
-  
+
   return pollutionData;
 };
 

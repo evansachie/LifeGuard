@@ -4,7 +4,7 @@ import ThemeToggle from '../../contexts/ThemeToggle';
 import NavigationLinks from './NavigationLinks';
 import LogoutButton from './LogoutButton';
 
-const MobileSidebar = ({ 
+const MobileSidebar = ({
   isOpen,
   sidebarRef,
   isDarkMode,
@@ -12,30 +12,21 @@ const MobileSidebar = ({
   profilePhotoUrl,
   navItems,
   handleLogout,
-  toggleTheme
+  toggleTheme,
 }) => {
   return (
-    <div 
-      ref={sidebarRef} 
+    <div
+      ref={sidebarRef}
       className={`mobile-sidebar ${isOpen ? 'open' : ''} ${isDarkMode ? 'dark-mode' : ''}`}
     >
       <div className="sidebar-content">
         <div className="sidebar-header">
-          <UserProfileSection 
-            displayName={displayName}
-            profilePhotoUrl={profilePhotoUrl}
-          />
-          <ThemeToggle 
-            isDarkMode={isDarkMode} 
-            toggleTheme={toggleTheme} 
-          />
+          <UserProfileSection displayName={displayName} profilePhotoUrl={profilePhotoUrl} />
+          <ThemeToggle isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
         </div>
-        
-        <NavigationLinks 
-          navItems={navItems} 
-          onNavLinkClick={() => {}}
-        />
-        
+
+        <NavigationLinks navItems={navItems} onNavLinkClick={() => {}} />
+
         <LogoutButton onLogout={handleLogout} />
       </div>
     </div>

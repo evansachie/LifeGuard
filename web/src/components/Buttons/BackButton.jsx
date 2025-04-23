@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 export const BackButton = ({ text, to, isDarkMode }) => {
   return (
     <div className="mb-8">
-      <Link 
+      <Link
         to={to}
         className={`inline-flex items-center px-4 py-2 rounded-lg ${
           isDarkMode
@@ -24,11 +24,11 @@ export const BackButton = ({ text, to, isDarkMode }) => {
 BackButton.propTypes = {
   text: PropTypes.string.isRequired,
   to: PropTypes.string.isRequired,
-  isDarkMode: PropTypes.bool
+  isDarkMode: PropTypes.bool,
 };
 
 BackButton.defaultProps = {
-  isDarkMode: false
+  isDarkMode: false,
 };
 
 export default BackButton;

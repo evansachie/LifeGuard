@@ -7,10 +7,7 @@ const EmptyState = ({ onNewNote, isDarkMode }) => {
     <div className="memos-empty-state">
       <img src={EmptyStateImg} alt="No notes" className="empty-state-image" />
       <p>No notes found</p>
-      <button 
-        className="action-button new-note-button"
-        onClick={onNewNote}
-      >
+      <button className="action-button new-note-button" onClick={onNewNote}>
         <FaPlus /> Create New Note
       </button>
     </div>

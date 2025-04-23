@@ -1,26 +1,26 @@
 import React, { useState } from 'react';
 import MemoForm from './MemoForm';
 
-const MemoCard = ({ 
-  memo, 
+const MemoCard = ({
+  memo,
   onEdit,
   onDelete,
   onToggleDone,
   onUpdateMemo,
   isEditing,
-  isDarkMode
+  isDarkMode,
 }) => {
   const [editText, setEditText] = useState(memo.Text);
-  
+
   const formatDate = (dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'short', 
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
 
@@ -36,7 +36,7 @@ const MemoCard = ({
   return (
     <div className={`saved-memo ${memo.Done ? 'done' : ''}`}>
       {isEditing ? (
-        <MemoForm 
+        <MemoForm
           memo={editText}
           setMemo={setEditText}
           handleSave={handleSaveEdit}
@@ -46,30 +46,27 @@ const MemoCard = ({
         />
       ) : (
         <>
-          <div 
-            className="memo-content" 
-            dangerouslySetInnerHTML={{ __html: memo.Text }} 
-          />
+          <div className="memo-content" dangerouslySetInnerHTML={{ __html: memo.Text }} />
           <div className="memo-date">{formatDate(memo.CreatedAt)}</div>
           <div className="memo-actions">
             <button
-              className="memo-button edit-button" 
+              className="memo-button edit-button"
               onClick={() => onEdit(memo.Id)}
               title="Edit note"
             >
               Edit
             </button>
-            <button 
-              className="memo-button delete-button" 
+            <button
+              className="memo-button delete-button"
               onClick={() => onDelete(memo)}
               title="Delete note"
             >
               Delete
             </button>
-            <button 
+            <button
               className="memo-button done-button"
               onClick={() => onToggleDone(memo.Id, !memo.Done)}
-              title={memo.Done ? "Mark as active" : "Mark as completed"}
+              title={memo.Done ? 'Mark as active' : 'Mark as completed'}
             >
               {memo.Done ? 'Undone' : 'Done'}
             </button>

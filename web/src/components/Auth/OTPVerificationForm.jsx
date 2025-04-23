@@ -2,14 +2,14 @@ import React from 'react';
 import Button from '../Buttons/Button';
 import OTPInput from './OTPInput';
 
-const OTPVerificationForm = ({ 
-  otp, 
-  setOtp, 
-  error, 
-  isLoading, 
-  timeLeft, 
-  handleResendOTP, 
-  handleSubmit 
+const OTPVerificationForm = ({
+  otp,
+  setOtp,
+  error,
+  isLoading,
+  timeLeft,
+  handleResendOTP,
+  handleSubmit,
 }) => {
   return (
     <form onSubmit={handleSubmit}>

@@ -4,10 +4,10 @@ const ToggleSwitch = ({ enabled, onChange, isDarkMode }) => (
   <div
     onClick={() => onChange(!enabled)}
     className={`relative inline-flex h-7 w-14 items-center rounded-full cursor-pointer transition-all duration-300 ${
-      enabled 
-        ? 'bg-blue-500 shadow-inner shadow-blue-600/50' 
-        : isDarkMode 
-          ? 'bg-gray-600' 
+      enabled
+        ? 'bg-blue-500 shadow-inner shadow-blue-600/50'
+        : isDarkMode
+          ? 'bg-gray-600'
           : 'bg-gray-200'
     }`}
   >

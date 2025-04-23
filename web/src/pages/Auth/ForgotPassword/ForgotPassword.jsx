@@ -2,7 +2,7 @@ import React from 'react';
 import { toast } from 'react-toastify';
 import forgotPasswordIllustration from '../../../assets/auth/forgot-password.svg';
 import ThemeToggle from '../../../contexts/ThemeToggle';
-import { Logo } from "../../../components/Logo/Logo";
+import { Logo } from '../../../components/Logo/Logo';
 import './ForgotPassword.css';
 import ForgotPasswordForm from '../../../components/Auth/ForgotPasswordForm';
 import { requestPasswordReset } from '../../../utils/auth';
@@ -15,7 +15,7 @@ const usePasswordResetForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
       await requestPasswordReset(email);
       toast.success('Password reset instructions sent to your email');
@@ -33,13 +33,13 @@ const usePasswordResetForm = () => {
     email,
     setEmail,
     isLoading,
-    handleSubmit
+    handleSubmit,
   };
 };
 
 export default function ForgotPassword({ isDarkMode, toggleTheme }) {
   const formProps = usePasswordResetForm();
-  
+
   return (
     <div className={`forgot-password-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
       <ThemeToggle isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
@@ -55,7 +55,7 @@ export default function ForgotPassword({ isDarkMode, toggleTheme }) {
           <p className="forgot-password-subheading">
             Enter your email address and we'll send you a link to reset your password.
           </p>
-          
+
           <ForgotPasswordForm {...formProps} />
         </div>
       </div>

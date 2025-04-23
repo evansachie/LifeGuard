@@ -22,8 +22,8 @@ const NavigationLinks = ({ navItems, onNavLinkClick }) => {
         <div key={index}>
           {item.subItems ? (
             <>
-              <div 
-                className={`nav-link ${isActivityDropdownOpen ? 'active' : ''}`} 
+              <div
+                className={`nav-link ${isActivityDropdownOpen ? 'active' : ''}`}
                 onClick={() => setIsActivityDropdownOpen(!isActivityDropdownOpen)}
               >
                 <span className="nav-icon">{item.icon}</span>

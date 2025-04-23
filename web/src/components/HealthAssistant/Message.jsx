@@ -18,7 +18,7 @@ const Message = ({ message, isDarkMode }) => {
   // Animation variants for messages
   const messageVariants = {
     hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } },
   };
 
   return (
@@ -30,18 +30,11 @@ const Message = ({ message, isDarkMode }) => {
       layout
     >
       <div className="message-header">
-        <span className="sender-name">
-          {message.type === 'user' ? 'You' : 'LifeGuard'}
-        </span>
-        <span className="timestamp">
-          {formatTime(message.timestamp)}
-        </span>
+        <span className="sender-name">{message.type === 'user' ? 'You' : 'LifeGuard'}</span>
+        <span className="timestamp">{formatTime(message.timestamp)}</span>
       </div>
       <div className="message-content">
-        {message.type === 'assistant'
-          ? formatContent(message.content)
-          : message.content
-        }
+        {message.type === 'assistant' ? formatContent(message.content) : message.content}
       </div>
     </motion.div>
   );

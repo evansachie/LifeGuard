@@ -1,14 +1,14 @@
 import React, { useRef } from 'react';
 import { FaPaperPlane, FaMicrophone } from 'react-icons/fa';
 
-const ChatInputForm = ({ 
-  query, 
-  onQueryChange, 
-  onSubmit, 
-  isLoading, 
+const ChatInputForm = ({
+  query,
+  onQueryChange,
+  onSubmit,
+  isLoading,
   isListening,
   toggleListening,
-  inputRef
+  inputRef,
 }) => {
   const handleSubmit = (e) => {
     e.preventDefault();

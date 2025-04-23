@@ -5,14 +5,14 @@ import { toast } from 'react-toastify';
 import exerciseService from '../../services/exerciseService';
 import { formatTime } from '../../utils/formatTime';
 
-const WorkoutTimer = ({ 
-  activeWorkout, 
-  workoutTimer, 
-  isTimerRunning, 
-  onToggleTimer, 
-  onResetTimer, 
+const WorkoutTimer = ({
+  activeWorkout,
+  workoutTimer,
+  isTimerRunning,
+  onToggleTimer,
+  onResetTimer,
   onEndWorkout,
-  isDarkMode
+  isDarkMode,
 }) => {
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -47,7 +47,7 @@ const WorkoutTimer = ({
     return {
       completionPercentage,
       adjustedCalories,
-      duration: Math.floor(workoutTimer / 60)
+      duration: Math.floor(workoutTimer / 60),
     };
   };
 
@@ -56,7 +56,7 @@ const WorkoutTimer = ({
       const stats = calculateCompletionStats();
 
       if (!isFullyCompleted && stats.completionPercentage < 80) {
-        toast.warn("You need to complete at least 80% of the workout for it to count!");
+        toast.warn('You need to complete at least 80% of the workout for it to count!');
         return false;
       }
 
@@ -69,11 +69,11 @@ const WorkoutTimer = ({
         workout_id: activeWorkout.id,
         workout_type: activeWorkout.title,
         calories_burned: stats.adjustedCalories,
-        duration_minutes: stats.duration
+        duration_minutes: stats.duration,
       });
 
       if (isFullyCompleted) {
-        toast.success("🎉 Workout completed successfully!");
+        toast.success('🎉 Workout completed successfully!');
       } else {
         toast.info(`Workout ended at ${Math.round(stats.completionPercentage)}% completion`);
       }
@@ -82,7 +82,7 @@ const WorkoutTimer = ({
       return true;
     } catch (error) {
       console.error('Error completing workout:', error);
-      toast.error("Failed to save workout progress");
+      toast.error('Failed to save workout progress');
       return false;
     }
   };
@@ -92,7 +92,7 @@ const WorkoutTimer = ({
       const stats = calculateCompletionStats();
 
       if (stats.completionPercentage < 80) {
-        toast.warn("You need to complete at least 80% of the workout for it to count!");
+        toast.warn('You need to complete at least 80% of the workout for it to count!');
         setShowConfirm(false);
         return;
       }
@@ -101,25 +101,25 @@ const WorkoutTimer = ({
         workout_id: activeWorkout.id,
         workout_type: activeWorkout.title,
         calories_burned: stats.adjustedCalories,
-        duration_minutes: stats.duration
+        duration_minutes: stats.duration,
       });
 
       // Stop the timer before closing
       if (isTimerRunning) {
         onToggleTimer();
       }
-      
+
       toast.info(`Workout ended at ${Math.round(stats.completionPercentage)}% completion`);
       setShowConfirm(false);
       onEndWorkout(); // This will close the timer
     } catch (error) {
       console.error('Error completing workout:', error);
-      toast.error("Failed to save workout progress");
+      toast.error('Failed to save workout progress');
     }
   };
 
   return (
-    <motion.div 
+    <motion.div
       className="relative bg-gradient-to-r from-red-500 to-pink-500 rounded-xl p-5 text-white shadow-lg"
       initial={{ y: 50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
@@ -133,40 +133,45 @@ const WorkoutTimer = ({
             Target: {activeWorkout?.targetMuscles.join(', ')}
           </p>
         </div>
-        
+
         <div className="flex flex-col items-center">
           <div className="relative w-28 h-28">
             <svg className="w-full h-full" viewBox="0 0 120 120">
-              <circle 
-                cx="60" 
-                cy="60" 
-                r="54" 
-                fill="none" 
-                stroke="rgba(255, 255, 255, 0.1)" 
-                strokeWidth="12" 
+              <circle
+                cx="60"
+                cy="60"
+                r="54"
+                fill="none"
+                stroke="rgba(255, 255, 255, 0.1)"
+                strokeWidth="12"
               />
               {activeWorkout && (
-                <motion.circle 
-                  cx="60" 
-                  cy="60" 
-                  r="54" 
-                  fill="none" 
-                  stroke="rgba(255, 255, 255, 0.8)" 
-                  strokeWidth="12" 
+                <motion.circle
+                  cx="60"
+                  cy="60"
+                  r="54"
+                  fill="none"
+                  stroke="rgba(255, 255, 255, 0.8)"
+                  strokeWidth="12"
                   strokeDasharray="339.292"
-                  strokeDashoffset={339.292 * (1 - workoutTimer / (parseInt(activeWorkout.duration) * 60))}
+                  strokeDashoffset={
+                    339.292 * (1 - workoutTimer / (parseInt(activeWorkout.duration) * 60))
+                  }
                   strokeLinecap="round"
                   initial={{ strokeDashoffset: 339.292 }}
-                  animate={{ strokeDashoffset: 339.292 * (1 - workoutTimer / (parseInt(activeWorkout.duration) * 60)) }}
+                  animate={{
+                    strokeDashoffset:
+                      339.292 * (1 - workoutTimer / (parseInt(activeWorkout.duration) * 60)),
+                  }}
                   transition={{ duration: 0.5 }}
                 />
               )}
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <motion.div 
+              <motion.div
                 className={`text-3xl font-bold font-mono ${getTimerColor()}`}
                 animate={{ scale: [1, 1.05, 1] }}
-                transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" }}
+                transition={{ duration: 1, repeat: Infinity, repeatType: 'reverse' }}
               >
                 {formatTime(workoutTimer)}
               </motion.div>
@@ -175,9 +180,9 @@ const WorkoutTimer = ({
               </div>
             </div>
           </div>
-          
+
           <div className="flex gap-4 mt-4">
-            <motion.button 
+            <motion.button
               className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all"
               onClick={onToggleTimer}
               whileHover={{ scale: 1.1 }}
@@ -185,7 +190,7 @@ const WorkoutTimer = ({
             >
               {isTimerRunning ? <FaPause /> : <FaPlay />}
             </motion.button>
-            <motion.button 
+            <motion.button
               className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all"
               onClick={onResetTimer}
               whileHover={{ scale: 1.1 }}
@@ -193,7 +198,7 @@ const WorkoutTimer = ({
             >
               <FaRedo />
             </motion.button>
-            <motion.button 
+            <motion.button
               className="w-12 h-12 rounded-full bg-red-500/30 flex items-center justify-center hover:bg-red-500/50 transition-all"
               onClick={() => setShowConfirm(true)}
               whileHover={{ scale: 1.1 }}
@@ -204,16 +209,19 @@ const WorkoutTimer = ({
           </div>
         </div>
       </div>
-      
+
       <AnimatePresence>
         {showConfirm && (
-          <motion.div 
+          <motion.div
             className="fixed inset-0 z-50 flex items-center justify-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowConfirm(false)} />
+            <div
+              className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+              onClick={() => setShowConfirm(false)}
+            />
             <motion.div
               className={`relative max-w-md w-full m-4 ${
                 isDarkMode ? 'bg-gray-800' : 'bg-white'
@@ -222,23 +230,26 @@ const WorkoutTimer = ({
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
             >
-              <p className={`text-lg font-medium mb-3 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+              <p
+                className={`text-lg font-medium mb-3 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}
+              >
                 Are you sure you want to end this workout early?
               </p>
               <p className={`text-sm mb-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                You need to complete at least 80% of the workout for it to count towards your progress.
+                You need to complete at least 80% of the workout for it to count towards your
+                progress.
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
-                <button 
+                <button
                   className="flex-1 py-2 px-4 bg-red-500 text-white rounded-full font-medium hover:bg-red-600 transition-colors"
                   onClick={handleEndWorkout}
                 >
                   Yes, End Workout
                 </button>
-                <button 
+                <button
                   className={`flex-1 py-2 px-4 ${
-                    isDarkMode 
-                      ? 'bg-gray-700 text-white hover:bg-gray-600' 
+                    isDarkMode
+                      ? 'bg-gray-700 text-white hover:bg-gray-600'
                       : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
                   } rounded-full font-medium transition-colors`}
                   onClick={() => setShowConfirm(false)}

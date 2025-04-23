@@ -5,7 +5,7 @@ import resetPasswordIllustration from '../../../assets/auth/reset-password.svg';
 import { resetUserPassword } from '../../../utils/auth';
 import { validatePassword } from '../../../utils/validatePassword';
 import ThemeToggle from '../../../contexts/ThemeToggle';
-import { Logo } from "../../../components/Logo/Logo";
+import { Logo } from '../../../components/Logo/Logo';
 import ResetPasswordForm from '../../../components/Auth/ResetPasswordForm';
 import './ResetPassword.css';
 
@@ -29,8 +29,8 @@ const usePasswordReset = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
     // Clear password error when user starts typing again
     if (name === 'newPassword' && passwordError) {
       setPasswordError('');
@@ -71,13 +71,13 @@ const usePasswordReset = () => {
     passwordError,
     isLoading,
     handleChange,
-    handleSubmit
+    handleSubmit,
   };
 };
 
 export default function ResetPassword({ isDarkMode, toggleTheme }) {
   const resetProps = usePasswordReset();
-  
+
   return (
     <div className={`reset-password-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
       <ThemeToggle isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
@@ -91,7 +91,7 @@ export default function ResetPassword({ isDarkMode, toggleTheme }) {
           <Logo />
           <h2 className="reset-password-heading">Reset Password</h2>
           <p className="reset-password-subheading">Please enter your new password</p>
-          
+
           <ResetPasswordForm {...resetProps} />
         </div>
       </div>
