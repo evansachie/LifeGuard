@@ -170,8 +170,6 @@ namespace LifeGuard
 
             app.UseHttpsRedirection();
 
-            app.UseForwardedHeaders();
-
             app.UseAuthentication();
 
             app.UseAuthorization();
