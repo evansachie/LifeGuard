@@ -1,4 +1,4 @@
-import { API_BASE_URL, API_ENDPOINTS, fetchApi, fetchWithAuth } from '../utils/api';
+import { API_BASE_URL, BASE_URL, API_ENDPOINTS, fetchApi, fetchWithAuth } from '../utils/api';
 
 export const isAuthenticated = () => {
   const token = localStorage.getItem('token');
@@ -110,7 +110,7 @@ export const initiateGoogleLogin = async () => {
 
 export const handleGoogleCallback = async (code) => {
   try {
-    const response = await fetchApi(API_ENDPOINTS.GOOGLE_CALLBACK, {
+    const response = await fetchApi(`${BASE_URL}${API_ENDPOINTS.GOOGLE_CALLBACK}`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${code}`,
