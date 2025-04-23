@@ -1,10 +1,10 @@
-import { API_ENDPOINTS, fetchApi, fetchWithAuth } from '../utils/api';
+import { API_BASE_URL, API_ENDPOINTS, fetchApi, fetchWithAuth } from '../utils/api';
 
 export const isAuthenticated = () => {
   const token = localStorage.getItem('token');
   const userId = localStorage.getItem('userId');
   return !!(token && userId);
-};
+}; 
 
 export async function requestPasswordReset(email) {
   return fetchApi(API_ENDPOINTS.FORGOT_PASSWORD, {
@@ -101,17 +101,8 @@ export async function getUserById(id) {
 
 export const initiateGoogleLogin = async () => {
   try {
-    const response = await fetchApi(API_ENDPOINTS.GOOGLE_LOGIN, {
-      method: 'GET',
-      credentials: 'include',
-    });
-
-    // The response should contain the Google OAuth URL
-    if (response?.url) {
-      window.location.href = response.url;
-    } else {
-      throw new Error('Invalid OAuth response');
-    }
+    const googleLoginUrl = `${API_BASE_URL}${API_ENDPOINTS.GOOGLE_LOGIN}`;
+    window.location.href = googleLoginUrl;
   } catch (error) {
     throw new Error('Failed to initiate Google login: ' + error.message);
   }

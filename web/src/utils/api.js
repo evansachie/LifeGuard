@@ -75,6 +75,11 @@ export const API_ENDPOINTS = {
 };
 
 export const handleApiResponse = async (response) => {
+  // Special handling for redirect responses
+  if (response.status === 0 || response.type === 'opaqueredirect') {
+    return { redirect: true };
+  }
+
   if (!response.ok) {
     const error = await response.json().catch(() => ({
       message: `HTTP error! status: ${response.status}`,
@@ -111,7 +116,6 @@ export const fetchApi = async (endpoint, options = {}) => {
     }
 
     console.log('Making request to:', url);
-    console.log('Request payload:', options.body);
 
     const response = await fetch(url, {
       ...options,
@@ -120,11 +124,15 @@ export const fetchApi = async (endpoint, options = {}) => {
         ...options.headers,
       },
       mode: 'cors',
-      credentials: 'omit',
+      redirect: options.redirect || 'follow',
+      credentials: options.credentials || 'omit'
     });
+    
+    if (options.redirect === 'manual' && [301, 302, 307, 308].includes(response.status)) {
+      return response; // Return the response with redirect information
+    }
 
     const data = await handleApiResponse(response);
-    console.log('Response:', data);
     return data;
   } catch (error) {
     console.error('API Error:', {
@@ -144,6 +152,8 @@ const PUBLIC_ENDPOINTS = [
   API_ENDPOINTS.RESET_PASSWORD,
   API_ENDPOINTS.VERIFY_OTP,
   API_ENDPOINTS.RESEND_OTP,
+  API_ENDPOINTS.GOOGLE_LOGIN,
+  API_ENDPOINTS.GOOGLE_CALLBACK
 ];
 
 export const fetchWithAuth = async (endpoint, options = {}) => {
