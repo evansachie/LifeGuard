@@ -42,7 +42,7 @@ const LoginForm = ({ formData, isLoading, handleChange, handleSubmit, handleGoog
       <OAuthButton onClick={handleGoogleLogin} isLoading={isLoading} />
 
       <p className="already">
-        Don't have an account?{' '}
+        Don&apos;t have an account?{' '}
         <Link to="/sign-up" className="link">
           Sign Up
         </Link>
