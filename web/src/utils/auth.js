@@ -1,4 +1,4 @@
-import { API_BASE_URL, BASE_URL, API_ENDPOINTS, fetchApi, fetchWithAuth } from '../utils/api';
+import { API_BASE_URL, API_ENDPOINTS, fetchApi, fetchWithAuth } from '../utils/api';
 
 export const isAuthenticated = () => {
   const token = localStorage.getItem('token');
@@ -65,7 +65,6 @@ export const registerUser = async (name, email, password) => {
     }
     throw new Error(response?.message || 'Registration failed');
   } catch (error) {
-    // If we get a 500 error but with a proper response, it might be the email service
     if (error.response?.data?.userId) {
       return error.response.data;
     }
@@ -108,23 +107,23 @@ export const initiateGoogleLogin = async () => {
   }
 };
 
-export const handleGoogleCallback = async (code) => {
+export const handleGoogleCallback = async (response) => {
   try {
-    const response = await fetchApi(`${BASE_URL}${API_ENDPOINTS.GOOGLE_CALLBACK}`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${code}`,
-      },
-    });
-
-    if (response?.data?.token) {
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('userId', response.data.id);
-      localStorage.setItem('userName', response.data.userName);
-      return response.data;
+    // Extract data from response
+    const { data } = response;
+    if (!data?.token || !data?.id || !data?.userName) {
+      throw new Error('Invalid authentication response');
     }
-    throw new Error('Invalid authentication response');
+
+    // Store auth data
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('userId', data.id);
+    localStorage.setItem('userName', data.userName);
+    localStorage.setItem('email', data.email);
+
+    return data;
   } catch (error) {
-    throw new Error('Google authentication failed: ' + error.message);
+    console.error('Google auth callback error:', error);
+    throw new Error('Failed to complete Google authentication');
   }
 };

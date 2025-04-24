@@ -37,6 +37,7 @@ import PrivacyPolicy from '../pages/PrivacyPolicy/PrivacyPolicy';
 import NotFound from '../pages/NotFound/NotFound';
 
 import { isAuthenticated } from '../utils/auth';
+import GoogleCallback from '../components/Auth/GoogleCallback';
 
 const AppRoutes = ({ isDarkMode, toggleTheme }) => {
   return (
@@ -111,6 +112,7 @@ const AppRoutes = ({ isDarkMode, toggleTheme }) => {
           }
         />
       </Route>
+      <Route path="/signin-google" element={<GoogleCallback />} />
       <Route path="*" element={<NotFound isDarkMode={isDarkMode} />} />
     </Routes>
   );

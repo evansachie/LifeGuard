@@ -3,6 +3,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { presetGoals } from '../../data/presetGoals';
 
 const GoalsModal = ({ isOpen, onClose, onSelectGoal, isDarkMode }) => {
+  const handleBackdropKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      onClose();
+    }
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -12,7 +18,14 @@ const GoalsModal = ({ isOpen, onClose, onSelectGoal, isDarkMode }) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          <div className="absolute inset-0 bg-black/70" onClick={onClose} />
+          <div
+            className="absolute inset-0 bg-black/70"
+            onClick={onClose}
+            onKeyDown={handleBackdropKeyDown}
+            role="button"
+            tabIndex={0}
+            aria-label="Close modal"
+          />
 
           <motion.div
             className={`relative w-full max-w-md m-4 rounded-2xl shadow-xl ${
@@ -54,11 +67,13 @@ const GoalsModal = ({ isOpen, onClose, onSelectGoal, isDarkMode }) => {
               </div>
             </div>
 
+            {/* Made this a proper button with aria-label */}
             <button
               className={`absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center ${
                 isDarkMode ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'
               }`}
               onClick={onClose}
+              aria-label="Close"
             >
               ×
             </button>
