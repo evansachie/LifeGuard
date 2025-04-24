@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+d dusing DotNetEnv;
 
 namespace Identity.Configurations
 {
@@ -14,6 +15,20 @@ namespace Identity.Configurations
     {
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
+            var env = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+
+            if (env == "Development")
+            {
+                Env.Load("../.env.local");
+            }
+            else
+            {
+                Env.Load("../.env");
+            }
+
+            var admin_password = Environment.GetEnvironmentVariable("ADMIN_PASSWORD");
+            var app_user_password = Environment.GetEnvironmentVariable("APP_USER_PASSWORD");
+
             var hasher = new PasswordHasher<ApplicationUser>();
             builder.HasData(
                  new ApplicationUser
@@ -24,7 +39,7 @@ namespace Identity.Configurations
                      Name = "System Admin",
                      UserName = "admin@localhost.com",
                      NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                     PasswordHash = hasher.HashPassword(null, "P@ssword1"),
+                     PasswordHash = hasher.HashPassword(null, admin_password),
                      EmailConfirmed = true
                  },
                  new ApplicationUser
@@ -35,7 +50,7 @@ namespace Identity.Configurations
                      Name = "Michael Adu-Gyamfi",
                      UserName = "madugyamfi76@gmail.com",
                      NormalizedUserName = "madugyamfi76@gmail.com",
-                     PasswordHash = hasher.HashPassword(null, "password123"),
+                     PasswordHash = hasher.HashPassword(null, app_user_password),
                      EmailConfirmed = true
                  }
             );
