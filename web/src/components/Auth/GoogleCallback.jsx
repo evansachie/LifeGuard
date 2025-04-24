@@ -1,19 +1,16 @@
 import React, { useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { handleGoogleCallback } from '../../utils/auth';
 import { toast } from 'react-toastify';
 
 const GoogleCallback = () => {
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
     const completeAuth = async () => {
       try {
-        const response = await fetch(location.href);
-        const data = await response.json();
-
-        await handleGoogleCallback(data);
+        // Process the callback data from URL params
+        await handleGoogleCallback();
         toast.success('Successfully logged in with Google!');
         navigate('/dashboard');
       } catch (error) {
@@ -24,7 +21,7 @@ const GoogleCallback = () => {
     };
 
     completeAuth();
-  }, [navigate, location]);
+  }, [navigate]);
 
   return (
     <div className="flex items-center justify-center min-h-screen">

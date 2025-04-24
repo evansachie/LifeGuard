@@ -100,28 +100,35 @@ export async function getUserById(id) {
 
 export const initiateGoogleLogin = async () => {
   try {
-    const googleLoginUrl = `${API_BASE_URL}${API_ENDPOINTS.GOOGLE_LOGIN}`;
+    // Add returnUrl parameter to tell the backend where to redirect after successful auth
+    const returnUrl = `${window.location.origin}/signin-google`;
+    const googleLoginUrl = `${API_BASE_URL}${API_ENDPOINTS.GOOGLE_LOGIN}?returnUrl=${encodeURIComponent(returnUrl)}`;
     window.location.href = googleLoginUrl;
   } catch (error) {
     throw new Error('Failed to initiate Google login: ' + error.message);
   }
 };
 
-export const handleGoogleCallback = async (response) => {
+export const handleGoogleCallback = async (code) => {
   try {
-    // Extract data from response
-    const { data } = response;
-    if (!data?.token || !data?.id || !data?.userName) {
-      throw new Error('Invalid authentication response');
+    // Get the authentication data from URL parameters instead of fetching the current URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    const userId = urlParams.get('userId');
+    const email = urlParams.get('email');
+    const userName = urlParams.get('userName');
+
+    if (!token || !userId || !email) {
+      throw new Error('Invalid authentication data received');
     }
 
     // Store auth data
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('userId', data.id);
-    localStorage.setItem('userName', data.userName);
-    localStorage.setItem('email', data.email);
+    localStorage.setItem('token', token);
+    localStorage.setItem('userId', userId);
+    localStorage.setItem('userName', userName || email);
+    localStorage.setItem('email', email);
 
-    return data;
+    return { token, userId, email, userName };
   } catch (error) {
     console.error('Google auth callback error:', error);
     throw new Error('Failed to complete Google authentication');
