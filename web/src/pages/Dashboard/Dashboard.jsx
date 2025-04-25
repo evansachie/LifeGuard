@@ -242,6 +242,26 @@ function Dashboard({ isDarkMode }) {
     setShowKeyboardShortcuts(true);
   };
 
+  useEffect(() => {
+    // Handle auth data from Google redirect
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    const userId = urlParams.get('userId');
+    const email = urlParams.get('email');
+    const userName = urlParams.get('userName');
+
+    if (token && userId && email) {
+      // Store auth data
+      localStorage.setItem('token', token);
+      localStorage.setItem('userId', userId);
+      localStorage.setItem('userName', userName || email);
+      localStorage.setItem('email', email);
+
+      // Clean up URL params
+      window.history.replaceState({}, document.title, '/dashboard');
+    }
+  }, []);
+
   return (
     <div
       ref={dashboardRef}
