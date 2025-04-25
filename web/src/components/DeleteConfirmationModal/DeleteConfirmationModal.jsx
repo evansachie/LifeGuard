@@ -37,7 +37,7 @@ const DeleteConfirmationModal = ({
             <FaExclamationTriangle className="warning-icon" />
             <h2>{title}</h2>
             <p>{message}</p>
-            {displayName && <p className="item-name">"{displayName}"</p>}
+            {displayName && <p className="item-name">&quot;{displayName}&quot;</p>}
             <div className="delete-modal-actions">
               <button className="cancel-button" onClick={onClose} disabled={isLoading}>
                 Cancel

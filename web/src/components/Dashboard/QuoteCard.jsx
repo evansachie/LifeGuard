@@ -19,7 +19,7 @@ const QuoteCard = ({ quote, loading, isDarkMode, onRefresh }) => {
           </div>
         ) : quote ? (
           <>
-            <p className="quote-text">"{quote.quote}"</p>
+            <p className="quote-text">&quot;{quote.quote}&quot;</p>
             <p className="quote-author">– {quote.author}</p>
           </>
         ) : (
