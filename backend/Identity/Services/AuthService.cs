@@ -209,7 +209,7 @@ namespace Identity.Services
         {
             if (request.NewPassword != request.ConfirmPassword)
             {
-                return new Result<string>(false, ResultStatusCode.BadRequest, "New password cannot be the same as old password");
+                return new Result<string>(false, ResultStatusCode.BadRequest, "Both passwords must match");
             }
 
             var user = await _userManager.FindByEmailAsync(request.Email);
@@ -296,16 +296,13 @@ namespace Identity.Services
             }
 
             var jwtToken = await GenerateToken(user);
+            var Token = new JwtSecurityTokenHandler().WriteToken(jwtToken);
 
-            AuthResponse response = new AuthResponse
-            {
-                Id = user.Id,
-                Token = new JwtSecurityTokenHandler().WriteToken(jwtToken),
-                Email = user.Email,
-                UserName = user.UserName
-            };
+            var redirectUrl =  $"{_frontEndUrl}/Dashboard?token={Token}&userId={user.Id}&" +
+                $"email={user.Email}&userName={user.UserName}";
 
-            return new Result<object>(true, ResultStatusCode.Success, response);
+            
+            return new Result<object>(true, ResultStatusCode.Success, null, redirectUrl);
         }
     }
     
