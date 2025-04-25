@@ -298,10 +298,9 @@ namespace Identity.Services
             var jwtToken = await GenerateToken(user);
             var Token = new JwtSecurityTokenHandler().WriteToken(jwtToken);
 
-            var redirectUrl =  $"{_frontEndUrl}/Dashboard?token={Token}&userId={user.Id}&" +
+            var redirectUrl = $"{_frontEndUrl}/dashboard?token={Token}&userId={user.Id}&" +
                 $"email={user.Email}&userName={user.UserName}";
 
-            
             return new Result<object>(true, ResultStatusCode.Success, null, redirectUrl);
         }
     }
