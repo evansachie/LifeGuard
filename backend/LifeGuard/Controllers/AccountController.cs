@@ -199,7 +199,7 @@ namespace LifeGuard_API.Controllers
             if (!result.IsSuccess)
                 return StatusCode((int)result.StatusCode, result.Message);
 
-            return Ok(result);
+            return Redirect(result.Message);
         }
         
 
