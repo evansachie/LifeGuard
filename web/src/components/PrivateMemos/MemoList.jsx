@@ -3,8 +3,8 @@ import MemoCard from './MemoCard';
 import EmptyState from './EmptyState';
 import Spinner from '../Spinner/Spinner';
 
-const MemoList = ({ 
-  memos, 
+const MemoList = ({
+  memos,
   isLoading,
   editingMemoId,
   setEditingMemoId,
@@ -13,7 +13,7 @@ const MemoList = ({
   handleUpdateMemo,
   showNewNoteForm,
   setShowNewNoteForm,
-  isDarkMode 
+  isDarkMode,
 }) => {
   if (isLoading) {
     return (
@@ -24,17 +24,12 @@ const MemoList = ({
   }
 
   if (memos.length === 0) {
-    return (
-      <EmptyState 
-        onNewNote={() => setShowNewNoteForm(true)}
-        isDarkMode={isDarkMode}
-      />
-    );
+    return <EmptyState onNewNote={() => setShowNewNoteForm(true)} isDarkMode={isDarkMode} />;
   }
 
   return (
     <div className="saved-memos-container">
-      {memos.map(memo => (
+      {memos.map((memo) => (
         <MemoCard
           key={memo.Id}
           memo={memo}

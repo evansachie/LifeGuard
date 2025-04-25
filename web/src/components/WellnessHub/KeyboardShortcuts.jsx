@@ -14,7 +14,7 @@ const KeyboardShortcuts = ({ isOpen, onClose }) => (
       >
         <motion.div
           className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md w-full mx-4"
-          onClick={e => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
         >
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-bold flex items-center gap-2">
@@ -24,7 +24,7 @@ const KeyboardShortcuts = ({ isOpen, onClose }) => (
               <FaTimes />
             </button>
           </div>
-          
+
           <div className="grid gap-4">
             <div className="flex justify-between items-center">
               <span>Space</span>
@@ -32,7 +32,9 @@ const KeyboardShortcuts = ({ isOpen, onClose }) => (
             </div>
             <div className="flex justify-between items-center">
               <span>Left/Right Arrow</span>
-              <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded">Change Category</span>
+              <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded">
+                Change Category
+              </span>
             </div>
             <div className="flex justify-between items-center">
               <span>Up/Down Arrow</span>
@@ -44,7 +46,9 @@ const KeyboardShortcuts = ({ isOpen, onClose }) => (
             </div>
             <div className="flex justify-between items-center">
               <span>F</span>
-              <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded">Toggle Fullscreen</span>
+              <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded">
+                Toggle Fullscreen
+              </span>
             </div>
             <div className="flex justify-between items-center">
               <span>K</span>

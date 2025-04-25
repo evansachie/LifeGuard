@@ -26,7 +26,7 @@ function VerifyEmergencyContact({ isDarkMode, toggleTheme }) {
 
       try {
         let response;
-        
+
         if (token) {
           console.log('Verifying with token:', token);
           // Make sure the token is properly URI encoded
@@ -40,11 +40,11 @@ function VerifyEmergencyContact({ isDarkMode, toggleTheme }) {
           const encodedToken = encodeURIComponent(fallbackToken);
           response = await fetch(`${API_ENDPOINTS.EMERGENCY_CONTACT_VERIFY(encodedToken)}`);
         }
-        
+
         if (!response.ok) {
           throw new Error(`Verification failed with status: ${response.status}`);
         }
-        
+
         const data = await response.json();
 
         if (data.success) {
@@ -74,18 +74,17 @@ function VerifyEmergencyContact({ isDarkMode, toggleTheme }) {
       <button className="theme-toggle" onClick={toggleTheme}>
         {isDarkMode ? <FaSun /> : <FaMoon />}
       </button>
-      
-      <div className={`verify-contact-illustration ${isDarkMode ? 'bg-[#2D3748]' : 'bg-[#E8EEF7]'}`}>
-        <img 
-          src={verifyContactImage}
-          alt="Verify Emergency Contact" 
-        />
+
+      <div
+        className={`verify-contact-illustration ${isDarkMode ? 'bg-[#2D3748]' : 'bg-[#E8EEF7]'}`}
+      >
+        <img src={verifyContactImage} alt="Verify Emergency Contact" />
       </div>
 
       <div className="verify-contact-form-container">
         <div className="verify-contact-form-card">
           <Logo />
-          
+
           {verificationStatus === 'loading' && (
             <div className="verification-status">
               <FaSpinner className="status-icon spinner" />
@@ -101,14 +100,21 @@ function VerifyEmergencyContact({ isDarkMode, toggleTheme }) {
               <FaCheckCircle className="status-icon success" />
               <h2 className="verify-contact-heading">Verification Successful!</h2>
               <p className="verify-contact-subheading">
-                Thank you for confirming your emergency contact status. You are now a verified emergency contact.
+                Thank you for confirming your emergency contact status. You are now a verified
+                emergency contact.
               </p>
               {contactData && (
                 <div className="contact-info-container">
                   <h3 className="contact-info-heading">Your Contact Information:</h3>
-                  <p className="contact-info-detail"><span>Name:</span> {contactData.Name}</p>
-                  <p className="contact-info-detail"><span>Email:</span> {contactData.Email}</p>
-                  <p className="contact-info-detail"><span>Phone:</span> {contactData.Phone}</p>
+                  <p className="contact-info-detail">
+                    <span>Name:</span> {contactData.Name}
+                  </p>
+                  <p className="contact-info-detail">
+                    <span>Email:</span> {contactData.Email}
+                  </p>
+                  <p className="contact-info-detail">
+                    <span>Phone:</span> {contactData.Phone}
+                  </p>
                 </div>
               )}
             </div>
@@ -119,15 +125,13 @@ function VerifyEmergencyContact({ isDarkMode, toggleTheme }) {
               <FaTimesCircle className="status-icon error" />
               <h2 className="verify-contact-heading">Verification Failed</h2>
               <p className="verify-contact-subheading">
-                We couldn't verify your emergency contact status. The link may be invalid or expired.
+                We couldn't verify your emergency contact status. The link may be invalid or
+                expired.
               </p>
             </div>
           )}
 
-          <button
-            onClick={handleGoToHome}
-            className="home-button"
-          >
+          <button onClick={handleGoToHome} className="home-button">
             Return to Home
           </button>
         </div>

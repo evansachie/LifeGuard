@@ -8,7 +8,7 @@ import { fetchQuote } from '../utils/dashboardApi';
 const useQuoteData = () => {
   const [quote, setQuote] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   useEffect(() => {
     const loadQuote = async () => {
       try {
@@ -22,10 +22,10 @@ const useQuoteData = () => {
         setIsLoading(false);
       }
     };
-    
+
     loadQuote();
   }, []);
-  
+
   return { quote, isLoading };
 };
 

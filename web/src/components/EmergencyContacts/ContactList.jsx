@@ -4,13 +4,13 @@ import EmptyState from '../../assets/empty-state.svg';
 import Spinner from '../Spinner/Spinner';
 import ContactCard from './ContactCard';
 
-const ContactList = ({ 
-  contacts, 
-  isLoading, 
-  onEdit, 
-  onDelete, 
+const ContactList = ({
+  contacts,
+  isLoading,
+  onEdit,
+  onDelete,
   onSendTestAlert,
-  isDarkMode = false 
+  isDarkMode = false,
 }) => {
   if (isLoading) {
     return (
@@ -19,7 +19,7 @@ const ContactList = ({
       </div>
     );
   }
-  
+
   if (!contacts || contacts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-64">
@@ -32,7 +32,7 @@ const ContactList = ({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <AnimatePresence>
-        {contacts.map(contact => (
+        {contacts.map((contact) => (
           <ContactCard
             key={contact.Id}
             contact={contact}

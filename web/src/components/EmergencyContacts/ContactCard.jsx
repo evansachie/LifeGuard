@@ -2,37 +2,41 @@ import React from 'react';
 import { FaEdit, FaTrash, FaPhone, FaEnvelope, FaBell } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 
-const ContactCard = ({ 
-  contact, 
-  onEdit, 
-  onDelete, 
-  onSendTestAlert,
-  isDarkMode = false 
-}) => {
-
+const ContactCard = ({ contact, onEdit, onDelete, onSendTestAlert, isDarkMode = false }) => {
   const getPriorityLabel = (priority) => {
     switch (priority) {
-      case 1: return 'High';
-      case 2: return 'Medium';
-      case 3: return 'Low';
-      default: return 'Medium';
+      case 1:
+        return 'High';
+      case 2:
+        return 'Medium';
+      case 3:
+        return 'Low';
+      default:
+        return 'Medium';
     }
   };
 
   const getPriorityClass = (priority) => {
     switch (priority) {
-      case 1: return 'bg-red-100 text-red-800';
-      case 2: return 'bg-yellow-100 text-yellow-800';
-      case 3: return 'bg-green-100 text-green-800';
-      default: return 'bg-yellow-100 text-yellow-800';
+      case 1:
+        return 'bg-red-100 text-red-800';
+      case 2:
+        return 'bg-yellow-100 text-yellow-800';
+      case 3:
+        return 'bg-green-100 text-green-800';
+      default:
+        return 'bg-yellow-100 text-yellow-800';
     }
   };
 
   const getRoleClass = (role) => {
     switch (role) {
-      case 'Medical': return 'bg-red-100 text-red-800';
-      case 'Emergency': return 'bg-orange-100 text-orange-800';
-      default: return 'bg-blue-100 text-blue-800';
+      case 'Medical':
+        return 'bg-red-100 text-red-800';
+      case 'Emergency':
+        return 'bg-orange-100 text-orange-800';
+      default:
+        return 'bg-blue-100 text-blue-800';
     }
   };
 
@@ -41,9 +45,7 @@ const ContactCard = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className={`p-6 rounded-lg shadow-lg ${
-        isDarkMode ? 'bg-[#2d2d2d]' : 'bg-white'
-      }`}
+      className={`p-6 rounded-lg shadow-lg ${isDarkMode ? 'bg-[#2d2d2d]' : 'bg-white'}`}
     >
       <div className="flex justify-between items-start mb-4">
         <div>
@@ -64,27 +66,21 @@ const ContactCard = ({
         <div className="flex gap-2">
           <button
             onClick={() => onSendTestAlert(contact.Id)}
-            className={`p-2 rounded-full ${
-              isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
-            }`}
+            className={`p-2 rounded-full ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
             title="Send Test Alert"
           >
             <FaBell className="text-blue-500" />
           </button>
           <button
             onClick={() => onEdit(contact)}
-            className={`p-2 rounded-full ${
-              isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
-            }`}
+            className={`p-2 rounded-full ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
             title="Edit Contact"
           >
             <FaEdit />
           </button>
           <button
             onClick={() => onDelete(contact)}
-            className={`p-2 rounded-full ${
-              isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
-            }`}
+            className={`p-2 rounded-full ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
             title="Delete Contact"
           >
             <FaTrash className="text-red-500" />
@@ -102,18 +98,24 @@ const ContactCard = ({
         </div>
         <div className="flex items-center gap-2 mt-2">
           <div className="flex items-center">
-            <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-              Role: 
+            <span
+              className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+            >
+              Role:
             </span>
             <span className={`ml-1 px-2 py-0.5 text-xs rounded-full ${getRoleClass(contact.Role)}`}>
               {contact.Role}
             </span>
           </div>
           <div className="flex items-center ml-3">
-            <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-              Priority: 
+            <span
+              className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+            >
+              Priority:
             </span>
-            <span className={`ml-1 px-2 py-0.5 text-xs rounded-full ${getPriorityClass(contact.Priority)}`}>
+            <span
+              className={`ml-1 px-2 py-0.5 text-xs rounded-full ${getPriorityClass(contact.Priority)}`}
+            >
               {getPriorityLabel(contact.Priority)}
             </span>
           </div>

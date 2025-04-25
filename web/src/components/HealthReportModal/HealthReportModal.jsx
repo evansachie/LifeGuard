@@ -1,9 +1,6 @@
 import React, { useRef, useEffect } from 'react';
-import { 
-  FaTemperatureHigh,  
-  FaWalking 
-} from 'react-icons/fa';
-import { WiHumidity, WiBarometer } from "react-icons/wi";
+import { FaTemperatureHigh, FaWalking } from 'react-icons/fa';
+import { WiHumidity, WiBarometer } from 'react-icons/wi';
 import { FaTimes, FaDownload, FaFileCsv } from 'react-icons/fa';
 import { generateHealthReport } from '../../data/health-report-data';
 import './HealthReportModal.css';
@@ -14,10 +11,10 @@ export default function HealthReportModal({ isOpen, onClose, userData, isDarkMod
   const report = generateHealthReport(userData);
 
   const iconMapping = {
-    temperature: <FaTemperatureHigh size={32}/>,
+    temperature: <FaTemperatureHigh size={32} />,
     humidity: <WiHumidity size={32} />,
     pressure: <WiBarometer size={42} />,
-    activityLevel: <FaWalking size={32}/>
+    activityLevel: <FaWalking size={32} />,
   };
 
   useEffect(() => {
@@ -49,7 +46,7 @@ export default function HealthReportModal({ isOpen, onClose, userData, isDarkMod
         value.average,
         value.min,
         value.max,
-        value.status
+        value.status,
       ]),
       [''],
       ['Environmental Metrics'],
@@ -57,9 +54,11 @@ export default function HealthReportModal({ isOpen, onClose, userData, isDarkMod
       ...Object.entries(report.environmentalMetrics).map(([key, value]) => [
         key,
         value.average,
-        value.status
-      ])
-    ].map(row => row.join(',')).join('\n');
+        value.status,
+      ]),
+    ]
+      .map((row) => row.join(','))
+      .join('\n');
 
     // Create and download CSV file
     const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
@@ -115,7 +114,7 @@ export default function HealthReportModal({ isOpen, onClose, userData, isDarkMod
               ))}
             </div>
           </section>
-          
+
           <section className="report-section">
             <h2>Recommendations</h2>
             <ul className="recommendations-list">
@@ -128,4 +127,4 @@ export default function HealthReportModal({ isOpen, onClose, userData, isDarkMod
       </div>
     </div>
   );
-} 
+}

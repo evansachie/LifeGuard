@@ -148,7 +148,8 @@ namespace LifeGuard
                 {
                     policy
                         .WithOrigins("https://lifeguard-vq69.onrender.com",
-                        "https://lifeguard-vert.vercel.app"
+                        "https://lifeguard-vert.vercel.app",
+                        "http://localhost:3000"
                         )   
                         .AllowAnyMethod()                                     
                         .AllowAnyHeader()                                     
@@ -172,7 +173,12 @@ namespace LifeGuard
 
             app.UseHttpsRedirection();
 
-            app.UseForwardedHeaders();
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedProto,
+                RequireHeaderSymmetry = false,
+                ForwardLimit = null
+            });
 
             app.UseAuthentication();
 

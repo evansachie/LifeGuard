@@ -43,8 +43,15 @@ export const KEYBOARD_SHORTCUTS = {
 export const matchesShortcut = (event, shortcut) => {
   const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
   const modifier = isMac ? event.metaKey : event.ctrlKey;
-  
+
   return shortcut.withModifier
-    ? (modifier && event.key.toLowerCase() === shortcut.key.toLowerCase() && !event.shiftKey && !event.altKey)
-    : (event.key === shortcut.key && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey);
+    ? modifier &&
+        event.key.toLowerCase() === shortcut.key.toLowerCase() &&
+        !event.shiftKey &&
+        !event.altKey
+    : event.key === shortcut.key &&
+        !event.ctrlKey &&
+        !event.metaKey &&
+        !event.shiftKey &&
+        !event.altKey;
 };

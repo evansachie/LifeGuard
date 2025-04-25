@@ -7,11 +7,11 @@ const ForgotPasswordForm = ({ email, setEmail, isLoading, handleSubmit }) => {
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <InputField 
-          type="email" 
-          value={email} 
-          onChange={(e) => setEmail(e.target.value)} 
-          placeholder="Email" 
+        <InputField
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
           required
         />
 
@@ -19,7 +19,10 @@ const ForgotPasswordForm = ({ email, setEmail, isLoading, handleSubmit }) => {
       </form>
 
       <p className="back-to-login">
-        Remember your password? <Link to="/log-in" className="link">Log In</Link>
+        Remember your password?{' '}
+        <Link to="/log-in" className="link">
+          Log In
+        </Link>
       </p>
     </>
   );

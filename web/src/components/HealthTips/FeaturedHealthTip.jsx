@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 const FeaturedHealthTip = ({ featuredTip, onLearnMore }) => {
   return (
-    <motion.section 
+    <motion.section
       className="featured-tip"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -17,10 +17,7 @@ const FeaturedHealthTip = ({ featuredTip, onLearnMore }) => {
           Learn More
         </button>
       </div>
-      <div 
-        className="featured-image" 
-        style={{ backgroundImage: `url(${featuredTip?.image})` }} 
-      />
+      <div className="featured-image" style={{ backgroundImage: `url(${featuredTip?.image})` }} />
     </motion.section>
   );
 };
@@ -29,9 +26,9 @@ FeaturedHealthTip.propTypes = {
   featuredTip: PropTypes.shape({
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
-    image: PropTypes.string.isRequired
+    image: PropTypes.string.isRequired,
   }),
-  onLearnMore: PropTypes.func.isRequired
+  onLearnMore: PropTypes.func.isRequired,
 };
 
 export default FeaturedHealthTip;

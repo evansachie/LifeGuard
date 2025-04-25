@@ -10,32 +10,28 @@ import ScrollToTop from '../../components/ScrollToTop/ScrollToTop';
 import './LandingPage.css';
 
 const LandingPage = ({ isDarkMode, toggleTheme, isAuthenticated }) => {
-    return (
-        <div className={`landing-page ${isDarkMode ? 'dark-mode' : ''}`}>
-            <Navbar 
-                isDarkMode={isDarkMode} 
-                toggleTheme={toggleTheme}
-                isAuthenticated={isAuthenticated}
-            />
-            <section id="hero">
-                <Hero />
-            </section>
-            <section id="features">
-                <Features />
-            </section>
-            <section id="how-it-works">
-                <HowItWorks />
-            </section>
-            <section id="benefits">
-                <Benefits />
-            </section>
-            <section id="download">
-                <DownloadSection />
-            </section>
-            <Footer />
-            <ScrollToTop />
-        </div>
-    );
+  return (
+    <div className={`landing-page ${isDarkMode ? 'dark-mode' : ''}`}>
+      <Navbar isDarkMode={isDarkMode} toggleTheme={toggleTheme} isAuthenticated={isAuthenticated} />
+      <section id="hero">
+        <Hero />
+      </section>
+      <section id="features">
+        <Features />
+      </section>
+      <section id="how-it-works">
+        <HowItWorks />
+      </section>
+      <section id="benefits">
+        <Benefits />
+      </section>
+      <section id="download">
+        <DownloadSection />
+      </section>
+      <Footer />
+      <ScrollToTop />
+    </div>
+  );
 };
 
-export default LandingPage; 
+export default LandingPage;

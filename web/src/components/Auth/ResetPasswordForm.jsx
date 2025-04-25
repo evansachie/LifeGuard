@@ -2,21 +2,15 @@ import React from 'react';
 import Button from '../Buttons/Button';
 import InputField from './InputField';
 
-const ResetPasswordForm = ({ 
-  formData, 
-  passwordError, 
-  isLoading, 
-  handleChange, 
-  handleSubmit 
-}) => {
+const ResetPasswordForm = ({ formData, passwordError, isLoading, handleChange, handleSubmit }) => {
   return (
     <form onSubmit={handleSubmit}>
-      <InputField 
-        type="password" 
-        name="newPassword" 
-        value={formData.newPassword} 
-        onChange={handleChange} 
-        placeholder="New Password" 
+      <InputField
+        type="password"
+        name="newPassword"
+        value={formData.newPassword}
+        onChange={handleChange}
+        placeholder="New Password"
         required
       />
 
@@ -31,12 +25,12 @@ const ResetPasswordForm = ({
 
       {passwordError && <div className="error-message">{passwordError}</div>}
 
-      <InputField 
-        type="password" 
-        name="confirmPassword" 
-        value={formData.confirmPassword} 
-        onChange={handleChange} 
-        placeholder="Confirm Password" 
+      <InputField
+        type="password"
+        name="confirmPassword"
+        value={formData.confirmPassword}
+        onChange={handleChange}
+        placeholder="Confirm Password"
         required
       />
 

@@ -1,0 +1,217 @@
+[cmdk-dialog] {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+  }
+  
+  [cmdk-overlay] {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+  }
+  
+  .command-dialog {
+    width: 90vw;
+    max-width: 640px;
+    height: auto;
+    max-height: 100vh;
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .dark.command-dialog {
+    background: #1a1a1a;
+    color: #fff;
+  }
+  
+  .command-palette-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+  
+  .command-palette-overlay[aria-hidden="true"] {
+    display: none;
+  }
+  
+  .command-palette-content {
+    width: 90vw;
+    max-width: 640px;
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  
+  .dark .command-palette-content {
+    background: #1a1a1a;
+    color: #fff;
+  }
+  
+  .command-inner {
+    padding: 1rem;
+  }
+  
+  .command-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    flex: 1;
+  }
+  
+  [cmdk-input] {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 12px;
+    background: transparent;
+    color: inherit;
+  }
+  
+  [cmdk-input]:focus {
+    outline: none;
+  }
+
+  [cmdk-list] {
+    height: auto;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow: visible;
+    flex: 1;
+  }
+
+  [cmdk-item] {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    user-select: none;
+    will-change: background, color;
+    position: relative;
+  }
+  
+  [cmdk-item][data-selected="true"] {
+    background: rgba(64, 124, 226, 0.1);
+  }
+  
+  .dark [cmdk-item][data-selected="true"] {
+    background: rgba(64, 124, 226, 0.2);
+  }
+  
+  [cmdk-item][aria-selected="true"] {
+    background: rgba(64, 124, 226, 0.1);
+    color: #4a90e2;
+  }
+  
+  .dark [cmdk-item][aria-selected="true"] {
+    background: rgba(64, 124, 226, 0.2);
+    color: #63b3ed;
+  }
+  
+  [cmdk-group-heading] {
+    font-size: 12px;
+    color: #999;
+    padding: 8px 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .dark [cmdk-group-heading] {
+    color: #999;
+  }
+  
+  [cmdk-empty] {
+    text-align: center;
+    padding: 1rem;
+    color: #666;
+  }
+  
+  [cmdk-separator] {
+    height: 1px;
+    background: #eaeaea;
+    margin: 0.5rem 0;
+  }
+  
+  .dark [cmdk-separator] {
+    background: #333;
+  }
+  
+  .command-menu-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(64, 124, 226, 0.1);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: #666;
+    border: 1px solid rgba(64, 124, 226, 0.2);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 8px;
+  }
+  
+  .dark-mode .command-menu-hint {
+    background: rgba(64, 124, 226, 0.15);
+    color: #e0e0e0;
+    border-color: rgba(64, 124, 226, 0.3);
+  }
+  
+  .command-menu-hint:hover {
+    background: rgba(64, 124, 226, 0.15);
+    border-color: rgba(64, 124, 226, 0.3);
+  }
+  
+  .command-menu-hint kbd {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-family: monospace;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+  }
+  
+  .dark-mode .command-menu-hint kbd {
+    background: rgba(0, 0, 0, 0.3);
+    box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+  }
+  
+  .command-icon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.7;
+  }
+  
+  .command-shortcut {
+    margin-left: auto;
+    padding: 2px 6px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: monospace;
+    color: #666;
+  }
+  
+  .dark .command-shortcut {
+    background: rgba(255, 255, 255, 0.1);
+    color: #999;
+  }

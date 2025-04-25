@@ -6,7 +6,7 @@ import Spinner from '../Spinner/Spinner';
 const HealthTipCard = ({ tip, onReadMore, isDarkMode }) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
-  
+
   const defaultImage = 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800';
 
   const categoryLabel = tip.category.charAt(0).toUpperCase() + tip.category.slice(1);
@@ -24,7 +24,7 @@ const HealthTipCard = ({ tip, onReadMore, isDarkMode }) => {
       <div className="tip-image-container">
         {!imageLoaded && (
           <div className="image-placeholder spinner-container">
-            <Spinner color='#fff'/>
+            <Spinner color="#fff" />
           </div>
         )}
         <img
@@ -35,29 +35,23 @@ const HealthTipCard = ({ tip, onReadMore, isDarkMode }) => {
           onLoad={handleImageLoad}
           style={{ display: imageLoaded ? 'block' : 'none' }}
         />
-        <span className={`tip-category ${tip.category}`}>
-          {categoryLabel}
-        </span>
+        <span className={`tip-category ${tip.category}`}>{categoryLabel}</span>
       </div>
-      
+
       <div className="tip-content">
         <h3 className="tip-title">{tip.title}</h3>
         <p className="tip-description">{tip.description}</p>
-        
+
         <div className="tip-footer">
-          <button 
+          <button
             className="read-more-btn"
             onClick={() => onReadMore(tip)}
             aria-label={`Read more about ${tip.title}`}
           >
             Read More
           </button>
-          
-          {tip.date && (
-            <span className="tip-date">
-              {new Date(tip.date).toLocaleDateString()}
-            </span>
-          )}
+
+          {tip.date && <span className="tip-date">{new Date(tip.date).toLocaleDateString()}</span>}
         </div>
       </div>
     </div>
@@ -75,7 +69,7 @@ HealthTipCard.propTypes = {
     date: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
   }).isRequired,
   onReadMore: PropTypes.func.isRequired,
-  isDarkMode: PropTypes.bool
+  isDarkMode: PropTypes.bool,
 };
 
 export default memo(HealthTipCard);

@@ -15,7 +15,7 @@ export const AudioPlayerProvider = ({ children }) => {
     setIsPlaying,
     volume,
     setVolume,
-    audioRef
+    audioRef,
   };
 
   return (

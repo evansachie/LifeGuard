@@ -6,13 +6,13 @@ import { fetchWithAuth, API_ENDPOINTS, extractPhotoUrl } from './api';
  * @returns {Promise<string|null>} - The photo URL or null if not found
  */
 export const fetchProfilePhoto = async (userId) => {
-    try {
-        const response = await fetchWithAuth(API_ENDPOINTS.GET_PHOTO(userId));
-        return extractPhotoUrl(response);
-    } catch (error) {
-        console.error('Error fetching profile photo:', error);
-        return null;
-    }
+  try {
+    const response = await fetchWithAuth(API_ENDPOINTS.GET_PHOTO(userId));
+    return extractPhotoUrl(response);
+  } catch (error) {
+    console.error('Error fetching profile photo:', error);
+    return null;
+  }
 };
 
 /**
@@ -21,6 +21,6 @@ export const fetchProfilePhoto = async (userId) => {
  * @returns {string} - URL for the avatar image
  */
 export const generateAvatarUrl = (name) => {
-    const formattedName = name || 'User';
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(formattedName)}&background=random`;
+  const formattedName = name || 'User';
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(formattedName)}&background=random`;
 };

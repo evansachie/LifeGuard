@@ -45,29 +45,26 @@ export function useEmergencyContacts() {
     try {
       const dataToSubmit = {
         ...formData,
-        priority: parseInt(formData.priority, 10)
+        priority: parseInt(formData.priority, 10),
       };
-      
+
       if (editingContactId) {
         const updatedContact = await fetchWithAuth(
           `${API_ENDPOINTS.EMERGENCY_CONTACTS}/${editingContactId}`,
           {
             method: 'PUT',
-            body: JSON.stringify(dataToSubmit)
+            body: JSON.stringify(dataToSubmit),
           }
         );
-        setContacts(contacts.map(contact =>
-          contact.Id === editingContactId ? updatedContact : contact
-        ));
+        setContacts(
+          contacts.map((contact) => (contact.Id === editingContactId ? updatedContact : contact))
+        );
         toast.success('Contact updated successfully!');
       } else {
-        const newContact = await fetchWithAuth(
-          API_ENDPOINTS.EMERGENCY_CONTACTS,
-          {
-            method: 'POST',
-            body: JSON.stringify(dataToSubmit)
-          }
-        );
+        const newContact = await fetchWithAuth(API_ENDPOINTS.EMERGENCY_CONTACTS, {
+          method: 'POST',
+          body: JSON.stringify(dataToSubmit),
+        });
         setContacts([...contacts, newContact]);
         toast.success('Contact added successfully!');
       }
@@ -86,14 +83,11 @@ export function useEmergencyContacts() {
       toast.error('Invalid contact ID');
       return false;
     }
-    
+
     setIsDeleting(true);
     try {
-      await fetchWithAuth(
-        `${API_ENDPOINTS.EMERGENCY_CONTACTS}/${contactId}`,
-        { method: 'DELETE' }
-      );
-      setContacts(prevContacts => prevContacts.filter(c => c.Id !== contactId));
+      await fetchWithAuth(`${API_ENDPOINTS.EMERGENCY_CONTACTS}/${contactId}`, { method: 'DELETE' });
+      setContacts((prevContacts) => prevContacts.filter((c) => c.Id !== contactId));
       toast.success('Contact deleted successfully!');
       return true;
     } catch (error) {
@@ -109,19 +103,16 @@ export function useEmergencyContacts() {
     try {
       setIsLoading(true);
       const alertData = {
-        message: "Emergency alert triggered from LifeGuard app",
+        message: 'Emergency alert triggered from LifeGuard app',
         location: "User's last known location",
-        medicalInfo: "Please contact immediately"
+        medicalInfo: 'Please contact immediately',
       };
-      
-      const response = await fetchWithAuth(
-        API_ENDPOINTS.EMERGENCY_ALERTS,
-        {
-          method: 'POST',
-          body: JSON.stringify(alertData)
-        }
-      );
-      
+
+      const response = await fetchWithAuth(API_ENDPOINTS.EMERGENCY_ALERTS, {
+        method: 'POST',
+        body: JSON.stringify(alertData),
+      });
+
       if (response.success) {
         toast.success(`Emergency alerts sent to ${response.alertsSent?.length || 0} contacts!`);
         return true;
@@ -140,11 +131,10 @@ export function useEmergencyContacts() {
 
   const sendTestAlert = async (contactId) => {
     try {
-      const response = await fetchWithAuth(
-        API_ENDPOINTS.EMERGENCY_TEST_ALERT(contactId),
-        { method: 'POST' }
-      );
-      
+      const response = await fetchWithAuth(API_ENDPOINTS.EMERGENCY_TEST_ALERT(contactId), {
+        method: 'POST',
+      });
+
       if (response.success) {
         toast.success('Test alert sent successfully!');
         return true;
@@ -170,6 +160,6 @@ export function useEmergencyContacts() {
     sendEmergencyAlert,
     sendTestAlert,
     emergencyContacts,
-    contactsLoading
+    contactsLoading,
   };
 }

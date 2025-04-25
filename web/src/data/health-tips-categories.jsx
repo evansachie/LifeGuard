@@ -7,5 +7,5 @@ export const categories = [
   { id: 'nutrition', icon: <MdRestaurant />, label: 'Nutrition' },
   { id: 'prevention', icon: <MdHealthAndSafety />, label: 'Prevention' },
   { id: 'resources', icon: <FaBookMedical />, label: 'Resources' },
-  { id: 'videos', icon: <FaYoutube />, label: 'Videos' }
+  { id: 'videos', icon: <FaYoutube />, label: 'Videos' },
 ];

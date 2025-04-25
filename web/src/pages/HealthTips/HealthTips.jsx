@@ -10,7 +10,7 @@ import FeaturedHealthTip from '../../components/HealthTips/FeaturedHealthTip';
 import TipsGrid from '../../components/HealthTips/TipsGrid';
 import HealthVideoGrid from '../../components/HealthTips/HealthVideoGrid';
 import Pagination from '../../components/HealthTips/Pagination';
-import { FaSearch } from "react-icons/fa";
+import { FaSearch } from 'react-icons/fa';
 import './HealthTips.css';
 
 const ITEMS_PER_PAGE = 6;
@@ -24,7 +24,7 @@ function HealthTips({ isDarkMode }) {
   const [isApiLoaded, setIsApiLoaded] = useState(false);
   const [error, setError] = useState(null);
   const [selectedTip, setSelectedTip] = useState(null);
-  
+
   useEffect(() => {
     const loadHealthTips = async () => {
       try {
@@ -51,11 +51,13 @@ function HealthTips({ isDarkMode }) {
     return [...tips].sort((a, b) => new Date(b.date || Date.now()) - new Date(a.date || 0));
   };
 
-  const filteredTips = healthData?.tips.filter(tip => 
-    (selectedCategory === 'all' || tip.category === selectedCategory) &&
-    (tip.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-     tip.description.toLowerCase().includes(searchQuery.toLowerCase()))
-  ) || [];
+  const filteredTips =
+    healthData?.tips.filter(
+      (tip) =>
+        (selectedCategory === 'all' || tip.category === selectedCategory) &&
+        (tip.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          tip.description.toLowerCase().includes(searchQuery.toLowerCase()))
+    ) || [];
 
   const sortedAndFilteredTips = sortTips(filteredTips);
 
@@ -78,7 +80,7 @@ function HealthTips({ isDarkMode }) {
       title: healthData.featured.title,
       description: healthData.featured.description,
       imageUrl: healthData.featured.image,
-      category: healthData.featured.category || 'prevention'
+      category: healthData.featured.category || 'prevention',
     };
     setSelectedTip(featuredTip);
   };
@@ -96,10 +98,7 @@ function HealthTips({ isDarkMode }) {
     <div className={`health-tips-container ${isDarkMode ? 'dark-mode' : ''}`}>
       {error && <div className="error-banner">{error}</div>}
 
-      <FeaturedHealthTip 
-        featuredTip={healthData?.featured}
-        onLearnMore={handleFeaturedLearnMore}
-      />
+      <FeaturedHealthTip featuredTip={healthData?.featured} onLearnMore={handleFeaturedLearnMore} />
 
       <section className="controls-section">
         <div className="search-bar">
@@ -112,8 +111,8 @@ function HealthTips({ isDarkMode }) {
             aria-label="Search health tips"
           />
         </div>
-        
-        <HealthTipsFilter 
+
+        <HealthTipsFilter
           categories={categories}
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}
@@ -140,7 +139,7 @@ function HealthTips({ isDarkMode }) {
           )}
         </>
       ) : (
-        <HealthVideoGrid 
+        <HealthVideoGrid
           videos={featuredVideos}
           containerVariants={containerVariants}
           itemVariants={itemVariants}
@@ -148,12 +147,10 @@ function HealthTips({ isDarkMode }) {
       )}
 
       {isLoading && !isApiLoaded && (
-        <div className="api-loading-indicator">
-          Updating content...
-        </div>
+        <div className="api-loading-indicator">Updating content...</div>
       )}
 
-      <HealthTipModal 
+      <HealthTipModal
         tip={selectedTip}
         isOpen={!!selectedTip}
         onClose={() => setSelectedTip(null)}

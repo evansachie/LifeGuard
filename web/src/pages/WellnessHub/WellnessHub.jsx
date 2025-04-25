@@ -11,88 +11,87 @@ import AudioVisualizer from '../../components/WellnessHub/AudioVisualizer';
 import './WellnessHub.css';
 
 const WellnessHub = ({ isDarkMode }) => {
-    const [activeSection, setActiveSection] = useState(() => {
-        return localStorage.getItem('wellnessSection') || 'breathing';
-    });
-    const [currentSound, setCurrentSound] = useState(null);
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [volume, setVolume] = useState(0.5);
-    
-    const audioRef = useRef(null);
+  const [activeSection, setActiveSection] = useState(() => {
+    return localStorage.getItem('wellnessSection') || 'breathing';
+  });
+  const [currentSound, setCurrentSound] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [volume, setVolume] = useState(0.5);
 
-    const handleSectionChange = (section) => {
-        setActiveSection(section);
-        localStorage.setItem('wellnessSection', section);
+  const audioRef = useRef(null);
+
+  const handleSectionChange = (section) => {
+    setActiveSection(section);
+    localStorage.setItem('wellnessSection', section);
+  };
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+    }
+  }, [volume]);
+
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = '';
+      }
     };
+  }, []);
 
-    useEffect(() => {
-        if (audioRef.current) {
-            audioRef.current.volume = volume;
-        }
-    }, [volume]);
+  return (
+    <div className={`wellness-hub ${isDarkMode ? 'dark' : ''}`}>
+      <ParticleBackground isDarkMode={isDarkMode} />
+      <SectionNavigation activeSection={activeSection} handleSectionChange={handleSectionChange} />
 
-    useEffect(() => {
-        return () => {
-            if (audioRef.current) {
-                audioRef.current.pause();
-                audioRef.current.src = '';
-            }
-        };
-    }, []);
+      <div className="content-area">
+        <AnimatePresence mode="wait">
+          {activeSection === 'breathing' && <BreathingSection isDarkMode={isDarkMode} />}
 
-    return (
-        <div className={`wellness-hub ${isDarkMode ? 'dark' : ''}`}>
-            <ParticleBackground isDarkMode={isDarkMode} />
-            <SectionNavigation 
-                activeSection={activeSection} 
-                handleSectionChange={handleSectionChange} 
+          {activeSection === 'meditation' && <MeditationSection isDarkMode={isDarkMode} />}
+
+          {activeSection === 'sounds' && (
+            <SoundsSection
+              isDarkMode={isDarkMode}
+              currentSound={currentSound}
+              setCurrentSound={setCurrentSound}
+              isPlaying={isPlaying}
+              setIsPlaying={setIsPlaying}
+              volume={volume}
+              setVolume={setVolume}
+              audioRef={audioRef}
             />
+          )}
+        </AnimatePresence>
+      </div>
 
-            <div className="content-area">
-                <AnimatePresence mode="wait">
-                    {activeSection === 'breathing' && (
-                        <BreathingSection isDarkMode={isDarkMode} />
-                    )}
-
-                    {activeSection === 'meditation' && (
-                        <MeditationSection isDarkMode={isDarkMode} />
-                    )}
-
-                    {activeSection === 'sounds' && (
-                        <SoundsSection 
-                            isDarkMode={isDarkMode}
-                            currentSound={currentSound}
-                            setCurrentSound={setCurrentSound}
-                            isPlaying={isPlaying}
-                            setIsPlaying={setIsPlaying}
-                            volume={volume}
-                            setVolume={setVolume}
-                            audioRef={audioRef}
-                        />
-                    )}
-                </AnimatePresence>
-            </div>
-
-            {currentSound && (
-                <>
-                    <AudioVisualizer audioRef={audioRef} isDarkMode={isDarkMode} />
-                    {activeSection !== 'sounds' && (
-                        <MiniPlayer 
-                            sound={soundsData.find(s => s.title === currentSound)}
-                            isPlaying={isPlaying}
-                            onPlayPause={() => setIsPlaying(!isPlaying)}
-                            onClose={() => {
-                                audioRef.current.pause();
-                                setCurrentSound(null);
-                                setIsPlaying(false);
-                            }}
-                        />
-                    )}
-                </>
-            )}
-            <audio ref={audioRef} loop preload="auto" />
-        </div>
-    );
+      {currentSound && (
+        <>
+          <AudioVisualizer audioRef={audioRef} isDarkMode={isDarkMode} />
+          {activeSection !== 'sounds' && (
+            <MiniPlayer
+              sound={soundsData.find((s) => s.title === currentSound)}
+              isPlaying={isPlaying}
+              onPlayPause={() => setIsPlaying(!isPlaying)}
+              onClose={() => {
+                audioRef.current.pause();
+                setCurrentSound(null);
+                setIsPlaying(false);
+              }}
+            />
+          )}
+        </>
+      )}
+      <audio ref={audioRef} loop preload="auto">
+        <track kind="captions" srcLang="en" label="English captions" />
+        <p>
+          Your browser does not support the audio element. This audio contains ambient sounds only,
+          no speech content.
+        </p>
+      </audio>
+    </div>
+  );
 };
 
 export default WellnessHub;

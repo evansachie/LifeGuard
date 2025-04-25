@@ -1,4 +1,4 @@
-import {FaFileAlt} from 'react-icons/fa';
+import { FaFileAlt } from 'react-icons/fa';
 
 export const ReportCard = ({ date, type, status }) => (
   <div className="report-card">
@@ -11,7 +11,10 @@ export const ReportCard = ({ date, type, status }) => (
         <p className="report-date">{date}</p>
       </div>
     </div>
-    <div className="report-status" style={{ '--status-color': status === 'Normal' ? '#4CAF50' : '#FF9800' }}>
+    <div
+      className="report-status"
+      style={{ '--status-color': status === 'Normal' ? '#4CAF50' : '#FF9800' }}
+    >
       {status}
     </div>
   </div>

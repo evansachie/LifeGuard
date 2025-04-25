@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import otpIllustration from '../../../assets/auth/otp.svg';
 import ThemeToggle from '../../../contexts/ThemeToggle';
-import { Logo } from "../../../components/Logo/Logo";
+import { Logo } from '../../../components/Logo/Logo';
 import OTPVerificationForm from '../../../components/Auth/OTPVerificationForm';
 import { verifyOTP, resendOTP } from '../../../utils/auth';
 import './OTPVerification.css';
@@ -21,8 +21,8 @@ const useOTPVerification = (email) => {
       navigate('/');
       return;
     }
-    
-    const timer = timeLeft > 0 && setInterval(() => setTimeLeft(prev => prev - 1), 1000);
+
+    const timer = timeLeft > 0 && setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
     return () => clearInterval(timer);
   }, [timeLeft, email, navigate]);
 
@@ -45,7 +45,7 @@ const useOTPVerification = (email) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const otpValue = otp.join('');
-    
+
     if (otpValue.length !== 6) {
       setError('Please enter all digits');
       return;
@@ -71,7 +71,7 @@ const useOTPVerification = (email) => {
     isLoading,
     timeLeft,
     handleResendOTP,
-    handleSubmit
+    handleSubmit,
   };
 };
 
@@ -93,7 +93,7 @@ export default function OTPVerification({ isDarkMode, toggleTheme }) {
           <Logo />
           <h2>Verify Your Email</h2>
           <p>Please enter the 6-digit code sent to your email</p>
-          
+
           <OTPVerificationForm {...otpProps} />
         </div>
       </div>

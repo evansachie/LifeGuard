@@ -3,9 +3,9 @@ export const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1
-    }
-  }
+      staggerChildren: 0.1,
+    },
+  },
 };
 
 export const itemVariants = {
@@ -15,7 +15,7 @@ export const itemVariants = {
     opacity: 1,
     transition: {
       duration: 0.5,
-      ease: "easeOut"
-    }
-  }
+      ease: 'easeOut',
+    },
+  },
 };

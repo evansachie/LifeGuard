@@ -23,7 +23,7 @@ const MedicationTracker = ({ isDarkMode }) => {
   const [filters, setFilters] = useState({
     status: '',
     frequency: '',
-    timeOfDay: ''
+    timeOfDay: '',
   });
   const [isNotificationSettingsOpen, setIsNotificationSettingsOpen] = useState(false);
 
@@ -56,7 +56,7 @@ const MedicationTracker = ({ isDarkMode }) => {
     try {
       await fetchWithAuth(API_ENDPOINTS.MEDICATIONS.ADD, {
         method: 'POST',
-        body: JSON.stringify(medicationData)
+        body: JSON.stringify(medicationData),
       });
       fetchMedications();
       toast.success('Medication added successfully');
@@ -69,11 +69,11 @@ const MedicationTracker = ({ isDarkMode }) => {
     try {
       await fetchWithAuth(API_ENDPOINTS.MEDICATIONS.TRACK, {
         method: 'POST',
-        body: JSON.stringify({ 
-          medicationId, 
+        body: JSON.stringify({
+          medicationId,
           taken,
-          scheduledTime: new Date().toTimeString().split(' ')[0]
-        })
+          scheduledTime: new Date().toTimeString().split(' ')[0],
+        }),
       });
       fetchMedications();
       fetchComplianceRate();
@@ -88,7 +88,7 @@ const MedicationTracker = ({ isDarkMode }) => {
     try {
       await fetchWithAuth(`${API_ENDPOINTS.MEDICATIONS.UPDATE}/${medicationData.Id}`, {
         method: 'PUT',
-        body: JSON.stringify(medicationData)
+        body: JSON.stringify(medicationData),
       });
       fetchMedications();
       toast.success('Medication updated successfully');
@@ -102,7 +102,7 @@ const MedicationTracker = ({ isDarkMode }) => {
     setIsDeleting(true);
     try {
       await fetchWithAuth(`${API_ENDPOINTS.MEDICATIONS.DELETE}/${medicationId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
       fetchMedications();
       toast.success('Medication deleted successfully');
@@ -115,33 +115,36 @@ const MedicationTracker = ({ isDarkMode }) => {
   };
 
   // New function to filter medications
-  const filteredMedications = medications.filter(med => {
-    const matchesSearch = med.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         med.Dosage.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = !filters.status || 
-                         (filters.status === 'active' ? med.Active : !med.Active);
-    
-    const matchesFrequency = !filters.frequency || 
-                            med.Frequency.toLowerCase() === filters.frequency.toLowerCase();
-    
-    const matchesTimeOfDay = !filters.timeOfDay || med.Time.some(time => {
-      const hour = parseInt(time.split(':')[0]);
-      if (filters.timeOfDay === 'morning') return hour >= 6 && hour < 12;
-      if (filters.timeOfDay === 'afternoon') return hour >= 12 && hour < 18;
-      if (filters.timeOfDay === 'evening') return hour >= 18 || hour < 6;
-      return true;
-    });
+  const filteredMedications = medications.filter((med) => {
+    const matchesSearch =
+      med.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      med.Dosage.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesStatus =
+      !filters.status || (filters.status === 'active' ? med.Active : !med.Active);
+
+    const matchesFrequency =
+      !filters.frequency || med.Frequency.toLowerCase() === filters.frequency.toLowerCase();
+
+    const matchesTimeOfDay =
+      !filters.timeOfDay ||
+      med.Time.some((time) => {
+        const hour = parseInt(time.split(':')[0]);
+        if (filters.timeOfDay === 'morning') return hour >= 6 && hour < 12;
+        if (filters.timeOfDay === 'afternoon') return hour >= 12 && hour < 18;
+        if (filters.timeOfDay === 'evening') return hour >= 18 || hour < 6;
+        return true;
+      });
 
     return matchesSearch && matchesStatus && matchesFrequency && matchesTimeOfDay;
   });
 
   const handleFilterChange = (filterName, value) => {
-    setFilters(prev => ({ ...prev, [filterName]: value }));
+    setFilters((prev) => ({ ...prev, [filterName]: value }));
   };
 
   return (
-    <motion.div 
+    <motion.div
       className={`min-h-screen p-6 ${isDarkMode ? 'bg-dark-mode text-gray-100' : 'bg-gray-50 text-gray-900'}`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -163,9 +166,7 @@ const MedicationTracker = ({ isDarkMode }) => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className={`p-3 rounded-full ${
-              isDarkMode 
-                ? 'bg-gray-800 hover:bg-gray-700' 
-                : 'bg-white hover:bg-gray-50'
+              isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50'
             } shadow-lg`}
           >
             <FaBell className="text-blue-500" />
@@ -173,14 +174,14 @@ const MedicationTracker = ({ isDarkMode }) => {
         </div>
 
         {/* Stats Overview */}
-        <MedicationStats 
+        <MedicationStats
           medications={medications}
           complianceRate={complianceRate}
           isDarkMode={isDarkMode}
         />
 
         {/* Add SearchAndFilter component after stats */}
-        <SearchAndFilter 
+        <SearchAndFilter
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
           filters={filters}
@@ -193,9 +194,7 @@ const MedicationTracker = ({ isDarkMode }) => {
           <motion.button
             onClick={() => setIsModalOpen(true)}
             className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium ${
-              isDarkMode 
-                ? 'bg-blue-600 hover:bg-blue-700' 
-                : 'bg-blue-500 hover:bg-blue-600'
+              isDarkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600'
             } text-white transition-colors`}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -229,25 +228,27 @@ const MedicationTracker = ({ isDarkMode }) => {
                 className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
                 onClick={() => setIsModalOpen(false)}
               />
-              
+
               {/* Modal Container */}
               <div className="fixed inset-0 flex items-center justify-center z-[70] p-4">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95, y: 20 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                  transition={{ 
-                    type: "spring", 
-                    stiffness: 300, 
-                    damping: 30 
+                  transition={{
+                    type: 'spring',
+                    stiffness: 300,
+                    damping: 30,
                   }}
                   className={`w-full max-w-2xl max-h-[90vh] rounded-2xl overflow-hidden shadow-2xl 
                     ${isDarkMode ? 'bg-dark-card' : 'bg-white'}`}
                 >
                   {/* Modal Header */}
-                  <div className={`sticky top-0 px-6 py-4 border-b ${
-                    isDarkMode ? 'border-gray-700/50' : 'border-gray-200'
-                  } bg-opacity-80 backdrop-blur-sm`}>
+                  <div
+                    className={`sticky top-0 px-6 py-4 border-b ${
+                      isDarkMode ? 'border-gray-700/50' : 'border-gray-200'
+                    } bg-opacity-80 backdrop-blur-sm`}
+                  >
                     <div className="flex items-center justify-between">
                       <h2 className="text-xl font-semibold flex items-center gap-3">
                         <div className="w-1 h-6 bg-blue-500 rounded-full"></div>
@@ -258,8 +259,18 @@ const MedicationTracker = ({ isDarkMode }) => {
                         className={`rounded-full p-2 hover:bg-opacity-10 
                           ${isDarkMode ? 'hover:bg-white' : 'hover:bg-black'}`}
                       >
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
                         </svg>
                       </button>
                     </div>
@@ -268,7 +279,7 @@ const MedicationTracker = ({ isDarkMode }) => {
                   {/* Modal Content */}
                   <div className="overflow-y-auto" style={{ maxHeight: 'calc(90vh - 80px)' }}>
                     <div className="p-6">
-                      <AddMedicationForm 
+                      <AddMedicationForm
                         onSubmit={(data) => {
                           handleAddMedication(data);
                           setIsModalOpen(false);
@@ -294,24 +305,26 @@ const MedicationTracker = ({ isDarkMode }) => {
                 className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
                 onClick={() => setEditingMedication(null)}
               />
-              
+
               <div className="fixed inset-0 flex items-center justify-center z-[70] p-4">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95, y: 20 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                  transition={{ 
-                    type: "spring", 
-                    stiffness: 300, 
-                    damping: 30 
+                  transition={{
+                    type: 'spring',
+                    stiffness: 300,
+                    damping: 30,
                   }}
                   className={`w-full max-w-2xl max-h-[90vh] rounded-2xl overflow-hidden shadow-2xl 
                     ${isDarkMode ? 'bg-dark-card' : 'bg-white'}`}
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <div className={`sticky top-0 px-6 py-4 border-b ${
-                    isDarkMode ? 'border-gray-700/50' : 'border-gray-200'
-                  } bg-opacity-80 backdrop-blur-sm`}>
+                  <div
+                    className={`sticky top-0 px-6 py-4 border-b ${
+                      isDarkMode ? 'border-gray-700/50' : 'border-gray-200'
+                    } bg-opacity-80 backdrop-blur-sm`}
+                  >
                     <div className="flex items-center justify-between">
                       <h2 className="text-xl font-semibold flex items-center gap-3">
                         <div className="w-1 h-6 bg-blue-500 rounded-full"></div>
@@ -322,15 +335,25 @@ const MedicationTracker = ({ isDarkMode }) => {
                         className={`rounded-full p-2 hover:bg-opacity-10 
                           ${isDarkMode ? 'hover:bg-white' : 'hover:bg-black'}`}
                       >
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
                         </svg>
                       </button>
                     </div>
                   </div>
 
                   <div className="p-6 overflow-y-auto" style={{ maxHeight: 'calc(90vh - 80px)' }}>
-                    <AddMedicationForm 
+                    <AddMedicationForm
                       initialData={{
                         ...editingMedication,
                         times: editingMedication.Time || [], // Fix the field name here
@@ -356,7 +379,7 @@ const MedicationTracker = ({ isDarkMode }) => {
                 className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
                 onClick={() => setIsNotificationSettingsOpen(false)}
               />
-              
+
               <div className="fixed inset-0 flex items-center justify-center z-[70] p-4">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -365,9 +388,11 @@ const MedicationTracker = ({ isDarkMode }) => {
                   className={`w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl 
                     ${isDarkMode ? 'bg-dark-card' : 'bg-white'}`}
                 >
-                  <div className={`px-6 py-4 border-b ${
-                    isDarkMode ? 'border-gray-700' : 'border-gray-200'
-                  }`}>
+                  <div
+                    className={`px-6 py-4 border-b ${
+                      isDarkMode ? 'border-gray-700' : 'border-gray-200'
+                    }`}
+                  >
                     <h2 className="text-xl font-semibold">Notification Settings</h2>
                   </div>
                   <NotificationPreferences

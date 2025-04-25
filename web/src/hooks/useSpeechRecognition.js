@@ -13,24 +13,24 @@ export function useSpeechRecognition() {
       speechRecognitionRef.current.continuous = false;
       speechRecognitionRef.current.interimResults = false;
       speechRecognitionRef.current.lang = 'en-US';
-      
+
       speechRecognitionRef.current.onresult = (event) => {
         const text = event.results[0][0].transcript;
         setTranscript(text);
         setIsListening(false);
       };
-      
+
       speechRecognitionRef.current.onerror = (event) => {
         console.error('Speech recognition error:', event.error);
         toast.error('Voice input failed. Please try again or type your question.');
         setIsListening(false);
       };
-      
+
       speechRecognitionRef.current.onend = () => {
         setIsListening(false);
       };
     }
-    
+
     return () => {
       if (speechRecognitionRef.current) {
         speechRecognitionRef.current.abort();
@@ -43,7 +43,7 @@ export function useSpeechRecognition() {
       toast.error('Voice input is not supported in your browser.');
       return;
     }
-    
+
     if (isListening) {
       speechRecognitionRef.current.stop();
       setIsListening(false);

@@ -3,8 +3,8 @@ import { Routes, Route, Outlet } from 'react-router-dom';
 
 import LandingPage from '../pages/Landing/LandingPage';
 
-import LogIn from "../pages/Auth/LogIn/LogIn";
-import SignUp from "../pages/Auth/SignUp/SignUp";
+import LogIn from '../pages/Auth/LogIn/LogIn';
+import SignUp from '../pages/Auth/SignUp/SignUp';
 import OTPVerification from '../pages/Auth/OTPVerification/OTPVerification';
 import ForgotPassword from '../pages/Auth/ForgotPassword/ForgotPassword';
 import ResetPassword from '../pages/Auth/ResetPassword/ResetPassword';
@@ -18,18 +18,18 @@ import AppLayout from '../layout/AppLayout';
 import Dashboard from '../pages/Dashboard/Dashboard';
 import Analytics from '../pages/Analytics/Analytics';
 import PrivateMemos from '../pages/PrivateMemos/PrivateMemos';
-import HealthReport from "../pages/HealthReport/HealthReport";
+import HealthReport from '../pages/HealthReport/HealthReport';
 import PollutionTracker from '../pages/PollutionTracker/PollutionTracker';
-import HealthTips from "../pages/HealthTips/HealthTips";
+import HealthTips from '../pages/HealthTips/HealthTips';
 
-import ExerciseRoutines from "../pages/ExerciseRoutines/ExerciseRoutines";
-import WellnessHub from "../pages/WellnessHub/WellnessHub";
-import EmergencyContacts from "../pages/EmergencyContacts/EmergencyContacts";
-import HealthMetrics from "../pages/HealthMetrics/HealthMetrics";
+import ExerciseRoutines from '../pages/ExerciseRoutines/ExerciseRoutines';
+import WellnessHub from '../pages/WellnessHub/WellnessHub';
+import EmergencyContacts from '../pages/EmergencyContacts/EmergencyContacts';
+import HealthMetrics from '../pages/HealthMetrics/HealthMetrics';
 import MedicationTracker from '../pages/MedicationTracker/MedicationTracker';
 
-import Profile from "../pages/Profile/Profile";
-import Settings from "../pages/Settings/Settings";
+import Profile from '../pages/Profile/Profile';
+import Settings from '../pages/Settings/Settings';
 import Help from '../pages/Help/Help';
 
 import TermsOfUse from '../pages/Terms/TermsOfUse';
@@ -37,57 +37,56 @@ import PrivacyPolicy from '../pages/PrivacyPolicy/PrivacyPolicy';
 import NotFound from '../pages/NotFound/NotFound';
 
 import { isAuthenticated } from '../utils/auth';
+import GoogleCallback from '../components/Auth/GoogleCallback';
 
 const AppRoutes = ({ isDarkMode, toggleTheme }) => {
   return (
     <Routes>
-      <Route 
-        path="/" 
+      <Route
+        path="/"
         element={
-          <LandingPage 
-            isDarkMode={isDarkMode} 
+          <LandingPage
+            isDarkMode={isDarkMode}
             toggleTheme={toggleTheme}
             isAuthenticated={isAuthenticated()}
           />
-        } 
+        }
       />
-      <Route 
-        path="/sign-up" 
-        element={<SignUp isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
+      <Route
+        path="/sign-up"
+        element={<SignUp isDarkMode={isDarkMode} toggleTheme={toggleTheme} />}
       />
-      <Route 
-        path="/log-in"
-        element={<LogIn isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
-      />
-      <Route 
+      <Route path="/log-in" element={<LogIn isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
+      <Route
         path="/verify-otp"
-        element={<OTPVerification isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
+        element={<OTPVerification isDarkMode={isDarkMode} toggleTheme={toggleTheme} />}
       />
-      <Route 
+      <Route
         path="/forgot-password"
-        element={<ForgotPassword isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
+        element={<ForgotPassword isDarkMode={isDarkMode} toggleTheme={toggleTheme} />}
       />
-      <Route 
+      <Route
         path="/reset-password"
-        element={<ResetPassword isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
+        element={<ResetPassword isDarkMode={isDarkMode} toggleTheme={toggleTheme} />}
       />
-      <Route 
+      <Route
         path="/verify-emergency-contact"
-        element={<VerifyEmergencyContact isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
+        element={<VerifyEmergencyContact isDarkMode={isDarkMode} toggleTheme={toggleTheme} />}
       />
-      <Route 
+      <Route
         path="/emergency-tracking"
-        element={<EmergencyTracking isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
+        element={<EmergencyTracking isDarkMode={isDarkMode} toggleTheme={toggleTheme} />}
       />
 
-      <Route element={
+      <Route
+        element={
           <ProtectedRoute>
             <AppLayout isDarkMode={isDarkMode} toggleTheme={toggleTheme}>
               <Outlet />
             </AppLayout>
           </ProtectedRoute>
-      }>
-
+        }
+      >
         <Route path="/dashboard" element={<Dashboard isDarkMode={isDarkMode} />} />
         <Route path="/sticky-notes" element={<PrivateMemos isDarkMode={isDarkMode} />} />
         <Route path="/health-report" element={<HealthReport isDarkMode={isDarkMode} />} />
@@ -103,17 +102,17 @@ const AppRoutes = ({ isDarkMode, toggleTheme }) => {
         <Route path="/terms-of-use" element={<TermsOfUse isDarkMode={isDarkMode} />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy isDarkMode={isDarkMode} />} />
         <Route path="/medication-tracker" element={<MedicationTracker isDarkMode={isDarkMode} />} />
-        
-        <Route 
-          path="/analytics" 
+
+        <Route
+          path="/analytics"
           element={
             <ProtectedRoute>
               <Analytics isDarkMode={isDarkMode} />
             </ProtectedRoute>
-          } 
+          }
         />
-
       </Route>
+      <Route path="/signin-google" element={<GoogleCallback />} />
       <Route path="*" element={<NotFound isDarkMode={isDarkMode} />} />
     </Routes>
   );

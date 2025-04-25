@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
  */
 const useDashboardTour = () => {
   const [showTour, setShowTour] = useState(false);
-  
+
   useEffect(() => {
     const shouldShowTour = localStorage.getItem('showTour') === 'true';
     if (shouldShowTour && window.location.pathname === '/dashboard') {
@@ -15,12 +15,12 @@ const useDashboardTour = () => {
       }, 1000);
     }
   }, []);
-  
+
   const handleTourExit = () => {
     setShowTour(false);
     localStorage.removeItem('showTour');
   };
-  
+
   return { showTour, handleTourExit };
 };
 

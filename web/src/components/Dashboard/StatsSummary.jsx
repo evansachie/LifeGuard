@@ -23,9 +23,9 @@ const StatsSummary = ({ isDarkMode, stats = {} }) => {
     readings: stats.readings || 124,
     alerts: stats.alerts || 2,
     notifications: stats.notifications || 5,
-    tasks: undoneTasks
+    tasks: undoneTasks,
   };
-  
+
   return (
     <div className={`stats-summary ${isDarkMode ? 'dark-mode' : ''}`}>
       <div className="stat-item">
@@ -37,7 +37,7 @@ const StatsSummary = ({ isDarkMode, stats = {} }) => {
           <p>Readings Today</p>
         </div>
       </div>
-      
+
       <div className="stat-item">
         <div className="stat-icon alerts">
           <FaExclamationTriangle />
@@ -47,7 +47,7 @@ const StatsSummary = ({ isDarkMode, stats = {} }) => {
           <p>Active Alerts</p>
         </div>
       </div>
-      
+
       <div className="stat-item">
         <div className="stat-icon notifications">
           <FaBell />
@@ -57,7 +57,7 @@ const StatsSummary = ({ isDarkMode, stats = {} }) => {
           <p>Notifications</p>
         </div>
       </div>
-      
+
       <div className="stat-item">
         <div className="stat-icon tasks">
           <FaClipboardCheck />

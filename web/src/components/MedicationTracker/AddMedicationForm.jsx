@@ -10,7 +10,7 @@ const defaultFormData = {
   startDate: new Date().toISOString().split('T')[0],
   endDate: '',
   notes: '',
-  active: true
+  active: true,
 };
 
 const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
@@ -24,17 +24,19 @@ const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
         startDate: initialData.StartDate?.split('T')[0] || defaultFormData.startDate,
         endDate: initialData.EndDate?.split('T')[0] || '',
         notes: initialData.Notes || '',
-        active: initialData.Active ?? true
+        active: initialData.Active ?? true,
       };
     }
     return defaultFormData;
   });
 
   const isFormValid = useMemo(() => {
-    return formData?.name?.trim() !== '' && 
-           formData?.dosage?.trim() !== '' && 
-           formData?.times?.length > 0 && 
-           formData?.times?.every(time => time !== '');
+    return (
+      formData?.name?.trim() !== '' &&
+      formData?.dosage?.trim() !== '' &&
+      formData?.times?.length > 0 &&
+      formData?.times?.every((time) => time !== '')
+    );
   }, [formData]);
 
   const handleSubmit = (e) => {
@@ -42,9 +44,9 @@ const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
     const submissionData = {
       ...formData,
       // If endDate is empty string, set it to null
-      endDate: formData.endDate || null
+      endDate: formData.endDate || null,
     };
-    
+
     onSubmit(initialData ? { ...submissionData, Id: initialData.Id } : submissionData);
     if (!initialData) {
       setFormData(defaultFormData);
@@ -52,16 +54,16 @@ const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
   };
 
   const addTimeSlot = () => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      times: [...prev.times, '12:00']
+      times: [...prev.times, '12:00'],
     }));
   };
 
   const removeTimeSlot = (index) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      times: prev.times.filter((_, i) => i !== index)
+      times: prev.times.filter((_, i) => i !== index),
     }));
   };
 
@@ -73,10 +75,10 @@ const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
           <input
             type="text"
             value={formData.name}
-            onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+            onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
             className={`w-full rounded-lg p-2.5 border transition-colors ${
-              isDarkMode 
-                ? 'bg-gray-800 border-gray-700 text-white focus:border-blue-500' 
+              isDarkMode
+                ? 'bg-gray-800 border-gray-700 text-white focus:border-blue-500'
                 : 'bg-white border-gray-300 focus:border-blue-500'
             }`}
             required
@@ -88,10 +90,10 @@ const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
           <input
             type="text"
             value={formData.dosage}
-            onChange={(e) => setFormData(prev => ({ ...prev, dosage: e.target.value }))}
+            onChange={(e) => setFormData((prev) => ({ ...prev, dosage: e.target.value }))}
             className={`w-full rounded-lg p-2.5 border transition-colors ${
-              isDarkMode 
-                ? 'bg-gray-800 border-gray-700 text-white focus:border-blue-500' 
+              isDarkMode
+                ? 'bg-gray-800 border-gray-700 text-white focus:border-blue-500'
                 : 'bg-white border-gray-300 focus:border-blue-500'
             }`}
             placeholder="e.g., 500mg"
@@ -103,10 +105,10 @@ const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
           <div className="text-sm font-medium mb-1">Frequency</div>
           <select
             value={formData.frequency}
-            onChange={(e) => setFormData(prev => ({ ...prev, frequency: e.target.value }))}
+            onChange={(e) => setFormData((prev) => ({ ...prev, frequency: e.target.value }))}
             className={`w-full rounded-lg p-2.5 border transition-colors ${
-              isDarkMode 
-                ? 'bg-dark-card border-gray-700 text-white focus:border-blue-500' 
+              isDarkMode
+                ? 'bg-dark-card border-gray-700 text-white focus:border-blue-500'
                 : 'bg-white border-gray-300 focus:border-blue-500'
             }`}
           >
@@ -128,11 +130,11 @@ const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
                   onChange={(e) => {
                     const newTimes = [...formData.times];
                     newTimes[index] = e.target.value;
-                    setFormData(prev => ({ ...prev, times: newTimes }));
+                    setFormData((prev) => ({ ...prev, times: newTimes }));
                   }}
                   className={`flex-1 rounded-lg p-2.5 border transition-colors ${
-                    isDarkMode 
-                      ? 'bg-gray-800 border-gray-700 text-white focus:border-blue-500' 
+                    isDarkMode
+                      ? 'bg-gray-800 border-gray-700 text-white focus:border-blue-500'
                       : 'bg-white border-gray-300 focus:border-blue-500'
                   }`}
                 />
@@ -163,10 +165,10 @@ const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
             <input
               type="date"
               value={formData.startDate}
-              onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
+              onChange={(e) => setFormData((prev) => ({ ...prev, startDate: e.target.value }))}
               className={`w-full rounded-lg p-2.5 border transition-colors ${
-                isDarkMode 
-                  ? 'bg-gray-800 border-gray-700 text-white focus:border-blue-500' 
+                isDarkMode
+                  ? 'bg-gray-800 border-gray-700 text-white focus:border-blue-500'
                   : 'bg-white border-gray-300 focus:border-blue-500'
               }`}
               required
@@ -177,10 +179,10 @@ const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
             <input
               type="date"
               value={formData.endDate}
-              onChange={(e) => setFormData(prev => ({ ...prev, endDate: e.target.value }))}
+              onChange={(e) => setFormData((prev) => ({ ...prev, endDate: e.target.value }))}
               className={`w-full rounded-lg p-2.5 border transition-colors ${
-                isDarkMode 
-                  ? 'bg-gray-800 border-gray-700 text-white focus:border-blue-500' 
+                isDarkMode
+                  ? 'bg-gray-800 border-gray-700 text-white focus:border-blue-500'
                   : 'bg-white border-gray-300 focus:border-blue-500'
               }`}
             />
@@ -191,10 +193,10 @@ const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
           <div className="text-sm font-medium mb-1">Notes (Optional)</div>
           <textarea
             value={formData.notes}
-            onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+            onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
             className={`w-full rounded-lg p-2.5 border transition-colors ${
-              isDarkMode 
-                ? 'bg-dark-card border-gray-700 text-white focus:border-blue-500' 
+              isDarkMode
+                ? 'bg-dark-card border-gray-700 text-white focus:border-blue-500'
                 : 'bg-white border-gray-300 focus:border-blue-500'
             }`}
             rows="3"

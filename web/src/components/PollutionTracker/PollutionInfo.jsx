@@ -12,30 +12,19 @@ const PollutionInfo = ({ zone }) => (
   >
     <h3>Air Quality Index</h3>
     <div className="info-grid">
-      <motion.div 
-        className="info-item"
-        whileHover={{ scale: 1.05 }}
-      >
+      <motion.div className="info-item" whileHover={{ scale: 1.05 }}>
         <FaThermometerHalf />
         <span className="label">AQI</span>
-        <span className={`value ${getPollutionLevel(zone.data.aqi, 'aqi')}`}>
-          {zone.data.aqi}
-        </span>
+        <span className={`value ${getPollutionLevel(zone.data.aqi, 'aqi')}`}>{zone.data.aqi}</span>
       </motion.div>
-      <motion.div 
-        className="info-item"
-        whileHover={{ scale: 1.05 }}
-      >
+      <motion.div className="info-item" whileHover={{ scale: 1.05 }}>
         <FaMask />
         <span className="label">PM2.5</span>
         <span className={`value ${getPollutionLevel(zone.data.pm25, 'pm25')}`}>
           {zone.data.pm25}
         </span>
       </motion.div>
-      <motion.div 
-        className="info-item"
-        whileHover={{ scale: 1.05 }}
-      >
+      <motion.div className="info-item" whileHover={{ scale: 1.05 }}>
         <FaWind />
         <span className="label">PM10</span>
         <span className={`value ${getPollutionLevel(zone.data.pm10, 'pm10')}`}>

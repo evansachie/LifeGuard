@@ -8,8 +8,8 @@ export const workoutData = {
         duration: '5 mins',
         videoUrl: 'https://www.youtube.com/embed/uW3-Ue07H0M',
         calories: 25,
-        targetMuscles: ['Full Body']
-      }
+        targetMuscles: ['Full Body'],
+      },
     ],
     cardio: [
       {
@@ -19,8 +19,8 @@ export const workoutData = {
         duration: '10 mins',
         videoUrl: 'https://www.youtube.com/embed/3XbfW90grUk',
         calories: 100,
-        targetMuscles: ['Legs', 'Core']
-      }
+        targetMuscles: ['Legs', 'Core'],
+      },
     ],
     strength: [
       {
@@ -30,8 +30,8 @@ export const workoutData = {
         duration: '17 mins',
         videoUrl: 'https://www.youtube.com/embed/WIHy-ZnSndA',
         calories: 150,
-        targetMuscles: ['Full Body']
-      }
+        targetMuscles: ['Full Body'],
+      },
     ],
     hiit: [
       {
@@ -41,8 +41,8 @@ export const workoutData = {
         duration: '20 mins',
         videoUrl: 'https://www.youtube.com/embed/M0uO8X3_tEA',
         calories: 200,
-        targetMuscles: ['Full Body']
-      }
+        targetMuscles: ['Full Body'],
+      },
     ],
     cooldown: [
       {
@@ -52,9 +52,9 @@ export const workoutData = {
         duration: '5 mins',
         videoUrl: 'https://www.youtube.com/embed/3w1szPuqY8I',
         calories: 20,
-        targetMuscles: ['Full Body']
-      }
-    ]
+        targetMuscles: ['Full Body'],
+      },
+    ],
   },
   intermediate: {
     warmup: [
@@ -65,8 +65,8 @@ export const workoutData = {
         duration: '17 mins',
         videoUrl: 'https://www.youtube.com/embed/h1AxL1Qp9eA',
         calories: 50,
-        targetMuscles: ['Full Body']
-      }
+        targetMuscles: ['Full Body'],
+      },
     ],
     cardio: [
       {
@@ -76,8 +76,8 @@ export const workoutData = {
         duration: '30 mins',
         videoUrl: 'https://www.youtube.com/embed/c1mBu4tK90k',
         calories: 120,
-        targetMuscles: ['Legs', 'Core']
-      }
+        targetMuscles: ['Legs', 'Core'],
+      },
     ],
     strength: [
       {
@@ -87,8 +87,8 @@ export const workoutData = {
         duration: '17 mins',
         videoUrl: 'https://www.youtube.com/embed/uM9iFSHUIgU',
         calories: 150,
-        targetMuscles: ['Full Body']
-      }
+        targetMuscles: ['Full Body'],
+      },
     ],
     hiit: [
       {
@@ -98,8 +98,8 @@ export const workoutData = {
         duration: '30 mins',
         videoUrl: 'https://www.youtube.com/embed/uearF2Iorng',
         calories: 250,
-        targetMuscles: ['Full Body']
-      }
+        targetMuscles: ['Full Body'],
+      },
     ],
     cooldown: [
       {
@@ -109,9 +109,9 @@ export const workoutData = {
         duration: '30 mins',
         videoUrl: 'https://www.youtube.com/embed/3w1szPuqY8I',
         calories: 20,
-        targetMuscles: ['Full Body']
-      }
-    ]
+        targetMuscles: ['Full Body'],
+      },
+    ],
   },
   advanced: {
     warmup: [
@@ -122,8 +122,8 @@ export const workoutData = {
         duration: '5 mins',
         videoUrl: 'https://www.youtube.com/embed/uW3-Ue07H0M',
         calories: 25,
-        targetMuscles: ['Full Body']
-      }
+        targetMuscles: ['Full Body'],
+      },
     ],
     cardio: [
       {
@@ -133,8 +133,8 @@ export const workoutData = {
         duration: '10 mins',
         videoUrl: 'https://www.youtube.com/embed/3XbfW90grUk',
         calories: 100,
-        targetMuscles: ['Legs', 'Core']
-      }
+        targetMuscles: ['Legs', 'Core'],
+      },
     ],
     strength: [
       {
@@ -144,8 +144,8 @@ export const workoutData = {
         duration: '17 mins',
         videoUrl: 'https://www.youtube.com/embed/WIHy-ZnSndA',
         calories: 150,
-        targetMuscles: ['Full Body']
-      }
+        targetMuscles: ['Full Body'],
+      },
     ],
     hiit: [
       {
@@ -155,8 +155,8 @@ export const workoutData = {
         duration: '20 mins',
         videoUrl: 'https://www.youtube.com/embed/M0uO8X3_tEA',
         calories: 200,
-        targetMuscles: ['Full Body']
-      }
+        targetMuscles: ['Full Body'],
+      },
     ],
     cooldown: [
       {
@@ -166,8 +166,8 @@ export const workoutData = {
         duration: '5 mins',
         videoUrl: 'https://www.youtube.com/embed/3w1szPuqY8I',
         calories: 20,
-        targetMuscles: ['Full Body']
-      }
-    ]
-  }
+        targetMuscles: ['Full Body'],
+      },
+    ],
+  },
 };

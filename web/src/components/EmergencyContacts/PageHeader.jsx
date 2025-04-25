@@ -1,6 +1,6 @@
 import React from 'react';
 import { FaUserPlus } from 'react-icons/fa';
-import { MdOutlineContactEmergency } from "react-icons/md";
+import { MdOutlineContactEmergency } from 'react-icons/md';
 import EmergencyButton from './EmergencyButton';
 
 const PageHeader = ({ onAddClick, onEmergencyAlert }) => {

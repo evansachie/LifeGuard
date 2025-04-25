@@ -19,11 +19,7 @@ const ChatMessages = ({ chatHistory, loading, isDarkMode, onExampleClick }) => {
       ) : (
         <div className="messages">
           {chatHistory.map((message, index) => (
-            <Message 
-              key={index} 
-              message={message} 
-              isDarkMode={isDarkMode} 
-            />
+            <Message key={index} message={message} isDarkMode={isDarkMode} />
           ))}
           {loading && <TypingIndicator />}
         </div>

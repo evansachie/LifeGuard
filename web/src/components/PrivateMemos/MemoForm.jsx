@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import Spinner from '../Spinner/Spinner';
 
-const MemoForm = ({ 
-  memo, 
+const MemoForm = ({
+  memo,
   setMemo,
   isDarkMode,
-  handleSave, 
-  handleCancel, 
-  isEditing = false, 
+  handleSave,
+  handleCancel,
+  isEditing = false,
   saving = false,
 }) => {
   const [isEditorLoading, setIsEditorLoading] = useState(true);
@@ -33,14 +33,31 @@ const MemoForm = ({
           height: isEditing ? 250 : 200,
           menubar: false,
           plugins: [
-            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-            'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-            'insertdatetime', 'media', 'table', 'help', 'wordcount', 'codesample', 'quickbars'
+            'advlist',
+            'autolink',
+            'lists',
+            'link',
+            'image',
+            'charmap',
+            'preview',
+            'anchor',
+            'searchreplace',
+            'visualblocks',
+            'code',
+            'fullscreen',
+            'insertdatetime',
+            'media',
+            'table',
+            'help',
+            'wordcount',
+            'codesample',
+            'quickbars',
           ],
-          toolbar: 'undo redo | blocks | ' +
-          'bold italic forecolor | alignleft aligncenter ' +
-          'alignright alignjustify | bullist numlist outdent indent | ' +
-          'removeformat | codesample | help',
+          toolbar:
+            'undo redo | blocks | ' +
+            'bold italic forecolor | alignleft aligncenter ' +
+            'alignright alignjustify | bullist numlist outdent indent | ' +
+            'removeformat | codesample | help',
           content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
           skin: isDarkMode ? 'oxide-dark' : 'oxide',
           content_css: isDarkMode ? 'dark' : 'default',
@@ -54,18 +71,21 @@ const MemoForm = ({
         }}
       />
       <div className="memo-input-actions py-4">
-        <button
-          className="action-button cancel-button"
-          onClick={handleCancel}
-        >
+        <button className="action-button cancel-button" onClick={handleCancel}>
           Cancel
         </button>
-        <button 
-          className="action-button save-memo-button" 
+        <button
+          className="action-button save-memo-button"
           onClick={handleSave}
           disabled={saving || !memo.trim()}
         >
-          {saving ? <Spinner size="small" color="white" /> : isEditing ? 'Update Note' : 'Save Note'}
+          {saving ? (
+            <Spinner size="small" color="white" />
+          ) : isEditing ? (
+            'Update Note'
+          ) : (
+            'Save Note'
+          )}
         </button>
       </div>
     </div>

@@ -46,17 +46,11 @@ const NotFound = ({ isDarkMode }) => {
         >
           404
         </motion.h1>
-        <h2 className="text-2xl font-semibold mb-4">
-          Oops! You seem lost in space.
-        </h2>
+        <h2 className="text-2xl font-semibold mb-4">Oops! You seem lost in space.</h2>
         <p className={`mb-8 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
           The page you’re looking for doesn’t exist. Let’s bring you back home.
         </p>
-        <motion.div
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          className="inline-flex"
-        >
+        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="inline-flex">
           <Link
             to="/dashboard"
             className={`inline-flex items-center gap-2 px-6 py-3 rounded-lg transition-colors shadow-lg ${

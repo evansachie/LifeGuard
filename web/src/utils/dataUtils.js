@@ -5,7 +5,7 @@
  * @returns {string} - Formatted value
  */
 export const formatValue = (value, decimals = 1) => {
-    return typeof value === 'number' ? value.toFixed(decimals) : '0.0';
+  return typeof value === 'number' ? value.toFixed(decimals) : '0.0';
 };
 
 /**
@@ -14,10 +14,10 @@ export const formatValue = (value, decimals = 1) => {
  * @returns {string} - Color code
  */
 export const getAQIColor = (aqi) => {
-    if (aqi <= 50) return '#00e400';
-    if (aqi <= 100) return '#ffff00';
-    if (aqi <= 150) return '#ff7e00';
-    if (aqi <= 200) return '#ff0000';
-    if (aqi <= 300) return '#8f3f97';
-    return '#7e0023';
+  if (aqi <= 50) return '#00e400';
+  if (aqi <= 100) return '#ffff00';
+  if (aqi <= 150) return '#ff7e00';
+  if (aqi <= 200) return '#ff0000';
+  if (aqi <= 300) return '#8f3f97';
+  return '#7e0023';
 };
