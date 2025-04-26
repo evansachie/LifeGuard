@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaGithub, FaTwitter, FaLinkedin } from 'react-icons/fa';
+import AccessibleDropdown from '../AccessibleDropdown/AccessibleDropdown';
 import './Footer.css';
 
 const Footer = () => {
@@ -21,13 +22,25 @@ const Footer = () => {
                 href="https://github.com/AWESOME04/LifeGuard"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="GitHub"
               >
                 <FaGithub />
               </a>
-              <a href="#" target="_blank" rel="noopener noreferrer">
+              {/* Replace # links with proper URLs or use button for temporary placeholders */}
+              <a
+                href="https://twitter.com/LifeGuardApp"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Twitter"
+              >
                 <FaTwitter />
               </a>
-              <a href="#" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://linkedin.com/company/lifeguard-app"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+              >
                 <FaLinkedin />
               </a>
             </div>
@@ -35,24 +48,101 @@ const Footer = () => {
 
           <div className="footer-links">
             <h3>Product</h3>
-            <button onClick={() => scrollToSection('features')}>Features</button>
-            <button onClick={() => scrollToSection('how-it-works')}>How It Works</button>
-            <button onClick={() => scrollToSection('benefits')}>Benefits</button>
-            <button onClick={() => scrollToSection('download')}>Download</button>
+            <AccessibleDropdown
+              isOpen={false}
+              onToggle={() => scrollToSection('features')}
+              ariaLabel="Go to Features section"
+              className="footer-link-button"
+            >
+              Features
+            </AccessibleDropdown>
+
+            <AccessibleDropdown
+              isOpen={false}
+              onToggle={() => scrollToSection('how-it-works')}
+              ariaLabel="Go to How It Works section"
+              className="footer-link-button"
+            >
+              How It Works
+            </AccessibleDropdown>
+
+            <AccessibleDropdown
+              isOpen={false}
+              onToggle={() => scrollToSection('benefits')}
+              ariaLabel="Go to Benefits section"
+              className="footer-link-button"
+            >
+              Benefits
+            </AccessibleDropdown>
+
+            <AccessibleDropdown
+              isOpen={false}
+              onToggle={() => scrollToSection('download')}
+              ariaLabel="Go to Download section"
+              className="footer-link-button"
+            >
+              Download
+            </AccessibleDropdown>
           </div>
 
           <div className="footer-links">
             <h3>Company</h3>
-            <button onClick={() => scrollToSection('about')}>About</button>
-            <button onClick={() => scrollToSection('contact')}>Contact</button>
-            <button onClick={() => scrollToSection('careers')}>Careers</button>
+            <AccessibleDropdown
+              isOpen={false}
+              onToggle={() => scrollToSection('about')}
+              ariaLabel="Go to About section"
+              className="footer-link-button"
+            >
+              About
+            </AccessibleDropdown>
+
+            <AccessibleDropdown
+              isOpen={false}
+              onToggle={() => scrollToSection('contact')}
+              ariaLabel="Go to Contact section"
+              className="footer-link-button"
+            >
+              Contact
+            </AccessibleDropdown>
+
+            <AccessibleDropdown
+              isOpen={false}
+              onToggle={() => scrollToSection('careers')}
+              ariaLabel="Go to Careers section"
+              className="footer-link-button"
+            >
+              Careers
+            </AccessibleDropdown>
           </div>
 
           <div className="footer-links">
             <h3>Resources</h3>
-            <button onClick={() => scrollToSection('help')}>Help Center</button>
-            <button onClick={() => scrollToSection('terms-of-use')}>Terms of Use</button>
-            <button onClick={() => scrollToSection('privacy-policy')}>Privacy Policy</button>
+            <AccessibleDropdown
+              isOpen={false}
+              onToggle={() => scrollToSection('help')}
+              ariaLabel="Go to Help Center section"
+              className="footer-link-button"
+            >
+              Help Center
+            </AccessibleDropdown>
+
+            <AccessibleDropdown
+              isOpen={false}
+              onToggle={() => scrollToSection('terms-of-use')}
+              ariaLabel="Go to Terms of Use section"
+              className="footer-link-button"
+            >
+              Terms of Use
+            </AccessibleDropdown>
+
+            <AccessibleDropdown
+              isOpen={false}
+              onToggle={() => scrollToSection('privacy-policy')}
+              ariaLabel="Go to Privacy Policy section"
+              className="footer-link-button"
+            >
+              Privacy Policy
+            </AccessibleDropdown>
           </div>
         </div>
 

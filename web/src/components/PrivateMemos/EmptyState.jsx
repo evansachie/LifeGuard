@@ -2,7 +2,7 @@ import React from 'react';
 import { FaPlus } from 'react-icons/fa';
 import EmptyStateImg from '../../../src/assets/empty-state.svg';
 
-const EmptyState = ({ onNewNote, isDarkMode }) => {
+const EmptyState = ({ onNewNote }) => {
   return (
     <div className="memos-empty-state">
       <img src={EmptyStateImg} alt="No notes" className="empty-state-image" />

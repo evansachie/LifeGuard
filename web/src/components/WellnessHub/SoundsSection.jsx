@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FaPlay,
   FaPause,
   FaVolumeUp,
-  FaMusic,
   FaSpinner,
   FaStar,
   FaTree,
@@ -34,6 +33,7 @@ import {
 } from '../../services/favoriteSoundsService';
 import { toast } from 'react-toastify';
 import NoMusicIcon from '../../assets/no-music.svg';
+import AccessibleDropdown from '../AccessibleDropdown/AccessibleDropdown';
 
 const SoundsSection = ({ isDarkMode }) => {
   const { currentSound, setCurrentSound, isPlaying, setIsPlaying, volume, setVolume, audioRef } =
@@ -43,7 +43,7 @@ const SoundsSection = ({ isDarkMode }) => {
   const [activeCategory, setActiveCategory] = useState('nature');
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState({});
-  const [hasMore, setHasMore] = useState(true);
+  const [, setHasMore] = useState(true);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [prevVolume, setPrevVolume] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -51,46 +51,81 @@ const SoundsSection = ({ isDarkMode }) => {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const userId = localStorage.getItem('userId');
 
-  const categories = {
-    nature: { label: 'Forest & Nature', icon: <FaTree /> },
-    meditation: { label: 'Tibetan Bowls', icon: <FaYinYang /> },
-    rain: { label: 'Gentle Rain', icon: <FaCloudRain /> },
-    ocean: { label: 'Ocean Waves', icon: <FaWater /> },
-    forest: { label: 'Forest Ambience', icon: <FaLeaf /> },
-    space: { label: 'Space Ambience', icon: <FaSpaceShuttle /> },
-    bowls: { label: 'Crystal Bowls', icon: <FaBell /> },
-    binaural: { label: 'Binaural Beats', icon: <LuBrainCircuit /> },
-    flute: { label: 'Native Flute', icon: <FaGuitar /> },
-  };
+  // Wrap categories in useMemo to prevent it from being recreated on every render
+  const categories = useMemo(
+    () => ({
+      nature: { label: 'Forest & Nature', icon: <FaTree /> },
+      meditation: { label: 'Tibetan Bowls', icon: <FaYinYang /> },
+      rain: { label: 'Gentle Rain', icon: <FaCloudRain /> },
+      ocean: { label: 'Ocean Waves', icon: <FaWater /> },
+      forest: { label: 'Forest Ambience', icon: <FaLeaf /> },
+      space: { label: 'Space Ambience', icon: <FaSpaceShuttle /> },
+      bowls: { label: 'Crystal Bowls', icon: <FaBell /> },
+      binaural: { label: 'Binaural Beats', icon: <LuBrainCircuit /> },
+      flute: { label: 'Native Flute', icon: <FaGuitar /> },
+    }),
+    []
+  ); // Empty dependency array means this will only be created once
 
-  useEffect(() => {
-    if (userId) {
-      loadFavorites();
-    }
-  }, [userId]);
-
-  const loadFavorites = async () => {
+  const loadFavorites = useCallback(async () => {
     try {
       const userFavorites = await getFavorites(userId);
       setFavorites(userFavorites);
       if (showFavoritesOnly) {
         const favoriteIds = userFavorites.map((fav) => fav.sound_id);
-        setSounds(sounds.filter((sound) => favoriteIds.includes(sound.id.toString())));
+        setSounds((prevSounds) =>
+          prevSounds.filter((sound) => favoriteIds.includes(sound.id.toString()))
+        );
       }
     } catch (error) {
       console.error('Error loading favorites:', error);
       toast.error('Failed to load favorites');
     }
-  };
+  }, [userId, showFavoritesOnly]);
+
+  useEffect(() => {
+    if (userId) {
+      loadFavorites();
+    }
+  }, [userId, loadFavorites]);
+
+  const fetchSounds = useCallback(
+    async (resetPage = false) => {
+      if (resetPage) setPage(1);
+      setLoading(true);
+      try {
+        const data = await searchSounds(activeCategory, resetPage ? 1 : page, filters);
+        setSounds((prev) => (resetPage ? data.results : [...prev, ...data.results]));
+        setHasMore(data.next !== null);
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [activeCategory, page, filters]
+  );
+
+  // Apply debounce to fetchSounds
+  const debouncedFetchSounds = useCallback(
+    debounce((resetPage) => {
+      fetchSounds(resetPage);
+    }, 500),
+    [fetchSounds]
+  );
 
   useEffect(() => {
     if (showFavoritesOnly) {
       const favoriteIds = favorites.map((fav) => fav.sound_id);
       setSounds((prev) => prev.filter((sound) => favoriteIds.includes(sound.id.toString())));
     } else {
-      fetchSounds(true);
+      debouncedFetchSounds(true);
     }
-  }, [showFavoritesOnly]);
+  }, [showFavoritesOnly, favorites, debouncedFetchSounds]);
+
+  useEffect(() => {
+    debouncedFetchSounds(true);
+  }, [activeCategory, filters, debouncedFetchSounds]);
 
   const handleToggleFavorite = async (sound) => {
     if (!userId) {
@@ -121,26 +156,15 @@ const SoundsSection = ({ isDarkMode }) => {
     }
   };
 
-  const fetchSounds = useCallback(
-    debounce(async (resetPage = false) => {
-      if (resetPage) setPage(1);
-      setLoading(true);
-      try {
-        const data = await searchSounds(activeCategory, resetPage ? 1 : page, filters);
-        setSounds((prev) => (resetPage ? data.results : [...prev, ...data.results]));
-        setHasMore(data.next !== null);
-      } catch (error) {
-        console.error('Error:', error);
-      } finally {
-        setLoading(false);
-      }
-    }, 500),
-    [activeCategory, page, filters]
-  );
-
-  useEffect(() => {
-    fetchSounds(true);
-  }, [activeCategory, filters]);
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+      setIsFullscreen(true);
+    } else {
+      document.exitFullscreen();
+      setIsFullscreen(false);
+    }
+  };
 
   useEffect(() => {
     const handleKeyPress = (e) => {
@@ -149,19 +173,22 @@ const SoundsSection = ({ isDarkMode }) => {
           e.preventDefault();
           setIsPlaying((prev) => !prev);
           break;
-        case 'arrowleft':
-          const categories = Object.keys(categories);
-          const currentIndex = categories.indexOf(activeCategory);
+        case 'arrowleft': {
+          const categoryKeys = Object.keys(categories);
+          const currentIndex = categoryKeys.indexOf(activeCategory);
           if (currentIndex > 0) {
-            setActiveCategory(categories[currentIndex - 1]);
+            setActiveCategory(categoryKeys[currentIndex - 1]);
           }
           break;
-        case 'arrowright':
-          const nextIndex = categories.indexOf(activeCategory) + 1;
-          if (nextIndex < categories.length) {
-            setActiveCategory(categories[nextIndex]);
+        }
+        case 'arrowright': {
+          const categoryKeys = Object.keys(categories);
+          const nextIndex = categoryKeys.indexOf(activeCategory) + 1;
+          if (nextIndex < categoryKeys.length) {
+            setActiveCategory(categoryKeys[nextIndex]);
           }
           break;
+        }
         case 'arrowup':
           setVolume((prev) => Math.min(1, prev + 0.1));
           break;
@@ -182,22 +209,14 @@ const SoundsSection = ({ isDarkMode }) => {
         case 'k':
           setShowShortcuts((prev) => !prev);
           break;
+        default:
+          break;
       }
     };
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [activeCategory, volume, isPlaying]);
-
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
-      setIsFullscreen(true);
-    } else {
-      document.exitFullscreen();
-      setIsFullscreen(false);
-    }
-  };
+  }, [activeCategory, volume, isPlaying, setIsPlaying, setVolume, prevVolume, categories]);
 
   const handleSoundPlay = async (sound) => {
     if (audioRef.current) {
@@ -277,16 +296,30 @@ const SoundsSection = ({ isDarkMode }) => {
                 <h3 className="sound-title">{sound.name}</h3>
                 <p className="sound-duration">{Math.floor(sound.duration)}s</p>
                 <div className="sound-controls">
-                  <button className="play-button" onClick={() => handleSoundPlay(sound)}>
+                  <AccessibleDropdown
+                    isOpen={currentSound === sound.name && isPlaying}
+                    onToggle={() => handleSoundPlay(sound)}
+                    ariaLabel={
+                      currentSound === sound.name && isPlaying ? 'Pause sound' : 'Play sound'
+                    }
+                    className="play-button"
+                  >
                     {currentSound === sound.name && isPlaying ? <FaPause /> : <FaPlay />}
-                  </button>
-                  <button
+                  </AccessibleDropdown>
+
+                  <AccessibleDropdown
+                    isOpen={favorites.some((fav) => fav.sound_id === sound.id.toString())}
+                    onToggle={() => handleToggleFavorite(sound)}
+                    ariaLabel={
+                      favorites.some((fav) => fav.sound_id === sound.id.toString())
+                        ? 'Remove from favorites'
+                        : 'Add to favorites'
+                    }
                     className={`favorite-button ${
                       favorites.some((fav) => fav.sound_id === sound.id.toString())
                         ? 'active bg-red-500 border-red-500'
                         : ''
                     }`}
-                    onClick={() => handleToggleFavorite(sound)}
                   >
                     <FaHeart
                       className={
@@ -295,7 +328,7 @@ const SoundsSection = ({ isDarkMode }) => {
                           : 'text-gray-300'
                       }
                     />
-                  </button>
+                  </AccessibleDropdown>
                 </div>
               </div>
             </motion.div>
@@ -315,38 +348,43 @@ const SoundsSection = ({ isDarkMode }) => {
       <h2>Mindful Soundscapes</h2>
 
       <div className="sound-categories">
-        <motion.button
+        <AccessibleDropdown
+          isOpen={showFavoritesOnly}
+          onToggle={() => setShowFavoritesOnly((prev) => !prev)}
+          ariaLabel={showFavoritesOnly ? 'Hide favorites' : 'Show favorites only'}
           className={`category-btn ${showFavoritesOnly ? 'active' : ''}`}
-          onClick={() => setShowFavoritesOnly((prev) => !prev)}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
         >
-          <span className="category-icon">
-            <FaHeart />
-          </span>
-          Favorites ({favorites.length})
-        </motion.button>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <span className="category-icon">
+              <FaHeart />
+            </span>
+            Favorites ({favorites.length})
+          </motion.div>
+        </AccessibleDropdown>
+
         {Object.entries(categories).map(([key, { label, icon }]) => (
-          <motion.button
+          <AccessibleDropdown
             key={key}
-            className={`category-btn ${activeCategory === key ? 'active' : ''}`}
-            onClick={() => {
+            isOpen={activeCategory === key}
+            onToggle={() => {
               setActiveCategory(key);
               setPage(1);
             }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            ariaLabel={`Select ${label} category`}
+            className={`category-btn ${activeCategory === key ? 'active' : ''}`}
           >
-            <span className="category-icon">{icon}</span>
-            {label}
-          </motion.button>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <span className="category-icon">{icon}</span>
+              {label}
+            </motion.div>
+          </AccessibleDropdown>
         ))}
       </div>
 
       <SoundFilters
         filters={filters}
         setFilters={setFilters}
-        onSearch={() => fetchSounds(true)}
+        onSearch={() => debouncedFetchSounds(true)}
         isDarkMode={isDarkMode}
         showFavoritesOnly={showFavoritesOnly}
         onToggleFavorites={() => setShowFavoritesOnly((prev) => !prev)}
@@ -360,10 +398,6 @@ const SoundsSection = ({ isDarkMode }) => {
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
         >
-          {/* <div className="now-playing">
-                        <FaMusic className="music-icon" />
-                        <span>Now Playing: {currentSound}</span>
-                    </div> */}
           <div className="volume-slider">
             <FaVolumeUp />
             <input
@@ -373,29 +407,35 @@ const SoundsSection = ({ isDarkMode }) => {
               step="0.01"
               value={volume}
               onChange={(e) => {
-                setVolume(e.target.value);
+                setVolume(parseFloat(e.target.value));
                 if (audioRef.current) {
                   audioRef.current.volume = e.target.value;
                 }
               }}
+              aria-label="Volume control"
             />
           </div>
         </motion.div>
       )}
 
       <div className="fixed bottom-4 right-4 space-x-2">
-        <button
-          onClick={() => setShowShortcuts(true)}
+        <AccessibleDropdown
+          isOpen={false}
+          onToggle={() => setShowShortcuts(true)}
+          ariaLabel="Show keyboard shortcuts"
           className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
         >
           <FaKeyboard />
-        </button>
-        <button
-          onClick={toggleFullscreen}
+        </AccessibleDropdown>
+
+        <AccessibleDropdown
+          isOpen={isFullscreen}
+          onToggle={toggleFullscreen}
+          ariaLabel={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
           className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
         >
           {isFullscreen ? <FaCompress /> : <FaExpand />}
-        </button>
+        </AccessibleDropdown>
       </div>
 
       <KeyboardShortcuts isOpen={showShortcuts} onClose={() => setShowShortcuts(false)} />

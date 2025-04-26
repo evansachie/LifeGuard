@@ -158,7 +158,7 @@ const ModelSection = ({ activeExercise, selectedCategory, isDarkMode }) => {
               className={`list-disc pl-5 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} space-y-1`}
             >
               <li>Keep your form correct throughout the exercise</li>
-              <li>Breathe steadily and don't hold your breath</li>
+              <li>Breathe steadily and don&apos;t hold your breath</li>
               <li>Focus on the targeted muscles shown in the model</li>
               <li>If you feel pain (not muscle fatigue), stop immediately</li>
             </ul>

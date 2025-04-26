@@ -11,7 +11,6 @@ const MemoList = ({
   handleDeleteMemo,
   handleToggleDone,
   handleUpdateMemo,
-  showNewNoteForm,
   setShowNewNoteForm,
   isDarkMode,
 }) => {

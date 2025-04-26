@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Command } from 'cmdk';
 import { useNavigate } from 'react-router-dom';
 import Fuse from 'fuse.js';
@@ -16,23 +16,23 @@ import {
 } from 'react-icons/fi';
 import './CommandPalette.css';
 
-export function CommandPalette({ isDarkMode, toggleTheme, open, setOpen }) {
-  const [search, setSearch] = React.useState('');
-  const [, setPages] = React.useState([]);
-  const [recentSearches, setRecentSearches] = React.useState(() => {
+export const CommandPalette = ({ isDarkMode, toggleTheme, open, setOpen }) => {
+  const [search, setSearch] = useState('');
+  const [, setPages] = useState([]);
+  const [recentSearches, setRecentSearches] = useState(() => {
     return JSON.parse(localStorage.getItem('recentSearches') || '[]');
   });
   const navigate = useNavigate();
 
   // Reset search when dialog closes
-  React.useEffect(() => {
+  useEffect(() => {
     if (!open) {
       setSearch('');
       setPages([]);
     }
   }, [open]);
 
-  const commands = React.useMemo(
+  const commands = useMemo(
     () => [
       {
         category: 'Navigation',
@@ -106,7 +106,7 @@ export function CommandPalette({ isDarkMode, toggleTheme, open, setOpen }) {
   );
 
   // Fuzzy search setup
-  const fuse = React.useMemo(() => {
+  const fuse = useMemo(() => {
     const items = commands.flatMap((category) =>
       category.items.map((item) => ({
         ...item,
@@ -119,7 +119,7 @@ export function CommandPalette({ isDarkMode, toggleTheme, open, setOpen }) {
     });
   }, [commands]);
 
-  const filteredCommands = React.useMemo(() => {
+  const filteredCommands = useMemo(() => {
     if (!search) return commands;
     const results = fuse.search(search);
     return [
@@ -130,7 +130,7 @@ export function CommandPalette({ isDarkMode, toggleTheme, open, setOpen }) {
     ];
   }, [search, commands, fuse]);
 
-  const handleSelect = React.useCallback(
+  const handleSelect = useCallback(
     (item) => {
       setOpen(false);
       item.action();
@@ -194,4 +194,4 @@ export function CommandPalette({ isDarkMode, toggleTheme, open, setOpen }) {
       </Command.List>
     </Command.Dialog>
   );
-}
+};

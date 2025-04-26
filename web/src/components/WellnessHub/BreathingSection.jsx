@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { breathingPatterns } from '../../data/breathing-data';
 import BreathingCircle from '../BreathingCircle/BreathingCircle';
 
-const BreathingSection = ({ isDarkMode }) => {
+const BreathingSection = () => {
   const [isBreathing, setIsBreathing] = useState(false);
   const [selectedPattern, setSelectedPattern] = useState(null);
   const [breathingPhase, setBreathingPhase] = useState('inhale');

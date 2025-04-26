@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaPlay, FaPause, FaRedo, FaStopCircle } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import AccessibleDropdown from '../AccessibleDropdown/AccessibleDropdown';
 import exerciseService from '../../services/exerciseService';
 import { formatTime } from '../../utils/formatTime';
 
@@ -31,7 +32,7 @@ const WorkoutTimer = ({
       handleWorkoutComplete(true);
       onToggleTimer();
     }
-  }, [timeRemaining]);
+  }, [timeRemaining, activeWorkout, isTimerRunning, onToggleTimer]);
 
   const getTimerColor = () => {
     if (timeRemaining < 60) return 'text-red-500';
@@ -182,30 +183,38 @@ const WorkoutTimer = ({
           </div>
 
           <div className="flex gap-4 mt-4">
-            <motion.button
+            <AccessibleDropdown
+              isOpen={isTimerRunning}
+              onToggle={onToggleTimer}
+              ariaLabel={isTimerRunning ? 'Pause workout' : 'Start workout'}
               className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all"
-              onClick={onToggleTimer}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
             >
-              {isTimerRunning ? <FaPause /> : <FaPlay />}
-            </motion.button>
-            <motion.button
+              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                {isTimerRunning ? <FaPause /> : <FaPlay />}
+              </motion.div>
+            </AccessibleDropdown>
+
+            <AccessibleDropdown
+              isOpen={false}
+              onToggle={onResetTimer}
+              ariaLabel="Reset workout timer"
               className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all"
-              onClick={onResetTimer}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
             >
-              <FaRedo />
-            </motion.button>
-            <motion.button
+              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                <FaRedo />
+              </motion.div>
+            </AccessibleDropdown>
+
+            <AccessibleDropdown
+              isOpen={false}
+              onToggle={() => setShowConfirm(true)}
+              ariaLabel="End workout"
               className="w-12 h-12 rounded-full bg-red-500/30 flex items-center justify-center hover:bg-red-500/50 transition-all"
-              onClick={() => setShowConfirm(true)}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
             >
-              <FaStopCircle />
-            </motion.button>
+              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                <FaStopCircle />
+              </motion.div>
+            </AccessibleDropdown>
           </div>
         </div>
       </div>
@@ -218,9 +227,11 @@ const WorkoutTimer = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
+            {/* Use regular div with onClick because this is just an overlay */}
             <div
               className="absolute inset-0 bg-black/70 backdrop-blur-sm"
               onClick={() => setShowConfirm(false)}
+              role="presentation" // Adding role to indicate this is presentational
             />
             <motion.div
               className={`relative max-w-md w-full m-4 ${

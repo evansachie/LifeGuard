@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { API_ENDPOINTS, fetchWithAuth, extractPhotoUrl } from '../utils/api';
-import { uploadToCloudinary } from '../utils/cloudinary';
 
 export const useProfileImage = (userId) => {
   const [isLoading, setIsLoading] = useState(false);

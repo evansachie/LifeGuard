@@ -1,12 +1,11 @@
 import React from 'react';
-import { FaUser, FaEnvelope, FaPhone, FaSave, FaTimesCircle, FaUserEdit } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaPhone, FaUserEdit } from 'react-icons/fa';
 import { FaPerson } from 'react-icons/fa6';
 import Spinner from '../../components/Spinner/Spinner';
 
 function PersonalInformationForm({
   profileData,
   profileLoading,
-  isLoading,
   editMode,
   setEditMode,
   handleInputChange,

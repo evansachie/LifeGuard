@@ -14,7 +14,7 @@ const ProgressOverview = ({ isDarkMode }) => {
     currentStreak: 0,
     currentGoal: 'Not set',
   });
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
 
   useEffect(() => {

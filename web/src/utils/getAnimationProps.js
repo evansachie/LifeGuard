@@ -1,4 +1,4 @@
-export const getAnimationProps = () => {
+export const getAnimationProps = ({ phase, pattern }) => {
   switch (phase) {
     case 'inhale':
       return {

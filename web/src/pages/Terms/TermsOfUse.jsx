@@ -124,8 +124,8 @@ const TermsOfUse = ({ isDarkMode }) => {
             >
               <h2 className="text-xl font-semibold mb-3">6. Disclaimer</h2>
               <p className="text-gray-600 dark:text-gray-300">
-                The service is provided "as is" without warranties of any kind, either express or
-                implied.
+                The service is provided &quot;as is&quot; without warranties of any kind, either
+                express or implied.
               </p>
             </section>
 
