@@ -332,6 +332,8 @@ These endpoints are served from the .NET-Server (hosted at `https://lifeguard-hi
 | POST       | `/api/Account/CompleteProfile`       | Submit additional profile details                    |
 | GET        | `/api/Account/{id}`                  | Retrieve basic account information by ID             |
 | GET        | `/api/Account/GetProfile/{id}`       | Retrieve detailed user profile information   
+| GET        | `/api/Account/google-login`       | Initiate Google OAuth authentication  
+| GET        | `/api/Account/signin-google`       | Handle the Google OAuth callback
 | DELETE     | `/api/Account/{id}`                  | Delete user profile information by ID             |
 
 ### Photo Endpoints
