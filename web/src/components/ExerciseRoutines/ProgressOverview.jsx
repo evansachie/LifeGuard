@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { MdOutlineFitnessCenter } from 'react-icons/md';
 import { FaFire, FaDumbbell, FaTrophy } from 'react-icons/fa';
-import { BiTargetLock } from 'react-icons/bi';
+import { BiTargetLock, BiChevronRight } from 'react-icons/bi';
 import StatsCard from './StatsCard';
 import exerciseService from '../../services/exerciseService';
 import { toast } from 'react-toastify';
@@ -72,6 +72,8 @@ const ProgressOverview = ({ isDarkMode }) => {
           color="from-cyan-500 to-cyan-400"
           onClick={() => setIsGoalModalOpen(true)}
           clickable={true}
+          suffixIcon={BiChevronRight}
+          hoverText="Click to change goal"
         />
         <StatsCard
           icon={FaTrophy}
