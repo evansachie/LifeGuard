@@ -38,21 +38,16 @@ const exerciseService = {
     });
   },
 
-  /**
-   * Gets detailed calories history and trends
-   * @param {string} period - Time period ('7days', '30days', or '90days')
-   * @returns {Promise<Object>} Calories history and trends
-   */
-  getCaloriesHistory: async (period = '7days') => {
-    return await fetchWithAuth(`${API_ENDPOINTS.EXERCISE_STATS}/calories-history?period=${period}`);
+  getWorkoutHistory: async (period = '7days') => {
+    return await fetchWithAuth(`${API_ENDPOINTS.EXERCISE_WORKOUT_HISTORY}?period=${period}`);
   },
 
-  getWorkoutHistory: async (period = '7days') => {
-    return await fetchWithAuth(`${API_ENDPOINTS.EXERCISE_STATS}/workout-history?period=${period}`);
+  getCaloriesHistory: async (period = '7days') => {
+    return await fetchWithAuth(`${API_ENDPOINTS.EXERCISE_CALORIES_HISTORY}?period=${period}`);
   },
 
   getStreakHistory: async (period = '7days') => {
-    return await fetchWithAuth(`${API_ENDPOINTS.EXERCISE_STATS}/streak-history?period=${period}`);
+    return await fetchWithAuth(`${API_ENDPOINTS.EXERCISE_STREAK_HISTORY}?period=${period}`);
   },
 };
 

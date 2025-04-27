@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaTrophy, FaCalendarAlt, FaFire, FaMedal } from 'react-icons/fa';
+import {
+  FaTrophy,
+  FaCalendarCheck,
+  FaCalendarAlt,
+  FaExclamationCircle,
+  FaFire,
+} from 'react-icons/fa';
 import {
   LineChart,
   Line,
@@ -16,25 +22,32 @@ import exerciseService from '../../services/exerciseService';
 const StreakModal = ({ isOpen, onClose, isDarkMode }) => {
   const [period, setPeriod] = useState('7days');
   const [streakData, setStreakData] = useState({
-    workoutDays: [],
-    streakMilestones: [],
-    stats: {},
+    history: [],
+    current: 0,
+    longest: 0,
   });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchStreakHistory = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const data = await exerciseService.getStreakHistory(period);
+      setStreakData(data);
+    } catch (error) {
+      console.error('Error fetching streak history:', error);
+      setError('Failed to load streak data. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchStreakHistory = async () => {
-      try {
-        const data = await exerciseService.getStreakHistory(period);
-        setStreakData(data);
-      } catch (error) {
-        console.error('Error fetching streak history:', error);
-      }
-    };
-
     if (isOpen) {
       fetchStreakHistory();
     }
-  }, [isOpen, period]);
+  }, [isOpen, period, fetchStreakHistory]);
 
   return (
     <AnimatePresence>
@@ -87,191 +100,240 @@ const StreakModal = ({ isOpen, onClose, isDarkMode }) => {
                 </div>
               </div>
 
-              {/* Streak Stats Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                <div
-                  className={`p-4 rounded-xl ${
-                    isDarkMode ? 'bg-gray-700' : 'bg-gray-50'
-                  } flex items-center gap-4`}
-                >
-                  <div className="w-12 h-12 rounded-full bg-amber-500/20 flex items-center justify-center">
-                    <FaTrophy className="text-2xl text-amber-500" />
+              {isLoading ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <div className="w-12 h-12 rounded-full border-4 border-t-blue-500 animate-spin" />
+                  <p className={`mt-4 text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    Loading streak data...
+                  </p>
+                </div>
+              ) : error ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                    <FaExclamationCircle className="text-2xl text-red-500" />
                   </div>
-                  <div>
-                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                      Current Streak
-                    </p>
-                    <p
-                      className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}
+                  <p className={`mt-4 text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    {error}
+                  </p>
+                  <button
+                    onClick={() => {
+                      setError(null);
+                      fetchStreakHistory();
+                    }}
+                    className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              ) : (
+                <>
+                  {/* Stats Summary Cards */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div
+                      className={`p-4 rounded-xl ${
+                        isDarkMode ? 'bg-gray-700' : 'bg-gray-50'
+                      } flex items-center gap-4`}
                     >
-                      {streakData.stats?.CurrentStreak || 0} days
-                    </p>
-                  </div>
-                </div>
+                      <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center">
+                        <FaFire className="text-2xl text-blue-500" />
+                      </div>
+                      <div>
+                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                          Current Streak
+                        </p>
+                        <p
+                          className={`text-2xl font-bold ${
+                            isDarkMode ? 'text-white' : 'text-gray-800'
+                          }`}
+                        >
+                          {streakData.stats?.CurrentStreak || 0} days
+                        </p>
+                      </div>
+                    </div>
 
-                <div
-                  className={`p-4 rounded-xl ${
-                    isDarkMode ? 'bg-gray-700' : 'bg-gray-50'
-                  } flex items-center gap-4`}
-                >
-                  <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center">
-                    <FaMedal className="text-2xl text-blue-500" />
-                  </div>
-                  <div>
-                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                      Longest Streak
-                    </p>
-                    <p
-                      className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}
+                    <div
+                      className={`p-4 rounded-xl ${
+                        isDarkMode ? 'bg-gray-700' : 'bg-gray-50'
+                      } flex items-center gap-4`}
                     >
-                      {streakData.stats?.LongestStreak || 0} days
-                    </p>
-                  </div>
-                </div>
+                      <div className="w-12 h-12 rounded-full bg-amber-500/20 flex items-center justify-center">
+                        <FaTrophy className="text-2xl text-amber-500" />
+                      </div>
+                      <div>
+                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                          Longest Streak
+                        </p>
+                        <p
+                          className={`text-2xl font-bold ${
+                            isDarkMode ? 'text-white' : 'text-gray-800'
+                          }`}
+                        >
+                          {streakData.stats?.LongestStreak || 0} days
+                        </p>
+                      </div>
+                    </div>
 
-                <div
-                  className={`p-4 rounded-xl ${
-                    isDarkMode ? 'bg-gray-700' : 'bg-gray-50'
-                  } flex items-center gap-4`}
-                >
-                  <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center">
-                    <FaCalendarAlt className="text-2xl text-green-500" />
-                  </div>
-                  <div>
-                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                      Active Days
-                    </p>
-                    <p
-                      className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}
+                    <div
+                      className={`p-4 rounded-xl ${
+                        isDarkMode ? 'bg-gray-700' : 'bg-gray-50'
+                      } flex items-center gap-4`}
                     >
-                      {streakData.workoutDays.length}
-                    </p>
-                  </div>
-                </div>
+                      <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center">
+                        <FaCalendarAlt className="text-2xl text-green-500" />
+                      </div>
+                      <div>
+                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                          Active Days
+                        </p>
+                        <p
+                          className={`text-2xl font-bold ${
+                            isDarkMode ? 'text-white' : 'text-gray-800'
+                          }`}
+                        >
+                          {streakData.workoutDays.length}
+                        </p>
+                      </div>
+                    </div>
 
-                <div
-                  className={`p-4 rounded-xl ${
-                    isDarkMode ? 'bg-gray-700' : 'bg-gray-50'
-                  } flex items-center gap-4`}
-                >
-                  <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
-                    <FaFire className="text-2xl text-red-500" />
-                  </div>
-                  <div>
-                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                      Last Workout
-                    </p>
-                    <p
-                      className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}
+                    <div
+                      className={`p-4 rounded-xl ${
+                        isDarkMode ? 'bg-gray-700' : 'bg-gray-50'
+                      } flex items-center gap-4`}
                     >
-                      {streakData.stats?.LastWorkoutDate
-                        ? new Date(streakData.stats.LastWorkoutDate).toLocaleDateString()
-                        : 'No workouts yet'}
-                    </p>
+                      <div className="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center">
+                        <FaCalendarCheck className="text-2xl text-purple-500" />
+                      </div>
+                      <div>
+                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                          Last Workout
+                        </p>
+                        <p
+                          className={`text-xl font-bold ${
+                            isDarkMode ? 'text-white' : 'text-gray-800'
+                          }`}
+                        >
+                          {new Date(streakData.stats?.LastWorkoutDate).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
 
-              {/* Streak Timeline */}
-              <div className={`p-4 rounded-xl ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} mb-6`}>
-                <h3
-                  className={`text-lg font-semibold mb-4 ${
-                    isDarkMode ? 'text-white' : 'text-gray-800'
-                  }`}
-                >
-                  Streak Timeline
-                </h3>
-                <div className="h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={streakData.streakMilestones}>
-                      <CartesianGrid
-                        strokeDasharray="3 3"
-                        stroke={isDarkMode ? '#374151' : '#E5E7EB'}
-                      />
-                      <XAxis
-                        dataKey="milestone_date"
-                        stroke={isDarkMode ? '#9CA3AF' : '#4B5563'}
-                        tickFormatter={(date) =>
-                          new Date(date).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                          })
-                        }
-                      />
-                      <YAxis
-                        stroke={isDarkMode ? '#9CA3AF' : '#4B5563'}
-                        label={{ value: 'Streak Days', angle: -90, position: 'insideLeft' }}
-                      />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF',
-                          border: 'none',
-                          borderRadius: '0.5rem',
-                        }}
-                        formatter={(value) => [`${value} days`, 'Streak Length']}
-                        labelFormatter={(date) => new Date(date).toLocaleDateString()}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="streak_length"
-                        stroke="#F59E0B"
-                        strokeWidth={2}
-                        dot={{ fill: '#F59E0B' }}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
+                  {/* Streak Timeline */}
+                  <div
+                    className={`p-4 rounded-xl ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} mb-6`}
+                  >
+                    <h3
+                      className={`text-lg font-semibold mb-4 ${
+                        isDarkMode ? 'text-white' : 'text-gray-800'
+                      }`}
+                    >
+                      Streak Timeline
+                    </h3>
+                    <div className="h-[300px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={streakData.streakMilestones}>
+                          <CartesianGrid
+                            strokeDasharray="3 3"
+                            stroke={isDarkMode ? '#374151' : '#E5E7EB'}
+                          />
+                          <XAxis
+                            dataKey="milestone_date"
+                            stroke={isDarkMode ? '#9CA3AF' : '#4B5563'}
+                            tickFormatter={(date) => new Date(date).toLocaleDateString()}
+                          />
+                          <YAxis stroke={isDarkMode ? '#9CA3AF' : '#4B5563'} />
+                          <Tooltip
+                            contentStyle={{
+                              backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF',
+                              border: 'none',
+                              borderRadius: '0.5rem',
+                            }}
+                            formatter={(value) => [`${value} days`, 'Streak Length']}
+                          />
+                          <Line
+                            type="monotone"
+                            dataKey="streak_length"
+                            stroke="#3B82F6"
+                            strokeWidth={2}
+                            dot={{ fill: '#3B82F6' }}
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
 
-              {/* Workout Calendar */}
-              <div
-                className={`rounded-xl overflow-hidden ${
-                  isDarkMode ? 'bg-gray-700' : 'bg-gray-50'
-                }`}
-              >
-                <table className="w-full">
-                  <thead>
-                    <tr className={isDarkMode ? 'bg-gray-600' : 'bg-gray-100'}>
-                      <th className="px-4 py-3 text-left">Date</th>
-                      <th className="px-4 py-3 text-left">Workouts</th>
-                      <th className="px-4 py-3 text-left">Types</th>
-                      <th className="px-4 py-3 text-left">Streak Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {streakData.workoutDays.map((day) => (
-                      <tr
-                        key={day.date}
-                        className={`border-t ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}
-                      >
-                        <td
-                          className={`px-4 py-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}
-                        >
-                          {new Date(day.date).toLocaleDateString()}
-                        </td>
-                        <td
-                          className={`px-4 py-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}
-                        >
-                          {day.workout_count}
-                        </td>
-                        <td
-                          className={`px-4 py-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}
-                        >
-                          {day.workout_types}
-                        </td>
-                        <td
-                          className={`px-4 py-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}
-                        >
-                          <span className="inline-flex items-center gap-1">
-                            <FaFire className="text-amber-500" />
-                            Streak Day
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  {/* Workout History Table */}
+                  <div
+                    className={`rounded-xl overflow-hidden ${
+                      isDarkMode ? 'bg-gray-700' : 'bg-gray-50'
+                    }`}
+                  >
+                    <table className="w-full">
+                      <thead>
+                        <tr className={isDarkMode ? 'bg-gray-600' : 'bg-gray-100'}>
+                          <th className="px-4 py-3 text-left">Date</th>
+                          <th className="px-4 py-3 text-left">Workouts</th>
+                          <th className="px-4 py-3 text-left">Types</th>
+                          <th className="px-4 py-3 text-left">Streak Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {streakData.workoutDays.map((day) => (
+                          <tr
+                            key={day.date}
+                            className={`border-t ${
+                              isDarkMode ? 'border-gray-600' : 'border-gray-200'
+                            }`}
+                          >
+                            <td
+                              className={`px-4 py-3 ${
+                                isDarkMode ? 'text-gray-300' : 'text-gray-800'
+                              }`}
+                            >
+                              {new Date(day.date).toLocaleDateString()}
+                            </td>
+                            <td
+                              className={`px-4 py-3 ${
+                                isDarkMode ? 'text-gray-300' : 'text-gray-800'
+                              }`}
+                            >
+                              {day.workout_count}
+                            </td>
+                            <td
+                              className={`px-4 py-3 ${
+                                isDarkMode ? 'text-gray-300' : 'text-gray-800'
+                              }`}
+                            >
+                              {day.workout_types}
+                            </td>
+                            <td
+                              className={`px-4 py-3 ${
+                                isDarkMode ? 'text-gray-300' : 'text-gray-800'
+                              }`}
+                            >
+                              <span
+                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                  day.date === streakData.stats?.LastWorkoutDate
+                                    ? isDarkMode
+                                      ? 'bg-green-500/20 text-green-400'
+                                      : 'bg-green-100 text-green-800'
+                                    : isDarkMode
+                                      ? 'bg-gray-600 text-gray-300'
+                                      : 'bg-gray-100 text-gray-800'
+                                }`}
+                              >
+                                {day.date === streakData.stats?.LastWorkoutDate
+                                  ? 'Latest'
+                                  : 'Completed'}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              )}
             </div>
 
             <AccessibleDropdown
