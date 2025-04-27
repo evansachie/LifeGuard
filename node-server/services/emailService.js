@@ -150,8 +150,41 @@ const sendTestAlert = async (contactData, userData) => {
   }
 };
 
+const sendMedicationReminderEmail = async (userEmail, medData) => {
+  try {
+    const templatePath = path.join(__dirname, '../templates/medication-reminder.html');
+    const html = await readHTMLFile(templatePath);
+    const template = handlebars.compile(html);
+
+    const replacements = {
+      medicationName: medData.Name,
+      dosage: medData.Dosage,
+      time: medData.Time,
+      notes: medData.Notes || '',
+      currentYear: new Date().getFullYear()
+    };
+
+    const htmlToSend = template(replacements);
+
+    const mailOptions = {
+      from: `"LifeGuard" <${process.env.EMAIL_USER}>`,
+      to: userEmail,
+      subject: `Time to take ${medData.Name}`,
+      html: htmlToSend
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Medication email sent: ', info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('Error sending medication reminder email:', error);
+    return { success: false, error: error.message };
+  }
+};
+
 module.exports = {
   sendEmergencyContactNotification,
   sendEmergencyAlert,
-  sendTestAlert
+  sendTestAlert,
+  sendMedicationReminderEmail
 };

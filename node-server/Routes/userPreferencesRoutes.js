@@ -78,13 +78,12 @@ module.exports = (pool) => {
                 UserId: userId,
                 Name: medication?.Name || 'Demo Med',
                 Dosage: medication?.Dosage || '100mg',
-                Time: medication?.Time || [(new Date(Date.now() + 1 * 60 * 1000)).toTimeString().substring(0,5)],
-                Notes: medication?.Notes || 'This is a test notification.',
-                email: userEmail
+                Time: medication?.Time || [new Date(Date.now() + 1 * 60 * 1000).toTimeString().substring(0, 5)],
+                Notes: medication?.Notes || 'This is a test notification.'
             };
 
-            // Send email immediately for demo
-            await notificationService.sendEmailReminder(med, med.Time[0]);
+            // Send email immediately for demo, always use JWT email
+            await notificationService.sendEmailReminder(med, med.Time[0], userEmail);
 
             res.json({ success: true, message: 'Test email sent (if email notifications are enabled and email is valid).' });
         } catch (error) {
