@@ -60,5 +60,38 @@ module.exports = (pool) => {
         }
     });
 
+    // TEST EMAIL ENDPOINT (for demo)
+    router.post('/notifications/test', async (req, res) => {
+        try {
+            const token = req.headers.authorization.split(' ')[1];
+            const decoded = jwt.decode(token);
+            const userId = decoded.uid;
+            const userEmail = decoded.email;
+            const { medication } = req.body;
+
+            // Import NotificationService dynamically to avoid circular deps
+            const NotificationService = require('../services/NotificationService');
+            const notificationService = new NotificationService(pool);
+
+            // Compose mock medication object
+            const med = {
+                UserId: userId,
+                Name: medication?.Name || 'Demo Med',
+                Dosage: medication?.Dosage || '100mg',
+                Time: medication?.Time || [(new Date(Date.now() + 1 * 60 * 1000)).toTimeString().substring(0,5)],
+                Notes: medication?.Notes || 'This is a test notification.',
+                email: userEmail
+            };
+
+            // Send email immediately for demo
+            await notificationService.sendEmailReminder(med, med.Time[0]);
+
+            res.json({ success: true, message: 'Test email sent (if email notifications are enabled and email is valid).' });
+        } catch (error) {
+            console.error('Failed to send test email:', error);
+            res.status(500).json({ success: false, error: 'Failed to send test email' });
+        }
+    });
+
     return router;
 };
