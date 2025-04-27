@@ -134,21 +134,27 @@ class NotificationService {
 
       const now = new Date();
       const today = now.toISOString().split('T')[0];
-
+      console.log(`[Scheduler] Running at ${now.toISOString()}`);
+      let scheduledCount = 0;
       for (const med of result.rows) {
         if (med.email_enabled) {
           med.Time.forEach(time => {
             const [hours, minutes] = time.split(':');
             const reminderTime = new Date(today);
             reminderTime.setHours(hours, minutes - med.reminder_lead_time, 0);
-
+            console.log(`[Scheduler] Checking med '${med.Name}' for user ${med.UserId} at ${time} (reminder at ${reminderTime.toLocaleTimeString()})`);
             if (reminderTime > now) {
               const delay = reminderTime.getTime() - now.getTime();
-              setTimeout(() => this.sendEmailReminder(med, time), delay);
+              setTimeout(() => {
+                console.log(`[Scheduler] Sending reminder for '${med.Name}' at ${time} (scheduled for ${reminderTime.toLocaleTimeString()})`);
+                this.sendEmailReminder(med, time);
+              }, delay);
+              scheduledCount++;
             }
           });
         }
       }
+      console.log(`[Scheduler] Total reminders scheduled: ${scheduledCount}`);
     } finally {
       client.release();
     }
