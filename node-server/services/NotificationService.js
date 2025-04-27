@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const { sendMedicationReminderEmail } = require('./emailService');
 
 class NotificationService {
   constructor(pool, transporter = null) {
@@ -85,33 +86,30 @@ class NotificationService {
     }
   }
 
-  async sendEmailReminder(medication, time) {
+  async sendEmailReminder(medication, time, userEmailFromJWT = null) {
     try {
-      // Get user email from database or use JWT email
-      const userEmail = await this.getUserEmail(medication.UserId);
-      
-      const mailOptions = {
-        from: `"LifeGuard Medication Reminder" <${process.env.EMAIL_USER}>`,
-        to: userEmail,
-        subject: `Time to take ${medication.Name}`,
-        html: `
-          <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
-            <h2 style="color: #2563EB;">Medication Reminder</h2>
-            <p>Hello,</p>
-            <p>It's time to take your medication:</p>
-            <div style="background: #f3f4f6; padding: 15px; border-radius: 8px; margin: 15px 0;">
-              <p style="margin: 5px 0;"><strong>Medication:</strong> ${medication.Name}</p>
-              <p style="margin: 5px 0;"><strong>Dosage:</strong> ${medication.Dosage}</p>
-              <p style="margin: 5px 0;"><strong>Time:</strong> ${time}</p>
-              ${medication.Notes ? `<p style="margin: 5px 0;"><strong>Notes:</strong> ${medication.Notes}</p>` : ''}
-            </div>
-            <p style="color: #666; font-size: 0.9em;">Please ensure to track your medication in the LifeGuard app.</p>
-          </div>
-        `
+      // Always prefer the JWT email if provided, fallback to DB otherwise
+      let userEmail = userEmailFromJWT || medication.email;
+      if (!userEmail) {
+        userEmail = await this.getUserEmail(medication.UserId);
+      }
+      if (!userEmail) {
+        console.error('No user email found for medication reminder');
+        return;
+      }
+      // Compose medication data for the template
+      const medData = {
+        Name: medication.Name,
+        Dosage: medication.Dosage,
+        Time: time,
+        Notes: medication.Notes || ''
       };
-
-      await this.transporter.sendMail(mailOptions);
-      console.log(`Reminder sent for ${medication.Name} scheduled at ${time}`);
+      const result = await sendMedicationReminderEmail(userEmail, medData);
+      if (result.success) {
+        console.log(`Medication reminder email sent for ${medication.Name} at ${time}`);
+      } else {
+        console.error('Failed to send medication reminder email:', result.error);
+      }
     } catch (error) {
       console.error('Failed to send reminder email:', error);
     }
