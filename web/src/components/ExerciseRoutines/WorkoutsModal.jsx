@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaExclamationCircle, FaRunning, FaClock, FaFire, FaCalendarCheck } from 'react-icons/fa';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -14,7 +14,7 @@ const WorkoutsModal = ({ isOpen, onClose, isDarkMode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchWorkoutHistory = async () => {
+  const fetchWorkoutHistory = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -26,7 +26,7 @@ const WorkoutsModal = ({ isOpen, onClose, isDarkMode }) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [period]);
 
   useEffect(() => {
     if (isOpen) {
@@ -116,6 +116,17 @@ const WorkoutsModal = ({ isOpen, onClose, isDarkMode }) => {
                   >
                     Try Again
                   </button>
+                </div>
+              ) : workoutData.history.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
+                    <FaRunning className="text-3xl text-gray-400" />
+                  </div>
+                  <p
+                    className={`mt-4 text-lg font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}
+                  >
+                    No workouts found for this period.
+                  </p>
                 </div>
               ) : (
                 <>

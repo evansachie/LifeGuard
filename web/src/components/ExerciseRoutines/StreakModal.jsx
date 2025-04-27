@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FaTrophy,
@@ -23,13 +23,16 @@ const StreakModal = ({ isOpen, onClose, isDarkMode }) => {
   const [period, setPeriod] = useState('7days');
   const [streakData, setStreakData] = useState({
     history: [],
+    stats: {},
+    workoutDays: [],
+    streakMilestones: [],
     current: 0,
     longest: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchStreakHistory = async () => {
+  const fetchStreakHistory = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -41,7 +44,7 @@ const StreakModal = ({ isOpen, onClose, isDarkMode }) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [period]);
 
   useEffect(() => {
     if (isOpen) {
@@ -124,6 +127,17 @@ const StreakModal = ({ isOpen, onClose, isDarkMode }) => {
                   >
                     Try Again
                   </button>
+                </div>
+              ) : !Array.isArray(streakData.history) || streakData.history.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
+                    <FaCalendarCheck className="text-3xl text-gray-400" />
+                  </div>
+                  <p
+                    className={`mt-4 text-lg font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}
+                  >
+                    No streak activity found for this period.
+                  </p>
                 </div>
               ) : (
                 <>
