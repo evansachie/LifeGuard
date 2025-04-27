@@ -17,6 +17,8 @@
     "@testing-library/react": "^13.4.0",
     "@tinymce/tinymce-react": "^6.1.0",
     "@types/intro.js": "^5.1.5",
+    "@uiw/react-heat-map": "^2.3.2",
+    "@uiw/react-tooltip": "^4.22.3",
     "axios": "^1.7.9",
     "chart.js": "^4.4.8",
     "cmdk": "^1.1.1",

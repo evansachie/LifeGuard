@@ -35,7 +35,7 @@ const WorkoutTimer = ({
   }, [timeRemaining, activeWorkout, isTimerRunning, onToggleTimer]);
 
   const getTimerColor = () => {
-    if (timeRemaining < 60) return 'text-red-500';
+    if (timeRemaining < 60) return 'text-white';
     if (timeRemaining < 180) return 'text-amber-500';
     return 'text-white';
   };

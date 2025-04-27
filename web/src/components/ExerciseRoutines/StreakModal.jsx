@@ -7,17 +7,11 @@ import {
   FaExclamationCircle,
   FaFire,
 } from 'react-icons/fa';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from 'recharts';
 import AccessibleDropdown from '../AccessibleDropdown/AccessibleDropdown';
 import exerciseService from '../../services/exerciseService';
+import HeatMap from '@uiw/react-heat-map';
+import Tooltip from '@uiw/react-tooltip';
+import { eachDayOfInterval, format, isValid, parseISO } from 'date-fns';
 
 const StreakModal = ({ isOpen, onClose, isDarkMode }) => {
   const [period, setPeriod] = useState('7days');
@@ -51,6 +45,48 @@ const StreakModal = ({ isOpen, onClose, isDarkMode }) => {
       fetchStreakHistory();
     }
   }, [isOpen, period, fetchStreakHistory]);
+
+  const safeFormatDate = (dateObj) => {
+    if (!isValid(dateObj)) {
+      console.warn('Invalid date encountered in heatmap:', dateObj);
+      return '';
+    }
+    return format(dateObj, 'yyyy/MM/dd');
+  };
+
+  const getFullHeatmapData = (workoutDays, startDate, endDate) => {
+    if (!isValid(startDate) || !isValid(endDate)) {
+      console.warn('Invalid start/end date for heatmap:', startDate, endDate);
+      return [];
+    }
+    const allDates = eachDayOfInterval({ start: startDate, end: endDate });
+    const activityMap = new Map();
+    (workoutDays || []).forEach((day) => {
+      if (!day.date) return;
+      let dateObj = day.date.includes('/') ? new Date(day.date) : parseISO(day.date);
+      if (!isValid(dateObj)) {
+        console.warn('Invalid workout day.date:', day.date);
+        return;
+      }
+      const date = safeFormatDate(dateObj);
+      if (!date) return;
+      activityMap.set(date, day.workout_count || 1);
+    });
+    return allDates
+      .map((dateObj) => {
+        if (!isValid(dateObj)) {
+          console.warn('Invalid date in allDates:', dateObj);
+          return null;
+        }
+        const date = safeFormatDate(dateObj);
+        if (!date) return null;
+        return {
+          date,
+          count: activityMap.get(date) || 0,
+        };
+      })
+      .filter(Boolean);
+  };
 
   return (
     <AnimatePresence>
@@ -128,7 +164,8 @@ const StreakModal = ({ isOpen, onClose, isDarkMode }) => {
                     Try Again
                   </button>
                 </div>
-              ) : !Array.isArray(streakData.history) || streakData.history.length === 0 ? (
+              ) : (!Array.isArray(streakData.workoutDays) || streakData.workoutDays.length === 0) &&
+                (!streakData.stats?.CurrentStreak || streakData.stats.CurrentStreak === 0) ? (
                 <div className="flex flex-col items-center justify-center py-12">
                   <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
                     <FaCalendarCheck className="text-3xl text-gray-400" />
@@ -141,7 +178,6 @@ const StreakModal = ({ isOpen, onClose, isDarkMode }) => {
                 </div>
               ) : (
                 <>
-                  {/* Stats Summary Cards */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                     <div
                       className={`p-4 rounded-xl ${
@@ -232,51 +268,170 @@ const StreakModal = ({ isOpen, onClose, isDarkMode }) => {
                     </div>
                   </div>
 
-                  {/* Streak Timeline */}
                   <div
-                    className={`p-4 rounded-xl ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} mb-6`}
+                    className={`p-4 rounded-2xl shadow-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} mb-6 flex flex-col items-center border border-gray-200 dark:border-gray-700`}
                   >
                     <h3
-                      className={`text-lg font-semibold mb-4 ${
+                      className={`text-lg font-semibold mb-4 tracking-tight ${
                         isDarkMode ? 'text-white' : 'text-gray-800'
                       }`}
                     >
-                      Streak Timeline
+                      Streak Activity Heatmap
                     </h3>
-                    <div className="h-[300px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={streakData.streakMilestones}>
-                          <CartesianGrid
-                            strokeDasharray="3 3"
-                            stroke={isDarkMode ? '#374151' : '#E5E7EB'}
-                          />
-                          <XAxis
-                            dataKey="milestone_date"
-                            stroke={isDarkMode ? '#9CA3AF' : '#4B5563'}
-                            tickFormatter={(date) => new Date(date).toLocaleDateString()}
-                          />
-                          <YAxis stroke={isDarkMode ? '#9CA3AF' : '#4B5563'} />
-                          <Tooltip
-                            contentStyle={{
-                              backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF',
-                              border: 'none',
-                              borderRadius: '0.5rem',
-                            }}
-                            formatter={(value) => [`${value} days`, 'Streak Length']}
-                          />
-                          <Line
-                            type="monotone"
-                            dataKey="streak_length"
-                            stroke="#3B82F6"
-                            strokeWidth={2}
-                            dot={{ fill: '#3B82F6' }}
-                          />
-                        </LineChart>
-                      </ResponsiveContainer>
+                    <div
+                      className={`mb-2 text-sm font-medium ${isDarkMode ? 'text-blue-300' : 'text-blue-700'}`}
+                    >
+                      Total Active Days: {streakData.workoutDays.length}
                     </div>
+                    <div className="w-full flex flex-col items-center">
+                      <div
+                        style={{
+                          width: '100%',
+                          maxWidth: 700,
+                          minWidth: 320,
+                          overflowX: 'auto',
+                        }}
+                        className="flex justify-center"
+                      >
+                        {(() => {
+                          const validDates = (streakData.workoutDays || [])
+                            .map(
+                              (d) =>
+                                d &&
+                                d.date &&
+                                (d.date.includes('/') ? new Date(d.date) : parseISO(d.date))
+                            )
+                            .filter((d) => isValid(d));
+
+                          const today = new Date();
+                          let startDate, endDate;
+                          if (validDates.length > 0) {
+                            const minDate = new Date(
+                              Math.min(...validDates.map((d) => d.getTime()))
+                            );
+                            const minRangeStart = new Date(today);
+                            minRangeStart.setDate(today.getDate() - 29);
+                            startDate = minDate < minRangeStart ? minDate : minRangeStart;
+                            endDate = today;
+                          } else {
+                            startDate = new Date(today);
+                            startDate.setDate(today.getDate() - 29);
+                            endDate = today;
+                          }
+                          const fullHeatmapData = getFullHeatmapData(
+                            streakData.workoutDays,
+                            startDate,
+                            endDate
+                          );
+                          if (
+                            !fullHeatmapData ||
+                            fullHeatmapData.length === 0 ||
+                            !fullHeatmapData.some((d) => d.count > 0)
+                          ) {
+                            return (
+                              <div className="text-gray-400 text-center py-8">
+                                No activity in this period.
+                              </div>
+                            );
+                          }
+                          return (
+                            <HeatMap
+                              value={fullHeatmapData}
+                              width={600}
+                              space={2}
+                              rectSize={15}
+                              weekLabels={['', 'Mon', '', 'Wed', '', 'Fri', '']}
+                              startDate={startDate}
+                              endDate={endDate}
+                              panelColors={{
+                                0: isDarkMode ? '#23272e' : '#f3f4f6',
+                                1: '#c6e48b',
+                                2: '#7bc96f',
+                                3: '#239a3b',
+                                4: '#196127',
+                              }}
+                              monthLabels={[
+                                'Jan',
+                                'Feb',
+                                'Mar',
+                                'Apr',
+                                'May',
+                                'Jun',
+                                'Jul',
+                                'Aug',
+                                'Sep',
+                                'Oct',
+                                'Nov',
+                                'Dec',
+                              ]}
+                              className={isDarkMode ? 'heatmap-dark' : 'heatmap-light'}
+                              legendCellSize={16}
+                              legend={[0, 1, 2, 3, 4]}
+                              rectProps={{
+                                rx: 3,
+                                style: {
+                                  stroke: isDarkMode ? '#374151' : '#e5e7eb',
+                                  strokeWidth: 1.2,
+                                },
+                              }}
+                              rectRender={(props, data) => (
+                                <Tooltip
+                                  placement="top"
+                                  content={`${data.date}: ${data.count || 0} workout${data.count === 1 ? '' : 's'}`}
+                                >
+                                  <rect {...props} />
+                                </Tooltip>
+                              )}
+                            />
+                          );
+                        })()}
+                      </div>
+                      {/* Legend */}
+                      <div className="flex items-center gap-2 mt-4">
+                        <span className="text-xs text-gray-400">Less</span>
+                        <span
+                          className="w-4 h-4 rounded-sm border border-gray-300 dark:border-gray-600"
+                          style={{ background: isDarkMode ? '#23272e' : '#f3f4f6' }}
+                        ></span>
+                        <span
+                          className="w-4 h-4 rounded-sm"
+                          style={{ background: '#c6e48b' }}
+                        ></span>
+                        <span
+                          className="w-4 h-4 rounded-sm"
+                          style={{ background: '#7bc96f' }}
+                        ></span>
+                        <span
+                          className="w-4 h-4 rounded-sm"
+                          style={{ background: '#239a3b' }}
+                        ></span>
+                        <span
+                          className="w-4 h-4 rounded-sm"
+                          style={{ background: '#196127' }}
+                        ></span>
+                        <span className="text-xs text-gray-400">More</span>
+                      </div>
+                    </div>
+                    <style>{`
+                      .heatmap-dark .w-echarts-heatmap-week-label {
+                        fill: #fff !important;
+                        font-size: 0.8rem;
+                        font-family: inherit;
+                        font-weight: 500;
+                        letter-spacing: 0.01em;
+                        opacity: 1 !important;
+                      }
+                      .heatmap-light .w-echarts-heatmap-week-label {
+                        fill: #222 !important;
+                        font-size: 0.8rem;
+                        font-family: inherit;
+                        font-weight: 500;
+                        letter-spacing: 0.01em;
+                        opacity: 1 !important;
+                      }
+                    `}</style>
                   </div>
 
-                  {/* Workout History Table */}
                   <div
                     className={`rounded-xl overflow-hidden ${
                       isDarkMode ? 'bg-gray-700' : 'bg-gray-50'
@@ -304,7 +459,13 @@ const StreakModal = ({ isOpen, onClose, isDarkMode }) => {
                                 isDarkMode ? 'text-gray-300' : 'text-gray-800'
                               }`}
                             >
-                              {new Date(day.date).toLocaleDateString()}
+                              {safeFormatDate(
+                                day.date
+                                  ? day.date.includes('/')
+                                    ? new Date(day.date)
+                                    : parseISO(day.date)
+                                  : null
+                              ) || 'N/A'}
                             </td>
                             <td
                               className={`px-4 py-3 ${
