@@ -74,6 +74,7 @@ export const API_ENDPOINTS = {
 
   USER_PREFERENCES: {
     NOTIFICATIONS: `${NODE_API_URL}/api/user-preferences/notifications`,
+    SEND_TEST_EMAIL: '/user-preferences/send-test-email',
   },
 };
 

@@ -417,6 +417,14 @@ These endpoints are served from the Node-Server (hosted at `https://lifeguard-no
 | POST       | `/api/rag/process/medical`      | Process medical knowledge (admin only)               |
 | POST       | `/api/rag/process/profiles`     | Process user profiles (authenticated users)          |
 
+### User Notification Preferences Endpoints
+
+| **Method** | **Endpoint**                           | **Description**                                 |
+|------------|----------------------------------------|-------------------------------------------------|
+| GET        | `/api/user-preferences/notifications`  | Get user notification preferences               |
+| POST       | `/api/user-preferences/notifications`  | Update user notification preferences            |
+| POST       | `/api/user-preferences/send-test-email`| Send a test notification email to the user      |
+
 Complete API documentation would be posted soon...
 
 ## 👥 Team
