@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const axios = require('axios');
 const { sendMedicationReminderEmail } = require('./emailService');
 
 class NotificationService {
@@ -60,28 +61,15 @@ class NotificationService {
 
   async getUserEmail(userId) {
     try {
-      const client = await this.pool.connect();
-      try {
-        // First try to get from UserNotificationPreferences
-        const prefResult = await client.query(
-          `SELECT m."UserId", m."Email" as email
-           FROM "Medications" m
-           WHERE m."UserId" = $1
-           LIMIT 1`,
-          [userId]
-        );
-        
-        if (prefResult.rows.length > 0 && prefResult.rows[0].email) {
-          return prefResult.rows[0].email;
-        }
-        
-        // If no email found, return null - the JWT token's email will be used as fallback
-        return null;
-      } finally {
-        client.release();
+      // Fetch user email from .NET backend
+      const url = `https://lifeguard-hiij.onrender.com/api/Account/${userId}`;
+      const response = await axios.get(url);
+      if (response.data && response.data.email) {
+        return response.data.email;
       }
+      return null;
     } catch (error) {
-      console.error('Error getting user email:', error);
+      console.error('Error fetching user email from .NET backend:', error.message);
       return null;
     }
   }
