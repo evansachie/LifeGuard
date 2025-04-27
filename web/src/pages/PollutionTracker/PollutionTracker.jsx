@@ -43,8 +43,32 @@ const PollutionTracker = ({ isDarkMode }) => {
     setSelectedZone(zone);
   };
 
+  // Page Under Construction Banner
+  const bannerStyle = {
+    position: 'fixed',
+    top: 24,
+    right: 24,
+    zIndex: 1000,
+    padding: '8px 20px',
+    background: isDarkMode ? 'rgba(30,41,59,0.95)' : 'rgba(255,255,255,0.95)',
+    color: isDarkMode ? '#fbbf24' : '#b45309',
+    border: isDarkMode ? '1.5px solid #334155' : '1.5px solid #fbbf24',
+    borderRadius: 12,
+    fontWeight: 600,
+    fontSize: 16,
+    letterSpacing: '0.01em',
+    boxShadow: '0 2px 12px rgba(0,0,0,0.10)',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+  };
+
   return (
-    <div className={`pollution-tracker ${isDarkMode ? 'dark-mode' : ''}`}>
+    <div
+      className={`pollution-tracker ${isDarkMode ? 'dark-mode' : ''}`}
+      style={{ position: 'relative', minHeight: '100vh' }}
+    >
+      <div style={bannerStyle}>🚧 Page Under Construction</div>
       <div className="map-container">
         <Map
           {...viewState}

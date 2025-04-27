@@ -20,7 +20,11 @@ const NotificationPreferences = ({ isDarkMode, onClose }) => {
   const fetchPreferences = async () => {
     try {
       const response = await fetchWithAuth(API_ENDPOINTS.USER_PREFERENCES.NOTIFICATIONS);
-      setPreferences(response.data);
+      const dbPrefs = response.data || {};
+      setPreferences({
+        emailNotifications: dbPrefs.EmailNotifications ?? true,
+        reminderLeadTime: dbPrefs.ReminderLeadTime ?? 15,
+      });
     } catch (error) {
       toast.error('Failed to load notification preferences');
     } finally {
@@ -39,6 +43,30 @@ const NotificationPreferences = ({ isDarkMode, onClose }) => {
       onClose();
     } catch (error) {
       toast.error('Failed to save preferences');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleTestEmail = async () => {
+    setSaving(true);
+    try {
+      await fetchWithAuth(API_ENDPOINTS.USER_PREFERENCES.NOTIFICATIONS + '/test', {
+        method: 'POST',
+        body: JSON.stringify({
+          emailNotifications: true,
+          reminderLeadTime: 5,
+          medication: {
+            Name: 'Demo Med',
+            Dosage: '100mg',
+            Time: [new Date(Date.now() + 1 * 60 * 1000).toTimeString().substring(0, 5)],
+            Notes: 'This is a test notification.',
+          },
+        }),
+      });
+      toast.success('Test email triggered! Check your inbox.');
+    } catch (error) {
+      toast.error('Failed to send test email');
     } finally {
       setSaving(false);
     }
@@ -133,6 +161,16 @@ const NotificationPreferences = ({ isDarkMode, onClose }) => {
         >
           {saving ? 'Saving...' : 'Save Changes'}
         </motion.button>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <button
+          onClick={handleTestEmail}
+          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded shadow"
+          disabled={saving}
+        >
+          Send Test Email
+        </button>
       </div>
     </div>
   );
