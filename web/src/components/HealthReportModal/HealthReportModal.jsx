@@ -3,12 +3,13 @@ import { FaTemperatureHigh, FaWalking } from 'react-icons/fa';
 import { WiHumidity, WiBarometer } from 'react-icons/wi';
 import { FaTimes, FaDownload, FaFileCsv } from 'react-icons/fa';
 import { generateHealthReport } from '../../data/health-report-data';
+import AccessibleDropdown from '../AccessibleDropdown/AccessibleDropdown';
 import './HealthReportModal.css';
 
 export default function HealthReportModal({ isOpen, onClose, userData, isDarkMode }) {
-  if (!isOpen) return null;
   const modalRef = useRef(null);
-  const report = generateHealthReport(userData);
+
+  const report = isOpen ? generateHealthReport(userData) : null;
 
   const iconMapping = {
     temperature: <FaTemperatureHigh size={32} />,
@@ -18,6 +19,8 @@ export default function HealthReportModal({ isOpen, onClose, userData, isDarkMod
   };
 
   useEffect(() => {
+    if (!isOpen) return;
+
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
         onClose();
@@ -26,13 +29,15 @@ export default function HealthReportModal({ isOpen, onClose, userData, isDarkMod
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [onClose]);
+  }, [onClose, isOpen]);
 
   const handlePdfDownload = () => {
     window.print();
   };
 
   const handleCsvDownload = () => {
+    if (!report) return;
+
     // Convert report data to CSV format
     const csvData = [
       ['Report ID', report.userInfo.reportId],
@@ -72,20 +77,39 @@ export default function HealthReportModal({ isOpen, onClose, userData, isDarkMod
     document.body.removeChild(link);
   };
 
+  if (!isOpen) return null;
+
   return (
     <div className="health-report-modal-overlay">
       <div ref={modalRef} className={`health-report-modal ${isDarkMode ? 'dark-mode' : ''}`}>
         <div className="modal-header">
-          <button className="close-button" onClick={onClose}>
+          <AccessibleDropdown
+            isOpen={false}
+            onToggle={onClose}
+            ariaLabel="Close health report"
+            className="close-button"
+          >
             <FaTimes />
-          </button>
+          </AccessibleDropdown>
+
           <div className="download-buttons">
-            <button className="download-button pdf" onClick={handlePdfDownload}>
+            <AccessibleDropdown
+              isOpen={false}
+              onToggle={handlePdfDownload}
+              ariaLabel="Download PDF"
+              className="download-button pdf"
+            >
               <FaDownload /> PDF
-            </button>
-            <button className="download-button csv" onClick={handleCsvDownload}>
+            </AccessibleDropdown>
+
+            <AccessibleDropdown
+              isOpen={false}
+              onToggle={handleCsvDownload}
+              ariaLabel="Download CSV"
+              className="download-button csv"
+            >
               <FaFileCsv /> CSV
-            </button>
+            </AccessibleDropdown>
           </div>
         </div>
 

@@ -50,6 +50,9 @@ export const API_ENDPOINTS = {
   EXERCISE_STATS: `${NODE_API_URL}/api/exercise/stats`,
   EXERCISE_COMPLETE: `${NODE_API_URL}/api/exercise/complete`,
   EXERCISE_GOALS: `${NODE_API_URL}/api/exercise/goals`,
+  EXERCISE_WORKOUT_HISTORY: `${NODE_API_URL}/api/exercise/stats/history`,
+  EXERCISE_CALORIES_HISTORY: `${NODE_API_URL}/api/exercise/stats/calories`,
+  EXERCISE_STREAK_HISTORY: `${NODE_API_URL}/api/exercise/stats/streak`,
 
   HEALTH_METRICS: {
     LATEST: `${NODE_API_URL}/api/health-metrics/latest`,
@@ -71,6 +74,7 @@ export const API_ENDPOINTS = {
 
   USER_PREFERENCES: {
     NOTIFICATIONS: `${NODE_API_URL}/api/user-preferences/notifications`,
+    SEND_TEST_EMAIL: '/user-preferences/send-test-email',
   },
 };
 

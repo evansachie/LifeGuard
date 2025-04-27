@@ -14,9 +14,13 @@ const EmptyChatState = ({ onExampleClick }) => {
       <p className="examples-title">Examples:</p>
       <ul className="examples-list">
         {exampleQuestions.map((question, index) => (
-          <li key={index} onClick={() => onExampleClick(question)}>
-            "{question}"
-          </li>
+          <button
+            key={index}
+            onClick={() => onExampleClick(question)}
+            className="text-left w-full p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
+          >
+            &ldquo;{question}&rdquo;
+          </button>
         ))}
       </ul>
     </div>

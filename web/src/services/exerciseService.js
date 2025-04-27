@@ -37,6 +37,18 @@ const exerciseService = {
       body: JSON.stringify({ goalType }),
     });
   },
+
+  getWorkoutHistory: async (period = '7days') => {
+    return await fetchWithAuth(`${API_ENDPOINTS.EXERCISE_WORKOUT_HISTORY}?period=${period}`);
+  },
+
+  getCaloriesHistory: async (period = '7days') => {
+    return await fetchWithAuth(`${API_ENDPOINTS.EXERCISE_CALORIES_HISTORY}?period=${period}`);
+  },
+
+  getStreakHistory: async (period = '7days') => {
+    return await fetchWithAuth(`${API_ENDPOINTS.EXERCISE_STREAK_HISTORY}?period=${period}`);
+  },
 };
 
 export default exerciseService;

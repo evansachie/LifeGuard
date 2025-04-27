@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { MdOutlineFitnessCenter } from 'react-icons/md';
 import { FaFire, FaDumbbell, FaTrophy } from 'react-icons/fa';
-import { BiTargetLock } from 'react-icons/bi';
+import { BiTargetLock, BiChevronRight } from 'react-icons/bi';
 import StatsCard from './StatsCard';
 import exerciseService from '../../services/exerciseService';
 import { toast } from 'react-toastify';
 import GoalsModal from './GoalsModal';
+import CaloriesModal from './CaloriesModal';
+import WorkoutsModal from './WorkoutsModal';
+import StreakModal from './StreakModal';
 
 const ProgressOverview = ({ isDarkMode }) => {
   const [stats, setStats] = useState({
@@ -14,8 +17,11 @@ const ProgressOverview = ({ isDarkMode }) => {
     currentStreak: 0,
     currentGoal: 'Not set',
   });
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
+  const [isCaloriesModalOpen, setIsCaloriesModalOpen] = useState(false);
+  const [isWorkoutsModalOpen, setIsWorkoutsModalOpen] = useState(false);
+  const [isStreakModalOpen, setIsStreakModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -48,7 +54,7 @@ const ProgressOverview = ({ isDarkMode }) => {
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
           <MdOutlineFitnessCenter className="text-3xl" />
-          <h1 className="text-3xl font-semibold">Exercuse Routines</h1>
+          <h1 className="text-3xl font-semibold">Exercise Routines</h1>
         </div>
       </div>
 
@@ -58,12 +64,20 @@ const ProgressOverview = ({ isDarkMode }) => {
           title="Calories Burned"
           value={`${stats.caloriesBurned} kcal`}
           color="from-red-500 to-red-400"
+          onClick={() => setIsCaloriesModalOpen(true)}
+          clickable={true}
+          suffixIcon={BiChevronRight}
+          hoverText="Click for detailed stats"
         />
         <StatsCard
           icon={FaDumbbell}
           title="Workouts Completed"
           value={`${stats.workoutsCompleted} this week`}
           color="from-blue-500 to-blue-400"
+          onClick={() => setIsWorkoutsModalOpen(true)}
+          clickable={true}
+          suffixIcon={BiChevronRight}
+          hoverText="Click for workout history"
         />
         <StatsCard
           icon={BiTargetLock}
@@ -72,12 +86,18 @@ const ProgressOverview = ({ isDarkMode }) => {
           color="from-cyan-500 to-cyan-400"
           onClick={() => setIsGoalModalOpen(true)}
           clickable={true}
+          suffixIcon={BiChevronRight}
+          hoverText="Click to change goal"
         />
         <StatsCard
           icon={FaTrophy}
           title="Streak"
           value={`${stats.currentStreak} days`}
           color="from-amber-500 to-amber-400"
+          onClick={() => setIsStreakModalOpen(true)}
+          clickable={true}
+          suffixIcon={BiChevronRight}
+          hoverText="Click to view streak details"
         />
       </div>
 
@@ -85,6 +105,24 @@ const ProgressOverview = ({ isDarkMode }) => {
         isOpen={isGoalModalOpen}
         onClose={() => setIsGoalModalOpen(false)}
         onSelectGoal={handleGoalSelect}
+        isDarkMode={isDarkMode}
+      />
+
+      <CaloriesModal
+        isOpen={isCaloriesModalOpen}
+        onClose={() => setIsCaloriesModalOpen(false)}
+        isDarkMode={isDarkMode}
+      />
+
+      <WorkoutsModal
+        isOpen={isWorkoutsModalOpen}
+        onClose={() => setIsWorkoutsModalOpen(false)}
+        isDarkMode={isDarkMode}
+      />
+
+      <StreakModal
+        isOpen={isStreakModalOpen}
+        onClose={() => setIsStreakModalOpen(false)}
         isDarkMode={isDarkMode}
       />
     </section>

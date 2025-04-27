@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
     navigate('/log-in', { replace: true });
   }, [navigate]);
 
-  const login = useCallback((token, userData) => {
+  const login = useCallback((token) => {
     localStorage.setItem('token', token);
     setIsAuthenticated(true);
   }, []);

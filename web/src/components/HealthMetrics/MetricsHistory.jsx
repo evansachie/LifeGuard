@@ -2,7 +2,7 @@ import React from 'react';
 import { format } from 'date-fns';
 import { Line } from 'react-chartjs-2';
 
-const MetricsHistory = ({ history, isDarkMode, unit }) => {
+const MetricsHistory = ({ history, isDarkMode }) => {
   if (!history?.length) return null;
 
   const chartData = {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { FaSpinner } from 'react-icons/fa';
 import NoMedsIcon from '../../assets/no-meds.svg';
 import MedicationCard from './MedicationCard';

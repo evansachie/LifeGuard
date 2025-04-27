@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { fetchWithAuth, API_ENDPOINTS } from '../utils/api';
-import { generateAvatarUrl } from '../utils/profileUtils';
 
 /**
  * Custom hook to fetch and manage user data

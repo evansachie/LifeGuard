@@ -136,11 +136,6 @@ export function useMemos() {
 
   const toggleDone = async (id, isDone) => {
     try {
-      const response = await fetchWithAuth(`${NODE_API_URL}/api/memos/${id}/done`, {
-        method: 'PUT',
-        body: JSON.stringify({ done: isDone }),
-      });
-
       setMemos((prevMemos) =>
         prevMemos.map((memo) => (memo.Id === id ? { ...memo, Done: isDone } : memo))
       );

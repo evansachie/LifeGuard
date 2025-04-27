@@ -13,7 +13,7 @@ const MemoForm = ({
 }) => {
   const [isEditorLoading, setIsEditorLoading] = useState(true);
 
-  const handleEditorChange = (content, editor) => {
+  const handleEditorChange = (content) => {
     setMemo(content);
   };
 

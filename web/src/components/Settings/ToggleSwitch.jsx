@@ -1,8 +1,15 @@
 import React from 'react';
 
 const ToggleSwitch = ({ enabled, onChange, isDarkMode }) => (
-  <div
+  <button
     onClick={() => onChange(!enabled)}
+    onKeyDown={(e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        onChange(!enabled);
+      }
+    }}
+    role="switch"
+    aria-checked={enabled}
     className={`relative inline-flex h-7 w-14 items-center rounded-full cursor-pointer transition-all duration-300 ${
       enabled
         ? 'bg-blue-500 shadow-inner shadow-blue-600/50'
@@ -16,7 +23,7 @@ const ToggleSwitch = ({ enabled, onChange, isDarkMode }) => (
         enabled ? 'translate-x-8' : 'translate-x-1'
       }`}
     />
-  </div>
+  </button>
 );
 
 export default ToggleSwitch;

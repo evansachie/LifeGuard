@@ -109,7 +109,7 @@ export const initiateGoogleLogin = async () => {
   }
 };
 
-export const handleGoogleCallback = async (code) => {
+export const handleGoogleCallback = async () => {
   try {
     // Get the authentication data from URL parameters instead of fetching the current URL
     const urlParams = new URLSearchParams(window.location.search);

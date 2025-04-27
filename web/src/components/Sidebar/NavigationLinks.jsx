@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import AccessibleDropdown from '../AccessibleDropdown/AccessibleDropdown';
 
 const NavigationLinks = ({ navItems, onNavLinkClick }) => {
   const [isActivityDropdownOpen, setIsActivityDropdownOpen] = useState(false);
@@ -16,19 +17,25 @@ const NavigationLinks = ({ navItems, onNavLinkClick }) => {
     </Link>
   );
 
+  const toggleDropdown = () => {
+    setIsActivityDropdownOpen(!isActivityDropdownOpen);
+  };
+
   return (
     <nav className="sidebar-nav">
       {navItems.map((item, index) => (
         <div key={index}>
           {item.subItems ? (
             <>
-              <div
+              <AccessibleDropdown
+                isOpen={isActivityDropdownOpen}
+                onToggle={toggleDropdown}
+                ariaLabel={`${item.label} submenu, ${isActivityDropdownOpen ? 'expanded' : 'collapsed'}`}
                 className={`nav-link ${isActivityDropdownOpen ? 'active' : ''}`}
-                onClick={() => setIsActivityDropdownOpen(!isActivityDropdownOpen)}
               >
                 <span className="nav-icon">{item.icon}</span>
                 <span className="nav-label">{item.label}</span>
-              </div>
+              </AccessibleDropdown>
               {isActivityDropdownOpen && (
                 <div className="subnav">
                   {item.subItems.map((subItem, subIndex) => (

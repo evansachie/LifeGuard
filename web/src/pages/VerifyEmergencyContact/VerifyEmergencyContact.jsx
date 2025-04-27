@@ -125,7 +125,7 @@ function VerifyEmergencyContact({ isDarkMode, toggleTheme }) {
               <FaTimesCircle className="status-icon error" />
               <h2 className="verify-contact-heading">Verification Failed</h2>
               <p className="verify-contact-subheading">
-                We couldn't verify your emergency contact status. The link may be invalid or
+                We couldn&apos;t verify your emergency contact status. The link may be invalid or
                 expired.
               </p>
             </div>

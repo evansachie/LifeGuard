@@ -332,6 +332,8 @@ These endpoints are served from the .NET-Server (hosted at `https://lifeguard-hi
 | POST       | `/api/Account/CompleteProfile`       | Submit additional profile details                    |
 | GET        | `/api/Account/{id}`                  | Retrieve basic account information by ID             |
 | GET        | `/api/Account/GetProfile/{id}`       | Retrieve detailed user profile information   
+| GET        | `/api/Account/google-login`       | Initiate Google OAuth authentication  
+| GET        | `/api/Account/signin-google`       | Handle the Google OAuth callback
 | DELETE     | `/api/Account/{id}`                  | Delete user profile information by ID             |
 
 ### Photo Endpoints
@@ -380,6 +382,9 @@ These endpoints are served from the Node-Server (hosted at `https://lifeguard-no
 | GET        | `/api/exercise/stats`     | Retrieve user's exercise statistics and streaks   |
 | POST       | `/api/exercise/complete`  | Record a completed workout session                |
 | POST       | `/api/exercise/goals`     | Set or update user's workout goals                |
+| GET        | `/api/exercise/workout-history` | Retrieve user's workout history |
+| GET        | `/api/exercise/calories-history` | Retrieve user's calories burned history |
+| GET        | `/api/exercise/streak-history` | Retrieve user's exercise streak history |
 
 ### Medication Endpoints
 
@@ -411,6 +416,14 @@ These endpoints are served from the Node-Server (hosted at `https://lifeguard-no
 | POST       | `/api/rag/process/environmental`| Process environmental data (authenticated users)     |
 | POST       | `/api/rag/process/medical`      | Process medical knowledge (admin only)               |
 | POST       | `/api/rag/process/profiles`     | Process user profiles (authenticated users)          |
+
+### User Notification Preferences Endpoints
+
+| **Method** | **Endpoint**                           | **Description**                                 |
+|------------|----------------------------------------|-------------------------------------------------|
+| GET        | `/api/user-preferences/notifications`  | Get user notification preferences               |
+| POST       | `/api/user-preferences/notifications`  | Update user notification preferences            |
+| POST       | `/api/user-preferences/send-test-email`| Send a test notification email to the user      |
 
 Complete API documentation would be posted soon...
 

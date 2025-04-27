@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
 import { ToastContainer } from 'react-toastify';
@@ -20,9 +20,9 @@ import './App.css';
 
 function App() {
   const { isDarkMode, toggleTheme } = useTheme();
-  const [commandPaletteOpen, setCommandPaletteOpen] = React.useState(false);
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const down = (e) => {
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();

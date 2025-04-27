@@ -4,7 +4,7 @@ import { FaPlay, FaPause, FaRedo } from 'react-icons/fa';
 import { meditationPresets } from '../../data/meditationPresets';
 import { formatTime } from '../../utils/formatTime';
 
-const MeditationSection = ({ isDarkMode }) => {
+const MeditationSection = () => {
   const [meditationTime, setMeditationTime] = useState(600);
   const [currentTime, setCurrentTime] = useState(600);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
