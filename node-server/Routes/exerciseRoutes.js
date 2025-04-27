@@ -96,6 +96,202 @@ module.exports = (pool) => {
         }
     });
 
+    // Get detailed calories history
+    router.get('/calories-history', async (req, res) => {
+        try {
+            const token = req.headers.authorization.split(' ')[1];
+            const decoded = jwt.decode(token);
+            const userId = decoded.uid;
+            const { period = '7days' } = req.query;
+
+            let timeInterval;
+            switch (period) {
+                case '30days':
+                    timeInterval = 'INTERVAL \'30 days\'';
+                    break;
+                case '90days':
+                    timeInterval = 'INTERVAL \'90 days\'';
+                    break;
+                default:
+                    timeInterval = 'INTERVAL \'7 days\'';
+            }
+
+            const caloriesHistory = await pool.query(`
+                SELECT 
+                    DATE("CompletedAt") as date,
+                    SUM("CaloriesBurned") as calories,
+                    STRING_AGG("WorkoutType", ', ') as workout_types,
+                    COUNT(*) as workout_count
+                FROM "UserWorkouts"
+                WHERE "UserId" = $1
+                AND "CompletedAt" >= NOW() - ${timeInterval}
+                GROUP BY DATE("CompletedAt")
+                ORDER BY date DESC
+            `, [userId]);
+
+            // Get calorie burning trends
+            const trends = await pool.query(`
+                SELECT 
+                    AVG("CaloriesBurned") as avg_calories_per_workout,
+                    SUM("CaloriesBurned") as total_calories,
+                    COUNT(*) as total_workouts
+                FROM "UserWorkouts"
+                WHERE "UserId" = $1
+                AND "CompletedAt" >= NOW() - ${timeInterval}
+            `, [userId]);
+
+            res.json({
+                history: caloriesHistory.rows,
+                trends: trends.rows[0]
+            });
+        } catch (error) {
+            console.error('Error fetching calories history:', error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    });
+
+    // Get detailed workout history
+    router.get('/workout-history', async (req, res) => {
+        try {
+            const token = req.headers.authorization.split(' ')[1];
+            const decoded = jwt.decode(token);
+            const userId = decoded.uid;
+            const { period = '7days' } = req.query;
+
+            let timeInterval;
+            switch (period) {
+                case '30days':
+                    timeInterval = 'INTERVAL \'30 days\'';
+                    break;
+                case '90days':
+                    timeInterval = 'INTERVAL \'90 days\'';
+                    break;
+                default:
+                    timeInterval = 'INTERVAL \'7 days\'';
+            }
+
+            const workoutHistory = await pool.query(`
+                SELECT 
+                    DATE("CompletedAt") as date,
+                    COUNT(*) as workout_count,
+                    STRING_AGG("WorkoutType", ', ') as workout_types,
+                    SUM("DurationMinutes") as total_duration,
+                    SUM("CaloriesBurned") as total_calories
+                FROM "UserWorkouts"
+                WHERE "UserId" = $1
+                AND "CompletedAt" >= NOW() - ${timeInterval}
+                GROUP BY DATE("CompletedAt")
+                ORDER BY date DESC
+            `, [userId]);
+
+            // Get workout type distribution
+            const typeDistribution = await pool.query(`
+                SELECT 
+                    "WorkoutType",
+                    COUNT(*) as count,
+                    SUM("DurationMinutes") as total_duration,
+                    AVG("DurationMinutes") as avg_duration,
+                    SUM("CaloriesBurned") as total_calories
+                FROM "UserWorkouts"
+                WHERE "UserId" = $1
+                AND "CompletedAt" >= NOW() - ${timeInterval}
+                GROUP BY "WorkoutType"
+                ORDER BY count DESC
+            `, [userId]);
+
+            // Get aggregate stats
+            const stats = await pool.query(`
+                SELECT 
+                    COUNT(DISTINCT DATE("CompletedAt")) as active_days,
+                    COUNT(*) as total_workouts,
+                    AVG("DurationMinutes") as avg_duration,
+                    SUM("DurationMinutes") as total_duration
+                FROM "UserWorkouts"
+                WHERE "UserId" = $1
+                AND "CompletedAt" >= NOW() - ${timeInterval}
+            `, [userId]);
+
+            res.json({
+                history: workoutHistory.rows,
+                typeDistribution: typeDistribution.rows,
+                stats: stats.rows[0]
+            });
+        } catch (error) {
+            console.error('Error fetching workout history:', error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    });
+
+    // Get streak history
+    router.get('/streak-history', async (req, res) => {
+        try {
+            const token = req.headers.authorization.split(' ')[1];
+            const decoded = jwt.decode(token);
+            const userId = decoded.uid;
+            const { period = '7days' } = req.query;
+
+            let timeInterval;
+            switch (period) {
+                case '30days':
+                    timeInterval = 'INTERVAL \'30 days\'';
+                    break;
+                case '90days':
+                    timeInterval = 'INTERVAL \'90 days\'';
+                    break;
+                default:
+                    timeInterval = 'INTERVAL \'7 days\'';
+            }
+
+            // Get daily workout completion status
+            const workoutDays = await pool.query(`
+                SELECT 
+                    DATE("CompletedAt") as date,
+                    COUNT(*) as workout_count,
+                    STRING_AGG("WorkoutType", ', ') as workout_types
+                FROM "UserWorkouts"
+                WHERE "UserId" = $1
+                AND "CompletedAt" >= NOW() - ${timeInterval}
+                GROUP BY DATE("CompletedAt")
+                ORDER BY date ASC
+            `, [userId]);
+
+            // Get streak milestones
+            const streakMilestones = await pool.query(`
+                SELECT 
+                    "LastWorkoutDate" as milestone_date,
+                    "CurrentStreak" as streak_length,
+                    "UpdatedAt"
+                FROM "WorkoutStreaks"
+                WHERE "UserId" = $1
+                AND "UpdatedAt" >= NOW() - ${timeInterval}
+                ORDER BY "UpdatedAt" ASC
+            `, [userId]);
+
+            // Get streak stats
+            const streakStats = await pool.query(`
+                SELECT 
+                    "CurrentStreak",
+                    "LongestStreak",
+                    "LastWorkoutDate"
+                FROM "WorkoutStreaks"
+                WHERE "UserId" = $1
+            `, [userId]);
+
+            res.json({
+                workoutDays: workoutDays.rows,
+                streakMilestones: streakMilestones.rows,
+                stats: streakStats.rows[0] || {
+                    CurrentStreak: 0,
+                    LongestStreak: 0,
+                    LastWorkoutDate: null
+                }
+            });
+        } catch (error) {
+            console.error('Error fetching streak history:', error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    });
+
     return router;
 };
 
