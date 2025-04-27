@@ -382,6 +382,9 @@ These endpoints are served from the Node-Server (hosted at `https://lifeguard-no
 | GET        | `/api/exercise/stats`     | Retrieve user's exercise statistics and streaks   |
 | POST       | `/api/exercise/complete`  | Record a completed workout session                |
 | POST       | `/api/exercise/goals`     | Set or update user's workout goals                |
+| GET        | `/api/exercise/workout-history` | Retrieve user's workout history |
+| GET        | `/api/exercise/calories-history` | Retrieve user's calories burned history |
+| GET        | `/api/exercise/streak-history` | Retrieve user's exercise streak history |
 
 ### Medication Endpoints
 
