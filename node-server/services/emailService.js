@@ -27,18 +27,32 @@ const readHTMLFile = (path) => {
 
 const FRONTEND_URL = process.env.FRONTEND_URL || 'https://lifeguard-vert.vercel.app';
 
-// Helper to fetch user profile from .NET backend
-async function fetchUserProfile(userId) {
+// Helper to fetch user profile and userName from .NET backend
+async function fetchFullUserProfile(userId) {
   try {
-    const url = `https://lifeguard-hiij.onrender.com/api/Account/GetProfile/${userId}`;
-    const response = await axios.get(url);
-    if (response.data) {
-      return response.data;
-    }
-    return {};
+    // Fetch /api/Account/{id} for userName
+    const userUrl = `https://lifeguard-hiij.onrender.com/api/Account/${userId}`;
+    const userRes = await axios.get(userUrl);
+    const userName = userRes.data?.userName || 'A LifeGuard user';
+    // Fetch /api/Account/GetProfile/{id} for profile fields
+    const profileUrl = `https://lifeguard-hiij.onrender.com/api/Account/GetProfile/${userId}`;
+    const profileRes = await axios.get(profileUrl);
+    const profile = (profileRes.data && profileRes.data.data) ? profileRes.data.data : {};
+    // Merge logic: prefer profile.name, else userName
+    return {
+      id: userId,
+      name: profile.name || userName,
+      userName,
+      age: profile.age,
+      gender: profile.gender,
+      weight: profile.weight,
+      height: profile.height,
+      phoneNumber: profile.phoneNumber,
+      bio: profile.bio
+    };
   } catch (error) {
-    console.error('Error fetching user profile:', error.message);
-    return {};
+    console.error('Error fetching full user profile:', error.message);
+    return { id: userId, name: 'A LifeGuard user', userName: 'A LifeGuard user' };
   }
 }
 
@@ -54,7 +68,7 @@ const sendEmergencyContactNotification = async (contactData, userData) => {
     
     let profile = userData;
     if (!userData || !userData.name || !userData.phoneNumber) {
-      profile = await fetchUserProfile(userData?.id || userData?.userId || userData?._id);
+      profile = await fetchFullUserProfile(userData?.id || userData?.userId || userData?._id);
     }
     
     const tokenString = `${contactId}:${contactEmail}`;
@@ -96,22 +110,23 @@ const sendEmergencyContactNotification = async (contactData, userData) => {
 const sendEmergencyAlert = async (contactData, userData, emergencyData) => {
   try {
     const templatePath = path.join(__dirname, '../templates/emergency-alert.html');
-    
     const html = await readHTMLFile(templatePath);
     const template = handlebars.compile(html);
-    
-    let profile = userData;
-    if (!userData || !userData.name || !userData.phoneNumber) {
-      profile = await fetchUserProfile(userData?.id || userData?.userId || userData?._id);
-    }
-    
+
+    // Always fetch full user profile for alerts
+    const profile = await fetchFullUserProfile(userData.id);
     const trackingToken = Buffer.from(`${profile.id}:${new Date().toISOString()}`).toString('base64');
     const trackingLink = `${FRONTEND_URL}/emergency-tracking?token=${trackingToken}`;
-    
+
     const replacements = {
       contactName: contactData.Name,
-      userName: profile.name || 'A LifeGuard user',
+      userName: profile.name || profile.userName || 'A LifeGuard user',
       userPhone: profile.phoneNumber || 'Not available',
+      age: profile.age != null ? profile.age : 'Not available',
+      gender: profile.gender || 'Not available',
+      weight: profile.weight != null ? profile.weight : 'Not available',
+      height: profile.height != null ? profile.height : 'Not available',
+      bio: profile.bio || 'Not available',
       emergencyMessage: emergencyData.message || 'Emergency alert triggered',
       emergencyLocation: emergencyData.location || 'Unavailable',
       trackingLink: trackingLink,
@@ -119,17 +134,16 @@ const sendEmergencyAlert = async (contactData, userData, emergencyData) => {
       appLogo: 'https://github-production-user-asset-6210df.s3.amazonaws.com/102630199/418295595-9dbe93f6-9f68-41b5-9b9e-4312683f5b34.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250301%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250301T174742Z&X-Amz-Expires=300&X-Amz-Signature=b487a8f40e2dbddd3c608dd8832b02c042b270ecf5fb68a6c7c32041417f3f48&X-Amz-SignedHeaders=host',
       currentYear: new Date().getFullYear()
     };
-    
+
     const htmlToSend = template(replacements);
-    
     const mailOptions = {
       from: `"LifeGuard EMERGENCY" <${process.env.EMAIL_USER}>`,
       to: contactData.Email,
-      subject: `EMERGENCY ALERT from ${profile.name || 'a LifeGuard user'}`,
+      subject: `EMERGENCY ALERT from ${profile.name || profile.userName || 'a LifeGuard user'}`,
       html: htmlToSend,
       priority: 'high'
     };
-    
+
     const info = await transporter.sendMail(mailOptions);
     console.log('Emergency email sent: ', info.messageId);
     return { success: true, messageId: info.messageId };
@@ -148,7 +162,7 @@ const sendTestAlert = async (contactData, userData) => {
     
     let profile = userData;
     if (!userData || !userData.name) {
-      profile = await fetchUserProfile(userData?.id || userData?.userId || userData?._id);
+      profile = await fetchFullUserProfile(userData?.id || userData?.userId || userData?._id);
     }
     
     const replacements = {
@@ -184,7 +198,7 @@ const sendMedicationReminderEmail = async (userEmail, medData, userId = null) =>
 
     let profile = {};
     if (userId) {
-      profile = await fetchUserProfile(userId);
+      profile = await fetchFullUserProfile(userId);
     }
     
     const replacements = {
