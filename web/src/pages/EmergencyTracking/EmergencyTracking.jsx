@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -13,6 +13,7 @@ import {
 import { toast } from 'react-toastify';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { API_ENDPOINTS, fetchWithAuth } from '../../utils/api';
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_API_KEY;
 
@@ -32,52 +33,28 @@ function EmergencyTracking({ isDarkMode, toggleTheme }) {
   const mapContainer = useRef(null);
   const map = useRef(null);
 
-  const accraCoordinates = [-0.187, 5.6037]; // this would be changed later to use location in user profile
+  const accraCoordinates = useMemo(() => [-0.1869644, 5.6037168], []);
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (!token) {
-        toast.error('No tracking token provided');
-        return;
-      }
-
       try {
-        // Decode token to get user ID and timestamp
-        const decodedData = atob(token);
-        const [userId, timestamp] = decodedData.split(':');
-
-        // Fetch user data from API
-        const response = await fetch(`/api/users/${userId}/emergency-info`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch user data');
-        }
-
+        const response = await fetchWithAuth(API_ENDPOINTS.GET_PROFILE(token));
         const userData = await response.json();
 
-        setUserData({
-          name: `${userData.firstName} ${userData.lastName}` || 'Name not available',
-          location: 'Accra, Ghana',
-          phone: userData.phone || 'Phone not available',
-          email: userData.email || 'Email not available',
-          medicalInfo: userData.medicalInfo || 'No medical information available',
-          timestamp: new Date(timestamp).toLocaleString(),
-          mapUrl: null,
-        });
-
-        toast.success('Emergency data loaded');
+        if (userData) {
+          setUserData({
+            name: `${userData.firstName} ${userData.lastName}`,
+            email: userData.email,
+            phone: userData.phoneNumber || 'Not available',
+            location: userData.location || 'Not available',
+            medicalInfo: userData.medicalInfo || 'No medical information available',
+            timestamp: new Date().toLocaleString(),
+            mapUrl: null,
+          });
+        }
       } catch (error) {
         console.error('Error fetching user data:', error);
-        toast.error('Failed to load emergency data');
-
-        setUserData((prevState) => ({
-          ...prevState,
-          location: 'Accra, Ghana',
-        }));
+        toast.error('Failed to load user data. Please try again.');
       } finally {
         setIsLoading(false);
       }
@@ -98,7 +75,7 @@ function EmergencyTracking({ isDarkMode, toggleTheme }) {
       zoom: 12,
     });
 
-    new mapboxgl.Marker({ color: '#ff0000' })
+    const marker = new mapboxgl.Marker()
       .setLngLat(accraCoordinates)
       .setPopup(new mapboxgl.Popup().setHTML(`<p>${userData.name}</p><p>${userData.location}</p>`))
       .addTo(map.current);
@@ -106,11 +83,10 @@ function EmergencyTracking({ isDarkMode, toggleTheme }) {
     map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
     return () => {
-      if (map.current) {
-        map.current.remove();
-      }
+      marker.remove();
+      map.current?.remove();
     };
-  }, [isLoading, isDarkMode, userData.name, userData.location]);
+  }, [isLoading, isDarkMode, userData.name, userData.location, accraCoordinates]);
 
   useEffect(() => {
     if (map.current) {

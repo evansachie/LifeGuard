@@ -103,9 +103,9 @@ export function useEmergencyContacts() {
     try {
       setIsLoading(true);
       const alertData = {
-        message: 'Emergency alert triggered from LifeGuard app',
-        location: "User's last known location",
-        medicalInfo: 'Please contact immediately',
+        message: "Emergency alert triggered from LifeGuard app",
+        location: "Unavailable",
+        medicalInfo: "Please contact immediately"
       };
 
       const response = await fetchWithAuth(API_ENDPOINTS.EMERGENCY_ALERTS, {

@@ -69,14 +69,27 @@ const useAuth = () => {
 
 export default function LogIn({ isDarkMode, toggleTheme }) {
   const authProps = useAuth();
-  const sliderImages = [loginIllustration, loginIllustration2, loginIllustration3];
+  const loginSlides = [
+    {
+      image: loginIllustration,
+      text: 'Track your fitness routines and exercise progress with personalized feedback.',
+    },
+    {
+      image: loginIllustration2,
+      text: 'Access guided meditation and sleep tracking for better rest quality.',
+    },
+    {
+      image: loginIllustration3,
+      text: 'Monitor your workout metrics and health activities in one comprehensive dashboard.',
+    },
+  ];
 
   return (
     <div className={`login-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
       <ThemeToggle isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
 
       <div className="login-illustration">
-        <ImageSlider images={sliderImages} />
+        <ImageSlider slides={loginSlides} interval={6000} />
       </div>
 
       <div className="login-form-container">

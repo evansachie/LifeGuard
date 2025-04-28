@@ -2,7 +2,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const { sendEmergencyContactNotification, sendEmergencyAlert, sendTestAlert } = require('../services/emailService');
 const { sendEmergencyAlertSMS, sendTestAlertSMS } = require('../services/smsService');
-const crypto = require('crypto');
+const axios = require('axios');
 
 module.exports = (pool) => {
     const router = express.Router();
@@ -122,30 +122,47 @@ module.exports = (pool) => {
             
             console.log('Contact inserted successfully:', rows[0]);
             
-            // Get user info for the email
-            let userData = { name: 'A LifeGuard user', email: decoded.email || email };
-            
+            // Get user info from .NET backend instead of AspNetUsers
             try {
-                const userResult = await pool.query(
-                    'SELECT "Name" as name, "Email" as email, "Phone" as phone FROM "AspNetUsers" WHERE "Id" = $1',
-                    [userId]
-                );
-                
-                if (userResult.rows.length > 0) {
-                    userData = userResult.rows[0];
+                const profileUrl = `https://lifeguard-hiij.onrender.com/api/Account/GetProfile/${userId}`;
+                const response = await axios.get(profileUrl);
+                if (response.data) {
+                    let userData = {
+                        id: userId, 
+                        name: response.data.name || 'A LifeGuard user', 
+                        email: response.data.email || decoded.email || 'user@lifeguard.com',
+                        phone: response.data.phoneNumber || 'Not available',
+                        bio: response.data.bio || '',
+                    };
+                    
+                    // Send email notification
+                    const emailResult = await sendEmergencyContactNotification(rows[0], userData);
+                    
+                    // Return the created contact with email status
+                    res.status(201).json({
+                        ...rows[0],
+                        notificationSent: emailResult.success
+                    });
                 }
             } catch (userError) {
-                console.log('AspNetUsers table might not exist, using default user data:', userError.message);
+                console.log('Could not fetch user profile from .NET backend, using default user data:', userError.message);
+                // Continue with default userData
+                let userData = { 
+                    id: userId, 
+                    name: 'A LifeGuard user', 
+                    email: decoded.email || 'user@lifeguard.com',
+                    phone: 'Not available'
+                };
+                
+                // Send email notification
+                const emailResult = await sendEmergencyContactNotification(rows[0], userData);
+                
+                // Return the created contact with email status
+                res.status(201).json({
+                    ...rows[0],
+                    notificationSent: emailResult.success
+                });
             }
-            
-            // Send email notification
-            const emailResult = await sendEmergencyContactNotification(rows[0], userData);
-            
-            // Return the created contact with email status
-            res.status(201).json({
-                ...rows[0],
-                notificationSent: emailResult.success
-            });
         } catch (error) {
             console.error('Error creating emergency contact:', error);
             res.status(500).json({ 
@@ -211,81 +228,138 @@ module.exports = (pool) => {
             
             const { message, location, medicalInfo } = req.body;
             
-            // Get user info - handle case where AspNetUsers might not exist
-            let userData = { 
-                id: userId, 
-                name: 'A LifeGuard user', 
-                email: decoded.email || 'user@lifeguard.com',
-                phone: 'Not available'
-            };
-            
+            // Get user info from .NET backend instead of AspNetUsers
             try {
-                const userResult = await pool.query(
-                    'SELECT "Name" as name, "Email" as email, "Phone" as phone FROM "AspNetUsers" WHERE "Id" = $1',
+                const axios = require('axios');
+                const profileUrl = `https://lifeguard-hiij.onrender.com/api/Account/GetProfile/${userId}`;
+                const response = await axios.get(profileUrl);
+                if (response.data) {
+                    let userData = {
+                        id: userId, 
+                        name: response.data.name || 'A LifeGuard user', 
+                        email: response.data.email || decoded.email || 'user@lifeguard.com',
+                        phone: response.data.phoneNumber || 'Not available',
+                        bio: response.data.bio || '',
+                    };
+                    
+                    // Get all verified emergency contacts
+                    const { rows: contacts } = await pool.query(
+                        'SELECT * FROM "EmergencyContacts" WHERE "UserId" = $1 AND "IsVerified" = true ORDER BY "Priority" ASC',
+                        [userId]
+                    );
+                    
+                    if (contacts.length === 0) {
+                        return res.status(404).json({ error: 'No verified emergency contacts found' });
+                    }
+                    
+                    // Create emergency record
+                    const emergencyResult = await pool.query(
+                        'INSERT INTO "EmergencyAlerts" ("UserId", "Message", "Location", "Status", "CreatedAt") VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP) RETURNING *',
+                        [userId, message, location, 'Active']
+                    );
+                    
+                    const emergencyId = emergencyResult.rows[0].Id;
+                    
+                    // Send alerts to all contacts
+                    const alertResults = await Promise.all(contacts.map(async (contact) => {
+                        // Prepare emergency data
+                        const emergencyData = {
+                            id: emergencyId,
+                            message: message || 'Emergency alert triggered',
+                            location: location || 'Location not available',
+                            medicalInfo: medicalInfo || 'No medical information provided'
+                        };
+                        
+                        // Send email alert
+                        const emailResult = await sendEmergencyAlert(contact, userData, emergencyData);
+                        
+                        // Send SMS alert
+                        const smsResult = await sendEmergencyAlertSMS(contact, userData, emergencyData);
+                        
+                        // Record the alert
+                        await pool.query(
+                            'INSERT INTO "EmergencyContactAlerts" ("EmergencyId", "ContactId", "EmailSent", "SmsSent", "CreatedAt") VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)',
+                            [emergencyId, contact.Id, emailResult.success, smsResult.success]
+                        );
+                        
+                        return {
+                            contactId: contact.Id,
+                            contactName: contact.Name,
+                            emailSent: emailResult.success,
+                            smsSent: smsResult.success
+                        };
+                    }));
+                    
+                    res.json({
+                        success: true,
+                        emergencyId: emergencyId,
+                        alertsSent: alertResults
+                    });
+                }
+            } catch (userError) {
+                console.log('Could not fetch user profile from .NET backend, using default user data:', userError.message);
+                // Continue with default userData
+                let userData = { 
+                    id: userId, 
+                    name: 'A LifeGuard user', 
+                    email: decoded.email || 'user@lifeguard.com',
+                    phone: 'Not available'
+                };
+                
+                // Get all verified emergency contacts
+                const { rows: contacts } = await pool.query(
+                    'SELECT * FROM "EmergencyContacts" WHERE "UserId" = $1 AND "IsVerified" = true ORDER BY "Priority" ASC',
                     [userId]
                 );
                 
-                if (userResult.rows.length > 0) {
-                    userData = { ...userData, ...userResult.rows[0] };
+                if (contacts.length === 0) {
+                    return res.status(404).json({ error: 'No verified emergency contacts found' });
                 }
-            } catch (userError) {
-                console.log('AspNetUsers table might not exist, using default user data:', userError.message);
-                // Continue with default userData
-            }
-            
-            // Get all verified emergency contacts
-            const { rows: contacts } = await pool.query(
-                'SELECT * FROM "EmergencyContacts" WHERE "UserId" = $1 AND "IsVerified" = true ORDER BY "Priority" ASC',
-                [userId]
-            );
-            
-            if (contacts.length === 0) {
-                return res.status(404).json({ error: 'No verified emergency contacts found' });
-            }
-            
-            // Create emergency record
-            const emergencyResult = await pool.query(
-                'INSERT INTO "EmergencyAlerts" ("UserId", "Message", "Location", "Status", "CreatedAt") VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP) RETURNING *',
-                [userId, message, location, 'Active']
-            );
-            
-            const emergencyId = emergencyResult.rows[0].Id;
-            
-            // Send alerts to all contacts
-            const alertResults = await Promise.all(contacts.map(async (contact) => {
-                // Prepare emergency data
-                const emergencyData = {
-                    id: emergencyId,
-                    message: message || 'Emergency alert triggered',
-                    location: location || 'Location not available',
-                    medicalInfo: medicalInfo || 'No medical information provided'
-                };
                 
-                // Send email alert
-                const emailResult = await sendEmergencyAlert(contact, userData, emergencyData);
-                
-                // Send SMS alert
-                const smsResult = await sendEmergencyAlertSMS(contact, userData, emergencyData);
-                
-                // Record the alert
-                await pool.query(
-                    'INSERT INTO "EmergencyContactAlerts" ("EmergencyId", "ContactId", "EmailSent", "SmsSent", "CreatedAt") VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)',
-                    [emergencyId, contact.Id, emailResult.success, smsResult.success]
+                // Create emergency record
+                const emergencyResult = await pool.query(
+                    'INSERT INTO "EmergencyAlerts" ("UserId", "Message", "Location", "Status", "CreatedAt") VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP) RETURNING *',
+                    [userId, message, location, 'Active']
                 );
                 
-                return {
-                    contactId: contact.Id,
-                    contactName: contact.Name,
-                    emailSent: emailResult.success,
-                    smsSent: smsResult.success
-                };
-            }));
-            
-            res.json({
-                success: true,
-                emergencyId: emergencyId,
-                alertsSent: alertResults
-            });
+                const emergencyId = emergencyResult.rows[0].Id;
+                
+                // Send alerts to all contacts
+                const alertResults = await Promise.all(contacts.map(async (contact) => {
+                    // Prepare emergency data
+                    const emergencyData = {
+                        id: emergencyId,
+                        message: message || 'Emergency alert triggered',
+                        location: location || 'Location not available',
+                        medicalInfo: medicalInfo || 'No medical information provided'
+                    };
+                    
+                    // Send email alert
+                    const emailResult = await sendEmergencyAlert(contact, userData, emergencyData);
+                    
+                    // Send SMS alert
+                    const smsResult = await sendEmergencyAlertSMS(contact, userData, emergencyData);
+                    
+                    // Record the alert
+                    await pool.query(
+                        'INSERT INTO "EmergencyContactAlerts" ("EmergencyId", "ContactId", "EmailSent", "SmsSent", "CreatedAt") VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)',
+                        [emergencyId, contact.Id, emailResult.success, smsResult.success]
+                    );
+                    
+                    return {
+                        contactId: contact.Id,
+                        contactName: contact.Name,
+                        emailSent: emailResult.success,
+                        smsSent: smsResult.success
+                    };
+                }));
+                
+                res.json({
+                    success: true,
+                    emergencyId: emergencyId,
+                    alertsSent: alertResults
+                });
+            }
         } catch (error) {
             console.error('Error sending emergency alerts:', error);
             res.status(500).json({ error: 'Failed to send emergency alerts' });
@@ -300,27 +374,9 @@ module.exports = (pool) => {
             const userId = decoded.uid;
             const { id } = req.params;
             
-            // Get user info - handle case where AspNetUsers might not exist
-            let userData = { 
-                id: userId, 
-                name: 'A LifeGuard user', 
-                email: decoded.email || 'user@lifeguard.com',
-                phone: 'Not available'
-            };
-            
-            try {
-                const userResult = await pool.query(
-                    'SELECT "Name" as name, "Email" as email, "Phone" as phone FROM "AspNetUsers" WHERE "Id" = $1',
-                    [userId]
-                );
-                
-                if (userResult.rows.length > 0) {
-                    userData = { ...userData, ...userResult.rows[0] };
-                }
-            } catch (userError) {
-                console.log('AspNetUsers table might not exist, using default user data:', userError.message);
-                // Continue with default userData
-            }
+            // Get user info from .NET backend instead of AspNetUsers
+            // For test alert, only pass userId so the full profile is always fetched
+            let userData = { id: userId };
             
             // Get the specific contact
             const { rows } = await pool.query(
