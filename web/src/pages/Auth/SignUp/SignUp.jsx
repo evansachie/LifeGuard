@@ -97,14 +97,27 @@ const useSignUp = () => {
 
 export default function SignUp({ isDarkMode, toggleTheme }) {
   const signUpProps = useSignUp();
-  const sliderImages = [signupIllustration, signupIllustration2, signupIllustration3];
+  const signupSlides = [
+    {
+      image: signupIllustration,
+      text: 'Track your runs and outdoor activities with real-time health monitoring.',
+    },
+    {
+      image: signupIllustration2,
+      text: 'Follow personalized workout routines tailored to your fitness goals.',
+    },
+    {
+      image: signupIllustration3,
+      text: 'Measure your progress with detailed performance analytics and activity tracking.',
+    },
+  ];
 
   return (
     <div className={`signup-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
       <ThemeToggle isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
 
       <div className="signup-illustration">
-        <ImageSlider images={sliderImages} />
+        <ImageSlider slides={signupSlides} interval={6000} />
       </div>
 
       <div className="signup-form-container">
