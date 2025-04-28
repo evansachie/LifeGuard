@@ -375,77 +375,32 @@ module.exports = (pool) => {
             const { id } = req.params;
             
             // Get user info from .NET backend instead of AspNetUsers
-            try {
-                const axios = require('axios');
-                const profileUrl = `https://lifeguard-hiij.onrender.com/api/Account/GetProfile/${userId}`;
-                const response = await axios.get(profileUrl);
-                if (response.data) {
-                    let userData = {
-                        id: userId, 
-                        name: response.data.name || 'A LifeGuard user', 
-                        email: response.data.email || decoded.email || 'user@lifeguard.com',
-                        phone: response.data.phoneNumber || 'Not available',
-                        bio: response.data.bio || '',
-                    };
-                    
-                    // Get the specific contact
-                    const { rows } = await pool.query(
-                        'SELECT * FROM "EmergencyContacts" WHERE "Id" = $1 AND "UserId" = $2',
-                        [id, userId]
-                    );
-                    
-                    if (rows.length === 0) {
-                        return res.status(404).json({ error: 'Contact not found' });
-                    }
-                    
-                    const contact = rows[0];
-                    
-                    // Send test alerts
-                    const emailResult = await sendTestAlert(contact, userData);
-                    const smsResult = await sendTestAlertSMS(contact, userData);
-                    
-                    res.json({
-                        success: true,
-                        contactId: contact.Id,
-                        contactName: contact.Name,
-                        emailSent: emailResult.success,
-                        smsSent: smsResult.success
-                    });
-                }
-            } catch (userError) {
-                console.log('Could not fetch user profile from .NET backend, using default user data:', userError.message);
-                // Continue with default userData
-                let userData = { 
-                    id: userId, 
-                    name: 'A LifeGuard user', 
-                    email: decoded.email || 'user@lifeguard.com',
-                    phone: 'Not available'
-                };
-                
-                // Get the specific contact
-                const { rows } = await pool.query(
-                    'SELECT * FROM "EmergencyContacts" WHERE "Id" = $1 AND "UserId" = $2',
-                    [id, userId]
-                );
-                
-                if (rows.length === 0) {
-                    return res.status(404).json({ error: 'Contact not found' });
-                }
-                
-                const contact = rows[0];
-                
-                // Send test alerts
-                const emailResult = await sendTestAlert(contact, userData);
-                const smsResult = await sendTestAlertSMS(contact, userData);
-                
-                res.json({
-                    success: true,
-                    contactId: contact.Id,
-                    contactName: contact.Name,
-                    emailSent: emailResult.success,
-                    smsSent: smsResult.success
-                });
+            // For test alert, only pass userId so the full profile is always fetched
+            let userData = { id: userId };
+            
+            // Get the specific contact
+            const { rows } = await pool.query(
+                'SELECT * FROM "EmergencyContacts" WHERE "Id" = $1 AND "UserId" = $2',
+                [id, userId]
+            );
+            
+            if (rows.length === 0) {
+                return res.status(404).json({ error: 'Contact not found' });
             }
+            
+            const contact = rows[0];
+            
+            // Send test alerts
+            const emailResult = await sendTestAlert(contact, userData);
+            const smsResult = await sendTestAlertSMS(contact, userData);
+            
+            res.json({
+                success: true,
+                contactId: contact.Id,
+                contactName: contact.Name,
+                emailSent: emailResult.success,
+                smsSent: smsResult.success
+            });
         } catch (error) {
             console.error('Error sending test alert:', error);
             res.status(500).json({ error: 'Failed to send test alert' });
