@@ -110,7 +110,7 @@ export function useEmergencyContacts() {
       setIsLoading(true);
       const alertData = {
         message: "Emergency alert triggered from LifeGuard app",
-        location: "User's last known location",
+        location: "Unavailable",
         medicalInfo: "Please contact immediately"
       };
       

@@ -83,7 +83,7 @@ const sendEmergencyContactNotification = async (contactData, userData) => {
     
     const replacements = {
       contactName: contactData.Name,
-      userName: profile.name || 'A LifeGuard user',
+      userName: profile.name || profile.userName || 'A LifeGuard user',
       verificationLink: verificationLink,
       appLogo: 'https://github-production-user-asset-6210df.s3.amazonaws.com/102630199/418295595-9dbe93f6-9f68-41b5-9b9e-4312683f5b34.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250301%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250301T174742Z&X-Amz-Expires=300&X-Amz-Signature=b487a8f40e2dbddd3c608dd8832b02c042b270ecf5fb68a6c7c32041417f3f48&X-Amz-SignedHeaders=host',
       currentYear: new Date().getFullYear()
@@ -167,7 +167,7 @@ const sendTestAlert = async (contactData, userData) => {
     
     const replacements = {
       contactName: contactData.Name,
-      userName: profile.name || 'A LifeGuard user',
+      userName: profile.name || profile.userName || 'A LifeGuard user',
       appLogo: 'https://github-production-user-asset-6210df.s3.amazonaws.com/102630199/418295595-9dbe93f6-9f68-41b5-9b9e-4312683f5b34.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250301%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250301T174742Z&X-Amz-Expires=300&X-Amz-Signature=b487a8f40e2dbddd3c608dd8832b02c042b270ecf5fb68a6c7c32041417f3f48&X-Amz-SignedHeaders=host',
       currentYear: new Date().getFullYear()
     };
@@ -177,7 +177,7 @@ const sendTestAlert = async (contactData, userData) => {
     const mailOptions = {
       from: `"LifeGuard" <${process.env.EMAIL_USER}>`,
       to: contactData.Email,
-      subject: `Test Emergency Alert from ${profile.name || 'a LifeGuard user'}`,
+      subject: `Test Emergency Alert from ${profile.name || profile.userName || 'a LifeGuard user'}`,
       html: htmlToSend
     };
     
