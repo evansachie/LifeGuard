@@ -107,39 +107,45 @@ const sendEmergencyContactNotification = async (contactData, userData) => {
   }
 };
 
+function generateTrackingToken(userId) {
+  const tokenData = `${userId}:${new Date().toISOString()}`;
+  return Buffer.from(tokenData).toString('base64');
+}
+
 const sendEmergencyAlert = async (contactData, userData, emergencyData) => {
   try {
     const templatePath = path.join(__dirname, '../templates/emergency-alert.html');
     const html = await readHTMLFile(templatePath);
     const template = handlebars.compile(html);
-
-    // Always fetch full user profile for alerts
-    const profile = await fetchFullUserProfile(userData.id);
-    const trackingToken = Buffer.from(`${profile.id}:${new Date().toISOString()}`).toString('base64');
-    const trackingLink = `${FRONTEND_URL}/emergency-tracking?token=${trackingToken}`;
-
+    
+    // Generate tracking token
+    const trackingToken = generateTrackingToken(userData.id);
+    
+    // Create tracking link with token
+    const trackingLink = `${FRONTEND_URL}/emergency-tracking?token=${encodeURIComponent(trackingToken)}`;
+    
     const replacements = {
+      userName: userData.name || 'LifeGuard User',
+      userPhone: userData.phone || 'Not available',
+      age: userData.age || 'Not available',
+      gender: userData.gender || 'Not available',
+      weight: userData.weight || 'Not available',
+      height: userData.height || 'Not available',
+      bio: userData.bio || 'Not available',
       contactName: contactData.Name,
-      userName: profile.name || profile.userName || 'A LifeGuard user',
-      userPhone: profile.phoneNumber || 'Not available',
-      age: profile.age != null ? profile.age : 'Not available',
-      gender: profile.gender || 'Not available',
-      weight: profile.weight != null ? profile.weight : 'Not available',
-      height: profile.height != null ? profile.height : 'Not available',
-      bio: profile.bio || 'Not available',
       emergencyMessage: emergencyData.message || 'Emergency alert triggered',
-      emergencyLocation: emergencyData.location || 'Unavailable',
+      emergencyLocation: emergencyData.location || 'Location not available',
+      medicalInfo: emergencyData.medicalInfo || 'No medical information available',
       trackingLink: trackingLink,
-      medicalInfo: profile.bio || 'No medical information provided',
-      appLogo: 'https://github-production-user-asset-6210df.s3.amazonaws.com/102630199/418295595-9dbe93f6-9f68-41b5-9b9e-4312683f5b34.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250301%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250301T174742Z&X-Amz-Expires=300&X-Amz-Signature=b487a8f40e2dbddd3c608dd8832b02c042b270ecf5fb68a6c7c32041417f3f48&X-Amz-SignedHeaders=host',
+      appLogo: 'https://res.cloudinary.com/dat7slh1u/image/upload/v1740908768/logo_moe3jm.png',
       currentYear: new Date().getFullYear()
     };
-
+    
     const htmlToSend = template(replacements);
     const mailOptions = {
       from: `"LifeGuard EMERGENCY" <${process.env.EMAIL_USER}>`,
       to: contactData.Email,
-      subject: `EMERGENCY ALERT from ${profile.name || profile.userName || 'a LifeGuard user'}`,
+      subject: `EMERGENCY ALERT from ${userData.name || 'a LifeGuard user'}`,
       html: htmlToSend,
       priority: 'high'
     };
@@ -232,5 +238,6 @@ module.exports = {
   sendEmergencyContactNotification,
   sendEmergencyAlert,
   sendTestAlert,
-  sendMedicationReminderEmail
+  sendMedicationReminderEmail,
+  generateTrackingToken,
 };
