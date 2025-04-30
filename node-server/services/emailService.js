@@ -115,8 +115,9 @@ const sendEmergencyAlert = async (contactData, userData, emergencyData) => {
 
     // Always fetch full user profile for alerts
     const profile = await fetchFullUserProfile(userData.id);
-    const trackingToken = Buffer.from(`${profile.id}:${new Date().toISOString()}`).toString('base64');
-    const trackingLink = `${FRONTEND_URL}/emergency-tracking?token=${trackingToken}`;
+    
+    // Simplified tracking link with just userId instead of a token
+    const trackingLink = `${FRONTEND_URL}/emergency-tracking?userId=${profile.id}`;
 
     const replacements = {
       contactName: contactData.Name,
