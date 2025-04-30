@@ -13,7 +13,7 @@ import {
 import { toast } from 'react-toastify';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { API_ENDPOINTS, fetchWithAuth } from '../../utils/api';
+import { fetchApi, BASE_URL } from '../../utils/api';
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_API_KEY;
 
@@ -37,17 +37,48 @@ function EmergencyTracking({ isDarkMode, toggleTheme }) {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      try {
-        const response = await fetchWithAuth(API_ENDPOINTS.GET_PROFILE(token));
-        const userData = await response.json();
+      if (!token) {
+        toast.error('Invalid tracking link');
+        setIsLoading(false);
+        return;
+      }
 
-        if (userData) {
+      try {
+        // First, try to decode the token to get the user ID and timestamp
+        const decodedTokenData = atob(token);
+        console.log('Decoded token data:', decodedTokenData);
+
+        // Expected format: userId:timestamp
+        const parts = decodedTokenData.split(':');
+        if (parts.length !== 2) {
+          throw new Error('Invalid tracking token format');
+        }
+
+        const userId = parts[0];
+
+        const userResponse = await fetchApi(`${BASE_URL}/api/Account/${userId}`);
+
+        const profileResponse = await fetchApi(`${BASE_URL}/api/Account/GetProfile/${userId}`);
+
+        const combinedData = {
+          ...userResponse,
+          ...(profileResponse?.data || {}),
+        };
+
+        console.log('User data:', userResponse);
+        console.log('Profile data:', profileResponse);
+
+        if (userResponse) {
           setUserData({
-            name: `${userData.firstName} ${userData.lastName}`,
-            email: userData.email,
-            phone: userData.phoneNumber || 'Not available',
-            location: userData.location || 'Not available',
-            medicalInfo: userData.medicalInfo || 'No medical information available',
+            name:
+              combinedData.name ||
+              `${combinedData.firstName || ''} ${combinedData.lastName || ''}`.trim() ||
+              userResponse.userName ||
+              'LifeGuard User',
+            email: combinedData.email || 'Not available',
+            phone: combinedData.phoneNumber || 'Not available',
+            location: combinedData.location || 'Not available',
+            medicalInfo: combinedData.medicalInfo || 'No medical information available',
             timestamp: new Date().toLocaleString(),
             mapUrl: null,
           });
@@ -188,7 +219,6 @@ function EmergencyTracking({ isDarkMode, toggleTheme }) {
                       </a>
                     </span>
                   </p>
-                  {/* Mapbox map container */}
                   <div
                     ref={mapContainer}
                     className="h-48 bg-gray-200 rounded-lg mt-2 overflow-hidden"

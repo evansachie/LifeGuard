@@ -369,7 +369,6 @@ const StreakModal = ({ isOpen, onClose, isDarkMode }) => {
                               startDate={startDate}
                               endDate={endDate}
                               panelColors={{
-
                                 0: isDarkMode ? '#171d27' : '#ebedf0',
                                 1: '#9be9a8',
                                 2: '#40c463',
@@ -395,7 +394,6 @@ const StreakModal = ({ isOpen, onClose, isDarkMode }) => {
                               rectProps={{
                                 rx: 2,
                                 style: {
-
                                   stroke: isDarkMode
                                     ? 'rgba(255, 255, 255, 0.1)'
                                     : 'rgba(0, 0, 0, 0.05)',
@@ -403,7 +401,6 @@ const StreakModal = ({ isOpen, onClose, isDarkMode }) => {
                                 },
                               }}
                               rectRender={(props, data) => {
-
                                 return (
                                   <Tooltip
                                     placement="top"
@@ -413,7 +410,6 @@ const StreakModal = ({ isOpen, onClose, isDarkMode }) => {
                                   </Tooltip>
                                 );
                               }}
-
                               style={{
                                 color: isDarkMode ? '#a0aec0' : '#4a5568',
                                 fontSize: '10px',
