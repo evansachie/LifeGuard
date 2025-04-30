@@ -29,7 +29,8 @@ function EmergencyTracking({ isDarkMode, toggleTheme }) {
     mapUrl: null,
   });
   const [isLoading, setIsLoading] = useState(true);
-  const token = searchParams.get('token');
+
+  const userId = searchParams.get('userId');
   const mapContainer = useRef(null);
   const map = useRef(null);
 
@@ -37,48 +38,33 @@ function EmergencyTracking({ isDarkMode, toggleTheme }) {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (!token) {
-        toast.error('Invalid tracking link');
+      if (!userId) {
+        toast.error('Invalid tracking link: missing user ID');
         setIsLoading(false);
         return;
       }
 
       try {
-        // First, try to decode the token to get the user ID and timestamp
-        const decodedTokenData = atob(token);
-        console.log('Decoded token data:', decodedTokenData);
+        console.log(`Fetching user data for ID: ${userId}`);
+        
+        const userEndpoint = `${BASE_URL}/api/Account/${userId}`;
+        const userResponse = await fetchApi(userEndpoint);
 
-        // Expected format: userId:timestamp
-        const parts = decodedTokenData.split(':');
-        if (parts.length !== 2) {
-          throw new Error('Invalid tracking token format');
-        }
-
-        const userId = parts[0];
-
-        const userResponse = await fetchApi(`${BASE_URL}/api/Account/${userId}`);
-
-        const profileResponse = await fetchApi(`${BASE_URL}/api/Account/GetProfile/${userId}`);
-
-        const combinedData = {
-          ...userResponse,
-          ...(profileResponse?.data || {}),
-        };
-
+        const profileEndpoint = `${BASE_URL}/api/Account/GetProfile/${userId}`;
+        const profileResponse = await fetchApi(profileEndpoint);
+        
         console.log('User data:', userResponse);
         console.log('Profile data:', profileResponse);
 
+        const profileData = profileResponse?.data || {};
+        
         if (userResponse) {
           setUserData({
-            name:
-              combinedData.name ||
-              `${combinedData.firstName || ''} ${combinedData.lastName || ''}`.trim() ||
-              userResponse.userName ||
-              'LifeGuard User',
-            email: combinedData.email || 'Not available',
-            phone: combinedData.phoneNumber || 'Not available',
-            location: combinedData.location || 'Not available',
-            medicalInfo: combinedData.medicalInfo || 'No medical information available',
+            name: userResponse.userName || 'LifeGuard User',
+            email: userResponse.email || 'Not available',
+            phone: profileData.phoneNumber || 'Not available',
+            location: profileData.location || 'Ghana, Accra',
+            medicalInfo: `Age: ${profileData.age || 'N/A'}\nGender: ${profileData.gender || 'N/A'}\nWeight: ${profileData.weight || 'N/A'} kg\nHeight: ${profileData.height || 'N/A'} cm\nBio: ${profileData.bio || 'No additional information provided'}`,
             timestamp: new Date().toLocaleString(),
             mapUrl: null,
           });
@@ -92,7 +78,7 @@ function EmergencyTracking({ isDarkMode, toggleTheme }) {
     };
 
     fetchUserData();
-  }, [token]);
+  }, [userId]);
 
   useEffect(() => {
     if (isLoading || !mapContainer.current) return;
