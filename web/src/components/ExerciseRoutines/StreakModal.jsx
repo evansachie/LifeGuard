@@ -11,7 +11,14 @@ import AccessibleDropdown from '../AccessibleDropdown/AccessibleDropdown';
 import exerciseService from '../../services/exerciseService';
 import HeatMap from '@uiw/react-heat-map';
 import Tooltip from '@uiw/react-tooltip';
-import { eachDayOfInterval, format, isValid, parseISO } from 'date-fns';
+import {
+  eachDayOfInterval,
+  format,
+  isValid,
+  parseISO,
+  parse,
+  differenceInCalendarDays,
+} from 'date-fns';
 
 const StreakModal = ({ isOpen, onClose, isDarkMode }) => {
   const [period, setPeriod] = useState('7days');
@@ -46,10 +53,24 @@ const StreakModal = ({ isOpen, onClose, isDarkMode }) => {
     }
   }, [isOpen, period, fetchStreakHistory]);
 
-  const safeFormatDate = (dateObj) => {
-    if (!isValid(dateObj)) {
-      console.warn('Invalid date encountered in heatmap:', dateObj);
-      return '';
+  const safeFormatDate = (dateInput) => {
+    let dateObj;
+    if (!dateInput) {
+      return 'N/A';
+    }
+    if (dateInput instanceof Date) {
+      dateObj = dateInput;
+    } else if (typeof dateInput === 'string') {
+      if (dateInput.includes('/')) {
+        dateObj = parse(dateInput, 'yyyy/MM/dd', new Date());
+      } else {
+        dateObj = parseISO(dateInput);
+      }
+    }
+
+    if (!dateObj || !isValid(dateObj)) {
+      console.warn('Invalid date encountered:', dateInput);
+      return 'N/A';
     }
     return format(dateObj, 'yyyy/MM/dd');
   };
@@ -269,7 +290,7 @@ const StreakModal = ({ isOpen, onClose, isDarkMode }) => {
                   </div>
 
                   <div
-                    className={`p-4 rounded-2xl shadow-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} mb-6 flex flex-col items-center border border-gray-200 dark:border-gray-700`}
+                    className={`p-4 rounded-2xl shadow-lg ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'} mb-6 flex flex-col items-center border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`} // Adjusted background for dark mode
                   >
                     <h3
                       className={`text-lg font-semibold mb-4 tracking-tight ${
@@ -287,11 +308,10 @@ const StreakModal = ({ isOpen, onClose, isDarkMode }) => {
                       <div
                         style={{
                           width: '100%',
-                          maxWidth: 700,
-                          minWidth: 320,
-                          overflowX: 'auto',
+                          maxWidth: 700, // Keep max width
+                          overflowX: 'auto', // Allow horizontal scroll if needed
                         }}
-                        className="flex justify-center"
+                        className="flex justify-center p-2" // Add padding
                       >
                         {(() => {
                           const validDates = (streakData.workoutDays || [])
@@ -318,6 +338,11 @@ const StreakModal = ({ isOpen, onClose, isDarkMode }) => {
                             startDate.setDate(today.getDate() - 29);
                             endDate = today;
                           }
+                          const daysInRange = differenceInCalendarDays(endDate, startDate);
+                          const numWeeks = Math.ceil((daysInRange + 1) / 7); // Calculate number of weeks
+
+                          const calculatedWidth = Math.min(700, numWeeks * 18 + 60); // Approx week width * space + labels
+
                           const fullHeatmapData = getFullHeatmapData(
                             streakData.workoutDays,
                             startDate,
@@ -337,18 +362,19 @@ const StreakModal = ({ isOpen, onClose, isDarkMode }) => {
                           return (
                             <HeatMap
                               value={fullHeatmapData}
-                              width={600}
-                              space={2}
-                              rectSize={15}
-                              weekLabels={['', 'Mon', '', 'Wed', '', 'Fri', '']}
+                              width={calculatedWidth}
+                              rectSize={12}
+                              space={3}
+                              weekLabels={['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']}
                               startDate={startDate}
                               endDate={endDate}
                               panelColors={{
-                                0: isDarkMode ? '#23272e' : '#f3f4f6',
-                                1: '#c6e48b',
-                                2: '#7bc96f',
-                                3: '#239a3b',
-                                4: '#196127',
+
+                                0: isDarkMode ? '#171d27' : '#ebedf0',
+                                1: '#9be9a8',
+                                2: '#40c463',
+                                3: '#30a14e',
+                                4: '#216e39',
                               }}
                               monthLabels={[
                                 'Jan',
@@ -365,69 +391,79 @@ const StreakModal = ({ isOpen, onClose, isDarkMode }) => {
                                 'Dec',
                               ]}
                               className={isDarkMode ? 'heatmap-dark' : 'heatmap-light'}
-                              legendCellSize={16}
-                              legend={[0, 1, 2, 3, 4]}
+                              legendCellSize={0}
                               rectProps={{
-                                rx: 3,
+                                rx: 2,
                                 style: {
-                                  stroke: isDarkMode ? '#374151' : '#e5e7eb',
-                                  strokeWidth: 1.2,
+
+                                  stroke: isDarkMode
+                                    ? 'rgba(255, 255, 255, 0.1)'
+                                    : 'rgba(0, 0, 0, 0.05)',
+                                  strokeWidth: 1,
                                 },
                               }}
-                              rectRender={(props, data) => (
-                                <Tooltip
-                                  placement="top"
-                                  content={`${data.date}: ${data.count || 0} workout${data.count === 1 ? '' : 's'}`}
-                                >
-                                  <rect {...props} />
-                                </Tooltip>
-                              )}
+                              rectRender={(props, data) => {
+
+                                return (
+                                  <Tooltip
+                                    placement="top"
+                                    content={`${data.date || 'N/A'}: ${data.count || 0} workout${data.count === 1 ? '' : 's'}`}
+                                  >
+                                    <rect {...props} />
+                                  </Tooltip>
+                                );
+                              }}
+
+                              style={{
+                                color: isDarkMode ? '#a0aec0' : '#4a5568',
+                                fontSize: '10px',
+                              }}
                             />
                           );
                         })()}
                       </div>
-                      {/* Legend */}
-                      <div className="flex items-center gap-2 mt-4">
-                        <span className="text-xs text-gray-400">Less</span>
-                        <span
-                          className="w-4 h-4 rounded-sm border border-gray-300 dark:border-gray-600"
-                          style={{ background: isDarkMode ? '#23272e' : '#f3f4f6' }}
-                        ></span>
-                        <span
-                          className="w-4 h-4 rounded-sm"
-                          style={{ background: '#c6e48b' }}
-                        ></span>
-                        <span
-                          className="w-4 h-4 rounded-sm"
-                          style={{ background: '#7bc96f' }}
-                        ></span>
-                        <span
-                          className="w-4 h-4 rounded-sm"
-                          style={{ background: '#239a3b' }}
-                        ></span>
-                        <span
-                          className="w-4 h-4 rounded-sm"
-                          style={{ background: '#196127' }}
-                        ></span>
-                        <span className="text-xs text-gray-400">More</span>
+
+                      <div className="flex items-center gap-1 mt-3 text-xs">
+                        <span className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>Less</span>
+                        {[
+                          isDarkMode ? '#171d27' : '#ebedf0',
+                          '#9be9a8',
+                          '#40c463',
+                          '#30a14e',
+                          '#216e39',
+                        ].map((color, index) => (
+                          <span
+                            key={color}
+                            className="w-3 h-3 rounded-sm inline-block"
+                            style={{
+                              backgroundColor: color,
+
+                              border:
+                                index === 0
+                                  ? `1px solid ${isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`
+                                  : 'none',
+                            }}
+                          ></span>
+                        ))}
+                        <span className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>More</span>
                       </div>
                     </div>
                     <style>{`
-                      .heatmap-dark .w-echarts-heatmap-week-label {
-                        fill: #fff !important;
-                        font-size: 0.8rem;
-                        font-family: inherit;
-                        font-weight: 500;
-                        letter-spacing: 0.01em;
-                        opacity: 1 !important;
-                      }
+                      /* Refine week label styles */
+                      .heatmap-dark .w-echarts-heatmap-week-label,
                       .heatmap-light .w-echarts-heatmap-week-label {
-                        fill: #222 !important;
-                        font-size: 0.8rem;
-                        font-family: inherit;
-                        font-weight: 500;
-                        letter-spacing: 0.01em;
-                        opacity: 1 !important;
+                        font-size: 9px !important; /* Smaller week labels */
+                        fill: ${isDarkMode ? '#a0aec0' : '#4a5568'} !important; /* Match label color */
+                        alignment-baseline: central;
+                      }
+                      /* Ensure month labels have consistent color */
+                      .heatmap-dark text, .heatmap-light text {
+                         fill: ${isDarkMode ? '#a0aec0' : '#4a5568'} !important;
+                         font-size: 10px !important;
+                      }
+                      /* Ensure rects don't have unwanted default outlines */
+                      .heatmap-dark rect, .heatmap-light rect {
+                        shape-rendering: geometricPrecision; /* Try to make strokes crisper */
                       }
                     `}</style>
                   </div>
@@ -459,13 +495,7 @@ const StreakModal = ({ isOpen, onClose, isDarkMode }) => {
                                 isDarkMode ? 'text-gray-300' : 'text-gray-800'
                               }`}
                             >
-                              {safeFormatDate(
-                                day.date
-                                  ? day.date.includes('/')
-                                    ? new Date(day.date)
-                                    : parseISO(day.date)
-                                  : null
-                              ) || 'N/A'}
+                              {safeFormatDate(day.date)}
                             </td>
                             <td
                               className={`px-4 py-3 ${
