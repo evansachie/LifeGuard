@@ -251,5 +251,36 @@ module.exports = (pool) => {
         }
     });
 
+    // This will allow medications to be retrieved by userId without authentication
+    router.get('/emergency/:userId', async (req, res) => {
+        try {
+            const { userId } = req.params;
+            
+            if (!userId) {
+                return res.status(400).json({ success: false, error: 'User ID is required' });
+            }
+            
+            // Only return active medications with minimal information for emergency purposes
+            const result = await pool.query(
+                `SELECT "Name", "Dosage", "Notes" 
+                 FROM "Medications" 
+                 WHERE "UserId" = $1 AND "Active" = true 
+                 ORDER BY "Name" ASC`,
+                [userId]
+            );
+            
+            res.json({ 
+                success: true, 
+                data: result.rows 
+            });
+        } catch (error) {
+            console.error('Error fetching emergency medications:', error);
+            res.status(500).json({ 
+                success: false, 
+                error: 'Failed to fetch emergency medications' 
+            });
+        }
+    });
+
     return router;
 };
