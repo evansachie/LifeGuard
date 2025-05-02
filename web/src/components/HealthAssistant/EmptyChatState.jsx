@@ -2,10 +2,10 @@ import React from 'react';
 
 const EmptyChatState = ({ onExampleClick }) => {
   const exampleQuestions = [
-    'How has my sleep been lately?',
-    "What's my heart rate trend this week?",
-    'How can I improve my overall health?',
-    'What exercises are good for back pain?',
+    'What are the benefits of regular exercise?',
+    'How much water should I drink daily?',
+    'What foods can help boost my immune system?',
+    'What are some stress management techniques?',
   ];
 
   return (

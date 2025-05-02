@@ -7,6 +7,7 @@ import Benefits from '../../components/Landing/Benefits';
 import DownloadSection from '../../components/Landing/DownloadSection';
 import Footer from '../../components/Landing/Footer';
 import ScrollToTop from '../../components/ScrollToTop/ScrollToTop';
+import FloatingHealthAssistant from '../../components/HealthAssistant/FloatingHealthAssistant';
 import './LandingPage.css';
 
 const LandingPage = ({ isDarkMode, toggleTheme, isAuthenticated }) => {
@@ -30,6 +31,7 @@ const LandingPage = ({ isDarkMode, toggleTheme, isAuthenticated }) => {
       </section>
       <Footer />
       <ScrollToTop />
+      <FloatingHealthAssistant isDarkMode={isDarkMode} />
     </div>
   );
 };
