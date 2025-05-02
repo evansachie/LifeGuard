@@ -70,6 +70,7 @@ export const API_ENDPOINTS = {
     REMINDERS: `${NODE_API_URL}/api/medications/reminders`,
     COMPLIANCE: `${NODE_API_URL}/api/medications/compliance`,
     HISTORY: `${NODE_API_URL}/api/medications/history`,
+    EMERGENCY: (userId) => `${NODE_API_URL}/api/medications/emergency/${userId}`,
   },
 
   USER_PREFERENCES: {

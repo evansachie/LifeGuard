@@ -1,4 +1,11 @@
-import { FaUserMd, FaHeartbeat, FaClipboardList, FaAmbulance, FaHospital } from 'react-icons/fa';
+import {
+  FaUserMd,
+  FaHeartbeat,
+  FaClipboardList,
+  FaAmbulance,
+  FaHospital,
+  FaPills,
+} from 'react-icons/fa';
 
 const MedicalTab = ({ userData, actions, isDarkMode }) => {
   return (
@@ -99,6 +106,57 @@ const MedicalTab = ({ userData, actions, isDarkMode }) => {
               {userData.medicalInfo.bio || 'No additional medical information provided.'}
             </div>
           </div>
+
+          <h3 className="text-xl font-semibold mt-6 mb-4 border-b pb-2 border-gray-600/30 flex items-center">
+            <FaPills className="text-red-500 mr-2" />
+            Active Medications
+          </h3>
+
+          {userData.medications && userData.medications.length > 0 ? (
+            <div className="overflow-y-auto max-h-[300px]">
+              <div className="grid gap-3">
+                {userData.medications.map((med, index) => (
+                  <div
+                    key={index}
+                    className={`p-3 rounded-lg ${
+                      isDarkMode ? 'bg-gray-600' : 'bg-white'
+                    } border ${isDarkMode ? 'border-gray-500' : 'border-gray-200'}`}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="font-bold">{med.Name}</h4>
+                        <p className="text-sm">{med.Dosage}</p>
+                      </div>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          isDarkMode
+                            ? 'bg-orange-900/50 text-orange-200'
+                            : 'bg-orange-100 text-orange-800'
+                        }`}
+                      >
+                        Active
+                      </span>
+                    </div>
+                    {med.Notes && (
+                      <div className="mt-2 text-sm text-gray-500 dark:text-gray-300">
+                        <strong>Notes:</strong> {med.Notes}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div
+              className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-600' : 'bg-white'} border ${
+                isDarkMode ? 'border-gray-500' : 'border-gray-200'
+              } text-center`}
+            >
+              <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                No current medications
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
