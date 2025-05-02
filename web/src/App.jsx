@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
 import { ToastContainer } from 'react-toastify';
+
 import 'react-toastify/dist/ReactToastify.css';
 import 'intro.js/introjs.css';
 
 import { AuthProvider } from './contexts/AuthContext';
 import { BLEProvider } from './contexts/BLEContext';
+
 import { AudioContextProvider } from './contexts/AudioContext';
 import { AudioPlayerProvider } from './contexts/AudioPlayerContext';
 

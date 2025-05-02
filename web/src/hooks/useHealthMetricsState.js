@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 /**
  * Custom hook to manage health metrics state
@@ -26,10 +26,45 @@ const useHealthMetricsState = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [metricsHistory, setMetricsHistory] = useState([]);
 
-  // Group metrics data and its setter for easier passing to components
+  const setFormDataMemoized = useCallback((data) => {
+    setFormData((prev) => {
+      const isEqual =
+        JSON.stringify(prev) === JSON.stringify(typeof data === 'function' ? data(prev) : data);
+      return isEqual ? prev : typeof data === 'function' ? data(prev) : data;
+    });
+  }, []);
+
+  const setMetricsMemoized = useCallback((data) => {
+    setMetricsData((prev) => {
+      const isEqual =
+        JSON.stringify(prev) === JSON.stringify(typeof data === 'function' ? data(prev) : data);
+      return isEqual ? prev : typeof data === 'function' ? data(prev) : data;
+    });
+  }, []);
+
+  const setShowResultsMemoized = useCallback((value) => {
+    setShowResults((prev) => (prev !== value ? value : prev));
+  }, []);
+
+  const setUnitMemoized = useCallback((value) => {
+    setUnit((prev) => (prev !== value ? value : prev));
+  }, []);
+
+  const setIsLoadingMemoized = useCallback((value) => {
+    setIsLoading((prev) => (prev !== value ? value : prev));
+  }, []);
+
+  const setMetricsHistoryMemoized = useCallback((data) => {
+    setMetricsHistory((prev) => {
+      const isEqual =
+        JSON.stringify(prev) === JSON.stringify(typeof data === 'function' ? data(prev) : data);
+      return isEqual ? prev : typeof data === 'function' ? data(prev) : data;
+    });
+  }, []);
+
   const metrics = {
     data: metricsData,
-    setMetrics: setMetricsData,
+    setMetrics: setMetricsMemoized,
   };
 
   return {
@@ -39,11 +74,11 @@ const useHealthMetricsState = () => {
     unit,
     isLoading,
     metricsHistory,
-    setFormData,
-    setUnit,
-    setShowResults,
-    setIsLoading,
-    setMetricsHistory,
+    setFormData: setFormDataMemoized,
+    setUnit: setUnitMemoized,
+    setShowResults: setShowResultsMemoized,
+    setIsLoading: setIsLoadingMemoized,
+    setMetricsHistory: setMetricsHistoryMemoized,
   };
 };
 
