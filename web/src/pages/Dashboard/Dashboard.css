@@ -658,7 +658,6 @@
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Fix for floating health assistant */
 .dashboard .floating-health-assistant .floating-button,
 .dashboard.dark-mode .floating-health-assistant .floating-button {
     background-color: #4a90e2 !important;
@@ -667,7 +666,6 @@
 }
 
 .dashboard .floating-health-assistant .floating-button::before {
-  /* Remove the pseudo-element approach */
   display: none;
 }
 
@@ -675,7 +673,6 @@
   display: none;
 }
 
-/* Styling for the floating button in dashboard context */
 .dashboard .floating-health-assistant .floating-button {
   background-color: #4a90e2 !important;
   color: white !important;
@@ -687,14 +684,8 @@
   color: white !important;
 }
 
-/* Fix for floating health assistant */
-.dashboard .floating-health-assistant {
-  bottom: 100px !important;
-  right: 100px !important;
-}
-
 .dashboard .floating-health-assistant .chat-window {
-  bottom: 120px !important;
+  bottom: 100px !important;
   right: 40px !important;
 }
 

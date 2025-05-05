@@ -46,15 +46,9 @@ export function useChatHistory() {
   };
 
   const clearHistory = () => {
-    if (chatHistory.length === 0) return false;
-
-    if (window.confirm('Are you sure you want to clear the conversation history?')) {
-      setChatHistory([]);
-      localStorage.removeItem('healthAssistantChatHistory');
-      toast.info('Conversation history cleared');
-      return true;
-    }
-    return false;
+    setChatHistory([]);
+    setLoading(false);
+    // Remove any toast notification here
   };
 
   const sendQuery = async (query) => {

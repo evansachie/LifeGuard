@@ -17,6 +17,7 @@ export function useEmergencyData(userId) {
     },
     timestamp: new Date().toLocaleString(),
     mapUrl: null,
+    medications: [],
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -31,6 +32,17 @@ export function useEmergencyData(userId) {
       try {
         const userResponse = await fetchApi(API_ENDPOINTS.GET_USER(userId));
         const profileResponse = await fetchApi(API_ENDPOINTS.GET_PROFILE(userId));
+        // Add this new request to fetch medications
+        let medications = [];
+        try {
+          const medicationsResponse = await fetchApi(API_ENDPOINTS.MEDICATIONS.EMERGENCY(userId));
+          if (medicationsResponse && medicationsResponse.success) {
+            medications = medicationsResponse.data || [];
+          }
+        } catch (medError) {
+          console.error('Error fetching medications:', medError);
+          // Continue with empty medications array
+        }
 
         const profileData = profileResponse?.data || {};
 
@@ -49,6 +61,7 @@ export function useEmergencyData(userId) {
             },
             timestamp: new Date().toLocaleString(),
             mapUrl: null,
+            medications: medications,
           });
         }
       } catch (error) {

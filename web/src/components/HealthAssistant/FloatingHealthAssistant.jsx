@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './FloatingHealthAssistant.css';
 
@@ -178,7 +178,11 @@ const FloatingHealthAssistant = ({ isDarkMode }) => {
               onExampleClick={handleExampleClick}
             />
 
-            <ChatActions chatHistory={chatHistory} onClearHistory={clearHistory} />
+            <ChatActions
+              chatHistory={chatHistory}
+              onClearHistory={clearHistory}
+              isDarkMode={isDarkMode}
+            />
 
             <ChatInputForm
               query={query}

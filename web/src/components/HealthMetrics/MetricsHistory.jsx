@@ -1,12 +1,25 @@
-import React from 'react';
-import { format } from 'date-fns';
 import { Line } from 'react-chartjs-2';
+import { formatDate } from '../../utils/formatDate';
 
-const MetricsHistory = ({ history, isDarkMode }) => {
-  if (!history?.length) return null;
+const MetricsHistory = ({ history = [], isDarkMode }) => {
+  if (!Array.isArray(history) || history.length < 2) {
+    return null;
+  }
+
+  const hasValidData = history.every(
+    (item) =>
+      typeof item.Weight === 'number' &&
+      typeof item.BMR === 'number' &&
+      typeof item.TDEE === 'number' &&
+      item.CreatedAt
+  );
+
+  if (!hasValidData) {
+    return null;
+  }
 
   const chartData = {
-    labels: history.map((m) => format(new Date(m.CreatedAt), 'MMM d')),
+    labels: history.map((m) => formatDate(m.CreatedAt)),
     datasets: [
       {
         label: 'Weight',
@@ -32,7 +45,7 @@ const MetricsHistory = ({ history, isDarkMode }) => {
   return (
     <div className="metrics-history-section">
       <h3>Metrics History</h3>
-      <div className="metrics-chart">
+      <div className="metrics-chart" style={{ height: '300px', marginTop: '20px' }}>
         <Line
           data={chartData}
           options={{

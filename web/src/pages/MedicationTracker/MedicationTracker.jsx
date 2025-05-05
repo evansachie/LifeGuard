@@ -151,7 +151,7 @@ const MedicationTracker = ({ isDarkMode }) => {
       exit={{ opacity: 0 }}
     >
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* Header with Notification Settings Button */}
+        {/* Header with Title and Notification Settings Button */}
         <div className="flex justify-between items-center mb-8">
           <div className="text-center flex-1">
             <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
@@ -180,17 +180,18 @@ const MedicationTracker = ({ isDarkMode }) => {
           isDarkMode={isDarkMode}
         />
 
-        {/* Add SearchAndFilter component after stats */}
-        <SearchAndFilter
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          isDarkMode={isDarkMode}
-        />
+        {/* Search and Add Medication Row */}
+        <div className="flex items-center justify-between mb-8 gap-4">
+          <div className="w-2/3">
+            <SearchAndFilter
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              filters={filters}
+              onFilterChange={handleFilterChange}
+              isDarkMode={isDarkMode}
+            />
+          </div>
 
-        {/* Add Medication Button */}
-        <div className="mb-8">
           <motion.button
             onClick={() => setIsModalOpen(true)}
             className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium ${

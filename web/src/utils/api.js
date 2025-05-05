@@ -70,6 +70,7 @@ export const API_ENDPOINTS = {
     REMINDERS: `${NODE_API_URL}/api/medications/reminders`,
     COMPLIANCE: `${NODE_API_URL}/api/medications/compliance`,
     HISTORY: `${NODE_API_URL}/api/medications/history`,
+    EMERGENCY: (userId) => `${NODE_API_URL}/api/medications/emergency/${userId}`,
   },
 
   USER_PREFERENCES: {
@@ -183,13 +184,24 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
   };
 
   try {
-    return await fetchApi(endpoint, {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
+
+    const result = await fetchApi(endpoint, {
       ...options,
       headers,
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
+    return result;
   } catch (error) {
-    if (error.message.includes('401')) {
-      // Clear invalid auth data
+    if (error.name === 'AbortError') {
+      console.error('Request timed out:', endpoint);
+      throw new Error('Request timed out. Please try again.');
+    }
+
+    if (error.message && error.message.includes('401')) {
       localStorage.removeItem('token');
       localStorage.removeItem('userId');
       window.location.href = '/log-in';

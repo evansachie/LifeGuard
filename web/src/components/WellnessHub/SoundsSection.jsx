@@ -354,11 +354,15 @@ const SoundsSection = ({ isDarkMode }) => {
           ariaLabel={showFavoritesOnly ? 'Hide favorites' : 'Show favorites only'}
           className={`category-btn ${showFavoritesOnly ? 'active' : ''}`}
         >
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <span className="category-icon">
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex items-center whitespace-nowrap"
+          >
+            <span className="category-icon inline-flex mr-2">
               <FaHeart />
             </span>
-            Favorites ({favorites.length})
+            <span className="category-text">Favorites ({favorites.length})</span>
           </motion.div>
         </AccessibleDropdown>
 
@@ -373,9 +377,13 @@ const SoundsSection = ({ isDarkMode }) => {
             ariaLabel={`Select ${label} category`}
             className={`category-btn ${activeCategory === key ? 'active' : ''}`}
           >
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <span className="category-icon">{icon}</span>
-              {label}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center whitespace-nowrap"
+            >
+              <span className="category-icon inline-flex mr-2">{icon}</span>
+              <span className="category-text">{label}</span>
             </motion.div>
           </AccessibleDropdown>
         ))}

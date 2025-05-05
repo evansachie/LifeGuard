@@ -8,6 +8,7 @@
     backdrop-filter: blur(10px);
     transition: all 0.3s ease;
     z-index: 1000;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.05);
 }
 
 .navbar.scrolled {
@@ -17,6 +18,8 @@
 
 .dark-mode.navbar {
     background-color: rgba(64, 124, 226, 0.1);
+    /* No default shadow in dark mode as it's more visible already */
+    box-shadow: none;
 }
 
 .navbar-container {

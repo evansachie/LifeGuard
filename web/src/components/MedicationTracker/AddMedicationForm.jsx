@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { FaPlus, FaTrash, FaClock } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaClock, FaInfoCircle } from 'react-icons/fa';
+import MedicationSearch from './MedicationSearch';
 
 const defaultFormData = {
   name: '',
@@ -30,6 +31,8 @@ const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
     return defaultFormData;
   });
 
+  const [selectedMedication, setSelectedMedication] = useState(null);
+
   const isFormValid = useMemo(() => {
     return (
       formData?.name?.trim() !== '' &&
@@ -50,7 +53,19 @@ const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
     onSubmit(initialData ? { ...submissionData, Id: initialData.Id } : submissionData);
     if (!initialData) {
       setFormData(defaultFormData);
+      setSelectedMedication(null);
     }
+  };
+
+  const handleMedicationSelect = (name, medication) => {
+    setFormData((prev) => ({
+      ...prev,
+      name,
+      // Auto-fill dosage if available and field is empty
+      dosage: !prev.dosage && medication?.strength ? medication.strength : prev.dosage,
+    }));
+
+    setSelectedMedication(medication);
   };
 
   const addTimeSlot = () => {
@@ -72,18 +87,39 @@ const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
       <div className="space-y-4">
         <div>
           <div className="text-sm font-medium mb-1">Medication Name</div>
-          <input
-            type="text"
+          <MedicationSearch
             value={formData.name}
-            onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
-            className={`w-full rounded-lg p-2.5 border transition-colors ${
-              isDarkMode
-                ? 'bg-gray-800 border-gray-700 text-white focus:border-blue-500'
-                : 'bg-white border-gray-300 focus:border-blue-500'
-            }`}
-            required
+            onChange={handleMedicationSelect}
+            isDarkMode={isDarkMode}
           />
         </div>
+
+        {/* Show medication details if a medication was selected from search */}
+        {selectedMedication && (
+          <div className={`p-3 rounded-md ${isDarkMode ? 'bg-gray-700' : 'bg-blue-50'}`}>
+            <div className="flex items-center mb-2">
+              <FaInfoCircle className="text-blue-500 mr-2" />
+              <span className="font-medium">Medication Information</span>
+            </div>
+            {selectedMedication.genericName && (
+              <div className="text-sm mb-1">
+                <span className="font-medium">Generic name:</span> {selectedMedication.genericName}
+              </div>
+            )}
+            {selectedMedication.form && (
+              <div className="text-sm mb-1">
+                <span className="font-medium">Form:</span> {selectedMedication.form}
+              </div>
+            )}
+            {selectedMedication.indications && (
+              <div className="text-sm">
+                <span className="font-medium">Used for:</span>{' '}
+                {selectedMedication.indications.substring(0, 150)}
+                {selectedMedication.indications.length > 150 ? '...' : ''}
+              </div>
+            )}
+          </div>
+        )}
 
         <div>
           <div className="text-sm font-medium mb-1">Dosage</div>
@@ -143,6 +179,7 @@ const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
                     type="button"
                     onClick={() => removeTimeSlot(index)}
                     className="p-2 text-red-500 hover:text-red-600"
+                    aria-label="Remove time slot"
                   >
                     <FaTrash />
                   </button>

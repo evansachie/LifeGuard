@@ -5,21 +5,21 @@ import postcss from './postcss.config.js';
 export default defineConfig({
   plugins: [react()],
   css: {
-    postcss
+    postcss,
   },
   optimizeDeps: {
-    include: ['mapbox-gl']
+    include: ['mapbox-gl'],
   },
   resolve: {
     alias: {
-      '@': '/src'
+      '@': '/src',
     },
-    extensions: ['.js', '.jsx', '.json']
+    extensions: ['.js', '.jsx', '.json'],
   },
   build: {
-    target: ['es2022']  // Set a more modern target that supports top-level await
+    target: ['es2022'], // Set a more modern target that supports top-level await
   },
   server: {
-    port: 3000
-  }
+    port: 3000,
+  },
 });

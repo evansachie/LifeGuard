@@ -49,10 +49,10 @@ const useHealthMetricsData = ({
           setShowResults(true);
         }
       }
+      return true;
     } catch (error) {
       console.error('Error fetching metrics:', error);
-    } finally {
-      setIsLoading(false);
+      return false;
     }
   };
 
@@ -62,9 +62,16 @@ const useHealthMetricsData = ({
   const fetchMetricsHistory = async () => {
     try {
       const response = await fetchWithAuth(API_ENDPOINTS.HEALTH_METRICS.HISTORY);
-      setMetricsHistory(response);
+      if (Array.isArray(response)) {
+        setMetricsHistory(response);
+      } else {
+        setMetricsHistory([]);
+      }
+      return true;
     } catch (error) {
       console.error('Error fetching metrics history:', error);
+      setMetricsHistory([]);
+      return false;
     }
   };
 
@@ -89,33 +96,40 @@ const useHealthMetricsData = ({
       return;
     }
 
-    const bmr = Math.round(
-      calculateBMR(formData.weight, formData.height, formData.age, formData.gender)
-    );
-    const tdee = Math.round(calculateTDEE(bmr, formData.activityLevel));
-    const macros = calculateMacros(tdee, formData.goal);
-    const idealWeight = calculateIdealWeight(formData.height, formData.gender);
+    setIsLoading(true);
 
-    const newMetrics = { bmr, tdee, macros, idealWeight };
-    setMetrics(newMetrics);
-    setShowResults(true);
-
-    // Save metrics to database
     try {
-      await fetchWithAuth(API_ENDPOINTS.HEALTH_METRICS.SAVE, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          bmr,
-          tdee,
-          unit,
-        }),
-      });
-      toast.success('Metrics saved successfully!');
-      fetchMetricsHistory();
+      const bmr = Math.round(
+        calculateBMR(formData.weight, formData.height, formData.age, formData.gender)
+      );
+      const tdee = Math.round(calculateTDEE(bmr, formData.activityLevel));
+      const macros = calculateMacros(tdee, formData.goal);
+      const idealWeight = calculateIdealWeight(formData.height, formData.gender);
+
+      const newMetrics = { bmr, tdee, macros, idealWeight };
+      setMetrics(newMetrics);
+      setShowResults(true);
+
+      try {
+        await fetchWithAuth(API_ENDPOINTS.HEALTH_METRICS.SAVE, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...formData,
+            bmr,
+            tdee,
+            unit,
+          }),
+        });
+        toast.success('Metrics saved successfully!');
+        await fetchMetricsHistory();
+      } catch (error) {
+        toast.error('Failed to save metrics');
+      }
     } catch (error) {
-      toast.error('Failed to save metrics');
+      toast.error('Error calculating metrics');
+    } finally {
+      setIsLoading(false);
     }
   };
 
