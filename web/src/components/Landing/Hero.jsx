@@ -5,7 +5,7 @@ import { FaGithub, FaArrowRight } from 'react-icons/fa';
 import HeroImg from '../../assets/hero-section.svg';
 import './Hero.css';
 
-const Hero = () => {
+const Hero = ({ isAuthenticated }) => {
   return (
     <section className="hero-section">
       <div className="hero-content">
@@ -24,8 +24,9 @@ const Hero = () => {
             services - all in one integrated platform.
           </p>
           <div className="hero-buttons">
-            <Link to="/sign-up" className="cta-button">
-              Get Started <FaArrowRight className="arrow-icon" />
+            <Link to={isAuthenticated ? '/dashboard' : '/sign-up'} className="cta-button">
+              {isAuthenticated ? 'Go to Dashboard' : 'Get Started'}{' '}
+              <FaArrowRight className="arrow-icon" />
             </Link>
             <a
               href="https://github.com/AWESOME04/LifeGuard"
