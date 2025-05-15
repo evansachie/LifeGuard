@@ -150,7 +150,6 @@ Our solution stands out as a cost-effective and comprehensive alternative to pre
 • React 18<br>
 • TypeScript<br>
 • Tailwind CSS<br>
-• Redux Toolkit<br>
 • MapBox API
 </td>
 <td>
@@ -164,7 +163,6 @@ Our solution stands out as a cost-effective and comprehensive alternative to pre
 • Flutter 3.19<br>
 • Provider State<br>
 • Material 3<br>
-• Offline Mode<br>
 • SharedPreferences
 </td>
 <td>

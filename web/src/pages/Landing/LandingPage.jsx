@@ -1,4 +1,3 @@
-import React from 'react';
 import Navbar from '../../components/Landing/Navbar';
 import Hero from '../../components/Landing/Hero';
 import Features from '../../components/Landing/Features';
