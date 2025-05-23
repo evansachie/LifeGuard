@@ -1,9 +1,20 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "LifeGuard",
-    "version": "1.0.0"
+    "title": "LifeGuard API",
+    "version": "1.0.0",
+    "description": "Comprehensive API documentation for LifeGuard health monitoring system including .NET Core backend and Node.js microservices"
   },
+  "servers": [
+    {
+      "url": "https://lifeguard-hiij.onrender.com",
+      "description": ".NET Core Backend Server"
+    },
+    {
+      "url": "https://lifeguard-node.onrender.com",
+      "description": "Node.js Microservices Server"
+    }
+  ],
   "paths": {
     "/": {
       "get": {
@@ -22,19 +33,11 @@
         "tags": [
           "Account"
         ],
+        "summary": "Authenticate user with email and password",
+        "security": [],
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthRequest"
-              }
-            },
-            "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/AuthRequest"
               }
@@ -45,17 +48,7 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthResponse"
-                }
-              },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthResponse"
-                }
-              },
-              "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AuthResponse"
                 }
@@ -70,19 +63,11 @@
         "tags": [
           "Account"
         ],
+        "summary": "Register a new user account",
+        "security": [],
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegistrationRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegistrationRequest"
-              }
-            },
-            "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/RegistrationRequest"
               }
@@ -93,17 +78,7 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/RegistrationResponse"
-                }
-              },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RegistrationResponse"
-                }
-              },
-              "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/RegistrationResponse"
                 }
@@ -118,19 +93,11 @@
         "tags": [
           "Account"
         ],
+        "summary": "Initiate password recovery process",
+        "security": [],
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ForgotPasswordRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ForgotPasswordRequest"
-              }
-            },
-            "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/ForgotPasswordRequest"
               }
@@ -149,19 +116,11 @@
         "tags": [
           "Account"
         ],
+        "summary": "Resend OTP to user",
+        "security": [],
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ResendOTPCommand"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ResendOTPCommand"
-              }
-            },
-            "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/ResendOTPCommand"
               }
@@ -172,17 +131,7 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Result"
-                }
-              },
-              "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Result"
                 }
@@ -197,19 +146,11 @@
         "tags": [
           "Account"
         ],
+        "summary": "Verify OTP provided by user",
+        "security": [],
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/VerifyOTPCommand"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/VerifyOTPCommand"
-              }
-            },
-            "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/VerifyOTPCommand"
               }
@@ -228,19 +169,11 @@
         "tags": [
           "Account"
         ],
+        "summary": "Reset user password using token",
+        "security": [],
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ResetPasswordRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ResetPasswordRequest"
-              }
-            },
-            "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/ResetPasswordRequest"
               }
@@ -259,6 +192,12 @@
         "tags": [
           "Account"
         ],
+        "summary": "Retrieve basic account information by ID",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -273,28 +212,27 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetUserResponse"
-                }
-              },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetUserResponse"
-                }
-              },
-              "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GetUserResponse"
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       },
       "delete": {
         "tags": [
           "Account"
+        ],
+        "summary": "Delete user account by ID",
+        "security": [
+          {
+            "Bearer": []
+          }
         ],
         "parameters": [
           {
@@ -309,6 +247,9 @@
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -318,19 +259,15 @@
         "tags": [
           "Account"
         ],
+        "summary": "Complete user profile with additional details",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CompleteProfileCommand"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CompleteProfileCommand"
-              }
-            },
-            "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/CompleteProfileCommand"
               }
@@ -340,6 +277,9 @@
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -348,6 +288,12 @@
       "get": {
         "tags": [
           "Account"
+        ],
+        "summary": "Retrieve detailed user profile information",
+        "security": [
+          {
+            "Bearer": []
+          }
         ],
         "parameters": [
           {
@@ -362,30 +308,39 @@
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
     },
-    "/api/Account/google-login": {
-      "get": {
+    "/api/Account/UpdateProfile": {
+      "put": {
         "tags": [
           "Account"
         ],
-        "responses": {
-          "200": {
-            "description": "Success"
+        "summary": "Update user profile information",
+        "security": [
+          {
+            "Bearer": []
           }
-        }
-      }
-    },
-    "/api/Account/signin-google": {
-      "get": {
-        "tags": [
-          "Account"
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompleteProfileCommand"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -394,6 +349,12 @@
       "post": {
         "tags": [
           "Photos"
+        ],
+        "summary": "Upload photo for user",
+        "security": [
+          {
+            "Bearer": []
+          }
         ],
         "parameters": [
           {
@@ -416,10 +377,133 @@
                     "format": "binary"
                   }
                 }
-              },
-              "encoding": {
-                "file": {
-                  "style": "form"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Photos"
+        ],
+        "summary": "Delete user photo",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Photos"
+        ],
+        "summary": "Get user photo",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/memos": {
+      "get": {
+        "tags": [
+          "Memos"
+        ],
+        "summary": "Retrieve user memos",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://lifeguard-node.onrender.com"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Memos"
+        ],
+        "summary": "Create a new memo",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://lifeguard-node.onrender.com"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  },
+                  "completed": {
+                    "type": "boolean"
+                  }
                 }
               }
             }
@@ -428,41 +512,530 @@
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
-      },
-      "delete": {
+      }
+    },
+    "/api/memos/undone/count": {
+      "get": {
         "tags": [
-          "Photos"
+          "Memos"
         ],
-        "parameters": [
+        "summary": "Get count of undone memos",
+        "security": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "Bearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://lifeguard-node.onrender.com"
           }
         ],
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/emergency-contacts": {
+      "get": {
+        "tags": [
+          "Emergency"
+        ],
+        "summary": "Retrieve user's emergency contacts",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://lifeguard-node.onrender.com"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       },
+      "post": {
+        "tags": [
+          "Emergency"
+        ],
+        "summary": "Add new emergency contact",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://lifeguard-node.onrender.com"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "relationship": {
+                    "type": "string"
+                  },
+                  "priority": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/emergency-contacts/alert": {
+      "post": {
+        "tags": [
+          "Emergency"
+        ],
+        "summary": "Send emergency alert to contacts",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://lifeguard-node.onrender.com"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/health-metrics/latest": {
       "get": {
         "tags": [
-          "Photos"
+          "Health"
         ],
-        "parameters": [
+        "summary": "Get latest health metrics",
+        "security": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
+            "Bearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://lifeguard-node.onrender.com"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/health-metrics/save": {
+      "post": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Save health metrics",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://lifeguard-node.onrender.com"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "heartRate": {
+                    "type": "number"
+                  },
+                  "bloodPressure": {
+                    "type": "string"
+                  },
+                  "temperature": {
+                    "type": "number"
+                  },
+                  "steps": {
+                    "type": "integer"
+                  }
+                }
+              }
             }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/medications": {
+      "get": {
+        "tags": [
+          "Medications"
+        ],
+        "summary": "Get all medications for user",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://lifeguard-node.onrender.com"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/medications/add": {
+      "post": {
+        "tags": [
+          "Medications"
+        ],
+        "summary": "Add new medication",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://lifeguard-node.onrender.com"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/medications/track": {
+      "post": {
+        "tags": [
+          "Medications"
+        ],
+        "summary": "Track medication dose",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://lifeguard-node.onrender.com"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/exercise/stats": {
+      "get": {
+        "tags": [
+          "Exercise"
+        ],
+        "summary": "Get exercise statistics",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://lifeguard-node.onrender.com"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/exercise/complete": {
+      "post": {
+        "tags": [
+          "Exercise"
+        ],
+        "summary": "Record completed workout",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://lifeguard-node.onrender.com"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/rag/query": {
+      "post": {
+        "tags": [
+          "RAG System"
+        ],
+        "summary": "Query the RAG system",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://lifeguard-node.onrender.com"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string"
+                  },
+                  "context": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/rag/initialize": {
+      "post": {
+        "tags": [
+          "RAG System"
+        ],
+        "summary": "Initialize RAG system (admin only)",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://lifeguard-node.onrender.com"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          }
+        }
+      }
+    },
+    "/api/freesound/audio-proxy": {
+      "post": {
+        "tags": [
+          "Audio"
+        ],
+        "summary": "Proxy audio streaming from Freesound",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://lifeguard-node.onrender.com"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/favorite-sounds": {
+      "get": {
+        "tags": [
+          "Audio"
+        ],
+        "summary": "Get all favorite sounds",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://lifeguard-node.onrender.com"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/user-preferences/notifications": {
+      "get": {
+        "tags": [
+          "User Preferences"
+        ],
+        "summary": "Get notification preferences",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://lifeguard-node.onrender.com"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "User Preferences"
+        ],
+        "summary": "Update notification preferences",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://lifeguard-node.onrender.com"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/notifications/health": {
+      "get": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Health check for notification service",
+        "security": [],
+        "servers": [
+          {
+            "url": "https://lifeguard-node.onrender.com"
           }
         ],
         "responses": {
@@ -709,16 +1282,16 @@
     },
     "securitySchemes": {
       "Bearer": {
-        "type": "apiKey",
-        "description": "JWT Authorization header using the Bearer scheme.\r\n                                   Enter 'Bearer' [space] and then your token in the text input\r\n                                   below.",
-        "name": "Authorization",
-        "in": "header"
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT Authorization header using the Bearer scheme. Example: 'Authorization: Bearer {token}'"
       }
     }
   },
   "security": [
     {
-      "Bearer": [ ]
+      "Bearer": []
     }
   ]
 }
