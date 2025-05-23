@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useAudioContext } from '../../contexts/AudioContext';
+import { useAudio } from '../../contexts/AudioContext';
 
 const AudioVisualizer = ({ audioRef, isDarkMode }) => {
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
   const [analyser, setAnalyser] = useState(null);
-  const { setupAudioContext } = useAudioContext();
+  const { setupAudioContext } = useAudio();
 
   useEffect(() => {
     if (audioRef.current && !analyser) {
