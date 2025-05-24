@@ -1,4 +1,6 @@
-export const timeframes = [
+import { TimeframeData } from '../types/common.types';
+
+export const timeframes: TimeframeData[] = [
   { id: 'today', label: 'Today' },
   { id: 'week', label: 'This Week' },
   { id: 'month', label: 'This Month' },

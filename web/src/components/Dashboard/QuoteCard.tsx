@@ -1,10 +1,21 @@
 import React, { memo } from 'react';
-import PropTypes from 'prop-types';
 import { FaQuoteLeft, FaSync } from 'react-icons/fa';
 import Spinner from '../Spinner/Spinner';
 import DataCard from './DataCard';
 
-const QuoteCard = ({ quote, loading, isDarkMode, onRefresh }) => {
+interface Quote {
+  quote: string;
+  author: string;
+}
+
+interface QuoteCardProps {
+  quote?: Quote | null;
+  loading?: boolean;
+  isDarkMode?: boolean;
+  onRefresh?: () => void;
+}
+
+const QuoteCard: React.FC<QuoteCardProps> = ({ quote, loading, isDarkMode, onRefresh }) => {
   return (
     <DataCard
       title="Daily Inspiration"
@@ -35,16 +46,6 @@ const QuoteCard = ({ quote, loading, isDarkMode, onRefresh }) => {
       </div>
     </DataCard>
   );
-};
-
-QuoteCard.propTypes = {
-  quote: PropTypes.shape({
-    quote: PropTypes.string.isRequired,
-    author: PropTypes.string.isRequired,
-  }),
-  loading: PropTypes.bool,
-  isDarkMode: PropTypes.bool,
-  onRefresh: PropTypes.func,
 };
 
 export default memo(QuoteCard);

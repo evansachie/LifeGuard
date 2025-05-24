@@ -1,7 +1,13 @@
 import React from 'react';
+import { UserData } from '../../types/common.types';
 
-const DashboardHeader = ({ userData, dataLoading }) => {
-  const getFirstName = (fullName) => {
+interface DashboardHeaderProps {
+  userData: UserData | null;
+  dataLoading: boolean;
+}
+
+const DashboardHeader: React.FC<DashboardHeaderProps> = ({ userData, dataLoading }) => {
+  const getFirstName = (fullName?: string): string => {
     if (!fullName) return 'User';
     // If it's an email, show just the first part
     if (fullName.includes('@')) {
@@ -16,7 +22,7 @@ const DashboardHeader = ({ userData, dataLoading }) => {
     );
   };
 
-  const handleCommandPaletteOpen = () => {
+  const handleCommandPaletteOpen = (): void => {
     // Create and dispatch a custom event to open the command palette
     const event = new KeyboardEvent('keydown', {
       key: 'k',
@@ -43,7 +49,7 @@ const DashboardHeader = ({ userData, dataLoading }) => {
         ⌘ + K or click{' '}
         <span
           onClick={handleCommandPaletteOpen}
-          onKeyDown={(e) => {
+          onKeyDown={(e: React.KeyboardEvent) => {
             if (e.key === 'Enter' || e.key === ' ') {
               handleCommandPaletteOpen();
             }

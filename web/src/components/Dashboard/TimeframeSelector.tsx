@@ -1,8 +1,19 @@
 import React from 'react';
 import { timeframes } from '../../data/timeframes';
+import { Timeframe } from '../../types/common.types';
 import './TimeframeSelector.css';
 
-const TimeframeSelector = ({ isDarkMode, selectedTimeframe = 'today', onTimeframeChange }) => {
+interface TimeframeSelectorProps {
+  isDarkMode: boolean;
+  selectedTimeframe?: Timeframe;
+  onTimeframeChange: (timeframe: Timeframe) => void;
+}
+
+const TimeframeSelector: React.FC<TimeframeSelectorProps> = ({ 
+  isDarkMode, 
+  selectedTimeframe = 'today', 
+  onTimeframeChange 
+}) => {
   return (
     <div className={`timeframe-selector ${isDarkMode ? 'dark-mode' : ''}`}>
       <span className="timeframe-label">View data for:</span>
@@ -21,4 +32,4 @@ const TimeframeSelector = ({ isDarkMode, selectedTimeframe = 'today', onTimefram
   );
 };
 
-export default TimeframeSelector;
+export default React.memo(TimeframeSelector);

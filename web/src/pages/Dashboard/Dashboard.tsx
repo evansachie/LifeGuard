@@ -14,6 +14,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  DragEndEvent,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -48,8 +49,21 @@ import useMemoData from '../../hooks/useMemoData';
 import usePollutionData from '../../hooks/usePollutionData';
 import useDashboardTour from '../../hooks/useDashboardTour';
 
-function Dashboard({ isDarkMode }) {
-  const [cardOrder, setCardOrder] = useState(() => {
+// Types
+import {
+  DashboardProps,
+  FilterOptions,
+  VisibleCards,
+  StatsData,
+  ViewMode,
+  SortOption,
+  Timeframe,
+  CardId,
+  DashboardControlsRef,
+} from '../../types/common.types';
+
+const Dashboard: React.FC<DashboardProps> = ({ isDarkMode }) => {
+  const [cardOrder, setCardOrder] = useState<CardId[]>(() => {
     const savedOrder = localStorage.getItem('dashboardCardOrder');
     return savedOrder
       ? JSON.parse(savedOrder)
@@ -78,17 +92,18 @@ function Dashboard({ isDarkMode }) {
     })
   );
 
-  const handleDragEnd = (event) => {
+  const handleDragEnd = (event: DragEndEvent): void => {
     const { active, over } = event;
 
-    if (active.id !== over.id) {
+    if (active.id !== over?.id) {
       setCardOrder((items) => {
-        const oldIndex = items.indexOf(active.id);
-        const newIndex = items.indexOf(over.id);
+        const oldIndex = items.indexOf(active.id as CardId);
+        const newIndex = items.indexOf(over?.id as CardId);
         return arrayMove(items, oldIndex, newIndex);
       });
     }
   };
+
   // BLE Context
   const { bleDevice, isConnecting, sensorData, connectToDevice, disconnectDevice } = useBLE();
 
@@ -99,18 +114,18 @@ function Dashboard({ isDarkMode }) {
   const { showTour: showDashboardTour, handleTourExit } = useDashboardTour();
 
   // Dashboard UI state
-  const [timeframe, setTimeframe] = useState('today');
-  const [viewMode, setViewMode] = useState('grid');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [timeframe, setTimeframe] = useState<Timeframe>('today');
+  const [viewMode, setViewMode] = useState<ViewMode>('grid');
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [filteredAlerts, setFilteredAlerts] = useState(alerts);
-  const [filterOptions, setFilterOptions] = useState({
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
     temperature: true,
     humidity: true,
     airQuality: true,
     alerts: true,
   });
-  const [sortOption, setSortOption] = useState('newest');
-  const [visibleCards, setVisibleCards] = useState({
+  const [sortOption, setSortOption] = useState<SortOption>('newest');
+  const [visibleCards, setVisibleCards] = useState<VisibleCards>({
     temperature: true,
     humidity: true,
     pressure: true,
@@ -122,9 +137,9 @@ function Dashboard({ isDarkMode }) {
     pollutants: true,
   });
 
-  const dashboardRef = useRef(null);
-  const controlsRef = useRef(null);
-  const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false);
+  const dashboardRef = useRef<HTMLDivElement>(null);
+  const controlsRef = useRef<DashboardControlsRef>(null);
+  const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState<boolean>(false);
 
   useEffect(() => {
     let timeframeAlerts = getAlertsByTimeframe(timeframe);
@@ -150,62 +165,27 @@ function Dashboard({ isDarkMode }) {
       co2: filterOptions.airQuality,
       pollutants: filterOptions.airQuality,
     });
-  }, [searchQuery, timeframe, filterOptions]);
-
-  // Event handlers
-  const handleTimeframeChange = (newTimeframe) => {
-    setTimeframe(newTimeframe);
-  };
-
-  const handleViewChange = (newView) => {
-    setViewMode(newView);
-  };
-
-  const handleSearchChange = (query) => {
-    setSearchQuery(query);
-  };
-
-  const handleFilterChange = (filterType, isChecked) => {
-    setFilterOptions((prev) => ({
-      ...prev,
-      [filterType]: isChecked,
-    }));
-  };
-
-  const handleSortChange = (sortType) => {
-    setSortOption(sortType);
-  };
+  }, [timeframe, searchQuery, filterOptions]);
 
   const filteredDashboard = useMemo(() => {
     return {
-      showTemperature:
-        visibleCards.temperature &&
-        (!searchQuery || 'temperature'.includes(searchQuery.toLowerCase())),
-      showHumidity:
-        visibleCards.humidity && (!searchQuery || 'humidity'.includes(searchQuery.toLowerCase())),
-      showPressure:
-        visibleCards.pressure && (!searchQuery || 'pressure'.includes(searchQuery.toLowerCase())),
-      showActivities:
-        visibleCards.activities &&
-        (!searchQuery || 'activities steps'.includes(searchQuery.toLowerCase())),
+      showTemperature: visibleCards.temperature,
+      showHumidity: visibleCards.humidity,
+      showPressure: visibleCards.pressure,
+      showActivities: visibleCards.activities,
       showQuote: visibleCards.quote,
       showReminders: visibleCards.reminders,
-      showAqi:
-        visibleCards.aqi && (!searchQuery || 'air quality aqi'.includes(searchQuery.toLowerCase())),
-      showCo2:
-        visibleCards.co2 &&
-        (!searchQuery || 'co2 carbon dioxide'.includes(searchQuery.toLowerCase())),
-      showPollutants:
-        visibleCards.pollutants &&
-        (!searchQuery || 'pollutants pm2.5 pm10 no2'.includes(searchQuery.toLowerCase())),
+      showAqi: visibleCards.aqi,
+      showCo2: visibleCards.co2,
+      showPollutants: visibleCards.pollutants,
     };
   }, [visibleCards, searchQuery]);
 
   useEffect(() => {
-    const handleKeyDown = (event) => {
+    const handleKeyDown = (event: KeyboardEvent): void => {
       // Only handle keyboard shortcuts if no input is focused (except for '/' key)
       const isInputFocused = ['INPUT', 'TEXTAREA', 'SELECT'].includes(
-        document.activeElement.tagName
+        (document.activeElement as HTMLElement)?.tagName || ''
       );
 
       if (isInputFocused && event.key !== '/') return;
@@ -238,8 +218,37 @@ function Dashboard({ isDarkMode }) {
     };
   }, []);
 
-  const handleShowShortcuts = () => {
+  const handleTimeframeChange = (newTimeframe: Timeframe): void => {
+    setTimeframe(newTimeframe);
+  };
+
+  const handleSearchChange = (query: string): void => {
+    setSearchQuery(query);
+  };
+
+  const handleViewChange = (newViewMode: ViewMode): void => {
+    setViewMode(newViewMode);
+  };
+  const handleFilterChange = (filterType: string, isChecked: boolean): void => {
+    setFilterOptions((prev) => ({
+      ...prev,
+      [filterType]: isChecked,
+    }));
+  };
+
+  const handleSortChange = (sortType: SortOption): void => {
+    setSortOption(sortType);
+  };
+
+  const handleShowShortcuts = (): void => {
     setShowKeyboardShortcuts(true);
+  };
+
+  const statsData: StatsData = {
+    readings: 124,
+    alerts: filteredAlerts.length,
+    notifications: 5,
+    tasks: savedMemos?.filter((memo) => !memo.Done).length || 0,
   };
 
   return (
@@ -247,9 +256,7 @@ function Dashboard({ isDarkMode }) {
       ref={dashboardRef}
       className={`dashboard ${isDarkMode ? 'dark-mode' : ''} ${viewMode}-view`}
     >
-      <DashboardHeader userData={userData} dataLoading={dataLoading} />
-
-      <div className="dropdown-container-layer" style={{ position: 'relative', zIndex: 50 }}>
+      <DashboardHeader userData={userData} dataLoading={dataLoading} />      <div className="dropdown-container-layer" style={{ position: 'relative', zIndex: 50 }}>
         <DashboardControls
           ref={controlsRef}
           isDarkMode={isDarkMode}
@@ -270,15 +277,7 @@ function Dashboard({ isDarkMode }) {
         onTimeframeChange={handleTimeframeChange}
       />
 
-      <StatsSummary
-        isDarkMode={isDarkMode}
-        stats={{
-          readings: 124,
-          alerts: filteredAlerts.length,
-          notifications: 5,
-          tasks: savedMemos?.filter((memo) => !memo.Done).length || 0,
-        }}
-      />
+      <StatsSummary isDarkMode={isDarkMode} stats={statsData} />
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={cardOrder} strategy={rectSortingStrategy}>
@@ -452,6 +451,6 @@ function Dashboard({ isDarkMode }) {
       />
     </div>
   );
-}
+};
 
 export default Dashboard;

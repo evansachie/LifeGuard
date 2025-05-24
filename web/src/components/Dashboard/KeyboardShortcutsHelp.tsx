@@ -1,14 +1,25 @@
 import React, { useRef, useEffect } from 'react';
 import { FaKeyboard, FaTimes } from 'react-icons/fa';
 import { KEYBOARD_SHORTCUTS } from '../../utils/keyboardShortcuts';
+import { KeyboardShortcut } from '../../types/common.types';
 import './KeyboardShortcutsHelp.css';
 
-const KeyboardShortcutsHelp = ({ isVisible, onClose, isDarkMode }) => {
-  const modalRef = useRef(null);
+interface KeyboardShortcutsHelpProps {
+  isVisible: boolean;
+  onClose: () => void;
+  isDarkMode: boolean;
+}
+
+const KeyboardShortcutsHelp: React.FC<KeyboardShortcutsHelpProps> = ({
+  isVisible,
+  onClose,
+  isDarkMode,
+}) => {
+  const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
         onClose();
       }
     };
@@ -23,7 +34,7 @@ const KeyboardShortcutsHelp = ({ isVisible, onClose, isDarkMode }) => {
   }, [isVisible, onClose]);
 
   useEffect(() => {
-    const handleEscKey = (event) => {
+    const handleEscKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         onClose();
       }
@@ -43,7 +54,7 @@ const KeyboardShortcutsHelp = ({ isVisible, onClose, isDarkMode }) => {
   const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
   const modifierKey = isMac ? '⌘' : 'Ctrl';
 
-  const getKeyDisplay = (shortcut) => {
+  const getKeyDisplay = (shortcut: KeyboardShortcut): string => {
     if (shortcut.withModifier) {
       return `${modifierKey} + ${shortcut.key.toUpperCase()}`;
     }
@@ -74,7 +85,7 @@ const KeyboardShortcutsHelp = ({ isVisible, onClose, isDarkMode }) => {
 
         <div className="keyboard-shortcuts-content">
           <ul className="shortcuts-list">
-            {Object.values(KEYBOARD_SHORTCUTS).map((shortcut) => (
+            {Object.values(KEYBOARD_SHORTCUTS).map((shortcut: KeyboardShortcut) => (
               <li key={shortcut.key} className="shortcut-item">
                 <span className="shortcut-key">{getKeyDisplay(shortcut)}</span>
                 <span className="shortcut-description">{shortcut.description}</span>

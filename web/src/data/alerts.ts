@@ -1,25 +1,27 @@
+import type { Alert } from '../types/common.types';
+
 /**
  * Static alert data for the dashboard
  * In a real app, this would come from an API
  */
-export const alerts = [
+export const alerts: Alert[] = [
   {
     id: 1,
-    type: 'warning',
+    type: 'warning' as const,
     message: 'High PM2.5 levels detected in your area',
     time: '2 hours ago',
     timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
   },
   {
     id: 2,
-    type: 'info',
+    type: 'info' as const,
     message: 'Air quality has improved since yesterday',
     time: '5 hours ago',
     timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
   },
   {
     id: 3,
-    type: 'warning',
+    type: 'warning' as const,
     message: 'Humidity levels exceeding recommended range',
     time: '1 day ago',
     timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
@@ -28,19 +30,19 @@ export const alerts = [
 
 /**
  * Get alerts filtered by type
- * @param {string} type - Alert type to filter by
- * @returns {Array} Filtered alerts
+ * @param type - Alert type to filter by
+ * @returns Filtered alerts
  */
-export const getAlertsByType = (type) => {
+export const getAlertsByType = (type: Alert['type']): Alert[] => {
   return alerts.filter((alert) => alert.type === type);
 };
 
 /**
  * Get alerts from a specific time period
- * @param {string} timeframe - Timeframe to filter by (today, week, month)
- * @returns {Array} Filtered alerts
+ * @param timeframe - Timeframe to filter by (today, week, month)
+ * @returns Filtered alerts
  */
-export const getAlertsByTimeframe = (timeframe) => {
+export const getAlertsByTimeframe = (timeframe: string): Alert[] => {
   const now = new Date();
 
   switch (timeframe) {

@@ -18,6 +18,7 @@ interface BLEProviderProps {
 export const BLEProvider: React.FC<BLEProviderProps> = ({ children }) => {
   const [devices, setDevices] = useState<BLEDevice[]>([]);
   const [isScanning, setIsScanning] = useState<boolean>(false);
+  const [isConnecting, setIsConnecting] = useState<boolean>(false);
   const [connectedDevice, setConnectedDevice] = useState<BLEDevice | null>(null);
   const [latestSensorData, setLatestSensorData] = useState<{
     environmental?: EnvironmentalData;
@@ -139,10 +140,10 @@ export const BLEProvider: React.FC<BLEProviderProps> = ({ children }) => {
     setIsScanning(false);
     toast.info('Stopped scanning for devices');
   }, []);
-
   // Connect to a BLE device
   const connect = useCallback(async (deviceId: string): Promise<void> => {
     try {
+      setIsConnecting(true);
       const device = devices.find(d => d.id === deviceId);
       if (!device) {
         throw new Error('Device not found');
@@ -167,6 +168,8 @@ export const BLEProvider: React.FC<BLEProviderProps> = ({ children }) => {
     } catch (error: any) {
       console.error('Error connecting to device:', error);
       toast.error(`Failed to connect: ${error.message}`);
+    } finally {
+      setIsConnecting(false);
     }
   }, [devices, generateMockSensorData]);
 
@@ -237,7 +240,6 @@ export const BLEProvider: React.FC<BLEProviderProps> = ({ children }) => {
       });
     }
   }, [latestSensorData.motion?.fallDetected]);
-
   const value: BLEContextType = {
     devices,
     isScanning,
@@ -248,6 +250,13 @@ export const BLEProvider: React.FC<BLEProviderProps> = ({ children }) => {
     startScanning,
     stopScanning,
     sendCommand,
+    
+    // Backward compatibility aliases
+    bleDevice: connectedDevice,
+    isConnecting,
+    sensorData: latestSensorData,
+    connectToDevice: connect,
+    disconnectDevice: disconnect,
   };
 
   return (

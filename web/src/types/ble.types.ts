@@ -73,4 +73,15 @@ export interface BLEContextType {
   startScanning: () => void;
   stopScanning: () => void;
   sendCommand: (deviceId: string, command: string) => Promise<void>;
+  
+  // Backward compatibility aliases for Dashboard
+  bleDevice: BLEDevice | null;
+  isConnecting: boolean;
+  sensorData: {
+    environmental?: EnvironmentalData;
+    motion?: MotionData;
+    health?: HealthMetrics;
+  };
+  connectToDevice: (deviceId: string) => Promise<void>;
+  disconnectDevice: (deviceId: string) => Promise<void>;
 }

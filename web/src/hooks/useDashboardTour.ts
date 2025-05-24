@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react';
 
+interface UseDashboardTourReturn {
+  showTour: boolean;
+  handleTourExit: () => void;
+}
+
 /**
  * Custom hook to manage dashboard tour state
- * @returns {Object} Tour state and exit handler
+ * @returns Tour state and exit handler
  */
-const useDashboardTour = () => {
-  const [showTour, setShowTour] = useState(false);
+const useDashboardTour = (): UseDashboardTourReturn => {
+  const [showTour, setShowTour] = useState<boolean>(false);
 
   useEffect(() => {
     const shouldShowTour = localStorage.getItem('showTour') === 'true';
@@ -16,7 +21,7 @@ const useDashboardTour = () => {
     }
   }, []);
 
-  const handleTourExit = () => {
+  const handleTourExit = (): void => {
     setShowTour(false);
     localStorage.removeItem('showTour');
   };

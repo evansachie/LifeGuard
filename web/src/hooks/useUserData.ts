@@ -2,20 +2,33 @@ import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { fetchWithAuth, API_ENDPOINTS } from '../utils/api';
 
+interface UserData {
+  userName: string;
+  email: string;
+}
+
+interface UseUserDataReturn {
+  userData: UserData | null;
+  profilePhotoUrl: string | null;
+  isLoading: boolean;
+  error: string | null;
+  getDisplayName: () => string;
+}
+
 /**
  * Custom hook to fetch and manage user data
- * @returns {Object} User data, profile photo URL, loading status, and utility functions
+ * @returns User data, profile photo URL, loading status, and utility functions
  */
-const useUserData = () => {
-  const [userData, setUserData] = useState(null);
-  const [profilePhotoUrl, setProfilePhotoUrl] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+const useUserData = (): UseUserDataReturn => {
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const fetchUserProfilePhoto = async () => {
+  const fetchUserProfilePhoto = async (): Promise<string | null> => {
     try {
       const userId = localStorage.getItem('userId');
-      if (!userId) return;
+      if (!userId) return null;
 
       const response = await fetchWithAuth(API_ENDPOINTS.GET_PHOTO(userId));
 
@@ -30,7 +43,7 @@ const useUserData = () => {
     }
   };
 
-  const loadUserData = async () => {
+  const loadUserData = async (): Promise<void> => {
     try {
       setIsLoading(true);
       const userId = localStorage.getItem('userId');
@@ -60,7 +73,7 @@ const useUserData = () => {
       } else {
         throw new Error('Invalid user data response');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error loading user data:', error);
       setError(error.message || 'Failed to load user data');
       toast.error('Failed to fetch user data');
@@ -73,7 +86,7 @@ const useUserData = () => {
     loadUserData();
   }, []);
 
-  const getDisplayName = () => {
+  const getDisplayName = (): string => {
     if (!userData?.userName) return 'User';
     return userData.userName.split(' ')[0];
   };

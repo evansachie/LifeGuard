@@ -4,8 +4,15 @@ import { FaStickyNote } from 'react-icons/fa';
 import Spinner from '../Spinner/Spinner';
 import DataCard from './DataCard';
 import { truncateHtml } from '../../utils/htmlUtils';
+import { Memo } from '../../types/common.types';
 
-const RemindersCard = ({ memos, loading, isDarkMode }) => {
+interface RemindersCardProps {
+  memos: Memo[];
+  loading: boolean;
+  isDarkMode: boolean;
+}
+
+const RemindersCard: React.FC<RemindersCardProps> = ({ memos, loading, isDarkMode }) => {
   const activeMemos = memos?.filter((memo) => !memo.Done) || [];
 
   return (

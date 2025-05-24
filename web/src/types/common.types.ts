@@ -91,6 +91,15 @@ export interface Address {
   formatted?: string;
 }
 
+// Alert Types
+export interface Alert {
+  id: number;
+  type: 'warning' | 'info' | 'error' | 'success';
+  message: string;
+  time: string;
+  timestamp: string;
+}
+
 // Audio Types
 export interface AudioTrack {
   id: string;
@@ -192,4 +201,171 @@ export interface UseUserDataReturn {
   isLoading: boolean;
   error: string | null;
   getDisplayName: () => string;
+}
+
+// Dashboard Types
+export interface DashboardProps {
+  isDarkMode: boolean;
+}
+
+export interface FilterOptions {
+  temperature: boolean;
+  humidity: boolean;
+  airQuality: boolean;
+  alerts: boolean;
+}
+
+export interface VisibleCards {
+  temperature: boolean;
+  humidity: boolean;
+  pressure: boolean;
+  activities: boolean;
+  quote: boolean;
+  reminders: boolean;
+  aqi: boolean;
+  co2: boolean;
+  pollutants: boolean;
+}
+
+export interface StatsData {
+  readings: number;
+  alerts: number;
+  notifications: number;
+  tasks: number;
+}
+
+export type ViewMode = 'grid' | 'list';
+export type SortOption = 'newest' | 'oldest' | 'priority';
+export type Timeframe = 'today' | 'week' | 'month' | 'quarter' | 'year';
+
+export interface TimeframeData {
+  id: Timeframe;
+  label: string;
+}
+
+// Dashboard Controls Types
+export interface DashboardControlsRef {
+  focusSearch: () => void;
+  toggleFilter: () => void;
+  toggleSort: () => void;
+}
+
+export interface DashboardControlsProps {
+  isDarkMode: boolean;
+  onSearchChange?: (query: string) => void;
+  onViewChange?: (view: ViewMode) => void;
+  onFilterChange?: (filterType: string, isChecked: boolean) => void;
+  onSortChange?: (sortType: SortOption) => void;
+  onShowShortcuts?: () => void;
+  filterOptions?: FilterOptions;
+  sortOption?: SortOption;
+  viewMode?: ViewMode;
+}
+
+// Data Types
+export interface Quote {
+  author: string;
+  text: string;
+}
+
+// Pollution Data Types
+export interface PollutionData {
+  temperature: number;
+  humidity: number;
+  pressure: number;
+  steps: number;
+  aqi: number;
+  pm25: number;
+  pm10: number;
+  no2: number;
+  co2: number;
+  gas: number;
+}
+
+// Memo/Reminder Types
+export interface Memo {
+  Id: number; // API returns PascalCase Id
+  id?: number; // Fallback for lowercase id
+  Text: string; // API returns PascalCase Text
+  text?: string; // Fallback for lowercase text
+  Done: boolean; // API returns PascalCase Done
+  done?: boolean; // Fallback for lowercase done
+  CreatedAt: string; // API returns PascalCase CreatedAt
+  createdAt?: string; // Fallback for lowercase createdAt
+}
+
+// Timeframe Types
+export type CardId = 'temperature' | 'humidity' | 'pressure' | 'activities' | 'quote' | 'reminders' | 'aqi' | 'co2' | 'pollutants';
+
+// Keyboard Shortcuts Types
+export interface KeyboardShortcut {
+  key: string;
+  description: string;
+  withModifier: boolean;
+}
+
+// Theme Toggle Component Props
+export interface ThemeToggleProps {
+  isDarkMode: boolean;
+  toggleTheme: () => void;
+}
+
+// Common Auth Page Props
+export interface AuthPageProps {
+  isDarkMode: boolean;
+  toggleTheme: () => void;
+}
+
+// Form Hook Return Types
+export interface ForgotPasswordFormHook {
+  email: string;
+  setEmail: (email: string) => void;
+  isLoading: boolean;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
+}
+
+export interface OTPVerificationFormHook {
+  otp: string[];
+  setOtp: (otp: string[]) => void;
+  error: string;
+  isLoading: boolean;
+  timeLeft: number;
+  handleResendOTP: () => Promise<void>;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
+}
+
+export interface ResetPasswordFormHook {
+  formData: {
+    newPassword: string;
+    confirmPassword: string;
+  };
+  passwordError: string;
+  isLoading: boolean;
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
+}
+
+export interface LoginFormHook {
+  formData: {
+    email: string;
+    password: string;
+  };
+  isLoading: boolean;
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
+  handleGoogleLogin: (e: React.MouseEvent<HTMLButtonElement>) => Promise<void>;
+}
+
+export interface SignUpFormHook {
+  formData: {
+    name: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+  };
+  errors: Record<string, string>;
+  isLoading: boolean;
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
+  handleGoogleLogin: (e: React.MouseEvent<HTMLButtonElement>) => Promise<void>;
 }

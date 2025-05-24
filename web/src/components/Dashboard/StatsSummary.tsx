@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { FaChartLine, FaExclamationTriangle, FaBell, FaClipboardCheck } from 'react-icons/fa';
 import memoService from '../../services/memoService';
+import { StatsData } from '../../types/common.types';
 import './StatsSummary.css';
 
-const StatsSummary = ({ isDarkMode, stats = {} }) => {
-  const [undoneTasks, setUndoneTasks] = useState(0);
+interface StatsSummaryProps {
+  isDarkMode: boolean;
+  stats?: Partial<StatsData>;
+}
+
+const StatsSummary: React.FC<StatsSummaryProps> = ({ isDarkMode, stats = {} }) => {
+  const [undoneTasks, setUndoneTasks] = useState<number>(0);
 
   useEffect(() => {
-    const fetchUndoneTasks = async () => {
+    const fetchUndoneTasks = async (): Promise<void> => {
       try {
         const count = await memoService.getUndoneMemoCount();
         setUndoneTasks(count);
@@ -19,7 +25,7 @@ const StatsSummary = ({ isDarkMode, stats = {} }) => {
     fetchUndoneTasks();
   }, []);
 
-  const defaultStats = {
+  const defaultStats: StatsData = {
     readings: stats.readings || 124,
     alerts: stats.alerts || 2,
     notifications: stats.notifications || 5,
