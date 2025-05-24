@@ -5,7 +5,57 @@ const HEALTH_API_BASE =
   'https://api.allorigins.win/raw?url=' +
   encodeURIComponent('https://health.gov/myhealthfinder/api/v3/topicsearch.json?lang=en');
 
-export const fetchHealthTips = async () => {
+interface HealthResource {
+  Id?: string;
+  Title?: string;
+  Categories?: string;
+  ImageUrl?: string;
+  ImageAlt?: string;
+  AccessibleVersion?: string;
+  [key: string]: any;
+}
+
+interface HealthApiResponse {
+  Result?: {
+    Resources?: {
+      Resource?: HealthResource[];
+    };
+  };
+}
+
+interface Video {
+  id: string;
+  title: string;
+  videoUrl: string;
+  duration: string;
+}
+
+interface FeaturedTip {
+  title: string;
+  description: string;
+  image: string;
+  category: string;
+}
+
+interface HealthTip {
+  id: string;
+  category: string;
+  title: string;
+  description: string;
+  type: string;
+  url?: string;
+  imageUrl?: string;
+  imageAlt?: string;
+  placeholderImage?: string;
+}
+
+interface HealthTipsData {
+  featured: FeaturedTip;
+  tips: HealthTip[];
+  videos: Video[];
+}
+
+export const fetchHealthTips = async (): Promise<HealthTipsData> => {
   try {
     // Fetch health information from health.gov through CORS proxy
     const healthResponse = await fetch(HEALTH_API_BASE, {
@@ -19,7 +69,7 @@ export const fetchHealthTips = async () => {
       throw new Error('Failed to fetch health tips');
     }
 
-    const healthData = await healthResponse.json();
+    const healthData: HealthApiResponse = await healthResponse.json();
 
     // Format and combine the data
     return {
@@ -68,9 +118,16 @@ export const fetchHealthTips = async () => {
   }
 };
 
-const getCategoryFromTitle = (title = '', description = '') => {
+type HealthCategory = 'emergency' | 'fitness' | 'nutrition' | 'mental' | 'prevention' | 'resources';
+
+interface CategoryRule {
+  category: HealthCategory;
+  keywords: string[];
+}
+
+const getCategoryFromTitle = (title: string = '', description: string = ''): HealthCategory => {
   // More specific category mapping rules
-  const categoryRules = [
+  const categoryRules: CategoryRule[] = [
     {
       category: 'emergency',
       keywords: ['emergency', 'urgent', 'critical', 'immediate', 'crisis', 'first aid', 'accident'],
@@ -141,7 +198,7 @@ const getCategoryFromTitle = (title = '', description = '') => {
   return 'resources'; // Default category
 };
 
-const formatHealthTips = (resources) => {
+const formatHealthTips = (resources: HealthResource[]): HealthTip[] => {
   const defaultImage = 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800';
 
   return resources.map((resource) => {
@@ -167,7 +224,7 @@ const formatHealthTips = (resources) => {
   });
 };
 
-const getFallbackData = () => ({
+const getFallbackData = (): HealthTipsData => ({
   featured: {
     title: "Today's Health Highlight",
     description: 'Learn about air quality monitoring and its impact on your health',

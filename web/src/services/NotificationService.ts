@@ -1,5 +1,12 @@
+interface Medication {
+  Name: string;
+  Dosage: string;
+  Time: string[];
+  [key: string]: any;
+}
+
 class NotificationService {
-  static async requestPermission() {
+  static async requestPermission(): Promise<boolean> {
     if (!('Notification' in window)) {
       console.warn('This browser does not support notifications');
       return false;
@@ -9,11 +16,11 @@ class NotificationService {
     return permission === 'granted';
   }
 
-  static async scheduleNotification(medication) {
+  static async scheduleNotification(medication: Medication): Promise<void> {
     const isPermissionGranted = await this.requestPermission();
     if (!isPermissionGranted) return;
 
-    medication.Time.forEach((time) => {
+    medication.Time.forEach((time: string) => {
       const [hours, minutes] = time.split(':');
       const now = new Date();
       const scheduledTime = new Date(
@@ -38,7 +45,7 @@ class NotificationService {
     });
   }
 
-  static showNotification(medication, time) {
+  static showNotification(medication: Medication, time: string): void {
     if ('Notification' in window && Notification.permission === 'granted') {
       new Notification('Medication Reminder', {
         body: `Time to take ${medication.Name} (${medication.Dosage}) at ${time}`,
