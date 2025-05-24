@@ -30,6 +30,17 @@ interface CompleteProfileData {
   ProfileImage: string | null;
 }
 
+interface ProfileUpdateResponse {
+  isSuccess: boolean;
+  message?: string;
+  data?: {
+    profileId: string;
+    userId: string;
+    updatedAt: string;
+    [key: string]: any;
+  };
+}
+
 export const fetchUserProfile = async (userId: string): Promise<UserProfileResponse> => {
   // First fetch basic user data
   const userData = await fetchWithAuth(API_ENDPOINTS.GET_USER(userId));
@@ -57,7 +68,7 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfileRespo
   return { userData, profileData, photoUrl };
 };
 
-export const updateUserProfile = async (profileData: ProfileData): Promise<any> => {
+export const updateUserProfile = async (profileData: ProfileData): Promise<ProfileUpdateResponse> => {
   try {
     const completeProfileData: CompleteProfileData = {
       Email: profileData.email || '',
@@ -81,7 +92,7 @@ export const updateUserProfile = async (profileData: ProfileData): Promise<any> 
   }
 };
 
-export const deleteUserAccount = async (userId: string): Promise<any> => {
+export const deleteUserAccount = async (userId: string): Promise<{ isSuccess: boolean; message?: string }> => {
   return await fetchWithAuth(API_ENDPOINTS.DELETE_USER(userId), {
     method: 'DELETE',
   });
