@@ -10,7 +10,6 @@ interface ProfileData {
   phone?: string;
   bio?: string;
   profileImage?: string | null;
-  [key: string]: any;
 }
 
 interface UserProfileResponse {
@@ -72,10 +71,10 @@ export const updateUserProfile = async (profileData: ProfileData): Promise<Profi
   try {
     const completeProfileData: CompleteProfileData = {
       Email: profileData.email || '',
-      Age: profileData.age ? parseInt(profileData.age.toString()) : null,
+      Age: profileData.age ? parseInt(profileData.age.toString(), 10) : null,
       Gender: profileData.gender || '',
-      Weight: profileData.weight ? parseInt(profileData.weight.toString()) : null,
-      Height: profileData.height ? parseInt(profileData.height.toString()) : null,
+      Weight: profileData.weight ? parseInt(profileData.weight.toString(), 10) : null,
+      Height: profileData.height ? parseInt(profileData.height.toString(), 10) : null,
       PhoneNumber: profileData.phone || '',
       Bio: profileData.bio || '',
       ProfileImage: profileData.profileImage || null,
