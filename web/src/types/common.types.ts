@@ -173,3 +173,23 @@ export interface IconProps {
   color?: string;
   className?: string;
 }
+
+// Navigation and User Data Types
+export interface NavigationItem {
+  path: string;
+  icon: React.ReactElement;
+  label: string;
+}
+
+export interface UserData {
+  userName?: string;
+  email?: string;
+}
+
+export interface UseUserDataReturn {
+  userData: UserData | null;
+  profilePhotoUrl: string | null;
+  isLoading: boolean;
+  error: string | null;
+  getDisplayName: () => string;
+}

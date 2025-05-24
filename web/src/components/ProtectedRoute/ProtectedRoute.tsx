@@ -1,7 +1,12 @@
+import React, { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-const ProtectedRoute = ({ children }) => {
+interface ProtectedRouteProps {
+  children: ReactNode;
+}
+
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const location = useLocation();
 
   // Check URL parameters for auth data
@@ -20,7 +25,7 @@ const ProtectedRoute = ({ children }) => {
 
     // Clean up URL params
     window.history.replaceState({}, document.title, location.pathname);
-    return children;
+    return <>{children}</>;
   }
 
   // Regular auth check
@@ -30,7 +35,7 @@ const ProtectedRoute = ({ children }) => {
     return <Navigate to="/log-in" state={{ from: location }} replace />;
   }
 
-  return children;
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;

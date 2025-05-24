@@ -1,13 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ReactNode } from 'react';
 import Sidebar from '../components/Sidebar/Sidebar';
 
-const AppLayout = ({ children, isDarkMode, toggleTheme }) => {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(
+interface AppLayoutProps {
+  children: ReactNode;
+  isDarkMode: boolean;
+  toggleTheme: () => void;
+}
+
+const AppLayout: React.FC<AppLayoutProps> = ({ children, isDarkMode, toggleTheme }) => {
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(
     localStorage.getItem('sidebarCollapsed') === 'true'
   );
 
   useEffect(() => {
-    const handleStorageChange = () => {
+    const handleStorageChange = (): void => {
       const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
       setIsSidebarCollapsed(isCollapsed);
       // Force layout recalculation

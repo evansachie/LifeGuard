@@ -11,21 +11,28 @@ import ThemeToggle from '../../contexts/ThemeToggle';
 import LogoutButton from './LogoutButton';
 import MobileMenuToggle from './MobileMenuToggle';
 import MobileSidebar from './MobileSidebar';
+import { UseUserDataReturn } from '../../types/common.types';
 
 import './Sidebar.css';
 
-function Sidebar({ toggleTheme, isDarkMode, onCollapsedChange }) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(
+interface SidebarProps {
+  toggleTheme: () => void;
+  isDarkMode: boolean;
+  onCollapsedChange?: (collapsed: boolean) => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ toggleTheme, isDarkMode, onCollapsedChange }) => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(
     localStorage.getItem('sidebarCollapsed') === 'true'
   );
 
   const location = useLocation();
   const { logout } = useAuth();
 
-  const { profilePhotoUrl, getDisplayName } = useUserData();
+  const { profilePhotoUrl, getDisplayName } = useUserData() as UseUserDataReturn;
 
-  const sidebarRef = useRef(null);
+  const sidebarRef = useRef<HTMLDivElement>(null);
 
   // Event handlers
   useEffect(() => {
@@ -39,21 +46,21 @@ function Sidebar({ toggleTheme, isDarkMode, onCollapsedChange }) {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
 
-  const handleClickOutside = (event) => {
-    if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+  const handleClickOutside = (event: MouseEvent): void => {
+    if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
       setIsMobileMenuOpen(false);
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = (): void => {
     logout();
   };
 
-  const toggleMobileMenu = () => {
+  const toggleMobileMenu = (): void => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const toggleCollapse = () => {
+  const toggleCollapse = (): void => {
     const newCollapsedState = !isCollapsed;
     setIsCollapsed(newCollapsedState);
     localStorage.setItem('sidebarCollapsed', newCollapsedState.toString());
@@ -70,23 +77,20 @@ function Sidebar({ toggleTheme, isDarkMode, onCollapsedChange }) {
           isCollapsed ? 'collapsed' : ''
         }`}
         ref={sidebarRef}
-      >
-        <div className="sidebar-header">
+      >        <div className="sidebar-header">
           <UserProfileSection
             displayName={getDisplayName()}
             profilePhotoUrl={profilePhotoUrl}
-            isCollapsed={isCollapsed}
           />
           <ThemeToggle
             isDarkMode={isDarkMode}
             toggleTheme={toggleTheme}
-            isCollapsed={isCollapsed}
           />
         </div>
 
-        <NavigationLinks navItems={navItems} isCollapsed={isCollapsed} />
+        <NavigationLinks navItems={navItems} onNavLinkClick={() => {}} />
 
-        <LogoutButton onLogout={handleLogout} isCollapsed={isCollapsed} />
+        <LogoutButton onLogout={handleLogout} />
       </div>
 
       <button
@@ -111,6 +115,6 @@ function Sidebar({ toggleTheme, isDarkMode, onCollapsedChange }) {
       />
     </>
   );
-}
+};
 
 export default Sidebar;
