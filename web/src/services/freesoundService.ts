@@ -1,8 +1,17 @@
+interface ImportMetaEnv {
+  readonly VITE_FREESOUND_API_KEY: string;
+  [key: string]: any;
+}
+
 const API_KEY = import.meta.env.VITE_FREESOUND_API_KEY;
 const BASE_URL = 'https://freesound.org/apiv2';
 import { API_ENDPOINTS } from '../utils/api';
 
-const categories = {
+interface Categories {
+  [key: string]: string;
+}
+
+const categories: Categories = {
   nature: 'peaceful nature sounds relaxing',
   meditation: 'tibetan bowls meditation',
   rain: 'gentle rain ambient',
@@ -14,7 +23,45 @@ const categories = {
   flute: 'native american flute',
 };
 
-export const searchSounds = async (category, page = 1, filters = {}) => {
+interface SearchFilters {
+  duration?: [number, number];
+  rating?: number;
+  tags?: string;
+}
+
+interface Preview {
+  'preview-hq-mp3': string;
+  'preview-lq-mp3': string;
+  [key: string]: string;
+}
+
+interface Sound {
+  id: number;
+  name: string;
+  username: string;
+  previews: Preview;
+  images: {
+    waveform_m: string;
+    [key: string]: string;
+  };
+  duration: number;
+  description: string;
+  avg_rating: number;
+  tags: string[];
+}
+
+interface SearchResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Sound[];
+}
+
+export const searchSounds = async (
+  category: string, 
+  page: number = 1, 
+  filters: SearchFilters = {}
+): Promise<SearchResponse> => {
   try {
     const { duration, rating, tags } = filters;
     let query = categories[category];
@@ -39,7 +86,7 @@ export const searchSounds = async (category, page = 1, filters = {}) => {
   }
 };
 
-export const getSound = async (soundId) => {
+export const getSound = async (soundId: number): Promise<Sound> => {
   try {
     const response = await fetch(`${BASE_URL}/sounds/${soundId}/?token=${API_KEY}`);
 
@@ -52,7 +99,7 @@ export const getSound = async (soundId) => {
   }
 };
 
-export const getProxiedAudioUrl = async (originalUrl) => {
+export const getProxiedAudioUrl = async (originalUrl: string): Promise<string> => {
   try {
     const response = await fetch(API_ENDPOINTS.FREESOUND_AUDIO_PROXY, {
       method: 'POST',

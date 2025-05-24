@@ -1,6 +1,36 @@
 import { fetchWithAuth, API_ENDPOINTS } from '../utils/api';
+import { UserData } from '../types/common.types';
 
-export const fetchUserProfile = async (userId) => {
+interface ProfileData {
+  email?: string;
+  age?: string | number;
+  gender?: string;
+  weight?: string | number;
+  height?: string | number;
+  phone?: string;
+  bio?: string;
+  profileImage?: string | null;
+  [key: string]: any;
+}
+
+interface UserProfileResponse {
+  userData: UserData;
+  profileData: ProfileData;
+  photoUrl: string | null;
+}
+
+interface CompleteProfileData {
+  Email: string;
+  Age: number | null;
+  Gender: string;
+  Weight: number | null;
+  Height: number | null;
+  PhoneNumber: string;
+  Bio: string;
+  ProfileImage: string | null;
+}
+
+export const fetchUserProfile = async (userId: string): Promise<UserProfileResponse> => {
   // First fetch basic user data
   const userData = await fetchWithAuth(API_ENDPOINTS.GET_USER(userId));
 
@@ -9,7 +39,7 @@ export const fetchUserProfile = async (userId) => {
   const profileData = profileResponse && profileResponse.data ? profileResponse.data : {};
 
   // Try to get the profile photo URL
-  let photoUrl = profileData?.profileImage;
+  let photoUrl: string | null = profileData?.profileImage;
 
   if (!photoUrl) {
     try {
@@ -27,14 +57,14 @@ export const fetchUserProfile = async (userId) => {
   return { userData, profileData, photoUrl };
 };
 
-export const updateUserProfile = async (profileData) => {
+export const updateUserProfile = async (profileData: ProfileData): Promise<any> => {
   try {
-    const completeProfileData = {
-      Email: profileData.email,
-      Age: profileData.age ? parseInt(profileData.age) : null,
+    const completeProfileData: CompleteProfileData = {
+      Email: profileData.email || '',
+      Age: profileData.age ? parseInt(profileData.age.toString()) : null,
       Gender: profileData.gender || '',
-      Weight: profileData.weight ? parseInt(profileData.weight) : null,
-      Height: profileData.height ? parseInt(profileData.height) : null,
+      Weight: profileData.weight ? parseInt(profileData.weight.toString()) : null,
+      Height: profileData.height ? parseInt(profileData.height.toString()) : null,
       PhoneNumber: profileData.phone || '',
       Bio: profileData.bio || '',
       ProfileImage: profileData.profileImage || null,
@@ -51,7 +81,7 @@ export const updateUserProfile = async (profileData) => {
   }
 };
 
-export const deleteUserAccount = async (userId) => {
+export const deleteUserAccount = async (userId: string): Promise<any> => {
   return await fetchWithAuth(API_ENDPOINTS.DELETE_USER(userId), {
     method: 'DELETE',
   });

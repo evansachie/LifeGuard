@@ -1,7 +1,38 @@
+interface OpenFDA {
+  application_number?: string[];
+  ndc?: string[];
+  brand_name?: string[];
+  generic_name?: string[];
+  manufacturer_name?: string[];
+  strength?: string[];
+  dosage_form?: string[];
+  route?: string[];
+}
+
+interface MedicationResult {
+  openfda?: OpenFDA;
+  warnings?: string[];
+  indications_and_usage?: string[];
+  dosage_and_administration?: string[];
+}
+
+interface FormattedMedication {
+  id: string;
+  brandName: string;
+  genericName: string;
+  manufacturer: string;
+  strength: string;
+  form: string;
+  route: string;
+  warnings: string;
+  indications: string;
+  dosage: string;
+}
+
 /**
  * Service to search for medications using OpenFDA API
  */
-export const searchMedications = async (query, limit = 10) => {
+export const searchMedications = async (query: string, limit: number = 10): Promise<FormattedMedication[]> => {
   if (!query || query.length < 2) return [];
 
   try {
@@ -40,7 +71,7 @@ export const searchMedications = async (query, limit = 10) => {
 /**
  * Format API results into a consistent medication object structure
  */
-function formatMedicationResults(results) {
+function formatMedicationResults(results: MedicationResult[]): FormattedMedication[] {
   return results.map((result) => {
     const openfda = result.openfda || {};
 
