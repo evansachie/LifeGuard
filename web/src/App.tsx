@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-
 import { ToastContainer } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -8,24 +7,22 @@ import 'intro.js/introjs.css';
 
 import { AuthProvider } from './contexts/AuthContext';
 import { BLEProvider } from './contexts/BLEContext';
-
 import { AudioContextProvider } from './contexts/AudioContext';
 import { AudioPlayerProvider } from './contexts/AudioPlayerContext';
 
 import FloatingAudioPlayer from './components/Audio/FloatingAudioPlayer';
 import { CommandPalette } from './components/CommandPalette/CommandPalette';
-
 import AppRoutes from './routes/AppRoutes';
 import { useTheme } from './hooks/useTheme';
 
 import './App.css';
 
-function App() {
+const App: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme();
-  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    const down = (e) => {
+    const down = (e: KeyboardEvent): void => {
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setCommandPaletteOpen((open) => !open);
@@ -62,6 +59,6 @@ function App() {
       </AudioPlayerProvider>
     </Router>
   );
-}
+};
 
 export default App;
