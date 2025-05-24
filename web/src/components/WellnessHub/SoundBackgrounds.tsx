@@ -1,4 +1,13 @@
-const categoryBackgrounds = {
+interface CategoryBackground {
+  image: string;
+  gradient: string;
+}
+
+interface CategoryBackgrounds {
+  [key: string]: CategoryBackground;
+}
+
+const categoryBackgrounds: CategoryBackgrounds = {
   nature: {
     image: 'https://images.unsplash.com/photo-1546587348-d12660c30c50', // Serene forest
     gradient: 'linear-gradient(rgba(44, 122, 123, 0.4), rgba(0, 0, 0, 0.6))',

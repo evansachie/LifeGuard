@@ -284,14 +284,14 @@ export interface PollutionData {
 
 // Memo/Reminder Types
 export interface Memo {
-  Id: number; // API returns PascalCase Id
-  id?: number; // Fallback for lowercase id
-  Text: string; // API returns PascalCase Text
-  text?: string; // Fallback for lowercase text
-  Done: boolean; // API returns PascalCase Done
-  done?: boolean; // Fallback for lowercase done
-  CreatedAt: string; // API returns PascalCase CreatedAt
-  createdAt?: string; // Fallback for lowercase createdAt
+  Id: number;
+  id?: number;
+  Text: string;
+  text?: string;
+  Done: boolean;
+  done?: boolean;
+  CreatedAt: string;
+  createdAt?: string;
 }
 
 // Timeframe Types

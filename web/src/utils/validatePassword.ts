@@ -1,4 +1,9 @@
-export const validatePassword = (password) => {
+/**
+ * Validates password complexity requirements
+ * @param password - Password to validate
+ * @returns Empty string if valid, error message if invalid
+ */
+export const validatePassword = (password: string): string => {
   const hasUpperCase = /[A-Z]/.test(password);
   const hasNonAlphanumeric = /[^a-zA-Z0-9]/.test(password);
 

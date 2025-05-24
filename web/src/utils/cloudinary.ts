@@ -1,13 +1,13 @@
 import axios from 'axios';
 
-const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-const CLOUDINARY_API_KEY = import.meta.env.VITE_CLOUDINARY_API_KEY;
-const CLOUDINARY_API_SECRET = import.meta.env.VITE_CLOUDINARY_API_SECRET;
+const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET as string;
+const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME as string;
+const CLOUDINARY_API_KEY = import.meta.env.VITE_CLOUDINARY_API_KEY as string;
+const CLOUDINARY_API_SECRET = import.meta.env.VITE_CLOUDINARY_API_SECRET as string;
 
 // Function to encode string to UTF-8 bytes
-const stringToUTF8Bytes = (str) => {
-  const arr = [];
+const stringToUTF8Bytes = (str: string): Uint8Array => {
+  const arr: number[] = [];
   for (let i = 0; i < str.length; i++) {
     let char = str.charCodeAt(i);
     if (char < 0x80) {
@@ -30,7 +30,7 @@ const stringToUTF8Bytes = (str) => {
   return new Uint8Array(arr);
 };
 
-const generateSignature = async (timestamp, folder) => {
+const generateSignature = async (timestamp: number, folder: string): Promise<string> => {
   const str = `folder=${folder}&timestamp=${timestamp}&upload_preset=${CLOUDINARY_UPLOAD_PRESET}${CLOUDINARY_API_SECRET}`;
   const msgUint8 = stringToUTF8Bytes(str);
   const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
@@ -38,7 +38,12 @@ const generateSignature = async (timestamp, folder) => {
   return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 };
 
-const uploadToCloudinary = async (file, folder = 'profile_photos') => {
+interface CloudinaryResponse {
+  secure_url: string;
+  [key: string]: any;
+}
+
+const uploadToCloudinary = async (file: File, folder: string = 'profile_photos'): Promise<string> => {
   try {
     const formData = new FormData();
     formData.append('file', file);
@@ -49,13 +54,13 @@ const uploadToCloudinary = async (file, folder = 'profile_photos') => {
 
     // Generate timestamp and signature
     const timestamp = Math.round(new Date().getTime() / 1000);
-    formData.append('timestamp', timestamp);
+    formData.append('timestamp', timestamp.toString());
 
     // Add signature
     const signature = await generateSignature(timestamp, folder);
     formData.append('signature', signature);
 
-    const response = await axios.post(
+    const response = await axios.post<CloudinaryResponse>(
       `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
       formData,
       {
@@ -71,7 +76,7 @@ const uploadToCloudinary = async (file, folder = 'profile_photos') => {
     } else {
       throw new Error('Invalid response from Cloudinary');
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error uploading image:', error.response?.data || error.message);
     throw new Error('Failed to upload image to Cloudinary');
   }

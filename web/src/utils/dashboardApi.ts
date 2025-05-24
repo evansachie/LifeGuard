@@ -1,11 +1,18 @@
 import axios from 'axios';
 import { fetchWithAuth, API_ENDPOINTS, QUOTE_API_URL } from './api';
+import { UserData, Memo, Quote } from '../types/common.types';
+
+interface QuoteApiResponse {
+  q: string;
+  a: string;
+  [key: string]: any;
+}
 
 /**
  * Fetch user data by userId
- * @returns {Promise<Object>} User data
+ * @returns User data object
  */
-export const fetchUserData = async (userId) => {
+export const fetchUserData = async (userId: string): Promise<UserData> => {
   if (!userId) {
     throw new Error('User ID is required');
   }
@@ -24,9 +31,9 @@ export const fetchUserData = async (userId) => {
 
 /**
  * Fetch user memos/reminders
- * @returns {Promise<Array>} Array of memo objects
+ * @returns Array of memo objects
  */
-export const fetchUserMemos = async () => {
+export const fetchUserMemos = async (): Promise<Memo[]> => {
   try {
     const memosData = await fetchWithAuth(API_ENDPOINTS.MEMOS);
     // Ensure memosData is an array
@@ -39,15 +46,15 @@ export const fetchUserMemos = async () => {
 
 /**
  * Fetch inspirational quote
- * @returns {Promise<Object>} Quote object with quote and author
+ * @returns Quote object with quote and author
  */
-export const fetchQuote = async () => {
+export const fetchQuote = async (): Promise<Quote> => {
   try {
-    const response = await axios.get(QUOTE_API_URL);
+    const response = await axios.get<QuoteApiResponse[]>(QUOTE_API_URL);
     const quoteData = response.data[0];
     return {
-      quote: quoteData.q,
       author: quoteData.a,
+      text: quoteData.q, // Changed from 'quote' to 'text' to match the Quote interface
     };
   } catch (error) {
     console.error('Error fetching quote:', error);

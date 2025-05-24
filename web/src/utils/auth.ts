@@ -1,14 +1,7 @@
-import { API_BASE_URL, API_ENDPOINTS, fetchApi, fetchWithAuth, apiMethods } from './api';
+import { API_BASE_URL, API_ENDPOINTS, fetchWithAuth, apiMethods } from './api';
 import type { 
-  AuthRequest, 
   AuthResponse, 
-  RegistrationRequest, 
   RegistrationResponse,
-  VerifyOTPRequest,
-  ResendOTPRequest,
-  ForgotPasswordRequest,
-  ResetPasswordRequest,
-  UserProfile,
   ApiResponse 
 } from '../types/api.types';
 

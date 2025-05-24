@@ -1,4 +1,11 @@
-export const dashboardSteps = [
+interface TourStep {
+  element: string;
+  intro: string;
+  position?: 'top' | 'bottom' | 'left' | 'right';
+  tooltipPosition?: 'top' | 'bottom' | 'left' | 'right';
+}
+
+export const dashboardSteps: TourStep[] = [
   {
     element: '.dashboard-header',
     intro:

@@ -1,10 +1,10 @@
 /**
  * Strips HTML tags from text and trims if too long
- * @param {string} html - HTML content to process
- * @param {number} maxLength - Maximum length before trimming (default: 50)
- * @returns {string} Plain text without HTML tags, trimmed if needed
+ * @param html - HTML content to process
+ * @param maxLength - Maximum length before trimming (default: 50)
+ * @returns Plain text without HTML tags, trimmed if needed
  */
-export const stripHtmlAndTrim = (html, maxLength = 50) => {
+export const stripHtmlAndTrim = (html: string, maxLength: number = 50): string => {
   if (!html) return '';
   // Create a temporary div element
   const tempDiv = document.createElement('div');
@@ -22,11 +22,11 @@ export const stripHtmlAndTrim = (html, maxLength = 50) => {
 
 /**
  * Truncates HTML content while preserving tag structure
- * @param {string} html - HTML content to truncate
- * @param {number} maxLength - Maximum length before truncating (default: 150)
- * @returns {string} Truncated HTML with preserved structure
+ * @param html - HTML content to truncate
+ * @param maxLength - Maximum length before truncating (default: 150)
+ * @returns Truncated HTML with preserved structure
  */
-export const truncateHtml = (html, maxLength = 150) => {
+export const truncateHtml = (html: string, maxLength: number = 150): string => {
   if (!html) return '';
 
   // Create a temporary div element
@@ -49,11 +49,11 @@ export const truncateHtml = (html, maxLength = 150) => {
   // Now we need to truncate the HTML intelligently
   let currentLength = 0;
   let truncatedHtml = '';
-  let openTags = [];
+  let openTags: string[] = [];
 
   // Tokenize the HTML
   const tokenizer = /<[^>]+>|[^<]+/g;
-  let match;
+  let match: RegExpExecArray | null;
   let shouldContinue = true;
 
   while ((match = tokenizer.exec(html)) !== null && shouldContinue) {

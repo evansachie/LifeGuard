@@ -1,9 +1,9 @@
 /**
  * Calculate age from birth date string
- * @param {string} birthDateString - Birth date in format YYYY-MM-DD
- * @returns {number} - Age in years
+ * @param birthDateString - Birth date in format YYYY-MM-DD
+ * @returns Age in years or null if calculation fails
  */
-export const calculateAge = (birthDateString) => {
+export const calculateAge = (birthDateString: string): number | null => {
   if (!birthDateString) {
     console.error('No birth date provided');
     return null;

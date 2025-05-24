@@ -1,7 +1,20 @@
 import { FaWind, FaChartLine } from 'react-icons/fa';
 import { MdAir } from 'react-icons/md';
+import { IconType } from 'react-icons';
 
-export const TABS = [
+interface Tab {
+  id: string;
+  label: string;
+  icon: IconType;
+  description: string;
+}
+
+interface DateRange {
+  value: string;
+  label: string;
+}
+
+export const TABS: Tab[] = [
   {
     id: 'environment',
     label: 'Environment',
@@ -22,7 +35,7 @@ export const TABS = [
   },
 ];
 
-export const DATE_RANGES = [
+export const DATE_RANGES: DateRange[] = [
   { value: '1h', label: 'Last Hour' },
   { value: '24h', label: 'Last 24 Hours' },
   { value: '7d', label: 'Last 7 Days' },

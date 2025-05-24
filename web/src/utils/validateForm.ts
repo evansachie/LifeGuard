@@ -1,5 +1,12 @@
-export function validateSignUpForm(formData) {
-  let errors = {};
+import { SignUpFormHook } from '../types/common.types';
+
+interface ValidationResult {
+  isValid: boolean;
+  errors: Record<string, string>;
+}
+
+export function validateSignUpForm(formData: SignUpFormHook['formData']): ValidationResult {
+  let errors: Record<string, string> = {};
   let isValid = true;
 
   if (!formData.name.trim()) {

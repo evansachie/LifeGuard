@@ -9,8 +9,10 @@ import {
   Legend,
 } from 'chart.js';
 
-// Register ChartJS components
-const registerCharts = () => {
+/**
+ * Registers required Chart.js components
+ */
+const registerCharts = (): void => {
   ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 };
 

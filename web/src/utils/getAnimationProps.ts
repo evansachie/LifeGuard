@@ -1,4 +1,24 @@
-export const getAnimationProps = ({ phase, pattern }) => {
+type AnimationPhase = 'inhale' | 'hold' | 'exhale' | 'holdAfterExhale';
+
+interface BreathingPattern {
+  inhale: number;
+  hold: number;
+  exhale: number;
+  holdAfterExhale?: number;
+}
+
+interface AnimationParams {
+  phase: AnimationPhase;
+  pattern: BreathingPattern;
+}
+
+interface AnimationProps {
+  scale: number | number[];
+  duration: number;
+  backgroundColor: string | string[];
+}
+
+export const getAnimationProps = ({ phase, pattern }: AnimationParams): AnimationProps => {
   switch (phase) {
     case 'inhale':
       return {
@@ -25,6 +45,10 @@ export const getAnimationProps = ({ phase, pattern }) => {
         backgroundColor: '#4CAF50',
       };
     default:
-      return {};
+      return {
+        scale: 1,
+        duration: 0,
+        backgroundColor: '#4CAF50',
+      };
   }
 };

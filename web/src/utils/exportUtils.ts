@@ -1,4 +1,13 @@
-export const exportToCSV = (historicalData) => {
+interface HistoricalData {
+  timestamps: string[];
+  temperature: number[];
+  humidity: number[];
+  pressure: number[];
+  co2: number[];
+  gas: number[];
+}
+
+export const exportToCSV = (historicalData: HistoricalData): void => {
   const headers = ['Timestamp', 'Temperature', 'Humidity', 'Pressure', 'CO2', 'Gas'];
   const data = historicalData.timestamps.map((timestamp, index) => [
     timestamp,
