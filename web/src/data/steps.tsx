@@ -1,6 +1,13 @@
+import React from 'react';
 import { FaUserPlus, FaMobile, FaHeartbeat, FaBell } from 'react-icons/fa';
 
-export const steps = [
+interface Step {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}
+
+export const steps: Step[] = [
   {
     icon: <FaUserPlus />,
     title: 'Create Account',

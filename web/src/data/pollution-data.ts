@@ -1,4 +1,18 @@
-export const pollutionZones = [
+interface PollutionLevel {
+  aqi: number;
+  pm25: number;
+  pm10: number;
+}
+
+interface PollutionZone {
+  id: string;
+  coordinates: [number, number]; // [latitude, longitude]
+  level: 'high' | 'medium' | 'low';
+  radius: number;
+  data: PollutionLevel;
+}
+
+export const pollutionZones: PollutionZone[] = [
   {
     id: '1',
     coordinates: [5.6505, -0.187], // University of Ghana, Legon

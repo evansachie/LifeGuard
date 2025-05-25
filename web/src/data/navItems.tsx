@@ -7,8 +7,9 @@ import {
   MdMedication,
 } from 'react-icons/md';
 import { FaMap } from 'react-icons/fa';
+import { NavigationItem } from '../types/common.types';
 
-export const navItems = [
+export const navItems: NavigationItem[] = [
   { path: '/dashboard', icon: <FaHome />, label: 'Dashboard' },
   { path: '/analytics', icon: <MdOutlineAnalytics />, label: 'Analytics' },
   { path: '/sticky-notes', icon: <FaStickyNote />, label: 'Sticky Notes' },

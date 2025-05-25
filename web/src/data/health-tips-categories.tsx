@@ -1,7 +1,14 @@
+import React from 'react';
 import { FaRunning, FaBrain, FaYoutube, FaBookMedical } from 'react-icons/fa';
 import { MdHealthAndSafety, MdRestaurant } from 'react-icons/md';
 
-export const categories = [
+export interface HealthCategory {
+  id: string;
+  icon: React.ReactNode;
+  label: string;
+}
+
+export const categories: HealthCategory[] = [
   { id: 'fitness', icon: <FaRunning />, label: 'Fitness' },
   { id: 'mental', icon: <FaBrain />, label: 'Mental Health' },
   { id: 'nutrition', icon: <MdRestaurant />, label: 'Nutrition' },

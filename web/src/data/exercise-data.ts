@@ -1,4 +1,39 @@
-export const muscleGroups = [
+interface MuscleGroup {
+  id: string;
+  name: string;
+}
+
+interface FitnessLevel {
+  id: string;
+  label: string;
+  color: string;
+}
+
+interface Exercise {
+  id: string;
+  title: string;
+  description: string;
+  duration: string;
+  videoUrl: string;
+  calories: number;
+  targetMuscles: string[];
+}
+
+interface WorkoutCategory {
+  warmup: Exercise[];
+  cardio: Exercise[];
+  strength: Exercise[];
+  hiit: Exercise[];
+  cooldown: Exercise[];
+}
+
+interface WorkoutData {
+  beginner: WorkoutCategory;
+  intermediate: WorkoutCategory;
+  advanced: WorkoutCategory;
+}
+
+export const muscleGroups: MuscleGroup[] = [
   { id: 'chest', name: 'Chest' },
   { id: 'shoulders', name: 'Shoulders' },
   { id: 'biceps', name: 'Biceps' },
@@ -11,13 +46,13 @@ export const muscleGroups = [
   { id: 'glutes', name: 'Glutes' },
 ];
 
-export const fitnessLevels = [
+export const fitnessLevels: FitnessLevel[] = [
   { id: 'beginner', label: 'Beginner', color: '#4CAF50' },
   { id: 'intermediate', label: 'Intermediate', color: '#FF9800' },
   { id: 'advanced', label: 'Advanced', color: '#f44336' },
 ];
 
-export const workoutData = {
+export const workoutData: WorkoutData = {
   beginner: {
     warmup: [
       {

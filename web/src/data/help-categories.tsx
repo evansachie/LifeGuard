@@ -1,6 +1,20 @@
+import React from 'react';
 import { FaHeart, FaDumbbell, FaBook, FaUserMd } from 'react-icons/fa';
 
-export const helpCategories = [
+interface HelpSection {
+  title: string;
+  content: string;
+}
+
+export interface HelpCategory {
+  id: string;
+  icon: React.ReactNode;
+  title: string;
+  color: string;
+  sections: HelpSection[];
+}
+
+export const helpCategories: HelpCategory[] = [
   {
     id: 'getting-started',
     icon: <FaBook />,

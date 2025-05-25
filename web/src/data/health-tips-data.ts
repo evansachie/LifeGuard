@@ -1,4 +1,29 @@
-export const localHealthTips = {
+interface FeaturedHealthTip {
+  title: string;
+  description: string;
+  image: string;
+  imageAlt: string;
+  category: string;
+}
+
+interface HealthTip {
+  id: string;
+  category: string;
+  title: string;
+  description: string;
+  longDescription?: string;
+  type: string;
+  imageUrl?: string;
+  imageAlt?: string;
+  url?: string;
+}
+
+interface LocalHealthTips {
+  featured: FeaturedHealthTip;
+  tips: HealthTip[];
+}
+
+export const localHealthTips: LocalHealthTips = {
   featured: {
     title: 'Understanding Your Health Metrics',
     description:

@@ -1,8 +1,82 @@
+import React from 'react';
 import { FaTemperatureHigh, FaTint, FaWalking, FaChartLine } from 'react-icons/fa';
 import { WiBarometer } from 'react-icons/wi';
 import { MdAir } from 'react-icons/md';
+import { UserData } from '../types/common.types';
 
-export const generateHealthReport = (userData) => ({
+interface VitalMetric {
+  average: string;
+  min: string;
+  max: string;
+  status: string;
+}
+
+interface AirQualityMetric {
+  average: string;
+  status: string;
+  pollutants: {
+    pm25: string;
+    pm10: string;
+    no2: string;
+  };
+}
+
+interface EnvironmentalMetric {
+  average: string;
+  status: string;
+}
+
+interface ActivityMetric {
+  average: string;
+  goal: string;
+  status: string;
+}
+
+export interface HealthReportData {
+  userInfo: {
+    name: string;
+    date: string;
+    reportId: string;
+  };
+  vitals: {
+    temperature: VitalMetric;
+    pressure: VitalMetric;
+    humidity: VitalMetric;
+    activityLevel: VitalMetric;
+  };
+  environmentalMetrics: {
+    airQuality: AirQualityMetric;
+    humidity: EnvironmentalMetric;
+    pressure: EnvironmentalMetric;
+  };
+  activityMetrics: {
+    dailySteps: ActivityMetric;
+    caloriesBurned: ActivityMetric;
+    activeMinutes: ActivityMetric;
+  };
+  recommendations: string[];
+}
+
+interface HealthStat {
+  icon: React.ComponentType;
+  label: string;
+  value: string;
+  color: string;
+}
+
+interface ReportItem {
+  id: number;
+  date: string;
+  type: string;
+  status: string;
+}
+
+interface HealthData {
+  stats: HealthStat[];
+  reports: ReportItem[];
+}
+
+export const generateHealthReport = (userData?: UserData): HealthReportData => ({
   userInfo: {
     name: userData?.userName || 'Test User',
     date: new Date().toLocaleDateString(),
@@ -78,7 +152,7 @@ export const generateHealthReport = (userData) => ({
   ],
 });
 
-export const healthData = {
+export const healthData: HealthData = {
   stats: [
     { icon: FaTemperatureHigh, label: 'Temperature', value: '30°C', color: '#FF6B6B' },
     { icon: FaTint, label: 'Humidity', value: '58.8%', color: '#4A90E2' },

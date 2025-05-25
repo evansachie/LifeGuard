@@ -1,4 +1,12 @@
-export const featuredVideos = [
+export interface FeaturedVideo {
+  id: string;
+  title: string;
+  description: string;
+  videoUrl: string;
+  category: string;
+}
+
+export const featuredVideos: FeaturedVideo[] = [
   {
     id: 'v1',
     title: 'Understanding Air Quality Index',

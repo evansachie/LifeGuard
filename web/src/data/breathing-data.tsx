@@ -1,7 +1,22 @@
+import React from 'react';
 import { GiMeditation, GiLotus } from 'react-icons/gi';
 import { TbWaveSine } from 'react-icons/tb';
 
-export const breathingPatterns = [
+export interface BreathingPattern {
+  id: string;
+  name: string;
+  description: string;
+  icon: React.ReactNode;
+  color: string;
+  pattern: {
+    inhale: number;
+    hold: number;
+    exhale: number;
+    holdAfterExhale?: number;
+  };
+}
+
+export const breathingPatterns: BreathingPattern[] = [
   {
     id: 'relaxation',
     name: '4-7-8 Relaxation',

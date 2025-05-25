@@ -1,6 +1,12 @@
 import { FaHeartbeat, FaLeaf, FaRunning, FaBell, FaMobileAlt, FaShieldAlt } from 'react-icons/fa';
 
-export const features = [
+export interface Feature {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}
+
+export const features: Feature[] = [
   {
     icon: <FaHeartbeat />,
     title: 'Health Monitoring',

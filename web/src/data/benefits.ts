@@ -2,7 +2,13 @@ import ProactiveHealth from '../assets/health-monitor.svg';
 import Environmental from '../assets/nature.svg';
 import Emergency from '../assets/emergency.svg';
 
-export const benefits = [
+export interface Benefit {
+  title: string;
+  description: string;
+  image: string;
+}
+
+export const benefits: Benefit[] = [
   {
     title: 'Proactive Health Monitoring',
     description: 'Stay ahead of health issues with real-time monitoring and early warning systems.',
