@@ -18,8 +18,7 @@ interface Exercise {
   calories: number;
   targetMuscles: string[];
 }
-
-interface WorkoutCategory {
+interface ExerciseWorkoutCategory {
   warmup: Exercise[];
   cardio: Exercise[];
   strength: Exercise[];
@@ -28,9 +27,9 @@ interface WorkoutCategory {
 }
 
 interface WorkoutData {
-  beginner: WorkoutCategory;
-  intermediate: WorkoutCategory;
-  advanced: WorkoutCategory;
+  beginner: ExerciseWorkoutCategory;
+  intermediate: ExerciseWorkoutCategory;
+  advanced: ExerciseWorkoutCategory;
 }
 
 export const muscleGroups: MuscleGroup[] = [
