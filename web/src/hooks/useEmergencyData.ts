@@ -2,8 +2,40 @@ import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { fetchApi, API_ENDPOINTS } from '../utils/api';
 
-export function useEmergencyData(userId) {
-  const [userData, setUserData] = useState({
+interface MedicalInfo {
+  age: string | number;
+  gender: string;
+  weight: string | number;
+  height: string | number;
+  bio: string;
+}
+
+interface Medication {
+  id: number | string;
+  name: string;
+  dosage?: string;
+  frequency?: string;
+  [key: string]: any;
+}
+
+interface EmergencyUserData {
+  name: string;
+  location: string;
+  phone: string;
+  email: string;
+  medicalInfo: MedicalInfo;
+  timestamp: string;
+  mapUrl: string | null;
+  medications: Medication[];
+}
+
+interface EmergencyDataReturn {
+  userData: EmergencyUserData;
+  isLoading: boolean;
+}
+
+export function useEmergencyData(userId: string): EmergencyDataReturn {
+  const [userData, setUserData] = useState<EmergencyUserData>({
     name: 'LifeGuard User',
     location: 'Last known location',
     phone: 'Not available',
@@ -19,7 +51,7 @@ export function useEmergencyData(userId) {
     mapUrl: null,
     medications: [],
   });
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -33,7 +65,7 @@ export function useEmergencyData(userId) {
         const userResponse = await fetchApi(API_ENDPOINTS.GET_USER(userId));
         const profileResponse = await fetchApi(API_ENDPOINTS.GET_PROFILE(userId));
         // Add this new request to fetch medications
-        let medications = [];
+        let medications: Medication[] = [];
         try {
           const medicationsResponse = await fetchApi(API_ENDPOINTS.MEDICATIONS.EMERGENCY(userId));
           if (medicationsResponse && medicationsResponse.success) {
@@ -41,7 +73,6 @@ export function useEmergencyData(userId) {
           }
         } catch (medError) {
           console.error('Error fetching medications:', medError);
-          // Continue with empty medications array
         }
 
         const profileData = profileResponse?.data || {};

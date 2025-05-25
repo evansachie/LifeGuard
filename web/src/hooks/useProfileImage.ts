@@ -2,10 +2,21 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { API_ENDPOINTS, fetchWithAuth, extractPhotoUrl } from '../utils/api';
 
-export const useProfileImage = (userId) => {
-  const [isLoading, setIsLoading] = useState(false);
+interface ProfileImageResult {
+  previewUrl: string;
+  cloudinaryUrl: string;
+}
 
-  const handleImageChange = async (file) => {
+interface UseProfileImageReturn {
+  isLoading: boolean;
+  handleImageChange: (file: File | null) => Promise<ProfileImageResult | null>;
+  handleDeletePhoto: () => Promise<boolean>;
+}
+
+export const useProfileImage = (userId: string): UseProfileImageReturn => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const handleImageChange = async (file: File | null): Promise<ProfileImageResult | null> => {
     if (!file) return null;
 
     try {
@@ -30,7 +41,7 @@ export const useProfileImage = (userId) => {
 
       toast.success('Profile photo updated successfully!');
       return { previewUrl, cloudinaryUrl };
-    } catch (error) {
+    } catch (error: any) {
       toast.error(error.message || 'Failed to update profile photo');
       return null;
     } finally {
@@ -38,7 +49,7 @@ export const useProfileImage = (userId) => {
     }
   };
 
-  const handleDeletePhoto = async () => {
+  const handleDeletePhoto = async (): Promise<boolean> => {
     try {
       setIsLoading(true);
 
@@ -52,7 +63,7 @@ export const useProfileImage = (userId) => {
 
       toast.success('Profile photo deleted successfully!');
       return true;
-    } catch (error) {
+    } catch (error: any) {
       toast.error(error.message || 'Failed to delete profile photo');
       return false;
     } finally {

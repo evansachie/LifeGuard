@@ -1,12 +1,8 @@
 import { useState, useEffect } from 'react';
 import { fetchQuote } from '../utils/dashboardApi';
+import { Quote } from '../types/common.types';
 
-interface Quote {
-  quote: string;
-  author: string;
-}
-
-interface UseQuoteDataReturn {
+interface QuoteDataReturn {
   quote: Quote | null;
   isLoading: boolean;
 }
@@ -15,14 +11,15 @@ interface UseQuoteDataReturn {
  * Custom hook to fetch and manage inspirational quotes
  * @returns Quote data and loading status
  */
-const useQuoteData = (): UseQuoteDataReturn => {
+const useQuoteData = (): QuoteDataReturn => {
   const [quote, setQuote] = useState<Quote | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const loadQuote = async (): Promise<void> => {      try {
+    const loadQuote = async () => {
+      try {
         setIsLoading(true);
-        const quoteData = await fetchQuote() as Quote;
+        const quoteData = await fetchQuote();
         setQuote(quoteData);
       } catch (error) {
         // Silent fail, quotes are not critical

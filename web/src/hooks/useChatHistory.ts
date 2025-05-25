@@ -2,9 +2,30 @@ import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { fetchWithAuth, API_ENDPOINTS } from '../utils/api';
 
-export function useChatHistory() {
-  const [chatHistory, setChatHistory] = useState([]);
-  const [loading, setLoading] = useState(false);
+interface ChatMessage {
+  type: 'user' | 'assistant';
+  content: string;
+  timestamp: string;
+  isError?: boolean;
+}
+
+interface ChatHistoryReturn {
+  chatHistory: ChatMessage[];
+  loading: boolean;
+  sendQuery: (query: string) => Promise<string | null>;
+  clearHistory: () => void;
+  addUserMessage: (content: string) => ChatMessage;
+  addAssistantMessage: (content: string, isError?: boolean) => ChatMessage;
+}
+
+interface QueryResponse {
+  response: string;
+  [key: string]: any;
+}
+
+export function useChatHistory(): ChatHistoryReturn {
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const savedChatHistory = localStorage.getItem('healthAssistantChatHistory');
@@ -24,8 +45,8 @@ export function useChatHistory() {
     }
   }, [chatHistory]);
 
-  const addUserMessage = (content) => {
-    const message = {
+  const addUserMessage = (content: string): ChatMessage => {
+    const message: ChatMessage = {
       type: 'user',
       content,
       timestamp: new Date().toISOString(),
@@ -34,8 +55,8 @@ export function useChatHistory() {
     return message;
   };
 
-  const addAssistantMessage = (content, isError = false) => {
-    const message = {
+  const addAssistantMessage = (content: string, isError = false): ChatMessage => {
+    const message: ChatMessage = {
       type: 'assistant',
       content,
       timestamp: new Date().toISOString(),
@@ -45,13 +66,12 @@ export function useChatHistory() {
     return message;
   };
 
-  const clearHistory = () => {
+  const clearHistory = (): void => {
     setChatHistory([]);
     setLoading(false);
-    // Remove any toast notification here
   };
 
-  const sendQuery = async (query) => {
+  const sendQuery = async (query: string): Promise<string | null> => {
     if (!query.trim()) return null;
     setLoading(true);
 
@@ -59,7 +79,7 @@ export function useChatHistory() {
       addUserMessage(query);
 
       // Get user ID from local storage
-      const userData = JSON.parse(localStorage.getItem('user')) || {};
+      const userData = JSON.parse(localStorage.getItem('user') || '{}');
       const userId = userData.id || localStorage.getItem('userId') || 'anonymous';
 
       // Ensure token is available
@@ -68,7 +88,7 @@ export function useChatHistory() {
         throw new Error('Authentication token not found. Please log in again.');
       }
 
-      const result = await fetchWithAuth(API_ENDPOINTS.RAG_QUERY, {
+      const result = await fetchWithAuth<QueryResponse>(API_ENDPOINTS.RAG_QUERY, {
         method: 'POST',
         body: JSON.stringify({ question: query, userId }),
         headers: { Authorization: `Bearer ${token}` },
@@ -76,7 +96,7 @@ export function useChatHistory() {
 
       addAssistantMessage(result.response);
       return result.response;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error querying health assistant:', error);
 
       let errorMessage = 'Failed to get a response. Please try again.';

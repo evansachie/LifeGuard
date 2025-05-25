@@ -2,8 +2,28 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { fetchUserProfile } from '../services/profileService';
 
-export const useProfileState = () => {
-  const [profileData, setProfileData] = useState({
+interface ProfileDataState {
+  fullName: string;
+  email: string;
+  gender: string;
+  phone: string;
+  bio: string;
+  birthDate: string;
+  weight: string;
+  height: string;
+  profileImage: string;
+  age: string;
+}
+
+interface ProfileStateReturn {
+  profileData: ProfileDataState;
+  setProfileData: React.Dispatch<React.SetStateAction<ProfileDataState>>;
+  profileLoading: boolean;
+  fetchUserProfileData: () => Promise<void>;
+}
+
+export const useProfileState = (): ProfileStateReturn => {
+  const [profileData, setProfileData] = useState<ProfileDataState>({
     fullName: '',
     email: '',
     gender: '',
@@ -15,9 +35,9 @@ export const useProfileState = () => {
     profileImage: '',
     age: '',
   });
-  const [profileLoading, setProfileLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState<boolean>(true);
 
-  const fetchUserProfileData = async () => {
+  const fetchUserProfileData = async (): Promise<void> => {
     try {
       setProfileLoading(true);
       const userId = localStorage.getItem('userId');
@@ -30,9 +50,9 @@ export const useProfileState = () => {
         fullName: userData?.userName || prev.fullName,
         email: userData?.email || prev.email,
         gender: fetchedProfile?.gender || '',
-        phone: fetchedProfile?.phoneNumber || '',
+        phone: fetchedProfile?.phone || '',
         bio: fetchedProfile?.bio || '',
-        birthDate: fetchedProfile?.birthDate || '',
+        birthDate: '',
         age: fetchedProfile?.age?.toString() || '',
         weight: fetchedProfile?.weight?.toString() || '',
         height: fetchedProfile?.height?.toString() || '',

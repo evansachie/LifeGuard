@@ -1,10 +1,25 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 
-export function useEmergencyActions() {
-  const [copySuccess, setCopySuccess] = useState('');
+interface UserEmergencyData {
+  name: string;
+  location: string;
+  phone: string;
+  [key: string]: any;
+}
 
-  const handlePhoneCall = (phoneNumber) => {
+interface EmergencyActionsReturn {
+  handlePhoneCall: (phoneNumber: string) => void;
+  shareEmergencyInfo: (userData: UserEmergencyData) => Promise<void>;
+  getDirections: (location: string) => void;
+  findNearbyHospitals: (location: string) => void;
+  copySuccess: string;
+}
+
+export function useEmergencyActions(): EmergencyActionsReturn {
+  const [copySuccess, setCopySuccess] = useState<string>('');
+
+  const handlePhoneCall = (phoneNumber: string): void => {
     const cleanNumber = phoneNumber.replace(/\D/g, '');
 
     if (window.innerWidth > 768) {
@@ -23,7 +38,7 @@ export function useEmergencyActions() {
     }, 300);
   };
 
-  const shareEmergencyInfo = async (userData) => {
+  const shareEmergencyInfo = async (userData: UserEmergencyData): Promise<void> => {
     const shareText = `Emergency alert for ${userData.name}.\nLocation: ${userData.location}\nPhone: ${userData.phone}\nPlease provide assistance immediately.`;
 
     if (navigator.share) {
@@ -43,7 +58,7 @@ export function useEmergencyActions() {
     }
   };
 
-  const fallbackShare = (shareText) => {
+  const fallbackShare = (shareText: string): void => {
     navigator.clipboard
       .writeText(shareText)
       .then(() => {
@@ -57,12 +72,12 @@ export function useEmergencyActions() {
       });
   };
 
-  const getDirections = (location) => {
+  const getDirections = (location: string): void => {
     const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(location)}`;
     window.open(mapsUrl, '_blank');
   };
 
-  const findNearbyHospitals = (location) => {
+  const findNearbyHospitals = (location: string): void => {
     const searchUrl = `https://www.google.com/maps/search/hospitals+near+${encodeURIComponent(location)}`;
     window.open(searchUrl, '_blank');
   };

@@ -2,13 +2,41 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { NODE_API_URL, fetchWithAuth } from '../utils/api';
+import { Memo } from '../types/common.types';
 
-export function useMemos() {
-  const [memos, setMemos] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [saving, setSaving] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+type MemoFilter = 'all' | 'active' | 'completed';
+type MemoSortOrder = 'newest' | 'oldest' | 'alphabetical';
+
+interface MemoResponse extends Memo {
+  Id: number;
+  Text: string;
+  Done: boolean;
+  CreatedAt: string;
+}
+
+interface UseMemosReturn {
+  memos: MemoResponse[];
+  isLoading: boolean;
+  error: string;
+  saving: boolean;
+  isDeleting: boolean;
+  createMemo: (memo: string) => Promise<boolean>;
+  updateMemo: (id: number, text: string) => Promise<boolean>;
+  deleteMemo: (id: number) => Promise<boolean>;
+  toggleDone: (id: number, isDone: boolean) => Promise<boolean>;
+  getFilteredAndSortedMemos: (
+    filter?: MemoFilter,
+    sortOrder?: MemoSortOrder,
+    searchTerm?: string
+  ) => MemoResponse[];
+}
+
+export function useMemos(): UseMemosReturn {
+  const [memos, setMemos] = useState<MemoResponse[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>('');
+  const [saving, setSaving] = useState<boolean>(false);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -51,7 +79,7 @@ export function useMemos() {
     fetchMemos();
   }, [navigate]);
 
-  const createMemo = async (memo) => {
+  const createMemo = async (memo: string): Promise<boolean> => {
     if (memo.trim() === '') {
       toast.info('Please enter some text before saving');
       return false;
@@ -93,9 +121,9 @@ export function useMemos() {
     }
   };
 
-  const updateMemo = async (id, text) => {
+  const updateMemo = async (id: number, text: string): Promise<boolean> => {
     try {
-      const response = await fetchWithAuth(`${NODE_API_URL}/api/memos/${id}`, {
+      const response = await fetchWithAuth<MemoResponse>(`${NODE_API_URL}/api/memos/${id}`, {
         method: 'PUT',
         body: JSON.stringify({ memo: text }),
       });
@@ -110,7 +138,7 @@ export function useMemos() {
     }
   };
 
-  const deleteMemo = async (id) => {
+  const deleteMemo = async (id: number): Promise<boolean> => {
     if (!id) {
       toast.error('Invalid memo ID');
       return false;
@@ -134,7 +162,7 @@ export function useMemos() {
     }
   };
 
-  const toggleDone = async (id, isDone) => {
+  const toggleDone = async (id: number, isDone: boolean): Promise<boolean> => {
     try {
       setMemos((prevMemos) =>
         prevMemos.map((memo) => (memo.Id === id ? { ...memo, Done: isDone } : memo))
@@ -148,15 +176,19 @@ export function useMemos() {
     }
   };
 
-  const getFilteredAndSortedMemos = (filter = 'all', sortOrder = 'newest', searchTerm = '') => {
+  const getFilteredAndSortedMemos = (
+    filter: MemoFilter = 'all',
+    sortOrder: MemoSortOrder = 'newest',
+    searchTerm: string = ''
+  ): MemoResponse[] => {
     const filteredByStatus = memos.filter((memo) => {
       return filter === 'all'
         ? true
         : filter === 'active'
-          ? !memo.Done
-          : filter === 'completed'
-            ? memo.Done
-            : true;
+        ? !memo.Done
+        : filter === 'completed'
+        ? memo.Done
+        : true;
     });
 
     const filteredBySearch = filteredByStatus.filter((memo) =>
@@ -166,15 +198,15 @@ export function useMemos() {
     return sortMemos(filteredBySearch, sortOrder);
   };
 
-  const sortMemos = (memos, sortOrder) => {
+  const sortMemos = (memos: MemoResponse[], sortOrder: MemoSortOrder): MemoResponse[] => {
     switch (sortOrder) {
       case 'oldest':
-        return [...memos].sort((a, b) => new Date(a.CreatedAt) - new Date(b.CreatedAt));
+        return [...memos].sort((a, b) => new Date(a.CreatedAt).getTime() - new Date(b.CreatedAt).getTime());
       case 'alphabetical':
         return [...memos].sort((a, b) => a.Text.localeCompare(b.Text));
       case 'newest':
       default:
-        return [...memos].sort((a, b) => new Date(b.CreatedAt) - new Date(a.CreatedAt));
+        return [...memos].sort((a, b) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime());
     }
   };
 

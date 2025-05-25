@@ -2,23 +2,67 @@ import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { API_ENDPOINTS, fetchWithAuth } from '../utils/api';
 
-export function useEmergencyContacts() {
-  const [contacts, setContacts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [emergencyContacts, setEmergencyContacts] = useState([]);
-  const [contactsLoading, setContactsLoading] = useState(true);
+interface EmergencyContact {
+  Id: number;
+  name: string;
+  phoneNumber: string;
+  relationship: string;
+  email?: string;
+  priority: number;
+  [key: string]: any;
+}
+
+interface EmergencyContactFormData {
+  name: string;
+  phoneNumber: string;
+  relationship: string;
+  email?: string;
+  priority: string | number;
+}
+
+interface EmergencyAlertData {
+  message: string;
+  location: string;
+  medicalInfo: string;
+}
+
+interface AlertResponse {
+  success: boolean;
+  alertsSent?: Array<any>;
+  message?: string;
+}
+
+interface EmergencyContactsReturn {
+  contacts: EmergencyContact[];
+  isLoading: boolean;
+  isSaving: boolean;
+  isDeleting: boolean;
+  fetchContacts: () => Promise<void>;
+  saveContact: (formData: EmergencyContactFormData, editingContactId?: number | null) => Promise<boolean>;
+  deleteContact: (contactId: number) => Promise<boolean>;
+  sendEmergencyAlert: () => Promise<boolean>;
+  sendTestAlert: (contactId: number) => Promise<boolean>;
+  emergencyContacts: EmergencyContact[];
+  contactsLoading: boolean;
+}
+
+export function useEmergencyContacts(): EmergencyContactsReturn {
+  const [contacts, setContacts] = useState<EmergencyContact[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const [emergencyContacts, setEmergencyContacts] = useState<EmergencyContact[]>([]);
+  const [contactsLoading, setContactsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     fetchContacts();
     fetchEmergencyContacts();
   }, []);
 
-  const fetchContacts = async () => {
+  const fetchContacts = async (): Promise<void> => {
     try {
       setIsLoading(true);
-      const data = await fetchWithAuth(API_ENDPOINTS.EMERGENCY_CONTACTS);
+      const data = await fetchWithAuth<EmergencyContact[]>(API_ENDPOINTS.EMERGENCY_CONTACTS);
       setContacts(data || []);
     } catch (error) {
       console.error('Error fetching contacts:', error);
@@ -28,10 +72,10 @@ export function useEmergencyContacts() {
     }
   };
 
-  const fetchEmergencyContacts = async () => {
+  const fetchEmergencyContacts = async (): Promise<void> => {
     try {
       setContactsLoading(true);
-      const data = await fetchWithAuth(API_ENDPOINTS.EMERGENCY_CONTACTS);
+      const data = await fetchWithAuth<EmergencyContact[]>(API_ENDPOINTS.EMERGENCY_CONTACTS);
       setEmergencyContacts(data);
     } catch (error) {
       console.error('Error fetching emergency contacts:', error);
@@ -40,16 +84,16 @@ export function useEmergencyContacts() {
     }
   };
 
-  const saveContact = async (formData, editingContactId = null) => {
+  const saveContact = async (formData: EmergencyContactFormData, editingContactId: number | null = null): Promise<boolean> => {
     setIsSaving(true);
     try {
       const dataToSubmit = {
         ...formData,
-        priority: parseInt(formData.priority, 10),
+        priority: parseInt(formData.priority.toString(), 10),
       };
 
       if (editingContactId) {
-        const updatedContact = await fetchWithAuth(
+        const updatedContact = await fetchWithAuth<EmergencyContact>(
           `${API_ENDPOINTS.EMERGENCY_CONTACTS}/${editingContactId}`,
           {
             method: 'PUT',
@@ -61,7 +105,7 @@ export function useEmergencyContacts() {
         );
         toast.success('Contact updated successfully!');
       } else {
-        const newContact = await fetchWithAuth(API_ENDPOINTS.EMERGENCY_CONTACTS, {
+        const newContact = await fetchWithAuth<EmergencyContact>(API_ENDPOINTS.EMERGENCY_CONTACTS, {
           method: 'POST',
           body: JSON.stringify(dataToSubmit),
         });
@@ -78,7 +122,7 @@ export function useEmergencyContacts() {
     }
   };
 
-  const deleteContact = async (contactId) => {
+  const deleteContact = async (contactId: number): Promise<boolean> => {
     if (!contactId) {
       toast.error('Invalid contact ID');
       return false;
@@ -99,16 +143,16 @@ export function useEmergencyContacts() {
     }
   };
 
-  const sendEmergencyAlert = async () => {
+  const sendEmergencyAlert = async (): Promise<boolean> => {
     try {
       setIsLoading(true);
-      const alertData = {
+      const alertData: EmergencyAlertData = {
         message: 'Emergency alert triggered from LifeGuard app',
         location: 'Unavailable',
         medicalInfo: 'Please contact immediately',
       };
 
-      const response = await fetchWithAuth(API_ENDPOINTS.EMERGENCY_ALERTS, {
+      const response = await fetchWithAuth<AlertResponse>(API_ENDPOINTS.EMERGENCY_ALERTS, {
         method: 'POST',
         body: JSON.stringify(alertData),
       });
@@ -129,9 +173,9 @@ export function useEmergencyContacts() {
     }
   };
 
-  const sendTestAlert = async (contactId) => {
+  const sendTestAlert = async (contactId: number): Promise<boolean> => {
     try {
-      const response = await fetchWithAuth(API_ENDPOINTS.EMERGENCY_TEST_ALERT(contactId), {
+      const response = await fetchWithAuth<AlertResponse>(API_ENDPOINTS.EMERGENCY_TEST_ALERT(contactId.toString()), {
         method: 'POST',
       });
 

@@ -7,11 +7,67 @@ import {
   calculateIdealWeight,
 } from '../utils/healthMetricsUtils';
 import { API_ENDPOINTS } from '../utils/api';
+import { Dispatch, SetStateAction } from 'react';
+
+interface FormData {
+  age: string | number;
+  weight: string | number;
+  height: string | number;
+  gender: 'male' | 'female';
+  activityLevel: 'sedentary' | 'light' | 'moderate' | 'active' | 'veryActive';
+  goal: 'lose' | 'maintain' | 'gain';
+}
+
+interface Metrics {
+  bmr: number;
+  tdee: number;
+  macros: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+  };
+  idealWeight: {
+    min: number;
+    max: number;
+  };
+}
+
+interface MetricHistory {
+  id: string;
+  Age: number;
+  Weight: number;
+  Height: number;
+  Gender: 'male' | 'female';
+  ActivityLevel: string;
+  Goal: string;
+  BMR: number;
+  TDEE: number;
+  CreatedAt: string;
+  [key: string]: any;
+}
+
+interface UseHealthMetricsDataParams {
+  formData: FormData;
+  setFormData: Dispatch<SetStateAction<FormData>>;
+  setMetrics: Dispatch<SetStateAction<Metrics>>;
+  setShowResults: Dispatch<SetStateAction<boolean>>;
+  unit: 'imperial' | 'metric';
+  setMetricsHistory: Dispatch<SetStateAction<MetricHistory[]>>;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
+}
+
+interface UseHealthMetricsDataReturn {
+  fetchLatestMetrics: () => Promise<boolean>;
+  fetchMetricsHistory: () => Promise<boolean>;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  calculateMetrics: () => Promise<void>;
+}
 
 /**
  * Custom hook to handle health metrics data operations
- * @param {Object} params - Parameters object
- * @returns {Object} Data manipulation functions
+ * @param params - Parameters object containing state setters and form data
+ * @returns Data manipulation functions
  */
 const useHealthMetricsData = ({
   formData,
@@ -21,30 +77,30 @@ const useHealthMetricsData = ({
   unit,
   setMetricsHistory,
   setIsLoading,
-}) => {
+}: UseHealthMetricsDataParams): UseHealthMetricsDataReturn => {
   /**
    * Fetch the latest metrics from API
    */
-  const fetchLatestMetrics = async () => {
+  const fetchLatestMetrics = async (): Promise<boolean> => {
     try {
-      const response = await fetchWithAuth(API_ENDPOINTS.HEALTH_METRICS.LATEST);
+      const response = await fetchWithAuth<MetricHistory>(API_ENDPOINTS.HEALTH_METRICS.LATEST);
       if (response) {
         setFormData((prev) => ({
           ...prev,
           age: response.Age || '',
           weight: response.Weight || '',
           height: response.Height || '',
-          gender: response.Gender || 'male',
-          activityLevel: response.ActivityLevel || 'sedentary',
-          goal: response.Goal || 'maintain',
+          gender: (response.Gender as 'male' | 'female') || 'male',
+          activityLevel: response.ActivityLevel as FormData['activityLevel'] || 'sedentary',
+          goal: response.Goal as FormData['goal'] || 'maintain',
         }));
 
         if (response.BMR && response.TDEE) {
           setMetrics({
             bmr: response.BMR,
             tdee: response.TDEE,
-            macros: calculateMacros(response.TDEE, response.Goal),
-            idealWeight: calculateIdealWeight(response.Height, response.Gender),
+            macros: calculateMacros(response.TDEE, response.Goal as FormData['goal']),
+            idealWeight: calculateIdealWeight(response.Height, response.Gender as 'male' | 'female'),
           });
           setShowResults(true);
         }
@@ -59,9 +115,9 @@ const useHealthMetricsData = ({
   /**
    * Fetch metrics history from API
    */
-  const fetchMetricsHistory = async () => {
+  const fetchMetricsHistory = async (): Promise<boolean> => {
     try {
-      const response = await fetchWithAuth(API_ENDPOINTS.HEALTH_METRICS.HISTORY);
+      const response = await fetchWithAuth<MetricHistory[]>(API_ENDPOINTS.HEALTH_METRICS.HISTORY);
       if (Array.isArray(response)) {
         setMetricsHistory(response);
       } else {
@@ -78,7 +134,7 @@ const useHealthMetricsData = ({
   /**
    * Handle form input changes
    */
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -90,7 +146,7 @@ const useHealthMetricsData = ({
   /**
    * Calculate and save metrics
    */
-  const calculateMetrics = async () => {
+  const calculateMetrics = async (): Promise<void> => {
     if (!formData.age || !formData.weight || !formData.height) {
       toast.info('Please fill in all fields');
       return;
