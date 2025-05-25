@@ -1,9 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import PropTypes from 'prop-types';
 
-export const BackButton = ({ text, to, isDarkMode }) => {
+interface BackButtonProps {
+  text: string;
+  to: string;
+  isDarkMode?: boolean;
+}
+
+export const BackButton: React.FC<BackButtonProps> = ({ text, to, isDarkMode = false }) => {
   return (
     <div className="mb-8">
       <Link
@@ -19,16 +24,6 @@ export const BackButton = ({ text, to, isDarkMode }) => {
       </Link>
     </div>
   );
-};
-
-BackButton.propTypes = {
-  text: PropTypes.string.isRequired,
-  to: PropTypes.string.isRequired,
-  isDarkMode: PropTypes.bool,
-};
-
-BackButton.defaultProps = {
-  isDarkMode: false,
 };
 
 export default BackButton;

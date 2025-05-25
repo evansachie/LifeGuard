@@ -1,8 +1,21 @@
 import React from 'react';
 import { FaBluetooth, FaBluetoothB } from 'react-icons/fa';
 import Spinner from '../Spinner/Spinner';
+import { BLEDevice } from '../../types/ble.types';
 
-const BluetoothButton = ({ bleDevice, isConnecting, connectToDevice, disconnectDevice }) => {
+interface BluetoothButtonProps {
+  bleDevice: BLEDevice | null;
+  isConnecting: boolean;
+  connectToDevice: () => void | Promise<void>;
+  disconnectDevice: () => void | Promise<void>;
+}
+
+const BluetoothButton: React.FC<BluetoothButtonProps> = ({ 
+  bleDevice, 
+  isConnecting, 
+  connectToDevice, 
+  disconnectDevice 
+}) => {
   return (
     <div className="ble-connect-button">
       {isConnecting ? (

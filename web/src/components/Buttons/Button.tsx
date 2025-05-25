@@ -1,4 +1,13 @@
-export default function Button({ text, isLoading, type = 'submit', onClick }) {
+import React from 'react';
+
+interface ButtonProps {
+  text: string;
+  isLoading?: boolean;
+  type?: 'submit' | 'button' | 'reset';
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+}
+
+const Button: React.FC<ButtonProps> = ({ text, isLoading = false, type = 'submit', onClick }) => {
   return (
     <button
       type={type}
@@ -18,4 +27,6 @@ export default function Button({ text, isLoading, type = 'submit', onClick }) {
       )}
     </button>
   );
-}
+};
+
+export default Button;
