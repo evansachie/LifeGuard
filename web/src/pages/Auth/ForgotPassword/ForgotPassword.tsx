@@ -6,13 +6,14 @@ import { Logo } from '../../../components/Logo/Logo';
 import './ForgotPassword.css';
 import ForgotPasswordForm from '../../../components/Auth/ForgotPasswordForm';
 import { requestPasswordReset } from '../../../utils/auth';
+import { AuthPageProps } from '../../../types/common.types';
 
 // Custom hook to manage form state and submission
 const usePasswordResetForm = () => {
-  const [email, setEmail] = React.useState('');
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [email, setEmail] = React.useState<string>('');
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -20,7 +21,7 @@ const usePasswordResetForm = () => {
       await requestPasswordReset(email);
       toast.success('Password reset instructions sent to your email');
       setEmail('');
-    } catch (error) {
+    } catch (error: any) {
       const errorMessage = error.message || 'Failed to process request';
       toast.error(errorMessage);
       console.error('Password reset error:', error);
@@ -37,7 +38,7 @@ const usePasswordResetForm = () => {
   };
 };
 
-export default function ForgotPassword({ isDarkMode, toggleTheme }) {
+const ForgotPassword: React.FC<AuthPageProps> = ({ isDarkMode, toggleTheme }) => {
   const formProps = usePasswordResetForm();
 
   return (
@@ -53,7 +54,7 @@ export default function ForgotPassword({ isDarkMode, toggleTheme }) {
           <Logo />
           <h2 className="forgot-password-heading">Forgot Password?</h2>
           <p className="forgot-password-subheading">
-            Enter your email address and we&apos;ll send you a link to reset your password.
+            Enter your email address and we'll send you a link to reset your password.
           </p>
 
           <ForgotPasswordForm {...formProps} />
@@ -61,4 +62,6 @@ export default function ForgotPassword({ isDarkMode, toggleTheme }) {
       </div>
     </div>
   );
-}
+};
+
+export default ForgotPassword;

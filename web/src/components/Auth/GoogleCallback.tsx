@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { handleGoogleCallback } from '../../utils/auth';
 import { toast } from 'react-toastify';
 
-const GoogleCallback = () => {
+const GoogleCallback: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const completeAuth = async () => {
+    const completeAuth = async (): Promise<void> => {
       try {
         // Process the callback data from URL params
         await handleGoogleCallback();
@@ -26,8 +26,8 @@ const GoogleCallback = () => {
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="text-center">
-        <div className="loader"></div>
-        <p className="mt-4">Completing Google sign-in...</p>
+        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+        <p className="mt-4 text-gray-600 dark:text-gray-300">Completing Google sign-in...</p>
       </div>
     </div>
   );

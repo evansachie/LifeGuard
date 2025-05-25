@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import signupIllustration from '../../../assets/auth/signupIllustration.svg';
@@ -10,21 +10,22 @@ import { validateSignUpForm } from '../../../utils/validateForm';
 import ThemeToggle from '../../../contexts/ThemeToggle';
 import { Logo } from '../../../components/Logo/Logo';
 import SignUpForm from '../../../components/Auth/SignUpForm';
+import { AuthPageProps, SignUpFormHook } from '../../../types/common.types';
 import './SignUp.css';
 
 // Custom hook to manage signup state and logic
-const useSignUp = () => {
-  const [formData, setFormData] = React.useState({
+const useSignUp = (): SignUpFormHook => {
+  const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
   });
-  const [errors, setErrors] = React.useState({});
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
     setFormData((prevState) => ({ ...prevState, [name]: value }));
 
@@ -34,7 +35,7 @@ const useSignUp = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     const { isValid, errors } = validateSignUpForm(formData);
 
@@ -61,7 +62,7 @@ const useSignUp = () => {
           navigate('/log-in');
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       const errorMessage = error.message || 'Registration failed';
       toast.error(errorMessage);
       setErrors((prev) => ({ ...prev, submit: errorMessage }));
@@ -71,12 +72,12 @@ const useSignUp = () => {
     }
   };
 
-  const handleGoogleLogin = async (e) => {
+  const handleGoogleLogin = async (e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
     e.preventDefault();
     setIsLoading(true);
     try {
       await initiateGoogleLogin();
-    } catch (error) {
+    } catch (error: any) {
       toast.error(error.message);
       console.error('Google login error:', error);
       setErrors((prev) => ({ ...prev, submit: error.message }));
@@ -95,20 +96,24 @@ const useSignUp = () => {
   };
 };
 
-export default function SignUp({ isDarkMode, toggleTheme }) {
+const SignUp: React.FC<AuthPageProps> = ({ isDarkMode, toggleTheme }) => {
   const signUpProps = useSignUp();
+  
   const signupSlides = [
     {
       image: signupIllustration,
       text: 'Track your runs and outdoor activities with real-time health monitoring.',
+      alt: 'Running activity illustration'
     },
     {
       image: signupIllustration2,
       text: 'Follow personalized workout routines tailored to your fitness goals.',
+      alt: 'Workout routines illustration'
     },
     {
       image: signupIllustration3,
       text: 'Measure your progress with detailed performance analytics and activity tracking.',
+      alt: 'Performance analytics illustration'
     },
   ];
 
@@ -124,9 +129,11 @@ export default function SignUp({ isDarkMode, toggleTheme }) {
         <div className="signup-form-card">
           <Logo />
           <h2 className="signup-heading">Start your journey!</h2>
-          <SignUpForm {...signUpProps} />
+          <SignUpForm {...signUpProps} isDarkMode={isDarkMode} />
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default SignUp;

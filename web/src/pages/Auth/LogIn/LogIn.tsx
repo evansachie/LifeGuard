@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import loginIllustration from '../../../assets/auth/loginIllustration.svg';
@@ -10,19 +10,20 @@ import ThemeToggle from '../../../contexts/ThemeToggle';
 import { Logo } from '../../../components/Logo/Logo';
 import LoginForm from '../../../components/Auth/LoginForm';
 import './LogIn.css';
+import { AuthPageProps, LoginFormHook } from '../../../types/common.types';
 
 // Custom hook to manage authentication state and logic
-const useAuth = () => {
-  const [formData, setFormData] = React.useState({ email: '', password: '' });
-  const [isLoading, setIsLoading] = React.useState(false);
+const useAuth = (): LoginFormHook => {
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -36,7 +37,7 @@ const useAuth = () => {
 
       toast.success('Login successful!');
       navigate('/dashboard');
-    } catch (error) {
+    } catch (error: any) {
       const errorMessage = error.message || 'Login failed';
       toast.error(errorMessage);
       console.error('Login error:', error);
@@ -45,12 +46,12 @@ const useAuth = () => {
     }
   };
 
-  const handleGoogleLogin = async (e) => {
+  const handleGoogleLogin = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsLoading(true);
     try {
       await initiateGoogleLogin();
-    } catch (error) {
+    } catch (error: any) {
       toast.error(error.message);
       console.error('Google login error:', error);
     } finally {
@@ -67,20 +68,24 @@ const useAuth = () => {
   };
 };
 
-export default function LogIn({ isDarkMode, toggleTheme }) {
+const LogIn: React.FC<AuthPageProps> = ({ isDarkMode, toggleTheme }) => {
   const authProps = useAuth();
+  
   const loginSlides = [
     {
       image: loginIllustration,
       text: 'Track your fitness routines and exercise progress with personalized feedback.',
+      alt: 'Fitness tracking illustration'
     },
     {
       image: loginIllustration2,
       text: 'Access guided meditation and sleep tracking for better rest quality.',
+      alt: 'Meditation and sleep tracking illustration'
     },
     {
       image: loginIllustration3,
       text: 'Monitor your workout metrics and health activities in one comprehensive dashboard.',
+      alt: 'Health dashboard illustration'
     },
   ];
 
@@ -96,9 +101,11 @@ export default function LogIn({ isDarkMode, toggleTheme }) {
         <div className="login-form-card">
           <Logo />
           <h2 className="login-heading">Welcome Back</h2>
-          <LoginForm {...authProps} />
+          <LoginForm {...authProps} isDarkMode={isDarkMode} />
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default LogIn;

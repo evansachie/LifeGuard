@@ -1,10 +1,30 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { FiMail, FiLock } from 'react-icons/fi'; 
 import Button from '../Buttons/Button';
 import InputField from './InputField';
 import OAuthButton from './OAuthButton';
 
-const LoginForm = ({ formData, isLoading, handleChange, handleSubmit, handleGoogleLogin }) => {
+interface LoginFormProps {
+  formData: {
+    email: string;
+    password: string;
+  };
+  isLoading: boolean;
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleGoogleLogin: (e: React.MouseEvent<HTMLButtonElement>) => Promise<void>;
+  isDarkMode?: boolean;
+}
+
+const LoginForm: React.FC<LoginFormProps> = ({ 
+  formData, 
+  isLoading, 
+  handleChange, 
+  handleSubmit, 
+  handleGoogleLogin,
+  isDarkMode = false
+}) => {
   return (
     <>
       <form onSubmit={handleSubmit}>
@@ -14,7 +34,8 @@ const LoginForm = ({ formData, isLoading, handleChange, handleSubmit, handleGoog
           value={formData.email}
           onChange={handleChange}
           placeholder="Email"
-          required
+          icon={FiMail}
+          isDarkMode={isDarkMode}
         />
 
         <InputField
@@ -23,7 +44,8 @@ const LoginForm = ({ formData, isLoading, handleChange, handleSubmit, handleGoog
           value={formData.password}
           onChange={handleChange}
           placeholder="Password"
-          required
+          icon={FiLock}
+          isDarkMode={isDarkMode}
         />
 
         <div className="forgot-password">
@@ -35,11 +57,13 @@ const LoginForm = ({ formData, isLoading, handleChange, handleSubmit, handleGoog
         <Button text="Log in" isLoading={isLoading} />
       </form>
 
-      <div className="my-4 text-center">
-        <span className="px-2 text-gray-500">or</span>
+      <div className="my-6 flex items-center">
+        <div className="flex-1 h-px bg-gray-300 dark:bg-gray-700"></div>
+        <span className="px-4 text-gray-500 !dark:text-gray-400 !dark:bg-gray-900">OR</span>
+        <div className="flex-1 h-px bg-gray-300 dark:bg-gray-700"></div>
       </div>
 
-      <OAuthButton onClick={handleGoogleLogin} isLoading={isLoading} />
+      <OAuthButton onClick={handleGoogleLogin} isLoading={isLoading} isDarkMode={isDarkMode} />
 
       <p className="already">
         Don&apos;t have an account?{' '}

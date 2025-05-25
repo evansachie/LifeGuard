@@ -2,7 +2,17 @@ import React from 'react';
 import Button from '../Buttons/Button';
 import OTPInput from './OTPInput';
 
-const OTPVerificationForm = ({
+interface OTPVerificationFormProps {
+  otp: string[];
+  setOtp: (otp: string[]) => void;
+  error: string;
+  isLoading: boolean;
+  timeLeft: number;
+  handleResendOTP: () => void;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+}
+
+const OTPVerificationForm: React.FC<OTPVerificationFormProps> = ({
   otp,
   setOtp,
   error,
