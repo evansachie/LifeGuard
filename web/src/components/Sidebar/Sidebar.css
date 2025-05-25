@@ -16,7 +16,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 1000;
+    z-index: 900; /* Same as toggle button */
     transform: translateX(0);
 }
 
@@ -40,7 +40,7 @@
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    z-index: 1001;
+    z-index: 900; /* Lower than command palette (1000) */
     box-shadow: 3px 0 6px rgba(0, 0, 0, 0.1);
     opacity: 0.8;
 }
