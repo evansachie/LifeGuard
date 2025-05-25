@@ -176,8 +176,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
 
   const handleSelect = useCallback(
     (item: CommandItem) => {
+      try {
+        item.action();
+      } catch (error) {
+        console.error("Error executing command:", error);
+      }
+      
       setOpen(false);
-      item.action();
 
       setRecentSearches((prev) => {
         const newSearches = [item, ...prev.filter((i) => i.id !== item.id)].slice(0, 5);
