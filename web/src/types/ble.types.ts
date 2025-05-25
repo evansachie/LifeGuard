@@ -1,5 +1,3 @@
-import { HealthMetrics } from "./api.types";
-
 export interface BLEDevice {
   id: string;
   name: string;
@@ -20,54 +18,50 @@ export interface SensorReading {
 }
 
 export interface EnvironmentalData {
-  temperature: number;
-  humidity: number;
-  pressure: number;
-  airQuality: {
-    aqi: number;
-    co2: number;
-    voc: number;
-    pm25: number;
-    pm10: number;
-  };
-  timestamp: string;
-  location?: {
-    latitude: number;
-    longitude: number;
-  };
+  temperature?: number;
+  humidity?: number;
+  pressure?: number;
+  co2?: number;
+  gas?: number;
 }
 
 export interface MotionData {
-  accelerometer: {
+  steps?: number;
+  activity?: string;
+  accelerometer?: {
     x: number;
     y: number;
     z: number;
   };
-  gyroscope: {
+  gyroscope?: {
     x: number;
     y: number;
     z: number;
   };
-  magnetometer: {
+  magnetometer?: {
     x: number;
     y: number;
     z: number;
   };
-  activity: 'stationary' | 'walking' | 'running' | 'cycling' | 'unknown';
-  stepCount: number;
-  fallDetected: boolean;
-  timestamp: string;
+  fallDetected?: boolean;
+  timestamp?: string;
+}
+
+export interface HealthMetrics {
+  heartRate?: number;
+}
+
+export interface SensorData {
+  environmental?: EnvironmentalData;
+  motion?: MotionData;
+  health?: HealthMetrics;
 }
 
 export interface BLEContextType {
   devices: BLEDevice[];
   isScanning: boolean;
   connectedDevice: BLEDevice | null;
-  latestSensorData: {
-    environmental?: EnvironmentalData;
-    motion?: MotionData;
-    health?: HealthMetrics;
-  };
+  latestSensorData: SensorData;
   connect: (deviceId: string) => Promise<void>;
   disconnect: (deviceId: string) => Promise<void>;
   startScanning: () => void;
@@ -77,11 +71,7 @@ export interface BLEContextType {
   // Backward compatibility aliases for Dashboard
   bleDevice: BLEDevice | null;
   isConnecting: boolean;
-  sensorData: {
-    environmental?: EnvironmentalData;
-    motion?: MotionData;
-    health?: HealthMetrics;
-  };
+  sensorData: SensorData;
   connectToDevice: (deviceId: string) => Promise<void>;
   disconnectDevice: (deviceId: string) => Promise<void>;
 }

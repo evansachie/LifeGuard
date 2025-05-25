@@ -1,4 +1,18 @@
-const TabNavigation = ({ activeTab, onTabChange, tabs }) => (
+import React from 'react';
+
+export interface Tab {
+  id: string;
+  icon: React.ReactNode;
+  label: string;
+}
+
+interface TabNavigationProps {
+  activeTab: string;
+  onTabChange: (tabId: string) => void;
+  tabs: Tab[];
+}
+
+const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onTabChange, tabs }) => (
   <div className="tabs">
     {tabs.map((tab) => (
       <button

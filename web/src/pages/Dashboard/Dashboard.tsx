@@ -110,6 +110,7 @@ const Dashboard: React.FC<DashboardProps> = ({ isDarkMode }) => {
   const { userData, isLoading: dataLoading } = useUserData();
   const { quote, isLoading: quotesLoading } = useQuoteData();
   const { memos: savedMemos, isLoading: memosLoading } = useMemoData();
+  // Pass the BLE sensor data directly to usePollutionData
   const pollutionData = usePollutionData(sensorData);
   const { showTour: showDashboardTour, handleTourExit } = useDashboardTour();
 
