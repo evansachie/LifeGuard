@@ -2,11 +2,7 @@ import React, { memo } from 'react';
 import { FaQuoteLeft, FaSync } from 'react-icons/fa';
 import Spinner from '../Spinner/Spinner';
 import DataCard from './DataCard';
-
-interface Quote {
-  quote: string;
-  author: string;
-}
+import { Quote } from '../../types/common.types';
 
 interface QuoteCardProps {
   quote?: Quote | null;
@@ -30,7 +26,7 @@ const QuoteCard: React.FC<QuoteCardProps> = ({ quote, loading, isDarkMode, onRef
           </div>
         ) : quote ? (
           <>
-            <p className="quote-text">&quot;{quote.quote}&quot;</p>
+            <p className="quote-text">&quot;{quote.text}&quot;</p>
             <p className="quote-author">– {quote.author}</p>
           </>
         ) : (
