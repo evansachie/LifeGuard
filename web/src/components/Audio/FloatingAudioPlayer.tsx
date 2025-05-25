@@ -3,18 +3,31 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaPlay, FaPause, FaVolumeUp, FaVolumeMute } from 'react-icons/fa';
 import { useAudioPlayer } from '../../contexts/AudioPlayerContext';
 import { Link } from 'react-router-dom';
-import getBackgroundStyle from '../../utils/getBackgroundStyle';
+import getBackgroundStyle, { CategoryType } from '../../utils/getBackgroundStyle';
 
-const FloatingAudioPlayer = ({ isDarkMode, activeCategory = 'nature' }) => {
+interface FloatingAudioPlayerProps {
+  isDarkMode: boolean;
+  activeCategory?: CategoryType;
+}
+
+interface SoundObject {
+  name: string;
+  [key: string]: any;
+}
+
+const FloatingAudioPlayer: React.FC<FloatingAudioPlayerProps> = ({ 
+  isDarkMode, 
+  activeCategory = 'nature' 
+}) => {
   const { currentSound, isPlaying, setIsPlaying, volume, setVolume, audioRef } = useAudioPlayer();
 
   if (!currentSound) return null;
 
-  const soundObject = typeof currentSound === 'object' ? currentSound : { name: currentSound };
+  const soundObject: SoundObject = typeof currentSound === 'object' ? currentSound : { name: currentSound };
 
   const backgroundStyle = getBackgroundStyle(soundObject, activeCategory);
 
-  const handlePlayPause = () => {
+  const handlePlayPause = (): void => {
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.pause();

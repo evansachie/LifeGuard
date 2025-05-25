@@ -6,10 +6,10 @@ interface BackgroundStyle {
   backgroundPosition: string;
 }
 
-type CategoryType = 'nature' | 'meditation' | 'rain' | 'ocean' | 'forest' | 'space' | 'bowls' | 'binaural' | 'flute';
+export type CategoryType = 'meditation' | 'nature' | 'focus' | 'sleep';
 
-const getBackgroundStyle = (_sound: any, activeCategory: CategoryType = 'nature'): BackgroundStyle => {
-  const bg = categoryBackgrounds[activeCategory] || categoryBackgrounds.nature;
+const getBackgroundStyle = (sound: any, category: CategoryType = 'nature'): BackgroundStyle => {
+  const bg = categoryBackgrounds[category] || categoryBackgrounds.nature;
   return {
     backgroundImage: `${bg.gradient}, url(${bg.image}?auto=format&fit=crop&w=600&q=80)`,
     backgroundSize: 'cover',
