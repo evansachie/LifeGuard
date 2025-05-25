@@ -22,6 +22,7 @@ const AccessibleDropdown: React.FC<AccessibleDropdownProps> = ({ isOpen, onToggl
       onClick={onToggle}
       onKeyDown={handleKeyDown}
       aria-expanded={isOpen}
+      aria-haspopup="true"
       aria-label={ariaLabel}
       type="button"
     >

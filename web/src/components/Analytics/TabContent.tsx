@@ -19,9 +19,6 @@ const TabContent: React.FC<TabContentProps> = ({
   onDateRangeChange,
   isDarkMode = false
 }) => {
-  // Add console log to debug isDarkMode value
-  console.log('TabContent isDarkMode:', isDarkMode);
-  
   const chartOptions = { responsive: true };
 
   const tabComponents = {

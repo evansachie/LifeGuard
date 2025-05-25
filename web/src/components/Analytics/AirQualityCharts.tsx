@@ -14,8 +14,6 @@ const AirQualityCharts: React.FC<AirQualityChartsProps> = ({
   chartOptions,
   isDarkMode = false
 }) => {
-  console.log('AirQualityCharts isDarkMode:', isDarkMode);
-  
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
       <div className={`chart-container ${isDarkMode ? 'dark-mode-chart bg-gray-800' : 'light-mode-chart bg-white'} rounded-xl p-6 shadow-md h-[300px] overflow-hidden flex flex-col justify-between`}>

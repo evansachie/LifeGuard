@@ -14,7 +14,6 @@ const EnvironmentCharts: React.FC<EnvironmentChartsProps> = ({
   chartOptions,
   isDarkMode = false
 }) => {
-  console.log('EnvironmentCharts isDarkMode:', isDarkMode);
   
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">

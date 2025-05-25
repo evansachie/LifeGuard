@@ -111,7 +111,14 @@
 
 .nav-button.signup:hover {
     background: #2B5BBF;
+    color: #407CE2;
+    border: 2px solid #407CE2;
     transform: translateY(-2px);
+}
+
+.dark-mode .nav-button.signup:hover {
+    color: #e0e0e0;
+    border-color: #e0e0e0;
 }
 
 .theme-toggle {

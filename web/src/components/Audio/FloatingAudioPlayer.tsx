@@ -12,7 +12,7 @@ interface FloatingAudioPlayerProps {
 
 interface SoundObject {
   name: string;
-  [key: string]: any;
+  [key: string]: unknown; // Allow additional properties with unknown type for better type safety
 }
 
 const FloatingAudioPlayer: React.FC<FloatingAudioPlayerProps> = ({ 
