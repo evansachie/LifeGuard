@@ -1,54 +1,42 @@
-type AnimationPhase = 'inhale' | 'hold' | 'exhale' | 'holdAfterExhale';
-
-interface BreathingPattern {
-  inhale: number;
-  hold: number;
-  exhale: number;
-  holdAfterExhale?: number;
-}
-
-interface AnimationParams {
-  phase: AnimationPhase;
-  pattern: BreathingPattern;
-}
+type BreathPhase = 'inhale' | 'hold' | 'exhale' | 'rest';
 
 interface AnimationProps {
-  scale: number | number[];
+  scale: number;
   duration: number;
-  backgroundColor: string | string[];
+  backgroundColor: string;
 }
 
-export const getAnimationProps = ({ phase, pattern }: AnimationParams): AnimationProps => {
+export const getAnimationProps = (phase: BreathPhase): AnimationProps => {
   switch (phase) {
     case 'inhale':
       return {
-        scale: [1, 2.5],
-        duration: pattern.inhale,
-        backgroundColor: ['#4CAF50', '#81C784'],
+        scale: 1.5,
+        duration: 4,
+        backgroundColor: 'rgba(66, 153, 225, 0.6)', // blue
       };
     case 'hold':
       return {
-        scale: 2.5,
-        duration: pattern.hold,
-        backgroundColor: '#81C784',
+        scale: 1.5,
+        duration: 7,
+        backgroundColor: 'rgba(72, 187, 120, 0.6)', // green
       };
     case 'exhale':
       return {
-        scale: [2.5, 1],
-        duration: pattern.exhale,
-        backgroundColor: ['#81C784', '#4CAF50'],
+        scale: 1.0,
+        duration: 8,
+        backgroundColor: 'rgba(237, 137, 54, 0.6)', // orange
       };
-    case 'holdAfterExhale':
+    case 'rest':
       return {
-        scale: 1,
-        duration: pattern.holdAfterExhale || 0,
-        backgroundColor: '#4CAF50',
+        scale: 1.0,
+        duration: 3,
+        backgroundColor: 'rgba(113, 128, 150, 0.6)', // gray
       };
     default:
       return {
-        scale: 1,
-        duration: 0,
-        backgroundColor: '#4CAF50',
+        scale: 1.0,
+        duration: 4,
+        backgroundColor: 'rgba(66, 153, 225, 0.6)', // blue
       };
   }
 };

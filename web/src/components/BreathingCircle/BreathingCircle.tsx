@@ -4,12 +4,22 @@ import { FaTimes } from 'react-icons/fa';
 import { getAnimationProps } from '../../utils/getAnimationProps';
 import './BreathingCircle.css';
 
-const BreathingCircle = ({ phase, onComplete, onClose }) => {
-  const { scale, duration, backgroundColor } = getAnimationProps();
+interface BreathingCircleProps {
+  phase: 'inhale' | 'hold' | 'exhale' | 'rest';
+  onComplete: () => void;
+  onClose: () => void;
+}
+
+const BreathingCircle: React.FC<BreathingCircleProps> = ({ phase, onComplete, onClose }) => {
+  const { scale, duration, backgroundColor } = getAnimationProps(phase);
 
   return (
     <div className="breathing-circle-container">
-      <button className="close-button" onClick={onClose}>
+      <button 
+        className="close-button" 
+        onClick={onClose}
+        aria-label="Close breathing exercise"
+      >
         <FaTimes />
       </button>
       <div className="breathing-instruction">
@@ -37,8 +47,7 @@ const BreathingCircle = ({ phase, onComplete, onClose }) => {
         }}
       >
         <motion.div className="circle-ripple" />
-      </motion.div>
-      <div className="timer-display">
+        
         <motion.span
           key={`timer-${phase}`}
           initial={{ opacity: 0 }}
@@ -47,7 +56,7 @@ const BreathingCircle = ({ phase, onComplete, onClose }) => {
         >
           {duration}s
         </motion.span>
-      </div>
+      </motion.div>
     </div>
   );
 };
