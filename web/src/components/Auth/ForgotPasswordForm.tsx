@@ -26,6 +26,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
           type="email"
           name="email"
           value={email}
+          required
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
           placeholder="Email"
           icon={FiMail}

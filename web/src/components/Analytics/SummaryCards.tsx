@@ -19,7 +19,8 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ historicalData, isDarkMode 
       <div className={`summary-card rounded-xl p-5 shadow-md ${isDarkMode ? 'bg-gray-800 text-gray-200' : 'bg-white text-gray-800'}`}>
         <div className="card-header flex justify-between items-center mb-3">
           <h3 className="text-xl font-medium">Temperature</h3>
-          <span className="icon-temp text-2xl">🌡️</span>
+          <span className="icon-temp text-2xl" aria-hidden="true">🌡️</span>
+          <span className="sr-only">Temperature icon</span>
         </div>
         <p className="value text-3xl font-bold">{tempStats.current.toFixed(1)}°C</p>
         <div className="stats-grid grid grid-cols-3 gap-4 my-4">
@@ -44,7 +45,8 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ historicalData, isDarkMode 
       <div className={`summary-card rounded-xl p-5 shadow-md ${isDarkMode ? 'bg-gray-800 text-gray-200' : 'bg-white text-gray-800'}`}>
         <div className="card-header flex justify-between items-center mb-3">
           <h3 className="text-xl font-medium">Air Quality</h3>
-          <span className="icon-air text-2xl">💨</span>
+          <span className="icon-air text-2xl" aria-hidden="true">💨</span>
+          <span className="sr-only">Air quality icon</span>
         </div>
         <p className="value text-3xl font-bold" style={{ color: airQuality.color }}>
           {airQuality.status}
