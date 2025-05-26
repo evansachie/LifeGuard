@@ -1,10 +1,8 @@
 export interface BLEDevice {
   id: string;
   name: string;
+  deviceId?: string;
   connected: boolean;
-  batteryLevel?: number;
-  lastSeen: string;
-  deviceType: 'nicla' | 'heart_rate' | 'temperature' | 'environmental';
 }
 
 export interface SensorReading {
@@ -23,28 +21,21 @@ export interface EnvironmentalData {
   pressure?: number;
   co2?: number;
   gas?: number;
+  airQuality?: {
+    aqi: number;
+    co2: number;
+    voc: number;
+    pm25: number;
+    pm10: number;
+  };
 }
 
 export interface MotionData {
   steps?: number;
+  stepCount?: number;
   activity?: string;
-  accelerometer?: {
-    x: number;
-    y: number;
-    z: number;
-  };
-  gyroscope?: {
-    x: number;
-    y: number;
-    z: number;
-  };
-  magnetometer?: {
-    x: number;
-    y: number;
-    z: number;
-  };
-  fallDetected?: boolean;
-  timestamp?: string;
+  calories?: number;
+  distance?: number;
 }
 
 export interface HealthMetrics {
@@ -54,24 +45,14 @@ export interface HealthMetrics {
 export interface SensorData {
   environmental?: EnvironmentalData;
   motion?: MotionData;
-  health?: HealthMetrics;
+  timestamp?: string;
 }
 
 export interface BLEContextType {
-  devices: BLEDevice[];
-  isScanning: boolean;
-  connectedDevice: BLEDevice | null;
-  latestSensorData: SensorData;
-  connect: (deviceId: string) => Promise<void>;
-  disconnect: (deviceId: string) => Promise<void>;
-  startScanning: () => void;
-  stopScanning: () => void;
-  sendCommand: (deviceId: string, command: string) => Promise<void>;
-  
-  // Backward compatibility aliases for Dashboard
   bleDevice: BLEDevice | null;
   isConnecting: boolean;
-  sensorData: SensorData;
+  sensorData: SensorData | null;
   connectToDevice: (deviceId: string) => Promise<void>;
   disconnectDevice: (deviceId: string) => Promise<void>;
+  scanForDevices?: () => Promise<BLEDevice[]>;
 }
