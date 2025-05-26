@@ -3,8 +3,18 @@ import { AnimatePresence } from 'framer-motion';
 import EmptyState from '../../assets/empty-state.svg';
 import Spinner from '../Spinner/Spinner';
 import ContactCard from './ContactCard';
+import { Contact } from '../../types/contact.types';
 
-const ContactList = ({
+interface ContactListProps {
+  contacts: Contact[];
+  isLoading: boolean;
+  onEdit: (contact: Contact) => void;
+  onDelete: (contact: Contact) => void;
+  onSendTestAlert: (contactId: string) => void;
+  isDarkMode?: boolean;
+}
+
+const ContactList: React.FC<ContactListProps> = ({
   contacts,
   isLoading,
   onEdit,

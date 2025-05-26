@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal/DeleteConfirmationModal';
-
 import { useEmergencyContacts } from '../../hooks/useEmergencyContacts';
-
 import PageHeader from '../../components/EmergencyContacts/PageHeader';
 import ContactList from '../../components/EmergencyContacts/ContactList';
 import ContactForm from '../../components/EmergencyContacts/ContactForm';
+import { Contact, ContactFormData } from '../../types/contact.types';
 
-function EmergencyContacts({ isDarkMode }) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingContact, setEditingContact] = useState(null);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [deletingContact, setDeletingContact] = useState(null);
+interface EmergencyContactsProps {
+  isDarkMode: boolean;
+}
+
+const EmergencyContacts: React.FC<EmergencyContactsProps> = ({ isDarkMode }) => {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [editingContact, setEditingContact] = useState<Contact | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
+  const [deletingContact, setDeletingContact] = useState<Contact | null>(null);
 
   const {
     contacts,
@@ -30,7 +33,7 @@ function EmergencyContacts({ isDarkMode }) {
     setEditingContact(null);
   };
 
-  const handleEdit = (contact) => {
+  const handleEdit = (contact: Contact) => {
     setEditingContact(contact);
     setIsModalOpen(true);
   };
@@ -40,19 +43,19 @@ function EmergencyContacts({ isDarkMode }) {
     setEditingContact(null);
   };
 
-  const handleDelete = (contact) => {
+  const handleDelete = (contact: Contact) => {
     setDeletingContact(contact);
     setDeleteModalOpen(true);
   };
 
-  const handleSubmitContact = async (formData) => {
+  const handleSubmitContact = async (formData: ContactFormData): Promise<void> => {
     const success = await saveContact(formData, editingContact?.Id);
     if (success) {
       handleCloseModal();
     }
   };
 
-  const confirmDelete = async () => {
+  const confirmDelete = async (): Promise<void> => {
     if (!deletingContact?.Id) return;
 
     const success = await deleteContact(deletingContact.Id);
@@ -64,7 +67,11 @@ function EmergencyContacts({ isDarkMode }) {
 
   return (
     <div className={`min-h-screen p-6 ${isDarkMode ? 'dark-mode' : 'bg-gray-50 text-gray-900'}`}>
-      <PageHeader onAddClick={handleOpenAddModal} onEmergencyAlert={sendEmergencyAlert} />
+      <PageHeader 
+        onAddClick={handleOpenAddModal} 
+        onEmergencyAlert={sendEmergencyAlert}
+        isDarkMode={isDarkMode} 
+      />
 
       <ContactList
         contacts={contacts}
@@ -77,7 +84,7 @@ function EmergencyContacts({ isDarkMode }) {
 
       <AnimatePresence>
         {isModalOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <ContactForm
               contact={editingContact}
               onSubmit={handleSubmitContact}
@@ -101,6 +108,6 @@ function EmergencyContacts({ isDarkMode }) {
       />
     </div>
   );
-}
+};
 
 export default EmergencyContacts;

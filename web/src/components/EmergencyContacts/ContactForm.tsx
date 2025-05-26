@@ -1,15 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Spinner from '../Spinner/Spinner';
+import { Contact } from '../../types/contact.types';
 
-const ContactForm = ({
+interface ContactFormData {
+  name: string;
+  phone: string;
+  email: string;
+  relationship: string;
+  priority: number;
+  role: string;
+}
+
+interface ContactFormProps {
+  contact?: Contact | null;
+  onSubmit: (formData: ContactFormData) => void;
+  onCancel: () => void;
+  isSaving?: boolean;
+  isDarkMode?: boolean;
+}
+
+interface FormErrors {
+  name?: string;
+  phone?: string;
+  email?: string;
+  relationship?: string;
+}
+
+const ContactForm: React.FC<ContactFormProps> = ({
   contact = null,
   onSubmit,
   onCancel,
   isSaving = false,
   isDarkMode = false,
 }) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ContactFormData>({
     name: '',
     phone: '',
     email: '',
@@ -17,7 +42,7 @@ const ContactForm = ({
     priority: 1,
     role: 'General',
   });
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<FormErrors>({});
 
   useEffect(() => {
     if (contact) {
@@ -32,8 +57,8 @@ const ContactForm = ({
     }
   }, [contact]);
 
-  const validateForm = () => {
-    const newErrors = {};
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
     if (!formData.name.trim()) {
       newErrors.name = 'Name is required';
     }
@@ -56,15 +81,18 @@ const ContactForm = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     if (!validateForm()) return;
     onSubmit(formData);
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ 
+      ...prev, 
+      [name]: name === 'priority' ? parseInt(value, 10) : value 
+    }));
   };
 
   return (
