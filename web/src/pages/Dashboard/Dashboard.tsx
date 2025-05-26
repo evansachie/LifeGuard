@@ -105,7 +105,16 @@ const Dashboard: React.FC<DashboardProps> = ({ isDarkMode }) => {
   };
 
   // BLE Context
-  const { bleDevice, isConnecting, sensorData, connectToDevice, disconnectDevice } = useBLE();
+  const { bleDevice, isConnecting, sensorData, connectToDevice: originalConnectToDevice, disconnectDevice: originalDisconnectDevice } = useBLE();
+  const handleConnectDevice = () => {
+    originalConnectToDevice("default-device-id");
+  };
+
+  const handleDisconnectDevice = () => {
+    if (bleDevice) {
+      originalDisconnectDevice(bleDevice.id);
+    }
+  };
 
   const { userData, isLoading: dataLoading } = useUserData();
   const { quote, isLoading: quotesLoading } = useQuoteData();
@@ -440,8 +449,8 @@ const Dashboard: React.FC<DashboardProps> = ({ isDarkMode }) => {
       <BluetoothButton
         bleDevice={bleDevice}
         isConnecting={isConnecting}
-        connectToDevice={connectToDevice}
-        disconnectDevice={disconnectDevice}
+        connectToDevice={handleConnectDevice}
+        disconnectDevice={handleDisconnectDevice}
       />
 
       <KeyboardShortcutsHelp

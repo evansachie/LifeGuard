@@ -94,7 +94,7 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleTheme, isDarkMode, onCollapsedC
       </div>
 
       <button
-        className={`sidebar-collapse-toggle ${isDarkMode ? 'dark-mode' : ''}`}
+        className={`sidebar-collapse-toggle ${isDarkMode ? 'dark-mode' : ''} z-[900]`}
         onClick={toggleCollapse}
         title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
       >
