@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './FloatingHealthAssistant.css';
 
@@ -12,13 +12,24 @@ import ChatMessages from './ChatMessages';
 import ChatActions from './ChatActions';
 import ChatInputForm from './ChatInputForm';
 
-const FloatingHealthAssistant = ({ isDarkMode }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [query, setQuery] = useState('');
-  const [showShortcuts, setShowShortcuts] = useState(false);
-  const [textToSpeechEnabled, setTextToSpeechEnabled] = useState(false);
+interface FloatingHealthAssistantProps {
+  isDarkMode: boolean;
+}
 
-  const inputRef = useRef(null);
+interface ChatMessage {
+  type: 'user' | 'assistant';
+  content: string;
+  timestamp: Date | string;
+  isError?: boolean;
+}
+
+const FloatingHealthAssistant: React.FC<FloatingHealthAssistantProps> = ({ isDarkMode }) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [query, setQuery] = useState<string>('');
+  const [showShortcuts, setShowShortcuts] = useState<boolean>(false);
+  const [textToSpeechEnabled, setTextToSpeechEnabled] = useState<boolean>(false);
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const { isListening, transcript, toggleListening } = useSpeechRecognition();
   const { chatHistory, loading, sendQuery, clearHistory } = useChatHistory();
@@ -45,12 +56,12 @@ const FloatingHealthAssistant = ({ isDarkMode }) => {
   }, [chatHistory, textToSpeechEnabled]);
 
   useEffect(() => {
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;
 
       if (e.ctrlKey && e.key === 'Enter') {
         if (query.trim()) {
-          handleSubmit(e);
+          handleSubmit();
         }
       }
 
@@ -75,8 +86,8 @@ const FloatingHealthAssistant = ({ isDarkMode }) => {
 
   useEffect(() => {
     const adjustPosition = () => {
-      const floatingButton = document.querySelector('.floating-button');
-      const chatWindow = document.querySelector('.chat-window');
+      const floatingButton = document.querySelector('.floating-button') as HTMLElement;
+      const chatWindow = document.querySelector('.chat-window') as HTMLElement;
 
       if (floatingButton && chatWindow) {
         const rect = floatingButton.getBoundingClientRect();
@@ -100,30 +111,30 @@ const FloatingHealthAssistant = ({ isDarkMode }) => {
     return () => window.removeEventListener('resize', adjustPosition);
   }, [isOpen]);
 
-  const toggleChat = () => setIsOpen(!isOpen);
+  const toggleChat = (): void => setIsOpen(!isOpen);
 
-  const toggleTextToSpeech = () => {
+  const toggleTextToSpeech = (): void => {
     setTextToSpeechEnabled(!textToSpeechEnabled);
     if (textToSpeechEnabled) {
       window.speechSynthesis.cancel();
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (): Promise<void> => {
     if (query.trim()) {
       await sendQuery(query);
       setQuery('');
     }
   };
 
-  const handleExampleClick = (exampleText) => {
+  const handleExampleClick = (exampleText: string): void => {
     setQuery(exampleText);
     if (inputRef.current) {
       inputRef.current.focus();
     }
   };
 
-  const speakText = (text) => {
+  const speakText = (text: string): void => {
     if (!('speechSynthesis' in window)) return;
 
     window.speechSynthesis.cancel();
@@ -146,6 +157,21 @@ const FloatingHealthAssistant = ({ isDarkMode }) => {
     utterance.volume = 1;
 
     window.speechSynthesis.speak(utterance);
+  };
+
+  const chatWindowVariants = {
+    closed: {
+      opacity: 0,
+      y: 20,
+      scale: 0.95,
+      transition: { duration: 0.2, ease: 'easeOut' },
+    },
+    open: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { duration: 0.25, ease: 'easeOut' },
+    },
   };
 
   return (
@@ -198,21 +224,6 @@ const FloatingHealthAssistant = ({ isDarkMode }) => {
       </AnimatePresence>
     </div>
   );
-};
-
-const chatWindowVariants = {
-  closed: {
-    opacity: 0,
-    y: 20,
-    scale: 0.95,
-    transition: { duration: 0.2, ease: 'easeOut' },
-  },
-  open: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: { duration: 0.25, ease: 'easeOut' },
-  },
 };
 
 export default FloatingHealthAssistant;

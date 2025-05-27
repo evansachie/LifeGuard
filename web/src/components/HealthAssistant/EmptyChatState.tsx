@@ -1,7 +1,11 @@
 import React from 'react';
 
-const EmptyChatState = ({ onExampleClick }) => {
-  const exampleQuestions = [
+interface EmptyChatStateProps {
+  onExampleClick: (question: string) => void;
+}
+
+const EmptyChatState: React.FC<EmptyChatStateProps> = ({ onExampleClick }) => {
+  const exampleQuestions: string[] = [
     'What are the benefits of regular exercise?',
     'How much water should I drink daily?',
     'What foods can help boost my immune system?',

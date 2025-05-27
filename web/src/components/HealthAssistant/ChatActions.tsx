@@ -3,12 +3,25 @@ import { FaRegTrashAlt, FaDownload } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import DeleteConfirmationModal from '../DeleteConfirmationModal/DeleteConfirmationModal';
 
-const ChatActions = ({ chatHistory, onClearHistory, isDarkMode }) => {
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+interface ChatMessage {
+  type: 'user' | 'assistant';
+  content: string;
+  timestamp: Date | string;
+  isError?: boolean;
+}
+
+interface ChatActionsProps {
+  chatHistory: ChatMessage[];
+  onClearHistory: () => void;
+  isDarkMode: boolean;
+}
+
+const ChatActions: React.FC<ChatActionsProps> = ({ chatHistory, onClearHistory, isDarkMode }) => {
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
 
   if (chatHistory.length === 0) return null;
 
-  const handleExportHistory = () => {
+  const handleExportHistory = (): void => {
     if (chatHistory.length === 0) {
       toast.info('No conversation to export');
       return;
@@ -38,14 +51,13 @@ const ChatActions = ({ chatHistory, onClearHistory, isDarkMode }) => {
     toast.success('Chat history exported successfully');
   };
 
-  const handleClearHistoryClick = () => {
+  const handleClearHistoryClick = (): void => {
     setIsDeleteModalOpen(true);
   };
 
-  const handleConfirmClearHistory = () => {
+  const handleConfirmClearHistory = (): void => {
     onClearHistory();
     setIsDeleteModalOpen(false);
-    // Only show one toast message
     toast.success('Chat history cleared');
   };
 

@@ -1,7 +1,12 @@
 import React from 'react';
 import { FaRobot } from 'react-icons/fa';
 
-const ChatButton = ({ isOpen, toggleChat }) => {
+interface ChatButtonProps {
+  isOpen: boolean;
+  toggleChat: () => void;
+}
+
+const ChatButton: React.FC<ChatButtonProps> = ({ isOpen, toggleChat }) => {
   return (
     <button
       className={`floating-button ${isOpen ? 'hidden' : ''}`}

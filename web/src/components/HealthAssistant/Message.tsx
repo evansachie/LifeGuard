@@ -1,12 +1,22 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const Message = ({ message }) => {
-  const formatTime = (timestamp) => {
+interface MessageProps {
+  message: {
+    type: 'user' | 'assistant';
+    content: string;
+    timestamp: Date | string;
+    isError?: boolean;
+  };
+  isDarkMode?: boolean;
+}
+
+const Message: React.FC<MessageProps> = ({ message, isDarkMode }) => {
+  const formatTime = (timestamp: Date | string): string => {
     return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  const formatContent = (content) => {
+  const formatContent = (content: string): React.ReactNode => {
     if (!content) return '';
 
     return content.split('\n').map((paragraph, i) => {

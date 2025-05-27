@@ -1,6 +1,6 @@
 import React from 'react';
 
-const TypingIndicator = () => {
+const TypingIndicator: React.FC = () => {
   return (
     <div className="typing-indicator">
       <span></span>

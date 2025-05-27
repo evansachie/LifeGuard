@@ -1,6 +1,10 @@
 import React from 'react';
 
-const ShortcutsPanel = ({ showShortcuts }) => {
+interface ShortcutsPanelProps {
+  showShortcuts: boolean;
+}
+
+const ShortcutsPanel: React.FC<ShortcutsPanelProps> = ({ showShortcuts }) => {
   if (!showShortcuts) return null;
 
   return (

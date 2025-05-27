@@ -1,7 +1,17 @@
-import React from 'react';
+import React, { RefObject } from 'react';
 import { FaPaperPlane, FaMicrophone } from 'react-icons/fa';
 
-const ChatInputForm = ({
+interface ChatInputFormProps {
+  query: string;
+  onQueryChange: (value: string) => void;
+  onSubmit: (query?: string) => void;
+  isLoading: boolean;
+  isListening: boolean;
+  toggleListening: () => void;
+  inputRef: RefObject<HTMLInputElement>;
+}
+
+const ChatInputForm: React.FC<ChatInputFormProps> = ({
   query,
   onQueryChange,
   onSubmit,
@@ -10,7 +20,7 @@ const ChatInputForm = ({
   toggleListening,
   inputRef,
 }) => {
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
     if (query.trim() && !isLoading && !isListening) {
       onSubmit(query);

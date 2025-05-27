@@ -2,7 +2,14 @@ import React from 'react';
 import { FaTimes, FaKeyboard } from 'react-icons/fa';
 import { IoVolumeHigh, IoVolumeMute } from 'react-icons/io5';
 
-const ChatHeader = ({
+interface ChatHeaderProps {
+  toggleChat: () => void;
+  toggleTextToSpeech: () => void;
+  textToSpeechEnabled: boolean;
+  toggleShowShortcuts: () => void;
+}
+
+const ChatHeader: React.FC<ChatHeaderProps> = ({
   toggleChat,
   toggleTextToSpeech,
   textToSpeechEnabled,
