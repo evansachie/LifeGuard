@@ -1,21 +1,25 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SearchBar from '../../components/Help/SearchBar';
+import SearchBox from '../../components/Help/SearchBox';
 import CategoryCard from '../../components/Help/CategoryCard';
 import InteractiveGuide from '../../components/Help/InteractiveGuide';
 import { IoMdHelp } from 'react-icons/io';
-import { helpCategories } from '../../data/help-categories';
+import { helpCategories, HelpCategory } from '../../data/help-categories';
 
-const Help = ({ isDarkMode }) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState(null);
+interface HelpProps {
+  isDarkMode: boolean;
+}
+
+const Help: React.FC<HelpProps> = ({ isDarkMode }) => {
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const handleSearchChange = (query) => {
+  const handleSearchChange = (query: string): void => {
     setSearchQuery(query);
   };
 
-  const filteredCategories = useMemo(() => {
+  const filteredCategories = useMemo((): HelpCategory[] => {
     return helpCategories.filter(
       (category) =>
         category.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -27,11 +31,11 @@ const Help = ({ isDarkMode }) => {
     );
   }, [searchQuery]);
 
-  const toggleActiveCategory = (id) => {
+  const toggleActiveCategory = (id: string): void => {
     setActiveCategory((prev) => (prev === id ? null : id));
   };
 
-  const handleStartTour = () => {
+  const handleStartTour = (): void => {
     localStorage.setItem('showTour', 'true');
     localStorage.setItem('tourInitialized', 'false');
     navigate('/dashboard');
@@ -45,7 +49,7 @@ const Help = ({ isDarkMode }) => {
           <h1 className="text-3xl font-bold py-4">Help Center</h1>
         </div>
 
-        <SearchBar
+        <SearchBox
           searchQuery={searchQuery}
           onSearchChange={handleSearchChange}
           isDarkMode={isDarkMode}

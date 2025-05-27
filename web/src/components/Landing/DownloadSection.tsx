@@ -4,7 +4,7 @@ import { FaApple, FaGooglePlay } from 'react-icons/fa';
 import MobileApp from '../../assets/mobile-app.svg';
 import './DownloadSection.css';
 
-const DownloadSection = () => {
+const DownloadSection: React.FC = () => {
   return (
     <section className="download-section" id="download">
       <div className="download-container">

@@ -14,15 +14,21 @@ import { fetchProfilePhoto, generateAvatarUrl } from '../../utils/profileUtils';
 import { fetchWithAuth, API_ENDPOINTS } from '../../utils/api';
 import './Navbar.css';
 
-const Navbar = ({ isDarkMode, toggleTheme, isAuthenticated }) => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [profilePhotoUrl, setProfilePhotoUrl] = useState(null);
-  const dropdownRef = useRef(null);
+interface NavbarProps {
+  isDarkMode: boolean;
+  toggleTheme: () => void;
+  isAuthenticated: boolean;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleTheme, isAuthenticated }) => {
+  const [isScrolled, setIsScrolled] = useState<boolean>(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState<string | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
+    const handleScroll = (): void => {
       setIsScrolled(window.scrollY > 20);
     };
 
@@ -31,7 +37,7 @@ const Navbar = ({ isDarkMode, toggleTheme, isAuthenticated }) => {
   }, []);
 
   useEffect(() => {
-    const fetchUserPhoto = async () => {
+    const fetchUserPhoto = async (): Promise<void> => {
       if (isAuthenticated) {
         const userId = localStorage.getItem('userId');
         if (userId) {
@@ -63,8 +69,8 @@ const Navbar = ({ isDarkMode, toggleTheme, isAuthenticated }) => {
   }, [isAuthenticated]);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent): void => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
       }
     };
@@ -73,7 +79,7 @@ const Navbar = ({ isDarkMode, toggleTheme, isAuthenticated }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const scrollToSection = (sectionId) => {
+  const scrollToSection = (sectionId: string): void => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
@@ -81,13 +87,13 @@ const Navbar = ({ isDarkMode, toggleTheme, isAuthenticated }) => {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = (): void => {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     window.location.reload();
   };
 
-  const AuthButtons = () => (
+  const AuthButtons: React.FC = () => (
     <>
       <Link to="/log-in" className="nav-button login" onClick={() => setIsMobileMenuOpen(false)}>
         Log In
@@ -98,7 +104,7 @@ const Navbar = ({ isDarkMode, toggleTheme, isAuthenticated }) => {
     </>
   );
 
-  const ProfileDropdown = () => {
+  const ProfileDropdown: React.FC = () => {
     const userName = localStorage.getItem('userName') || 'User';
 
     return (
@@ -112,9 +118,9 @@ const Navbar = ({ isDarkMode, toggleTheme, isAuthenticated }) => {
             src={profilePhotoUrl || generateAvatarUrl(userName)}
             alt="Profile"
             className="w-10 h-10 rounded-full"
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = generateAvatarUrl(userName);
+            onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = generateAvatarUrl(userName);
             }}
           />
         </button>

@@ -1,7 +1,27 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const CategoryCard = ({ category, isActive, toggleActive, isDarkMode }) => {
+interface Section {
+  title: string;
+  content: string;
+}
+
+export interface HelpCategory {
+  id: string;
+  title: string;
+  icon: React.ReactNode;
+  color: string;
+  sections: Section[];
+}
+
+interface CategoryCardProps {
+  category: HelpCategory;
+  isActive: boolean;
+  toggleActive: (id: string) => void;
+  isDarkMode: boolean;
+}
+
+const CategoryCard: React.FC<CategoryCardProps> = ({ category, isActive, toggleActive, isDarkMode }) => {
   return (
     <motion.div
       layout

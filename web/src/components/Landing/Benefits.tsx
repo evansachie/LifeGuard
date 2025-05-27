@@ -3,7 +3,13 @@ import { motion } from 'framer-motion';
 import { benefits } from '../../data/benefits';
 import './Benefits.css';
 
-const Benefits = () => {
+interface Benefit {
+  image: string;
+  title: string;
+  description: string;
+}
+
+const Benefits: React.FC = () => {
   return (
     <section className="benefits-section" id="benefits">
       <div className="benefits-container">
@@ -22,7 +28,7 @@ const Benefits = () => {
         </motion.div>
 
         <div className="benefits-grid">
-          {benefits.map((benefit, index) => (
+          {benefits.map((benefit: Benefit, index: number) => (
             <motion.div
               key={index}
               className="benefit-card"

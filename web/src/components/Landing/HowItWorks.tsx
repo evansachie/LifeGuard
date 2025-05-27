@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { steps } from '../../data/steps';
 import './HowItWorks.css';
 
-const HowItWorks = () => {
+const HowItWorks: React.FC = () => {
   return (
     <section className="how-it-works-section" id="how-it-works">
       <div className="how-it-works-container">

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { features } from '../../data/features-data';
 import './Features.css';
 
-const Features = () => {
+const Features: React.FC = () => {
   return (
     <section className="features-section" id="features">
       <div className="features-container">

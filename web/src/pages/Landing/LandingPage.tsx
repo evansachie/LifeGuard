@@ -10,7 +10,13 @@ import ScrollToTop from '../../components/ScrollToTop/ScrollToTop';
 import FloatingHealthAssistant from '../../components/HealthAssistant/FloatingHealthAssistant';
 import './LandingPage.css';
 
-const LandingPage = ({ isDarkMode, toggleTheme, isAuthenticated }) => {
+interface LandingPageProps {
+  isDarkMode: boolean;
+  toggleTheme: () => void;
+  isAuthenticated: boolean;
+}
+
+const LandingPage: React.FC<LandingPageProps> = ({ isDarkMode, toggleTheme, isAuthenticated }) => {
   return (
     <div className={`landing-page ${isDarkMode ? 'dark-mode' : ''}`}>
       <Navbar isDarkMode={isDarkMode} toggleTheme={toggleTheme} isAuthenticated={isAuthenticated} />

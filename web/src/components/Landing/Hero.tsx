@@ -5,7 +5,7 @@ import { FaGithub, FaArrowRight } from 'react-icons/fa';
 import HeroImg from '../../assets/hero-section.svg';
 import './Hero.css';
 
-const Hero = () => {
+const Hero: React.FC = () => {
   return (
     <section className="hero-section">
       <div className="hero-content">

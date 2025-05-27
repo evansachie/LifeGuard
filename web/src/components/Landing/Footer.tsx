@@ -3,8 +3,8 @@ import { FaGithub, FaTwitter, FaLinkedin } from 'react-icons/fa';
 import AccessibleDropdown from '../AccessibleDropdown/AccessibleDropdown';
 import './Footer.css';
 
-const Footer = () => {
-  const scrollToSection = (sectionId) => {
+const Footer: React.FC = () => {
+  const scrollToSection = (sectionId: string): void => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
@@ -26,7 +26,6 @@ const Footer = () => {
               >
                 <FaGithub />
               </a>
-              {/* Replace # links with proper URLs or use button for temporary placeholders */}
               <a
                 href="https://twitter.com/LifeGuardApp"
                 target="_blank"

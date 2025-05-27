@@ -2,7 +2,12 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { FaPlay } from 'react-icons/fa';
 
-const InteractiveGuide = ({ onStartTour, isDarkMode }) => {
+interface InteractiveGuideProps {
+  onStartTour: () => void;
+  isDarkMode: boolean;
+}
+
+const InteractiveGuide: React.FC<InteractiveGuideProps> = ({ onStartTour, isDarkMode }) => {
   return (
     <motion.div
       initial={{ opacity: 0 }}
