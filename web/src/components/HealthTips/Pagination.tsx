@@ -1,9 +1,14 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
-const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}
+
+const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
   const renderPageNumbers = () => {
-    const pages = [];
+    const pages: Array<number | string> = [];
 
     if (totalPages <= 5) {
       for (let i = 1; i <= totalPages; i++) {
@@ -41,7 +46,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       ) : (
         <button
           key={page}
-          onClick={() => onPageChange(page)}
+          onClick={() => onPageChange(page as number)}
           className={`pagination-button ${currentPage === page ? 'active' : ''}`}
         >
           {page}
@@ -73,12 +78,6 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       </button>
     </div>
   );
-};
-
-Pagination.propTypes = {
-  currentPage: PropTypes.number.isRequired,
-  totalPages: PropTypes.number.isRequired,
-  onPageChange: PropTypes.func.isRequired,
 };
 
 export default Pagination;

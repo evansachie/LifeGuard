@@ -6,9 +6,14 @@ import { healthData } from '../../data/health-report-data';
 import { RiHealthBookFill } from 'react-icons/ri';
 import HealthReportModal from '../../components/HealthReportModal/HealthReportModal';
 import './HealthReport.css';
+import { IconType } from 'react-icons';
 
-export default function HealthReport({ isDarkMode }) {
-  const [showReportModal, setShowReportModal] = useState(false);
+interface HealthReportProps {
+  isDarkMode: boolean;
+}
+
+const HealthReport: React.FC<HealthReportProps> = ({ isDarkMode }) => {
+  const [showReportModal, setShowReportModal] = useState<boolean>(false);
 
   return (
     <div className={`health-report ${isDarkMode ? 'dark-mode' : ''}`}>
@@ -31,7 +36,13 @@ export default function HealthReport({ isDarkMode }) {
         {/* Stats Grid */}
         <div className="stats-grid">
           {healthData.stats.map((stat, index) => (
-            <StatCard key={index} {...stat} />
+            <StatCard
+              key={index}
+              icon={stat.icon as IconType}
+              label={stat.label}
+              value={stat.value}
+              color={stat.color}
+            />
           ))}
         </div>
 
@@ -59,4 +70,6 @@ export default function HealthReport({ isDarkMode }) {
       />
     </div>
   );
-}
+};
+
+export default HealthReport;

@@ -1,6 +1,13 @@
+import React from 'react';
 import { FaFileAlt } from 'react-icons/fa';
 
-export const ReportCard = ({ date, type, status }) => (
+interface ReportCardProps {
+  date: string;
+  type: string;
+  status: string;
+}
+
+export const ReportCard: React.FC<ReportCardProps> = ({ date, type, status }) => (
   <div className="report-card">
     <div className="report-card-left">
       <div className="report-icon">
@@ -13,7 +20,7 @@ export const ReportCard = ({ date, type, status }) => (
     </div>
     <div
       className="report-status"
-      style={{ '--status-color': status === 'Normal' ? '#4CAF50' : '#FF9800' }}
+      style={{ '--status-color': status === 'Normal' ? '#4CAF50' : '#FF9800' } as React.CSSProperties}
     >
       {status}
     </div>

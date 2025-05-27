@@ -1,9 +1,29 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import PropTypes from 'prop-types';
 import HealthTipCard from './HealthTipCard';
+import { HealthTip } from '../../types/healthTips.types';
 
-const TipsGrid = ({ tips, onReadMore, isDarkMode, containerVariants, itemVariants }) => {
+interface TipsGridProps {
+  tips: HealthTip[];
+  onReadMore: (tip: HealthTip) => void;
+  isDarkMode: boolean;
+  containerVariants: {
+    hidden: object;
+    visible: object;
+  };
+  itemVariants: {
+    hidden: object;
+    visible: object;
+  };
+}
+
+const TipsGrid: React.FC<TipsGridProps> = ({ 
+  tips, 
+  onReadMore, 
+  isDarkMode, 
+  containerVariants, 
+  itemVariants 
+}) => {
   return (
     <motion.section
       className="tips-grid"
@@ -24,14 +44,6 @@ const TipsGrid = ({ tips, onReadMore, isDarkMode, containerVariants, itemVariant
       )}
     </motion.section>
   );
-};
-
-TipsGrid.propTypes = {
-  tips: PropTypes.array.isRequired,
-  onReadMore: PropTypes.func.isRequired,
-  isDarkMode: PropTypes.bool,
-  containerVariants: PropTypes.object.isRequired,
-  itemVariants: PropTypes.object.isRequired,
 };
 
 export default TipsGrid;

@@ -1,9 +1,22 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { FaThLarge } from 'react-icons/fa';
+import { CategoryType } from '../../types/healthTips.types';
 import './HealthTipsFilter.css';
 
-const HealthTipsFilter = ({ categories, selectedCategory, onCategoryChange, isDarkMode }) => {
+interface HealthTipsFilterProps {
+  categories: CategoryType[];
+  selectedCategory: string;
+  onCategoryChange: (categoryId: string) => void;
+  isDarkMode: boolean;
+  onSortChange?: (sortOption: string) => void;
+  currentSort?: string;
+}
+
+const HealthTipsFilter: React.FC<HealthTipsFilterProps> = ({ 
+  categories, 
+  selectedCategory, 
+  onCategoryChange, 
+  isDarkMode}) => {
   return (
     <div className={`health-tips-filter ${isDarkMode ? 'dark-mode' : ''}`}>
       <div className="filter-categories">
@@ -31,21 +44,6 @@ const HealthTipsFilter = ({ categories, selectedCategory, onCategoryChange, isDa
       </div>
     </div>
   );
-};
-
-HealthTipsFilter.propTypes = {
-  categories: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      icon: PropTypes.node.isRequired,
-      label: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-  selectedCategory: PropTypes.string.isRequired,
-  onCategoryChange: PropTypes.func.isRequired,
-  isDarkMode: PropTypes.bool,
-  onSortChange: PropTypes.func,
-  currentSort: PropTypes.string,
 };
 
 export default HealthTipsFilter;

@@ -1,21 +1,35 @@
 import React, { memo, useState } from 'react';
-import PropTypes from 'prop-types';
 import './HealthTipCard.css';
 import Spinner from '../Spinner/Spinner';
+import { HealthTip } from '../../types/healthTips.types';
 
-const HealthTipCard = ({ tip, onReadMore, isDarkMode }) => {
-  const [imageError, setImageError] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
+interface HealthTipCardProps {
+  tip: HealthTip;
+  onReadMore: (tip: HealthTip) => void;
+  isDarkMode: boolean;
+}
 
-  const defaultImage = 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800';
+const HealthTipCard: React.FC<HealthTipCardProps> = ({ tip, onReadMore, isDarkMode }) => {
+  const [imageError, setImageError] = useState<boolean>(false);
+  const [imageLoaded, setImageLoaded] = useState<boolean>(false);
+
+  const defaultImages = [
+    'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800',
+    'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800',
+    'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800',
+    'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800'
+  ];
+  
+  const defaultImage = defaultImages[parseInt(String(tip.id).charAt(0), 36) % defaultImages.length];
 
   const categoryLabel = tip.category.charAt(0).toUpperCase() + tip.category.slice(1);
 
-  const handleImageError = () => {
+  const handleImageError = (): void => {
     setImageError(true);
+    setImageLoaded(true);
   };
 
-  const handleImageLoad = () => {
+  const handleImageLoad = (): void => {
     setImageLoaded(true);
   };
 
@@ -28,7 +42,7 @@ const HealthTipCard = ({ tip, onReadMore, isDarkMode }) => {
           </div>
         )}
         <img
-          src={imageError ? defaultImage : tip.imageUrl}
+          src={imageError ? defaultImage : tip.imageUrl || defaultImage}
           alt={tip.imageAlt || tip.title}
           className="tip-image"
           onError={handleImageError}
@@ -56,20 +70,6 @@ const HealthTipCard = ({ tip, onReadMore, isDarkMode }) => {
       </div>
     </div>
   );
-};
-
-HealthTipCard.propTypes = {
-  tip: PropTypes.shape({
-    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    title: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-    imageUrl: PropTypes.string,
-    imageAlt: PropTypes.string,
-    category: PropTypes.string.isRequired,
-    date: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
-  }).isRequired,
-  onReadMore: PropTypes.func.isRequired,
-  isDarkMode: PropTypes.bool,
 };
 
 export default memo(HealthTipCard);

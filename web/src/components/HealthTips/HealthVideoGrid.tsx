@@ -1,8 +1,26 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import PropTypes from 'prop-types';
 
-const HealthVideoGrid = ({ videos, containerVariants, itemVariants }) => {
+interface HealthVideo {
+  id: string;
+  title: string;
+  description: string;
+  videoUrl: string;
+}
+
+interface HealthVideoGridProps {
+  videos: HealthVideo[];
+  containerVariants: {
+    hidden: object;
+    visible: object;
+  };
+  itemVariants: {
+    hidden: object;
+    visible: object;
+  };
+}
+
+const HealthVideoGrid: React.FC<HealthVideoGridProps> = ({ videos, containerVariants, itemVariants }) => {
   return (
     <section className="video-section">
       <motion.div
@@ -30,19 +48,6 @@ const HealthVideoGrid = ({ videos, containerVariants, itemVariants }) => {
       </motion.div>
     </section>
   );
-};
-
-HealthVideoGrid.propTypes = {
-  videos: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired,
-      videoUrl: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-  containerVariants: PropTypes.object.isRequired,
-  itemVariants: PropTypes.object.isRequired,
 };
 
 export default HealthVideoGrid;
