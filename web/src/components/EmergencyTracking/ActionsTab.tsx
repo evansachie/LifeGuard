@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   FaAmbulance,
   FaPhone,
@@ -8,8 +9,15 @@ import {
   FaShareAlt,
   FaClipboardList,
 } from 'react-icons/fa';
+import { EmergencyUserData, EmergencyActions } from '../../types/emergency';
 
-const ActionsTab = ({ userData, actions, isDarkMode }) => {
+interface ActionsTabProps {
+  userData: EmergencyUserData;
+  actions: EmergencyActions;
+  isDarkMode: boolean;
+}
+
+const ActionsTab: React.FC<ActionsTabProps> = ({ userData, actions, isDarkMode }) => {
   return (
     <div className="animate__animated animate__fadeIn">
       <div className="mb-4">

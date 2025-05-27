@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
@@ -15,17 +15,26 @@ import ActionsTab from '../../components/EmergencyTracking/ActionsTab';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_API_KEY;
+// Configure Mapbox access token
+mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_API_KEY as string;
 
-function EmergencyTracking({ isDarkMode, toggleTheme }) {
+interface EmergencyTrackingProps {
+  isDarkMode: boolean;
+  toggleTheme: () => void;
+}
+
+type TabType = 'info' | 'medical' | 'actions';
+
+const EmergencyTracking: React.FC<EmergencyTrackingProps> = ({ isDarkMode, toggleTheme }) => {
   const [searchParams] = useSearchParams();
   const userId = searchParams.get('userId');
-  const [activeTab, setActiveTab] = useState('info');
+  const [activeTab, setActiveTab] = useState<TabType>('info');
 
-  const { userData, isLoading } = useEmergencyData(userId);
+  const { userData, isLoading } = useEmergencyData(userId || '');
   const actions = useEmergencyActions();
 
-  const accraCoordinates = useMemo(() => [-0.1869644, 5.6037168], []);
+  // Default coordinates for Accra, Ghana
+  const accraCoordinates = useMemo<[number, number]>(() => [-0.1869644, 5.6037168], []);
 
   return (
     <div
@@ -73,6 +82,6 @@ function EmergencyTracking({ isDarkMode, toggleTheme }) {
       </div>
     </div>
   );
-}
+};
 
 export default EmergencyTracking;

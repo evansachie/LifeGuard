@@ -1,56 +1,28 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { fetchApi, API_ENDPOINTS } from '../utils/api';
+import { EmergencyUserData, Medication } from '../types/emergency';
 
-interface MedicalInfo {
-  age: string | number;
-  gender: string;
-  weight: string | number;
-  height: string | number;
-  bio: string;
-}
+// Default emergency user data that matches the expected structure
+const defaultUserData: EmergencyUserData = {
+  name: 'User',
+  location: 'Unknown location',
+  phone: '+233000000000',
+  email: 'user@example.com',
+  timestamp: new Date().toLocaleString(),
+  medicalInfo: {
+    age: 30,
+    gender: 'Not specified',
+    weight: 70,
+    height: 175,
+    bio: 'No additional information available',
+  },
+  mapUrl: null,
+  medications: [],
+};
 
-interface Medication {
-  id: number | string;
-  name: string;
-  dosage?: string;
-  frequency?: string;
-  [key: string]: any;
-}
-
-interface EmergencyUserData {
-  name: string;
-  location: string;
-  phone: string;
-  email: string;
-  medicalInfo: MedicalInfo;
-  timestamp: string;
-  mapUrl: string | null;
-  medications: Medication[];
-}
-
-interface EmergencyDataReturn {
-  userData: EmergencyUserData;
-  isLoading: boolean;
-}
-
-export function useEmergencyData(userId: string): EmergencyDataReturn {
-  const [userData, setUserData] = useState<EmergencyUserData>({
-    name: 'LifeGuard User',
-    location: 'Last known location',
-    phone: 'Not available',
-    email: 'Not available',
-    medicalInfo: {
-      age: 'N/A',
-      gender: 'N/A',
-      weight: 'N/A',
-      height: 'N/A',
-      bio: 'No additional information provided',
-    },
-    timestamp: new Date().toLocaleString(),
-    mapUrl: null,
-    medications: [],
-  });
+export function useEmergencyData(userId: string) {
+  const [userData, setUserData] = useState<EmergencyUserData>(defaultUserData);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {

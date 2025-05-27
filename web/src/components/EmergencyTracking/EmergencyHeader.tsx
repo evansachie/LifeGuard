@@ -1,7 +1,14 @@
+import React from 'react';
 import { motion } from 'framer-motion';
 import { FaExclamationTriangle, FaSun, FaMoon } from 'react-icons/fa';
 
-const EmergencyHeader = ({ isDarkMode, toggleTheme, userName }) => {
+interface EmergencyHeaderProps {
+  isDarkMode: boolean;
+  toggleTheme: () => void;
+  userName: string;
+}
+
+const EmergencyHeader: React.FC<EmergencyHeaderProps> = ({ isDarkMode, toggleTheme, userName }) => {
   return (
     <div
       className={`sticky top-0 z-20 p-3 ${isDarkMode ? 'bg-gray-900/90' : 'bg-white/90'} backdrop-blur-sm`}

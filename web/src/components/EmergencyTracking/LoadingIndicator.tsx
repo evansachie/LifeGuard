@@ -1,6 +1,7 @@
+import React from 'react';
 import { motion } from 'framer-motion';
 
-const LoadingIndicator = () => {
+const LoadingIndicator: React.FC = () => {
   return (
     <div className="flex justify-center items-center h-[70vh]">
       <motion.div

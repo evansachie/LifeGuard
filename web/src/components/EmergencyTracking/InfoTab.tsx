@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import React, { useRef } from 'react';
 import {
   FaClock,
   FaMapMarkerAlt,
@@ -11,9 +11,18 @@ import {
   FaShareAlt,
 } from 'react-icons/fa';
 import { useEmergencyMap } from '../../hooks/useEmergencyMap';
+import { EmergencyUserData, EmergencyActions } from '../../types/emergency';
 
-const InfoTab = ({ userData, isDarkMode, actions, accraCoordinates, isLoading }) => {
-  const mapContainer = useRef(null);
+interface InfoTabProps {
+  userData: EmergencyUserData;
+  isDarkMode: boolean;
+  actions: EmergencyActions;
+  accraCoordinates: [number, number];
+  isLoading: boolean;
+}
+
+const InfoTab: React.FC<InfoTabProps> = ({ userData, isDarkMode, actions, accraCoordinates, isLoading }) => {
+  const mapContainer = useRef<HTMLDivElement>(null);
 
   useEmergencyMap(mapContainer, isLoading, isDarkMode, userData, accraCoordinates);
 
@@ -125,7 +134,7 @@ const InfoTab = ({ userData, isDarkMode, actions, accraCoordinates, isLoading })
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className={`p-5 rounded-lg ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} shadow-sm`}>
           <h3 className="text-xl font-semibold mb-3 border-b pb-2 border-gray-600/30 flex items-center">
             <FaAmbulance className="text-red-500 mr-2" />
@@ -146,7 +155,7 @@ const InfoTab = ({ userData, isDarkMode, actions, accraCoordinates, isLoading })
               <FaAmbulance className="mr-2" /> Call Emergency Services
             </button>
           </div>
-        </div>
+    </div>
 
         <div className={`p-5 rounded-lg ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} shadow-sm`}>
           <h3 className="text-xl font-semibold mb-3 border-b pb-2 border-gray-600/30">Share</h3>
