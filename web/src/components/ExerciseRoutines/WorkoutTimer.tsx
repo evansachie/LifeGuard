@@ -6,7 +6,25 @@ import AccessibleDropdown from '../AccessibleDropdown/AccessibleDropdown';
 import exerciseService from '../../services/exerciseService';
 import { formatTime } from '../../utils/formatTime';
 
-const WorkoutTimer = ({
+interface Exercise {
+  id: string | number;
+  title: string;
+  duration: string;
+  calories: number;
+  targetMuscles: string[];
+}
+
+interface WorkoutTimerProps {
+  activeWorkout: Exercise | null;
+  workoutTimer: number;
+  isTimerRunning: boolean;
+  onToggleTimer: () => void;
+  onResetTimer: () => void;
+  onEndWorkout: () => void;
+  isDarkMode: boolean;
+}
+
+const WorkoutTimer: React.FC<WorkoutTimerProps> = ({
   activeWorkout,
   workoutTimer,
   isTimerRunning,
@@ -15,8 +33,8 @@ const WorkoutTimer = ({
   onEndWorkout,
   isDarkMode,
 }) => {
-  const [timeRemaining, setTimeRemaining] = useState(0);
-  const [showConfirm, setShowConfirm] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState<number>(0);
+  const [showConfirm, setShowConfirm] = useState<boolean>(false);
 
   useEffect(() => {
     if (activeWorkout) {
@@ -34,14 +52,20 @@ const WorkoutTimer = ({
     }
   }, [timeRemaining, activeWorkout, isTimerRunning, onToggleTimer]);
 
-  const getTimerColor = () => {
+  const getTimerColor = (): string => {
     if (timeRemaining < 60) return 'text-white';
     if (timeRemaining < 180) return 'text-amber-500';
     return 'text-white';
   };
 
-  const calculateCompletionStats = () => {
-    const totalSeconds = parseInt(activeWorkout.duration) * 60;
+  const calculateCompletionStats = (): { completionPercentage: number; adjustedCalories: number; duration: number } => {
+    if (!activeWorkout) {
+      return { completionPercentage: 0, adjustedCalories: 0, duration: 0 };
+    }
+    
+    const durationParts = activeWorkout.duration.split(' ');
+    const minutes = parseInt(durationParts[0]);
+    const totalSeconds = minutes * 60;
     const completionPercentage = (workoutTimer / totalSeconds) * 100;
     const adjustedCalories = Math.floor((workoutTimer / totalSeconds) * activeWorkout.calories);
 
@@ -52,7 +76,9 @@ const WorkoutTimer = ({
     };
   };
 
-  const handleWorkoutComplete = async (isFullyCompleted = false) => {
+  const handleWorkoutComplete = async (isFullyCompleted = false): Promise<boolean> => {
+    if (!activeWorkout) return false;
+    
     try {
       const stats = calculateCompletionStats();
 
@@ -67,7 +93,7 @@ const WorkoutTimer = ({
       }
 
       await exerciseService.completeWorkout({
-        workout_id: activeWorkout.id,
+        workout_id: String(activeWorkout.id),
         workout_type: activeWorkout.title,
         calories_burned: stats.adjustedCalories,
         duration_minutes: stats.duration,
@@ -88,7 +114,9 @@ const WorkoutTimer = ({
     }
   };
 
-  const handleEndWorkout = async () => {
+  const handleEndWorkout = async (): Promise<void> => {
+    if (!activeWorkout) return;
+    
     try {
       const stats = calculateCompletionStats();
 
@@ -99,7 +127,7 @@ const WorkoutTimer = ({
       }
 
       await exerciseService.completeWorkout({
-        workout_id: activeWorkout.id,
+        workout_id: String(activeWorkout.id),
         workout_type: activeWorkout.title,
         calories_burned: stats.adjustedCalories,
         duration_minutes: stats.duration,
@@ -112,7 +140,7 @@ const WorkoutTimer = ({
 
       toast.info(`Workout ended at ${Math.round(stats.completionPercentage)}% completion`);
       setShowConfirm(false);
-      onEndWorkout(); // This will close the timer
+      onEndWorkout();
     } catch (error) {
       console.error('Error completing workout:', error);
       toast.error('Failed to save workout progress');
@@ -227,11 +255,10 @@ const WorkoutTimer = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            {/* Use regular div with onClick because this is just an overlay */}
             <div
               className="absolute inset-0 bg-black/70 backdrop-blur-sm"
               onClick={() => setShowConfirm(false)}
-              role="presentation" // Adding role to indicate this is presentational
+              role="presentation"
             />
             <motion.div
               className={`relative max-w-md w-full m-4 ${

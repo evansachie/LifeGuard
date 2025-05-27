@@ -12,14 +12,31 @@ import ExerciseCard from '../../components/ExerciseRoutines/ExerciseCard';
 import WorkoutTimer from '../../components/ExerciseRoutines/WorkoutTimer';
 import ModelSection from '../../components/ExerciseRoutines/ModelSection';
 
-function ExerciseRoutines({ isDarkMode }) {
-  const [selectedLevel, setSelectedLevel] = useState('beginner');
-  const [selectedCategory, setSelectedCategory] = useState('warmup');
-  const [isLoading, setIsLoading] = useState(true);
-  const [activeWorkout, setActiveWorkout] = useState(null);
-  const [activeExercise, setActiveExercise] = useState(null);
-  const [showTip, setShowTip] = useState(true);
-  const [workoutProgress, setWorkoutProgress] = useState(0);
+interface ExerciseRoutinesProps {
+  isDarkMode: boolean;
+}
+
+type FitnessLevelType = 'beginner' | 'intermediate' | 'advanced';
+type CategoryType = 'warmup' | 'cardio' | 'strength' | 'hiit' | 'cooldown';
+
+interface Exercise {
+  id: string;
+  title: string;
+  description: string;
+  duration: string;
+  videoUrl: string;
+  calories: number;
+  targetMuscles: string[];
+}
+
+const ExerciseRoutines: React.FC<ExerciseRoutinesProps> = ({ isDarkMode }) => {
+  const [selectedLevel, setSelectedLevel] = useState<FitnessLevelType>('beginner');
+  const [selectedCategory, setSelectedCategory] = useState<CategoryType>('warmup');
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [activeWorkout, setActiveWorkout] = useState<Exercise | null>(null);
+  const [activeExercise, setActiveExercise] = useState<Exercise | null>(null);
+  const [showTip, setShowTip] = useState<boolean>(true);
+  const [workoutProgress, setWorkoutProgress] = useState<number>(0);
 
   const { workoutTimer, isTimerRunning, toggleTimer, resetTimer, setWorkoutTimer } =
     useWorkoutTimer();
@@ -40,14 +57,14 @@ function ExerciseRoutines({ isDarkMode }) {
     }
   }, [workoutTimer, activeWorkout, isTimerRunning]);
 
-  const handleExerciseClick = (exercise) => {
+  const handleExerciseClick = (exercise: Exercise): void => {
     setActiveExercise(exercise);
     setActiveWorkout(exercise);
     setWorkoutProgress(0);
     setWorkoutTimer(0);
   };
 
-  const handleCategoryChange = (categoryId) => {
+  const handleCategoryChange = (categoryId: CategoryType): void => {
     setSelectedCategory(categoryId);
     if (activeWorkout) {
       setActiveWorkout(null);
@@ -56,7 +73,7 @@ function ExerciseRoutines({ isDarkMode }) {
     }
   };
 
-  const handleEndWorkout = () => {
+  const handleEndWorkout = (): void => {
     setActiveWorkout(null);
     setActiveExercise(null);
     resetTimer();
@@ -79,12 +96,10 @@ function ExerciseRoutines({ isDarkMode }) {
       className={`min-h-screen ${isDarkMode ? 'bg-dark-bg text-gray-100' : 'bg-light-bg text-gray-800'}`}
     >
       <div className="max-w-7xl mx-auto px-4 py-8 lg:px-8">
-        {/* Header Section with Progress Overview */}
         <div className="mb-8">
           <ProgressOverview isDarkMode={isDarkMode} />
         </div>
 
-        {/* Workout Tip - Conditional */}
         <AnimatePresence>
           {showTip && (
             <motion.div
@@ -112,9 +127,7 @@ function ExerciseRoutines({ isDarkMode }) {
           )}
         </AnimatePresence>
 
-        {/* Controls Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          {/* Fitness Level Selection */}
           <div className={`rounded-xl p-5 ${isDarkMode ? 'bg-dark-card' : 'bg-white'} shadow-md`}>
             <h2 className="text-xl font-semibold mb-3 pb-2 border-b border-gray-200 dark:border-gray-700">
               Fitness Level
@@ -133,8 +146,8 @@ function ExerciseRoutines({ isDarkMode }) {
                     borderColor: level.color,
                     color: selectedLevel === level.id ? 'white' : level.color,
                     backgroundColor: selectedLevel === level.id ? level.color : 'transparent',
-                  }}
-                  onClick={() => setSelectedLevel(level.id)}
+                  } as React.CSSProperties}
+                  onClick={() => setSelectedLevel(level.id as FitnessLevelType)}
                 >
                   {level.label}
                 </button>
@@ -142,7 +155,6 @@ function ExerciseRoutines({ isDarkMode }) {
             </div>
           </div>
 
-          {/* Workout Categories */}
           <div className={`rounded-xl p-5 ${isDarkMode ? 'bg-dark-card' : 'bg-white'} shadow-md`}>
             <h2 className="text-xl font-semibold mb-3">Workout Type</h2>
             <div className="relative flex items-center">
@@ -162,7 +174,7 @@ function ExerciseRoutines({ isDarkMode }) {
                           : 'bg-gradient-to-r from-blue-600 to-blue-500 text-white'
                         : `${isDarkMode ? 'bg-dark-card2 hover:bg-gray-700' : 'bg-gray-50 hover:bg-gray-100'} shadow`
                     } shadow-lg transform hover:-translate-y-1`}
-                    onClick={() => handleCategoryChange(category.id)}
+                    onClick={() => handleCategoryChange(category.id as CategoryType)}
                   >
                     <div className="text-2xl mb-1">{category.icon}</div>
                     <span className="text-sm font-medium">{category.label}</span>
@@ -178,7 +190,6 @@ function ExerciseRoutines({ isDarkMode }) {
           </div>
         </div>
 
-        {/* Active Workout Timer */}
         {activeWorkout && (
           <div className="mb-6">
             <WorkoutTimer
@@ -209,7 +220,6 @@ function ExerciseRoutines({ isDarkMode }) {
           </div>
         )}
 
-        {/* Exercise Grid with Integrated 3D Model */}
         <motion.div
           className={`rounded-xl ${isDarkMode ? 'bg-dark-card' : 'bg-white'} shadow-md overflow-hidden`}
           variants={{
@@ -227,7 +237,6 @@ function ExerciseRoutines({ isDarkMode }) {
           </h2>
 
           <div className="flex flex-col lg:flex-row">
-            {/* Exercise Card - Left side */}
             <div className="lg:w-1/2 p-5">
               {workoutData[selectedLevel][selectedCategory]?.length > 0 && (
                 <ExerciseCard
@@ -235,12 +244,11 @@ function ExerciseRoutines({ isDarkMode }) {
                   onExerciseStart={handleExerciseClick}
                   activeWorkout={activeWorkout}
                   isDarkMode={isDarkMode}
-                  showModel={false}
+                  compact={false}
                 />
               )}
             </div>
 
-            {/* 3D Model - Right side */}
             <div className="lg:w-1/2 border-t lg:border-t-0 lg:border-l border-gray-200 dark:border-gray-700">
               <ModelSection
                 activeExercise={activeExercise}
@@ -250,7 +258,6 @@ function ExerciseRoutines({ isDarkMode }) {
             </div>
           </div>
 
-          {/* Additional Exercises */}
           {workoutData[selectedLevel][selectedCategory]?.length > 1 && (
             <div className="border-t border-gray-200 dark:border-gray-700 p-5">
               <h3 className="text-lg font-medium mb-4">More Exercises</h3>
@@ -262,7 +269,6 @@ function ExerciseRoutines({ isDarkMode }) {
                     onExerciseStart={handleExerciseClick}
                     activeWorkout={activeWorkout}
                     isDarkMode={isDarkMode}
-                    showModel={false}
                     compact={true}
                   />
                 ))}
@@ -273,6 +279,6 @@ function ExerciseRoutines({ isDarkMode }) {
       </div>
     </div>
   );
-}
+};
 
 export default ExerciseRoutines;

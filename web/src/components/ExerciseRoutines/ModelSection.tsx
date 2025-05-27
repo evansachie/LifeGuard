@@ -2,17 +2,38 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaSyncAlt, FaExpand, FaInfoCircle } from 'react-icons/fa';
 
-const MODEL_URL = import.meta.env.VITE_MODEL_URL;
+const MODEL_URL = import.meta.env.VITE_MODEL_URL as string;
 
-const ModelSection = ({ activeExercise, selectedCategory, isDarkMode }) => {
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [highlightedMuscles, setHighlightedMuscles] = useState([]);
+interface Exercise {
+  id?: string | number;
+  title: string;
+  targetMuscles: string[];
+  [key: string]: any;
+}
+
+interface ModelSectionProps {
+  activeExercise: Exercise | null;
+  selectedCategory: string | null;
+  isDarkMode: boolean;
+}
+
+interface ModelMessage {
+  type: string;
+  data: {
+    method: string;
+    args?: string[];
+  };
+}
+
+const ModelSection: React.FC<ModelSectionProps> = ({ activeExercise, selectedCategory, isDarkMode }) => {
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [highlightedMuscles, setHighlightedMuscles] = useState<string[]>([]);
 
   useEffect(() => {
-    const iframe = document.querySelector('.model-container iframe');
+    const iframe = document.querySelector('.model-container iframe') as HTMLIFrameElement | null;
     if (!iframe || !selectedCategory) return;
 
-    const highlightMuscles = () => {
+    const highlightMuscles = (): void => {
       if (!activeExercise?.targetMuscles) {
         setHighlightedMuscles([]);
         return;
@@ -20,31 +41,29 @@ const ModelSection = ({ activeExercise, selectedCategory, isDarkMode }) => {
 
       setHighlightedMuscles(activeExercise.targetMuscles);
 
-      iframe.contentWindow.postMessage(
-        {
-          type: 'callMethod',
-          data: {
-            method: 'clearAnnotations',
-          },
+      const clearMessage: ModelMessage = {
+        type: 'callMethod',
+        data: {
+          method: 'clearAnnotations',
         },
-        '*'
-      );
+      };
+      
+      iframe.contentWindow?.postMessage(clearMessage, '*');
 
       activeExercise.targetMuscles.forEach((muscle) => {
-        iframe.contentWindow.postMessage(
-          {
-            type: 'callMethod',
-            data: {
-              method: 'showAnnotation',
-              args: [muscle],
-            },
+        const showMessage: ModelMessage = {
+          type: 'callMethod',
+          data: {
+            method: 'showAnnotation',
+            args: [muscle],
           },
-          '*'
-        );
+        };
+        
+        iframe.contentWindow?.postMessage(showMessage, '*');
       });
     };
 
-    const handleMessage = (event) => {
+    const handleMessage = (event: MessageEvent): void => {
       if (event.data === 'viewerready') {
         highlightMuscles();
       }
@@ -61,23 +80,22 @@ const ModelSection = ({ activeExercise, selectedCategory, isDarkMode }) => {
     };
   }, [activeExercise, selectedCategory]);
 
-  const handleFullscreen = () => {
+  const handleFullscreen = (): void => {
     setIsFullscreen(!isFullscreen);
   };
 
-  const handleResetView = () => {
-    const iframe = document.querySelector('.model-container iframe');
+  const handleResetView = (): void => {
+    const iframe = document.querySelector('.model-container iframe') as HTMLIFrameElement | null;
     if (!iframe) return;
 
-    iframe.contentWindow.postMessage(
-      {
-        type: 'callMethod',
-        data: {
-          method: 'resetCamera',
-        },
+    const resetMessage: ModelMessage = {
+      type: 'callMethod',
+      data: {
+        method: 'resetCamera',
       },
-      '*'
-    );
+    };
+    
+    iframe.contentWindow?.postMessage(resetMessage, '*');
   };
 
   return (
@@ -117,8 +135,7 @@ const ModelSection = ({ activeExercise, selectedCategory, isDarkMode }) => {
               src={MODEL_URL}
               className="w-full h-full border-0"
               allowFullScreen
-              mozallowfullscreen="true"
-              webkitallowfullscreen="true"
+              {...{ mozallowfullscreen: "true", webkitallowfullscreen: "true" } as any}
             />
           </div>
         </div>
@@ -204,8 +221,7 @@ const ModelSection = ({ activeExercise, selectedCategory, isDarkMode }) => {
                     src={MODEL_URL}
                     className="w-full h-full border-0"
                     allowFullScreen
-                    mozallowfullscreen="true"
-                    webkitallowfullscreen="true"
+                    {...{ mozallowfullscreen: "true", webkitallowfullscreen: "true" } as any}
                   />
                 </div>
               </div>

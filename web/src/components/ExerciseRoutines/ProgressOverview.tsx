@@ -10,24 +10,42 @@ import CaloriesModal from './CaloriesModal';
 import WorkoutsModal from './WorkoutsModal';
 import StreakModal from './StreakModal';
 
-const ProgressOverview = ({ isDarkMode }) => {
-  const [stats, setStats] = useState({
+interface ExerciseStats {
+  caloriesBurned: number;
+  workoutsCompleted: number;
+  currentStreak: number;
+  currentGoal: string;
+  [key: string]: string | number;
+}
+
+interface ProgressOverviewProps {
+  isDarkMode: boolean;
+}
+
+const ProgressOverview: React.FC<ProgressOverviewProps> = ({ isDarkMode }) => {
+  const [stats, setStats] = useState<ExerciseStats>({
     caloriesBurned: 0,
     workoutsCompleted: 0,
     currentStreak: 0,
     currentGoal: 'Not set',
   });
-  const [, setLoading] = useState(true);
-  const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
-  const [isCaloriesModalOpen, setIsCaloriesModalOpen] = useState(false);
-  const [isWorkoutsModalOpen, setIsWorkoutsModalOpen] = useState(false);
-  const [isStreakModalOpen, setIsStreakModalOpen] = useState(false);
+  const [, setLoading] = useState<boolean>(true);
+  const [isGoalModalOpen, setIsGoalModalOpen] = useState<boolean>(false);
+  const [isCaloriesModalOpen, setIsCaloriesModalOpen] = useState<boolean>(false);
+  const [isWorkoutsModalOpen, setIsWorkoutsModalOpen] = useState<boolean>(false);
+  const [isStreakModalOpen, setIsStreakModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchStats = async (): Promise<void> => {
       try {
         const data = await exerciseService.getStats();
-        setStats(data);
+        const transformedData: ExerciseStats = {
+          caloriesBurned: data.totalCaloriesBurned || 0,
+          workoutsCompleted: data.totalWorkouts || 0,
+          currentStreak: data.currentStreak || 0,
+          currentGoal: data.goalType || 'Not set',
+        };
+        setStats(transformedData);
       } catch (error) {
         console.error('Error fetching exercise stats:', error);
       } finally {
@@ -38,7 +56,7 @@ const ProgressOverview = ({ isDarkMode }) => {
     fetchStats();
   }, []);
 
-  const handleGoalSelect = async (goalType) => {
+  const handleGoalSelect = async (goalType: string): Promise<void> => {
     try {
       await exerciseService.setGoal(goalType);
       setStats((prev) => ({ ...prev, currentGoal: goalType }));

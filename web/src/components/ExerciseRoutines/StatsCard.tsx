@@ -1,7 +1,19 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { IconType } from 'react-icons';
 
-const StatsCard = ({
+interface StatsCardProps {
+  icon: IconType;
+  title: string;
+  value: string | number;
+  color?: string;
+  onClick?: () => void;
+  clickable?: boolean;
+  suffixIcon?: IconType;
+  hoverText?: string;
+}
+
+const StatsCard: React.FC<StatsCardProps> = ({
   icon: Icon,
   title,
   value,

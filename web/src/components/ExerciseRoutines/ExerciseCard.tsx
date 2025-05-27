@@ -2,7 +2,27 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { FaFire, FaPlay, FaInfoCircle } from 'react-icons/fa';
 
-const ExerciseCard = ({
+// Update the Exercise interface to match the one from exercise-data.ts
+interface Exercise {
+  id: string;
+  title: string;
+  description: string;
+  duration: string;
+  videoUrl: string;
+  calories: number;
+  targetMuscles: string[];
+}
+
+// Update the ExerciseCardProps interface
+interface ExerciseCardProps {
+  exercise: Exercise;
+  onExerciseStart: (exercise: Exercise) => void;
+  activeWorkout: Exercise | null;  // Changed from boolean | null to Exercise | null
+  isDarkMode: boolean;
+  compact?: boolean;
+}
+
+const ExerciseCard: React.FC<ExerciseCardProps> = ({
   exercise,
   onExerciseStart,
   activeWorkout,
@@ -52,7 +72,7 @@ const ExerciseCard = ({
             <div className="flex gap-2">
               <button
                 className={`p-1.5 rounded-full ${isDarkMode ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'} transition-colors`}
-                onClick={(e) => {
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                   e.stopPropagation();
                 }}
               >
