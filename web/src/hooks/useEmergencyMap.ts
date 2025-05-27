@@ -1,7 +1,7 @@
 import { useEffect, useRef, RefObject } from 'react';
 import mapboxgl from 'mapbox-gl';
 import { toast } from 'react-toastify';
-import { EmergencyUserData } from '../types/emergency';
+import { EmergencyUserData } from '../types/emergency.types';
 
 type Coordinates = [number, number];
 

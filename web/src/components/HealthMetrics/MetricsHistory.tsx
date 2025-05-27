@@ -1,7 +1,20 @@
+import React from 'react';
 import { Line } from 'react-chartjs-2';
 import { formatDate } from '../../utils/formatDate';
 
-const MetricsHistory = ({ history = [], isDarkMode }) => {
+interface HistoryItem {
+  Weight: number;
+  BMR: number;
+  TDEE: number;
+  CreatedAt: string | Date;
+}
+
+interface MetricsHistoryProps {
+  history?: HistoryItem[];
+  isDarkMode: boolean;
+}
+
+const MetricsHistory: React.FC<MetricsHistoryProps> = ({ history = [], isDarkMode }) => {
   if (!Array.isArray(history) || history.length < 2) {
     return null;
   }

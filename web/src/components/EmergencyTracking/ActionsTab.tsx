@@ -9,7 +9,7 @@ import {
   FaShareAlt,
   FaClipboardList,
 } from 'react-icons/fa';
-import { EmergencyUserData, EmergencyActions } from '../../types/emergency';
+import { EmergencyUserData, EmergencyActions } from '../../types/emergency.types';
 
 interface ActionsTabProps {
   userData: EmergencyUserData;

@@ -1,9 +1,10 @@
-import { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { FaCalculator, FaExclamationCircle, FaRedo } from 'react-icons/fa';
 import Spinner from '../../components/Spinner/Spinner';
 
 import useHealthMetricsState from '../../hooks/useHealthMetricsState';
 import useHealthMetricsData from '../../hooks/useHealthMetricsData';
+import { MetricsData } from '../../types/healthMetrics.types';
 
 import PageHeader from '../../components/HealthMetrics/PageHeader';
 import MetricsForm from '../../components/HealthMetrics/MetricsForm';
@@ -12,7 +13,11 @@ import MetricsHistory from '../../components/HealthMetrics/MetricsHistory';
 
 import './HealthMetrics.css';
 
-function HealthMetrics({ isDarkMode }) {
+interface HealthMetricsProps {
+  isDarkMode: boolean;
+}
+
+const HealthMetrics: React.FC<HealthMetricsProps> = ({ isDarkMode }) => {
   const {
     formData,
     metrics,
@@ -27,22 +32,37 @@ function HealthMetrics({ isDarkMode }) {
     setMetricsHistory,
   } = useHealthMetricsState();
 
-  const [dataFetchFailed, setDataFetchFailed] = useState(false);
-  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
-  const [isRetrying, setIsRetrying] = useState(false);
+  const [dataFetchFailed, setDataFetchFailed] = useState<boolean>(false);
+  const [initialLoadComplete, setInitialLoadComplete] = useState<boolean>(false);
+  const [isRetrying, setIsRetrying] = useState<boolean>(false);
 
   const { fetchLatestMetrics, fetchMetricsHistory, handleInputChange, calculateMetrics } =
     useHealthMetricsData({
       formData,
       setFormData,
-      setMetrics: metrics.setMetrics,
-      setShowResults,
+      setMetrics: ((data: MetricsData | ((prev: MetricsData) => MetricsData)) => {
+        if (typeof data === 'function') {
+          metrics.setMetrics((prevState) => {
+            const newState = data(prevState as unknown as MetricsData);
+            return newState as unknown as typeof prevState;
+          });
+        } else {
+          metrics.setMetrics(data as unknown as Parameters<typeof metrics.setMetrics>[0]);
+        }
+      }) as any,
+      setShowResults: ((value: boolean | ((prev: boolean) => boolean)) => {
+        setShowResults(value as any);
+      }) as any,
       unit,
-      setMetricsHistory,
-      setIsLoading,
+      setMetricsHistory: ((data: any) => {
+        setMetricsHistory(data);
+      }) as any,
+      setIsLoading: ((value: boolean | ((prev: boolean) => boolean)) => {
+        setIsLoading(value as any);
+      }) as any,
     });
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async (): Promise<void> => {
     if (isLoading || isRetrying) return;
 
     setIsLoading(true);
@@ -50,7 +70,7 @@ function HealthMetrics({ isDarkMode }) {
     setDataFetchFailed(false);
 
     try {
-      const timeoutPromise = new Promise((_, reject) => {
+      const timeoutPromise = new Promise<never>((_, reject) => {
         const timeoutId = setTimeout(() => {
           clearTimeout(timeoutId);
           reject(new Error('Request timeout'));
@@ -89,9 +109,9 @@ function HealthMetrics({ isDarkMode }) {
     return () => {
       setIsLoading(false);
     };
-  }, [loadData, initialLoadComplete]);
+  }, [loadData, initialLoadComplete, setIsLoading]);
 
-  const handleRetry = () => {
+  const handleRetry = (): void => {
     loadData();
   };
 
@@ -126,7 +146,7 @@ function HealthMetrics({ isDarkMode }) {
                 >
                   {isRetrying ? (
                     <>
-                      <Spinner size="small" className="mr-2" /> Retrying...
+                      <Spinner size="small" /> <span className="ml-2">Retrying...</span>
                     </>
                   ) : (
                     <>
@@ -142,7 +162,6 @@ function HealthMetrics({ isDarkMode }) {
               handleInputChange={handleInputChange}
               unit={unit}
               isDarkMode={isDarkMode}
-              calculateMetrics={calculateMetrics}
               isLoading={isLoading}
             >
               <button
@@ -152,21 +171,24 @@ function HealthMetrics({ isDarkMode }) {
               >
                 {isLoading ? (
                   <>
-                    <Spinner size="small" />
-                    <span>Calculating...</span>
+                    <Spinner size="small" /> <span className="ml-2">Calculating...</span>
                   </>
                 ) : (
                   <>
-                    <FaCalculator />
-                    <span>Calculate Metrics</span>
+                    <FaCalculator /> <span className="ml-2">Calculate Metrics</span>
                   </>
                 )}
               </button>
             </MetricsForm>
 
-            {showResults && (
+            {showResults && metrics.data && (
               <ResultsSection
-                metrics={metrics.data}
+                metrics={{
+                  bmr: metrics.data.bmr,
+                  tdee: metrics.data.tdee,
+                  macros: metrics.data.macros || { calories: 0, protein: 0, carbs: 0, fat: 0 },
+                  idealWeight: metrics.data.idealWeight || { min: 0, max: 0 },
+                }}
                 formData={formData}
                 unit={unit}
                 isDarkMode={isDarkMode}
@@ -174,13 +196,13 @@ function HealthMetrics({ isDarkMode }) {
             )}
 
             {metricsHistory?.length > 0 && (
-              <MetricsHistory history={metricsHistory} isDarkMode={isDarkMode} unit={unit} />
+              <MetricsHistory history={metricsHistory} isDarkMode={isDarkMode} />
             )}
           </>
         )}
       </div>
     </div>
   );
-}
+};
 
 export default HealthMetrics;

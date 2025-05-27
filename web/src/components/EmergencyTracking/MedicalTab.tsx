@@ -1,6 +1,6 @@
 import React from 'react';
 import { FaUserMd, FaHeartbeat, FaUser, FaAmbulance, FaHospital, FaPills } from 'react-icons/fa';
-import { EmergencyUserData, EmergencyActions } from '../../types/emergency';
+import { EmergencyUserData, EmergencyActions } from '../../types/emergency.types';
 
 interface MedicalTabProps {
   userData: EmergencyUserData;

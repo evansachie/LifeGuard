@@ -1,6 +1,31 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
-const MetricsForm = ({ formData, handleInputChange, unit, isDarkMode, isLoading, children }) => {
+interface FormData {
+  age: string | number;
+  weight: string | number;
+  height: string | number;
+  gender: string;
+  activityLevel: string;
+  goal: string;
+}
+
+interface MetricsFormProps {
+  formData: FormData;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  unit: 'metric' | 'imperial';
+  isDarkMode: boolean;
+  isLoading: boolean;
+  children: ReactNode;
+}
+
+const MetricsForm: React.FC<MetricsFormProps> = ({ 
+  formData, 
+  handleInputChange, 
+  unit, 
+  isDarkMode, 
+  isLoading, 
+  children 
+}) => {
   return (
     <div className="metrics-form">
       <div className={`input-section ${isLoading ? 'loading-pulse' : ''}`}>

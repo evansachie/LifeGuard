@@ -11,7 +11,7 @@ import {
   FaShareAlt,
 } from 'react-icons/fa';
 import { useEmergencyMap } from '../../hooks/useEmergencyMap';
-import { EmergencyUserData, EmergencyActions } from '../../types/emergency';
+import { EmergencyUserData, EmergencyActions } from '../../types/emergency.types';
 
 interface InfoTabProps {
   userData: EmergencyUserData;

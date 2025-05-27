@@ -1,6 +1,16 @@
 import React from 'react';
 
-const MacrosDisplay = ({ macros }) => {
+interface Macros {
+  protein: number;
+  carbs: number;
+  fat: number;
+}
+
+interface MacrosDisplayProps {
+  macros: Macros | null;
+}
+
+const MacrosDisplay: React.FC<MacrosDisplayProps> = ({ macros }) => {
   if (!macros) return null;
 
   return (

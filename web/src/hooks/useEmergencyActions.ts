@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { EmergencyActions, EmergencyUserData } from '../types/emergency';
+import { EmergencyActions, EmergencyUserData } from '../types/emergency.types';
 
 export function useEmergencyActions(): EmergencyActions {
   const [copySuccess, setCopySuccess] = useState<string | undefined>(undefined);

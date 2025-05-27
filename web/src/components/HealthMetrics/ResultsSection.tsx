@@ -3,8 +3,16 @@ import MetricCard from './MetricCard';
 import MacrosDisplay from './MacrosDisplay';
 import RecommendationsSection from './RecommendationsSection';
 import { FaRunning, FaChartLine, FaWeightHanging } from 'react-icons/fa';
+import { Metrics, FormData } from '../../types/healthMetrics.types';
 
-const ResultsSection = ({ metrics, formData, unit, isDarkMode }) => {
+interface ResultsSectionProps {
+  metrics: Metrics;
+  formData: FormData;
+  unit: 'metric' | 'imperial';
+  isDarkMode: boolean;
+}
+
+const ResultsSection: React.FC<ResultsSectionProps> = ({ metrics, formData, unit, isDarkMode }) => {
   return (
     <div className="results-section">
       <div className="metrics-grid">

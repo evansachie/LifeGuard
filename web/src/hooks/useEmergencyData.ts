@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { fetchApi, API_ENDPOINTS } from '../utils/api';
-import { EmergencyUserData, Medication } from '../types/emergency';
+import { EmergencyUserData, Medication } from '../types/emergency.types';
 
 // Default emergency user data that matches the expected structure
 const defaultUserData: EmergencyUserData = {
