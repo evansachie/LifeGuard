@@ -10,29 +10,34 @@ import AddMedicationForm from '../../components/MedicationTracker/AddMedicationF
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal/DeleteConfirmationModal';
 import SearchAndFilter from '../../components/MedicationTracker/SearchAndFilter';
 import NotificationPreferences from '../../components/MedicationTracker/NotificationPreferences';
+import { Medication, MedicationData, FiltersType } from '../../types/medicationTracker.types';
 
-const MedicationTracker = ({ isDarkMode }) => {
-  const [medications, setMedications] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [complianceRate, setComplianceRate] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingMedication, setEditingMedication] = useState(null);
-  const [medicationToDelete, setMedicationToDelete] = useState(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filters, setFilters] = useState({
+interface MedicationTrackerProps {
+  isDarkMode: boolean;
+}
+
+const MedicationTracker: React.FC<MedicationTrackerProps> = ({ isDarkMode }) => {
+  const [medications, setMedications] = useState<Medication[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [complianceRate, setComplianceRate] = useState<number | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [editingMedication, setEditingMedication] = useState<Medication | null>(null);
+  const [medicationToDelete, setMedicationToDelete] = useState<Medication | null>(null);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [filters, setFilters] = useState<FiltersType>({
     status: '',
     frequency: '',
     timeOfDay: '',
   });
-  const [isNotificationSettingsOpen, setIsNotificationSettingsOpen] = useState(false);
+  const [isNotificationSettingsOpen, setIsNotificationSettingsOpen] = useState<boolean>(false);
 
   useEffect(() => {
     fetchMedications();
     fetchComplianceRate();
   }, []);
 
-  const fetchMedications = async () => {
+  const fetchMedications = async (): Promise<void> => {
     try {
       const response = await fetchWithAuth(API_ENDPOINTS.MEDICATIONS.LIST);
       setMedications(response.data);
@@ -43,7 +48,7 @@ const MedicationTracker = ({ isDarkMode }) => {
     }
   };
 
-  const fetchComplianceRate = async () => {
+  const fetchComplianceRate = async (): Promise<void> => {
     try {
       const response = await fetchWithAuth(API_ENDPOINTS.MEDICATIONS.COMPLIANCE);
       setComplianceRate(response.data);
@@ -52,7 +57,7 @@ const MedicationTracker = ({ isDarkMode }) => {
     }
   };
 
-  const handleAddMedication = async (medicationData) => {
+  const handleAddMedication = async (medicationData: MedicationData): Promise<void> => {
     try {
       await fetchWithAuth(API_ENDPOINTS.MEDICATIONS.ADD, {
         method: 'POST',
@@ -65,7 +70,7 @@ const MedicationTracker = ({ isDarkMode }) => {
     }
   };
 
-  const handleTrackDose = async (medicationId, taken) => {
+  const handleTrackDose = async (medicationId: string, taken: boolean): Promise<void> => {
     try {
       await fetchWithAuth(API_ENDPOINTS.MEDICATIONS.TRACK, {
         method: 'POST',
@@ -78,13 +83,13 @@ const MedicationTracker = ({ isDarkMode }) => {
       fetchMedications();
       fetchComplianceRate();
       toast.success('Dose tracked successfully');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Track dose error:', error);
       toast.error(error.message || 'Failed to track dose');
     }
   };
 
-  const handleEditMedication = async (medicationData) => {
+  const handleEditMedication = async (medicationData: MedicationData): Promise<void> => {
     try {
       await fetchWithAuth(`${API_ENDPOINTS.MEDICATIONS.UPDATE}/${medicationData.Id}`, {
         method: 'PUT',
@@ -98,7 +103,7 @@ const MedicationTracker = ({ isDarkMode }) => {
     }
   };
 
-  const handleDeleteMedication = async (medicationId) => {
+  const handleDeleteMedication = async (medicationId: string): Promise<void> => {
     setIsDeleting(true);
     try {
       await fetchWithAuth(`${API_ENDPOINTS.MEDICATIONS.DELETE}/${medicationId}`, {
@@ -114,7 +119,7 @@ const MedicationTracker = ({ isDarkMode }) => {
     }
   };
 
-  // New function to filter medications
+  // Filter medications
   const filteredMedications = medications.filter((med) => {
     const matchesSearch =
       med.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -124,7 +129,8 @@ const MedicationTracker = ({ isDarkMode }) => {
       !filters.status || (filters.status === 'active' ? med.Active : !med.Active);
 
     const matchesFrequency =
-      !filters.frequency || med.Frequency.toLowerCase() === filters.frequency.toLowerCase();
+      !filters.frequency || 
+      med.Frequency.toLowerCase() === filters.frequency.toLowerCase();
 
     const matchesTimeOfDay =
       !filters.timeOfDay ||
@@ -139,7 +145,7 @@ const MedicationTracker = ({ isDarkMode }) => {
     return matchesSearch && matchesStatus && matchesFrequency && matchesTimeOfDay;
   });
 
-  const handleFilterChange = (filterName, value) => {
+  const handleFilterChange = (filterName: string, value: string): void => {
     setFilters((prev) => ({ ...prev, [filterName]: value }));
   };
 
@@ -355,10 +361,7 @@ const MedicationTracker = ({ isDarkMode }) => {
 
                   <div className="p-6 overflow-y-auto" style={{ maxHeight: 'calc(90vh - 80px)' }}>
                     <AddMedicationForm
-                      initialData={{
-                        ...editingMedication,
-                        times: editingMedication.Time || [], // Fix the field name here
-                      }}
+                      initialData={editingMedication}
                       onSubmit={handleEditMedication}
                       isDarkMode={isDarkMode}
                     />
@@ -410,7 +413,7 @@ const MedicationTracker = ({ isDarkMode }) => {
         <DeleteConfirmationModal
           isOpen={!!medicationToDelete}
           onClose={() => setMedicationToDelete(null)}
-          onConfirm={() => handleDeleteMedication(medicationToDelete?.Id)}
+          onConfirm={() => medicationToDelete?.Id && handleDeleteMedication(medicationToDelete.Id)}
           title="Delete Medication"
           message="Are you sure you want to delete this medication? This action cannot be undone."
           itemName={medicationToDelete?.Name}

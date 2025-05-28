@@ -2,8 +2,14 @@ import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { FaPlus, FaTrash, FaClock, FaInfoCircle } from 'react-icons/fa';
 import MedicationSearch from './MedicationSearch';
+import { 
+  AddMedicationFormProps, 
+  MedicationData, 
+  MedicationFormData, 
+  MedicationSearchItem
+} from '../../types/medicationTracker.types';
 
-const defaultFormData = {
+const defaultFormData: MedicationFormData = {
   name: '',
   dosage: '',
   frequency: 'daily',
@@ -14,8 +20,8 @@ const defaultFormData = {
   active: true,
 };
 
-const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
-  const [formData, setFormData] = useState(() => {
+const AddMedicationForm: React.FC<AddMedicationFormProps> = ({ onSubmit, isDarkMode, initialData = null }) => {
+  const [formData, setFormData] = useState<MedicationFormData>(() => {
     if (initialData) {
       return {
         name: initialData.Name || '',
@@ -31,7 +37,7 @@ const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
     return defaultFormData;
   });
 
-  const [selectedMedication, setSelectedMedication] = useState(null);
+  const [selectedMedication, setSelectedMedication] = useState<MedicationSearchItem | null>(null);
 
   const isFormValid = useMemo(() => {
     return (
@@ -42,9 +48,9 @@ const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
     );
   }, [formData]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const submissionData = {
+    const submissionData: MedicationData = {
       ...formData,
       // If endDate is empty string, set it to null
       endDate: formData.endDate || null,
@@ -57,7 +63,7 @@ const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
     }
   };
 
-  const handleMedicationSelect = (name, medication) => {
+  const handleMedicationSelect = (name: string, medication?: MedicationSearchItem) => {
     setFormData((prev) => ({
       ...prev,
       name,
@@ -65,7 +71,9 @@ const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
       dosage: !prev.dosage && medication?.strength ? medication.strength : prev.dosage,
     }));
 
-    setSelectedMedication(medication);
+    if (medication) {
+      setSelectedMedication(medication);
+    }
   };
 
   const addTimeSlot = () => {
@@ -75,7 +83,7 @@ const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
     }));
   };
 
-  const removeTimeSlot = (index) => {
+  const removeTimeSlot = (index: number) => {
     setFormData((prev) => ({
       ...prev,
       times: prev.times.filter((_, i) => i !== index),
@@ -93,8 +101,6 @@ const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
             isDarkMode={isDarkMode}
           />
         </div>
-
-        {/* Show medication details if a medication was selected from search */}
         {selectedMedication && (
           <div className={`p-3 rounded-md ${isDarkMode ? 'bg-gray-700' : 'bg-blue-50'}`}>
             <div className="flex items-center mb-2">
@@ -141,7 +147,10 @@ const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
           <div className="text-sm font-medium mb-1">Frequency</div>
           <select
             value={formData.frequency}
-            onChange={(e) => setFormData((prev) => ({ ...prev, frequency: e.target.value }))}
+            onChange={(e) => setFormData((prev) => ({ 
+              ...prev, 
+              frequency: e.target.value as MedicationFormData['frequency'] 
+            }))}
             className={`w-full rounded-lg p-2.5 border transition-colors ${
               isDarkMode
                 ? 'bg-dark-card border-gray-700 text-white focus:border-blue-500'
@@ -236,7 +245,7 @@ const AddMedicationForm = ({ onSubmit, isDarkMode, initialData = null }) => {
                 ? 'bg-dark-card border-gray-700 text-white focus:border-blue-500'
                 : 'bg-white border-gray-300 focus:border-blue-500'
             }`}
-            rows="3"
+            rows={3}
             placeholder="Add any special instructions or notes"
           />
         </div>

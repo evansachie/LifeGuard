@@ -2,15 +2,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FaSearch, FaSpinner } from 'react-icons/fa';
 import { searchMedications } from '../../services/medicationSearchService';
 import { debounce } from 'lodash';
+import { MedicationSearchProps, MedicationSearchItem } from '../../types/medicationTracker.types';
 
-const MedicationSearch = ({ value, onChange, isDarkMode }) => {
-  const [query, setQuery] = useState(value || '');
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(-1);
-  const dropdownRef = useRef(null);
-  const inputRef = useRef(null);
+const MedicationSearch: React.FC<MedicationSearchProps> = ({ value, onChange, isDarkMode }) => {
+  const [query, setQuery] = useState<string>(value || '');
+  const [results, setResults] = useState<MedicationSearchItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [activeIndex, setActiveIndex] = useState<number>(-1);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Update internal state when parent value changes
   useEffect(() => {
@@ -21,7 +22,7 @@ const MedicationSearch = ({ value, onChange, isDarkMode }) => {
 
   // Debounce the search function
   const debouncedSearch = useRef(
-    debounce(async (searchQuery) => {
+    debounce(async (searchQuery: string) => {
       if (searchQuery.length < 2) {
         setResults([]);
         setIsOpen(false);
@@ -48,8 +49,8 @@ const MedicationSearch = ({ value, onChange, isDarkMode }) => {
 
   // Close dropdown when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent): void => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
@@ -59,7 +60,7 @@ const MedicationSearch = ({ value, onChange, isDarkMode }) => {
   }, []);
 
   // Handle selection from dropdown
-  const handleSelect = (medication) => {
+  const handleSelect = (medication: MedicationSearchItem): void => {
     setQuery(medication.brandName);
     onChange(medication.brandName, medication);
     setIsOpen(false);
@@ -67,7 +68,7 @@ const MedicationSearch = ({ value, onChange, isDarkMode }) => {
   };
 
   // Handle query change
-  const handleQueryChange = (e) => {
+  const handleQueryChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const newQuery = e.target.value;
     setQuery(newQuery);
     onChange(newQuery);
@@ -75,7 +76,7 @@ const MedicationSearch = ({ value, onChange, isDarkMode }) => {
   };
 
   // Handle keyboard navigation
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
     if (!isOpen) {
       if (e.key === 'ArrowDown' && query.length >= 2) {
         setIsOpen(true);

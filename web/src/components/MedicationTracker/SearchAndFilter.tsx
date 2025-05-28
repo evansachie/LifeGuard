@@ -1,21 +1,17 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import { FaSearch, FaFilter } from 'react-icons/fa';
 import AccessibleDropdown from '../AccessibleDropdown/AccessibleDropdown';
+import { SearchAndFilterProps } from '../../types/medicationTracker.types';
 
-const SearchAndFilter = ({ searchTerm, onSearchChange, filters, onFilterChange, isDarkMode }) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+const SearchAndFilter: React.FC<SearchAndFilterProps> = ({ 
+  searchTerm, 
+  onSearchChange, 
+  filters, 
+  onFilterChange, 
+  isDarkMode 
+}) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className="relative w-full">

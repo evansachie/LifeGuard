@@ -4,20 +4,21 @@ import { FaBell, FaClock } from 'react-icons/fa';
 import { fetchWithAuth, API_ENDPOINTS } from '../../utils/api';
 import { toast } from 'react-toastify';
 import Spinner from '../Spinner/Spinner';
+import { NotificationPreferencesProps, PreferencesState } from '../../types/medicationTracker.types';
 
-const NotificationPreferences = ({ isDarkMode, onClose }) => {
-  const [preferences, setPreferences] = useState({
+const NotificationPreferences: React.FC<NotificationPreferencesProps> = ({ isDarkMode, onClose }) => {
+  const [preferences, setPreferences] = useState<PreferencesState>({
     emailNotifications: true,
     reminderLeadTime: 15,
   });
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [saving, setSaving] = useState<boolean>(false);
 
   useEffect(() => {
     fetchPreferences();
   }, []);
 
-  const fetchPreferences = async () => {
+  const fetchPreferences = async (): Promise<void> => {
     try {
       const response = await fetchWithAuth(API_ENDPOINTS.USER_PREFERENCES.NOTIFICATIONS);
       const dbPrefs = response.data || {};
@@ -32,7 +33,7 @@ const NotificationPreferences = ({ isDarkMode, onClose }) => {
     }
   };
 
-  const handleSave = async () => {
+  const handleSave = async (): Promise<void> => {
     setSaving(true);
     try {
       await fetchWithAuth(API_ENDPOINTS.USER_PREFERENCES.NOTIFICATIONS, {
@@ -47,30 +48,6 @@ const NotificationPreferences = ({ isDarkMode, onClose }) => {
       setSaving(false);
     }
   };
-
-  // const handleTestEmail = async () => {
-  //   setSaving(true);
-  //   try {
-  //     await fetchWithAuth(API_ENDPOINTS.USER_PREFERENCES.NOTIFICATIONS + '/test', {
-  //       method: 'POST',
-  //       body: JSON.stringify({
-  //         emailNotifications: true,
-  //         reminderLeadTime: 5,
-  //         medication: {
-  //           Name: 'Demo Med',
-  //           Dosage: '100mg',
-  //           Time: [new Date(Date.now() + 1 * 60 * 1000).toTimeString().substring(0, 5)],
-  //           Notes: 'This is a test notification.',
-  //         },
-  //       }),
-  //     });
-  //     toast.success('Test email triggered! Check your inbox.');
-  //   } catch (error) {
-  //     toast.error('Failed to send test email');
-  //   } finally {
-  //     setSaving(false);
-  //   }
-  // };
 
   if (loading) {
     return (
@@ -162,16 +139,6 @@ const NotificationPreferences = ({ isDarkMode, onClose }) => {
           {saving ? 'Saving...' : 'Save Changes'}
         </motion.button>
       </div>
-
-      {/* <div className="flex items-center justify-between">
-        <button
-          onClick={handleTestEmail}
-          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded shadow"
-          disabled={saving}
-        >
-          Send Test Email
-        </button>
-      </div> */}
     </div>
   );
 };

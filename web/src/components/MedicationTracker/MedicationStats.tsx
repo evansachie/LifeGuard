@@ -1,8 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaPills, FaClipboardList, FaChartLine } from 'react-icons/fa';
+import { MedicationStatsProps } from '../../types/medicationTracker.types';
 
-const MedicationStats = ({ complianceRate, medications, isDarkMode }) => {
+const MedicationStats: React.FC<MedicationStatsProps> = ({ complianceRate, medications, isDarkMode }) => {
   const activeMedications = medications.filter((m) => m.Active);
   const totalDoses = medications.reduce((acc, med) => acc + med.Time.length, 0);
 
