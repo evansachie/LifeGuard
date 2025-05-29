@@ -2,18 +2,18 @@
 
 .pollution-tracker {
   width: 100%;
-  height: 100%;
+  height: 100vh;
   position: relative;
+  overflow: hidden;
 }
 
 .map-container {
-  width: 100%;
+  width: 100vw;
   height: calc(100vh - 64px);
   position: relative;
   overflow: hidden;
 }
 
-/* User location marker */
 .location-marker {
   color: #ff6b6b;
   font-size: 24px;
@@ -36,7 +36,6 @@
   }
 }
 
-/* Legend styles */
 .legend {
   position: absolute;
   bottom: 30px;
@@ -59,10 +58,10 @@
 }
 
 .dark-mode .legend {
-  background: rgba(30, 41, 59, 0.95);
+  background: rgba(28, 28, 28, 0.95);
   color: #e5e7eb;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(44, 44, 44, 0.2);
 }
 
 .legend h3 {
@@ -85,7 +84,7 @@
 }
 
 .dark-mode .legend-item {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(44, 44, 44, 0.4);
 }
 
 .legend-item:last-child {
@@ -127,11 +126,10 @@
   color: #9ca3af;
 }
 
-/* Pollution info panel styles */
 .pollution-info {
   position: absolute;
   top: 20px;
-  right: 20px;
+  left: 20px;
   background: rgba(255, 255, 255, 0.95);
   padding: 18px;
   border-radius: 12px;
@@ -149,9 +147,9 @@
 }
 
 .dark-mode .pollution-info {
-  background: rgba(30, 41, 59, 0.95);
+  background: rgba(28, 28, 28, 0.95);
   color: #e5e7eb;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(44, 44, 44, 0.2);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
 }
 
@@ -194,7 +192,7 @@
 }
 
 .dark-mode .info-item {
-  background: rgba(55, 65, 81, 0.5);
+  background: rgba(44, 44, 44, 0.5);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
@@ -228,7 +226,6 @@
   font-weight: bold;
 }
 
-/* Pollution value status colors */
 .value.normal {
   color: #10B981;
 }
@@ -292,7 +289,7 @@
 }
 
 .dark-mode .construction-banner {
-  background: rgba(30, 41, 59, 0.95);
+  background: rgba(28, 28, 28, 0.95);
   color: #fbbf24;
   border: 2px solid #78350f;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
@@ -309,11 +306,26 @@
   }
 }
 
-/* MapBox control customizations */
+.mapboxgl-canvas-container,
+.mapboxgl-canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.mapboxgl-map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+}
+
 .mapboxgl-ctrl-group {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
   border-radius: 8px !important;
   overflow: hidden;
+  margin-right: 15px !important;
+  margin-top: 15px !important;
 }
 
 .dark-mode .mapboxgl-ctrl-group {
@@ -330,19 +342,42 @@
   background-color: #374151 !important;
 }
 
-/* Responsive adjustments */
+.mapboxgl-ctrl-bottom-right {
+  bottom: 5px !important;
+  right: 5px !important;
+}
+
+.mapboxgl-ctrl-attrib {
+  padding: 0 5px !important;
+  margin-right: 10px !important;
+  background-color: rgba(255, 255, 255, 0.7) !important;
+  border-radius: 4px !important;
+}
+
+.dark-mode .mapboxgl-ctrl-attrib {
+  background-color: rgba(31, 41, 55, 0.7) !important;
+}
+
+.dark-mode .mapboxgl-ctrl-attrib-inner {
+  color: #d1d5db !important;
+}
+
+.mapboxgl-ctrl-geolocate {
+  background-color: transparent !important;
+}
+
 @media (max-width: 768px) {
   .pollution-info {
-    top: auto;
-    bottom: 90px;
-    right: 15px;
-    left: 15px;
-    max-width: none;
-    width: calc(100% - 30px);
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 92%;
+    width: 92%;
   }
 
   .legend {
-    bottom: 20px;
+    bottom: 70px;
+    left: 10px;
     max-width: 200px;
   }
   
@@ -386,7 +421,7 @@
   
   .legend {
     left: 10px;
-    bottom: 10px;
+    bottom: 70px;
     max-width: 180px;
     padding: 10px;
   }
