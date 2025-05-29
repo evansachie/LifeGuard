@@ -1,7 +1,24 @@
 import React, { useState } from 'react';
 import MemoForm from './MemoForm';
 
-const MemoCard = ({
+interface Memo {
+  Id: number;
+  Text: string;
+  Done: boolean;
+  CreatedAt: string;
+}
+
+interface MemoCardProps {
+  memo: Memo;
+  onEdit: (id: number | null) => void;
+  onDelete: (memo: Memo) => void;
+  onToggleDone: (id: number, done: boolean) => void;
+  onUpdateMemo: (id: number, text: string) => void;
+  isEditing: boolean;
+  isDarkMode: boolean;
+}
+
+const MemoCard: React.FC<MemoCardProps> = ({
   memo,
   onEdit,
   onDelete,
@@ -10,9 +27,9 @@ const MemoCard = ({
   isEditing,
   isDarkMode,
 }) => {
-  const [editText, setEditText] = useState(memo.Text);
+  const [editText, setEditText] = useState<string>(memo.Text);
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string): string => {
     if (!dateString) return '';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -24,11 +41,11 @@ const MemoCard = ({
     });
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = (): void => {
     onUpdateMemo(memo.Id, editText);
   };
 
-  const handleCancelEdit = () => {
+  const handleCancelEdit = (): void => {
     setEditText(memo.Text);
     onEdit(null);
   };

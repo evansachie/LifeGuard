@@ -3,7 +3,26 @@ import MemoCard from './MemoCard';
 import EmptyState from './EmptyState';
 import Spinner from '../Spinner/Spinner';
 
-const MemoList = ({
+interface Memo {
+  Id: number;
+  Text: string;
+  Done: boolean;
+  CreatedAt: string;
+}
+
+interface MemoListProps {
+  memos: Memo[];
+  isLoading: boolean;
+  editingMemoId: number | null;
+  setEditingMemoId: (id: number | null) => void;
+  handleDeleteMemo: (memo: Memo) => void;
+  handleToggleDone: (id: number, done: boolean) => void;
+  handleUpdateMemo: (id: number, text: string) => void;
+  setShowNewNoteForm: (show: boolean) => void;
+  isDarkMode: boolean;
+}
+
+const MemoList: React.FC<MemoListProps> = ({
   memos,
   isLoading,
   editingMemoId,

@@ -6,20 +6,32 @@ import { useMemos } from '../../hooks/useMemos';
 import FilterBar from '../../components/PrivateMemos/FilterBar';
 import MemoForm from '../../components/PrivateMemos/MemoForm';
 import MemoList from '../../components/PrivateMemos/MemoList';
+import { FilterType, SortOrderType } from '../../components/PrivateMemos/FilterBar';
 
 import './PrivateMemos.css';
 
-const PrivateMemos = ({ isDarkMode }) => {
-  const [memo, setMemo] = useState('');
-  const [filter, setFilter] = useState('all');
-  const [sortOrder, setSortOrder] = useState('newest');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showNewNoteForm, setShowNewNoteForm] = useState(false);
-  const [editingMemoId, setEditingMemoId] = useState(null);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [deletingMemo, setDeletingMemo] = useState(null);
+interface Memo {
+  Id: number;
+  Text: string;
+  Done: boolean;
+  CreatedAt: string;
+}
 
-  const searchInputRef = useRef(null);
+interface PrivateMemosProps {
+  isDarkMode: boolean;
+}
+
+const PrivateMemos: React.FC<PrivateMemosProps> = ({ isDarkMode }) => {
+  const [memo, setMemo] = useState<string>('');
+  const [filter, setFilter] = useState<FilterType>('all');
+  const [sortOrder, setSortOrder] = useState<SortOrderType>('newest');
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [showNewNoteForm, setShowNewNoteForm] = useState<boolean>(false);
+  const [editingMemoId, setEditingMemoId] = useState<number | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
+  const [deletingMemo, setDeletingMemo] = useState<Memo | null>(null);
+
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const {
     isLoading,
@@ -36,7 +48,7 @@ const PrivateMemos = ({ isDarkMode }) => {
   const filteredMemos = getFilteredAndSortedMemos(filter, sortOrder, searchTerm);
 
   useEffect(() => {
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent): void => {
       // "/" to focus search
       if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
         if (document.activeElement !== searchInputRef.current) {
@@ -56,7 +68,7 @@ const PrivateMemos = ({ isDarkMode }) => {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const handleSaveMemo = async () => {
+  const handleSaveMemo = async (): Promise<void> => {
     const success = await createMemo(memo);
     if (success) {
       setMemo('');
@@ -64,12 +76,12 @@ const PrivateMemos = ({ isDarkMode }) => {
     }
   };
 
-  const handleDeleteMemo = (memo) => {
+  const handleDeleteMemo = (memo: Memo): void => {
     setDeletingMemo(memo);
     setDeleteModalOpen(true);
   };
 
-  const confirmDelete = async () => {
+  const confirmDelete = async (): Promise<void> => {
     if (!deletingMemo?.Id) return;
 
     const success = await deleteMemo(deletingMemo.Id);
@@ -79,18 +91,18 @@ const PrivateMemos = ({ isDarkMode }) => {
     }
   };
 
-  const handleUpdateMemo = async (id, updatedText) => {
+  const handleUpdateMemo = async (id: number, updatedText: string): Promise<void> => {
     const success = await updateMemo(id, updatedText);
     if (success) {
       setEditingMemoId(null);
     }
   };
 
-  const handleToggleDone = async (id, isDone) => {
+  const handleToggleDone = async (id: number, isDone: boolean): Promise<void> => {
     await toggleDone(id, isDone);
   };
 
-  const toggleNewNoteForm = () => {
+  const toggleNewNoteForm = (): void => {
     setShowNewNoteForm(!showNewNoteForm);
     if (!showNewNoteForm) {
       setMemo('');
@@ -154,7 +166,6 @@ const PrivateMemos = ({ isDarkMode }) => {
         handleDeleteMemo={handleDeleteMemo}
         handleToggleDone={handleToggleDone}
         handleUpdateMemo={handleUpdateMemo}
-        showNewNoteForm={showNewNoteForm}
         setShowNewNoteForm={setShowNewNoteForm}
         isDarkMode={isDarkMode}
       />

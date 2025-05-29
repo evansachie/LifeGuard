@@ -2,7 +2,17 @@ import React, { useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import Spinner from '../Spinner/Spinner';
 
-const MemoForm = ({
+interface MemoFormProps {
+  memo: string;
+  setMemo: (content: string) => void;
+  isDarkMode: boolean;
+  handleSave: () => void;
+  handleCancel: () => void;
+  isEditing?: boolean;
+  saving?: boolean;
+}
+
+const MemoForm: React.FC<MemoFormProps> = ({
   memo,
   setMemo,
   isDarkMode,
@@ -11,9 +21,9 @@ const MemoForm = ({
   isEditing = false,
   saving = false,
 }) => {
-  const [isEditorLoading, setIsEditorLoading] = useState(true);
+  const [isEditorLoading, setIsEditorLoading] = useState<boolean>(true);
 
-  const handleEditorChange = (content) => {
+  const handleEditorChange = (content: string): void => {
     setMemo(content);
   };
 
@@ -66,7 +76,6 @@ const MemoForm = ({
           branding: false,
           promotion: false,
           statusbar: false,
-
           auto_focus: !isEditing,
         }}
       />

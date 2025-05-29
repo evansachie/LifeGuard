@@ -1,7 +1,17 @@
 import React from 'react';
 import { MdSort } from 'react-icons/md';
 
-const FilterBar = ({ filter, setFilter, sortOrder, setSortOrder }) => {
+export type FilterType = 'all' | 'active' | 'completed';
+export type SortOrderType = 'newest' | 'oldest' | 'alphabetical';
+
+interface FilterBarProps {
+  filter: FilterType;
+  setFilter: (filter: FilterType) => void;
+  sortOrder: SortOrderType;
+  setSortOrder: (sortOrder: SortOrderType) => void;
+}
+
+const FilterBar: React.FC<FilterBarProps> = ({ filter, setFilter, sortOrder, setSortOrder }) => {
   return (
     <div className="filters-bar">
       <div className="filter-tabs">
