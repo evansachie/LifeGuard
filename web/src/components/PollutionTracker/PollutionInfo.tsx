@@ -2,8 +2,13 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { FaThermometerHalf, FaMask, FaWind } from 'react-icons/fa';
 import { getPollutionLevel } from '../../utils/getPollutionLevel';
+import { PollutionZone } from '../../types/pollutionTracker.types';
 
-const PollutionInfo = ({ zone }) => (
+interface PollutionInfoProps {
+  zone: PollutionZone;
+}
+
+const PollutionInfo: React.FC<PollutionInfoProps> = ({ zone }) => (
   <motion.div
     className="pollution-info"
     initial={{ opacity: 0, x: 20 }}

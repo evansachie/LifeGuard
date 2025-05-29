@@ -1,312 +1,393 @@
-/* Import Mapbox styles */
 @import url('https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css');
 
 .pollution-tracker {
-    position: relative;
-    height: 100vh;
-    width: 100%;
-    background: #f8f9fa;
-    transition: background-color 0.3s ease;
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 
 .map-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: calc(100vh - 64px);
+  position: relative;
+  overflow: hidden;
 }
 
-.mapboxgl-canvas {
-    left: 0;
-    top: 0;
-    position: absolute;
+/* User location marker */
+.location-marker {
+  color: #ff6b6b;
+  font-size: 24px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  animation: pulse 2s infinite;
 }
 
-.mapboxgl-control-container {
-    position: absolute;
-    z-index: 1;
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
-/* Legend Styles */
+/* Legend styles */
 .legend {
-    position: absolute;
-    bottom: 30px;
-    left: 30px;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 1rem;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    min-width: 250px;
-    backdrop-filter: blur(8px);
-    transition: all 0.3s ease;
+  position: absolute;
+  bottom: 30px;
+  left: 15px;
+  max-width: 250px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 12px 15px;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  font-size: 13px;
+  z-index: 10;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
 }
 
 .legend:hover {
-    transform: translateX(5px);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .legend {
+  background: rgba(30, 41, 59, 0.95);
+  color: #e5e7eb;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .legend h3 {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #2d3436;
-    margin: 0 0 1rem 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-    transition: all 0.2s ease;
-    padding: 0.5rem;
-    border-radius: 6px;
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode .legend-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .legend-item:last-child {
-    margin-bottom: 0;
-}
-
-.legend-item:hover {
-    background: rgba(255, 255, 255, 0.1);
+  margin-bottom: 0;
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
 .legend-color {
-    width: 24px;
-    height: 24px;
-    border-radius: 6px;
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  margin-top: 3px;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .legend-info {
-    display: flex;
-    flex-direction: column;
+  margin-left: 10px;
+  flex: 1;
 }
 
 .legend-label {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #2d3436;
+  font-weight: 600;
+  display: block;
+  font-size: 13px;
+  line-height: 1.2;
 }
 
 .legend-description {
-    font-size: 0.75rem;
-    color: #636e72;
+  font-size: 11px;
+  display: block;
+  color: #666;
+  line-height: 1.4;
+  margin-top: 2px;
 }
 
-/* Pollution Info Panel */
+.dark-mode .legend-description {
+  color: #9ca3af;
+}
+
+/* Pollution info panel styles */
 .pollution-info {
-    position: absolute;
-    top: 30px;
-    right: 30px;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    min-width: 300px;
-    backdrop-filter: blur(8px);
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 18px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  max-width: 320px;
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
 }
 
 .pollution-info:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.dark-mode .pollution-info {
+  background: rgba(30, 41, 59, 0.95);
+  color: #e5e7eb;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
 }
 
 .pollution-info h3 {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: #2d3436;
-    margin: 0 0 1rem 0;
+  margin-top: 0;
+  font-size: 18px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 8px;
+  text-align: center;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.dark-mode .pollution-info h3 {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .info-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
 }
 
 .info-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0.75rem;
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 8px;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 12px 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .info-item:hover {
-    transform: translateY(-2px);
-    background: rgba(255, 255, 255, 0.8);
-}
-
-.info-item .label {
-    font-size: 0.75rem;
-    color: #636e72;
-    margin-bottom: 0.25rem;
-}
-
-.info-item .value {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #2d3436;
-    position: relative;
-    transition: color 0.3s ease;
-}
-
-.info-item .value.high {
-    color: #FF4444;
-}
-
-.info-item .value.medium {
-    color: #FFB344;
-}
-
-.info-item .value.low {
-    color: #4CAF50;
-}
-
-/* Location Marker */
-.location-marker {
-    color: #007AFF;
-    font-size: 2rem;
-    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-.location-marker:hover {
-    transform: scale(1.1);
-    filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.3));
-}
-
-/* Loading State */
-.map-loading {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.9);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.loader {
-    width: 48px;
-    height: 48px;
-    border: 4px solid #007AFF;
-    border-radius: 50%;
-    border-top-color: transparent;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-/* Map Controls */
-.mapboxgl-ctrl-group {
-    background: rgba(255, 255, 255, 0.95) !important;
-    backdrop-filter: blur(8px);
-    border-radius: 8px !important;
-    overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.mapboxgl-ctrl button {
-    transition: all 0.2s ease !important;
-}
-
-/* Tooltip */
-.map-tooltip {
-    position: absolute;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    pointer-events: none;
-    transition: all 0.2s ease;
-    z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(8px);
-}
-
-/* Dark Mode Styles */
-.dark-mode.pollution-tracker {
-    background: #1a1a1a;
-}
-
-.dark-mode .legend,
-.dark-mode .pollution-info {
-    background: rgba(45, 45, 45, 0.95);
-}
-
-.dark-mode .legend h3,
-.dark-mode .pollution-info h3,
-.dark-mode .legend-label {
-    color: #e0e0e0;
-}
-
-.dark-mode .legend-description,
-.dark-mode .info-item .label {
-    color: #a0a0a0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .dark-mode .info-item {
-    background: rgba(60, 60, 60, 0.5);
-}
-
-.dark-mode .info-item .value {
-    color: #e0e0e0;
-}
-
-.dark-mode .map-loading {
-    background: rgba(26, 26, 26, 0.9);
-}
-
-.dark-mode .map-tooltip {
-    background: rgba(45, 45, 45, 0.95);
-    color: #e0e0e0;
-}
-
-.dark-mode .mapboxgl-ctrl-group {
-    background: rgba(45, 45, 45, 0.95) !important;
+  background: rgba(55, 65, 81, 0.5);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .dark-mode .info-item:hover {
-    background: rgba(60, 60, 60, 0.8);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
-/* Responsive Design */
+.info-item svg {
+  font-size: 20px;
+  margin-bottom: 5px;
+  color: #3B82F6;
+}
+
+.dark-mode .info-item svg {
+  color: #60A5FA;
+}
+
+.info-item .label {
+  font-size: 12px;
+  margin: 5px 0;
+  color: #4B5563;
+  font-weight: 500;
+}
+
+.dark-mode .info-item .label {
+  color: #D1D5DB;
+}
+
+.info-item .value {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Pollution value status colors */
+.value.normal {
+  color: #10B981;
+}
+
+.value.moderate {
+  color: #F59E0B;
+}
+
+.value.high {
+  color: #EF4444;
+}
+
+.value.veryhigh {
+  color: #8E44AD;
+}
+
+.value.hazardous {
+  color: #7D3C98;
+}
+
+.dark-mode .value.normal {
+  color: #34D399;
+}
+
+.dark-mode .value.moderate {
+  color: #FBBF24;
+}
+
+.dark-mode .value.high {
+  color: #F87171;
+}
+
+.dark-mode .value.veryhigh {
+  color: #A78BFA;
+}
+
+.dark-mode .value.hazardous {
+  color: #8B5CF6;
+}
+
+.construction-banner {
+  position: fixed;
+  top: 24px;
+  left: 86%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #b45309;
+  border: 2px solid #fbbf24;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  backdrop-filter: blur(8px);
+  animation: bannerEntrance 0.6s ease-out;
+}
+
+.dark-mode .construction-banner {
+  background: rgba(30, 41, 59, 0.95);
+  color: #fbbf24;
+  border: 2px solid #78350f;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+}
+
+@keyframes bannerEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px) translateX(-50%) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) translateX(-50%) scale(1);
+  }
+}
+
+/* MapBox control customizations */
+.mapboxgl-ctrl-group {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+}
+
+.dark-mode .mapboxgl-ctrl-group {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  background-color: #1f2937 !important;
+}
+
+.dark-mode .mapboxgl-ctrl button {
+  background-color: #1f2937 !important;
+  color: #e5e7eb !important;
+}
+
+.dark-mode .mapboxgl-ctrl button:hover {
+  background-color: #374151 !important;
+}
+
+/* Responsive adjustments */
 @media (max-width: 768px) {
-    .legend {
-        bottom: 20px;
-        left: 20px;
-        max-width: calc(100% - 40px);
-    }
+  .pollution-info {
+    top: auto;
+    bottom: 90px;
+    right: 15px;
+    left: 15px;
+    max-width: none;
+    width: calc(100% - 30px);
+  }
 
-    .pollution-info {
-        top: 20px;
-        right: 20px;
-        max-width: calc(100% - 40px);
-    }
-
-    .info-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+  .legend {
+    bottom: 20px;
+    max-width: 200px;
+  }
+  
+  .legend-item {
+    margin-bottom: 6px;
+    padding-bottom: 4px;
+  }
+  
+  .legend-label {
+    font-size: 12px;
+  }
+  
+  .legend-description {
+    font-size: 10px;
+  }
+  
+  .info-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  
+  .info-item:last-child {
+    grid-column: span 2;
+  }
+  
+  .construction-banner {
+    top: 15px;
+    font-size: 12px;
+    padding: 8px 16px;
+  }
 }
 
 @media (max-width: 480px) {
-    .info-grid {
-        grid-template-columns: 1fr;
-    }
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .info-item:last-child {
+    grid-column: auto;
+  }
+  
+  .legend {
+    left: 10px;
+    bottom: 10px;
+    max-width: 180px;
+    padding: 10px;
+  }
 }

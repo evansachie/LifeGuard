@@ -2,8 +2,8 @@ import React from 'react';
 import { FaInfoCircle } from 'react-icons/fa';
 import { legendItems } from '../../data/legend-items';
 
-const Legend = () => (
-  <div className="legend">
+const Legend: React.FC = () => (
+  <div className="legend" style={{ maxWidth: '280px' }}>
     <h3>
       <FaInfoCircle /> Pollution Levels
     </h3>

@@ -1,9 +1,40 @@
-import React from 'react';
-import { Source, Layer } from 'react-map-gl';
+import React, { useEffect } from 'react';
+import { Source, Layer, useMap } from 'react-map-gl';
 import { pollutionZones } from '../../data/pollution-data';
 import { getPollutionColor } from '../../utils/getPollutionColor';
+import { PollutionZone } from '../../types/pollutionTracker.types';
 
-const PollutionZones = ({ onZoneClick }) => {
+interface PollutionZonesProps {
+  onZoneClick: (zone: PollutionZone) => void;
+}
+
+const PollutionZones: React.FC<PollutionZonesProps> = ({ onZoneClick }) => {
+  const { current: map } = useMap();
+
+  useEffect(() => {
+    if (!map) return;
+
+    const handleMapClick = (event: mapboxgl.MapMouseEvent): void => {
+      const features = map.queryRenderedFeatures(event.point, {
+        layers: pollutionZones.map(zone => `zone-${zone.id}`)
+      });
+      
+      if (features.length > 0) {
+        const zoneId = features[0].layer.id.replace('zone-', '');
+        const clickedZone = pollutionZones.find(zone => `zone-${zone.id}` === features[0].layer.id);
+        if (clickedZone) {
+          onZoneClick(clickedZone);
+        }
+      }
+    };
+
+    map.on('click', handleMapClick);
+    
+    return () => {
+      map.off('click', handleMapClick);
+    };
+  }, [map, onZoneClick]);
+
   return (
     <>
       {pollutionZones.map((zone) => (
@@ -38,10 +69,6 @@ const PollutionZones = ({ onZoneClick }) => {
               'circle-opacity': 0.6,
               'circle-blur': 0.5,
             }}
-            // Note: Layer components don’t directly support onClick.
-            // For actual feature selection, you’d typically add a click handler on the Map
-            // and query the rendered features.
-            onClick={() => onZoneClick(zone)}
           />
         </Source>
       ))}
