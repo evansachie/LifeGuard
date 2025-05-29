@@ -1,6 +1,14 @@
+import React, { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 
-export const Section = ({ icon, title, children, isDarkMode }) => (
+interface SectionProps {
+  icon: ReactNode;
+  title: string;
+  children: ReactNode;
+  isDarkMode: boolean;
+}
+
+export const Section: React.FC<SectionProps> = ({ icon, title, children, isDarkMode }) => (
   <motion.section
     whileHover={{ x: 5 }}
     className={`p-6 rounded-lg ${

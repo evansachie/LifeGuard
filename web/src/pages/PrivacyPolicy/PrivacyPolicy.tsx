@@ -13,7 +13,11 @@ import {
 import { Section } from '../../components/PrivacyPolicy/Section';
 import { BackButton } from '../../components/Buttons/BackButton';
 
-const PrivacyPolicy = ({ isDarkMode }) => {
+interface PrivacyPolicyProps {
+  isDarkMode: boolean;
+}
+
+const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ isDarkMode }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
