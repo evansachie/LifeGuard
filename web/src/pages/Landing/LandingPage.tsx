@@ -20,7 +20,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ isDarkMode, toggleTheme, isAu
     <div className={`landing-page ${isDarkMode ? 'dark-mode' : ''}`}>
       <Navbar isDarkMode={isDarkMode} toggleTheme={toggleTheme} isAuthenticated={isAuthenticated} />
       <section id="hero">
-        <Hero isAuthenticated={isAuthenticated} />
+        <Hero />
       </section>
       <section id="features">
         <Features />
