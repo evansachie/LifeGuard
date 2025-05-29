@@ -1,15 +1,8 @@
-interface ViewState {
-  latitude: number;
-  longitude: number;
-  zoom: number;
-  bearing: number;
-  pitch: number;
-}
+import { MapViewState } from '../types/pollutionTracker.types';
 
-export const INITIAL_VIEW_STATE: ViewState = {
-  latitude: 5.6505,
+// Initial coordinates centered on University of Ghana, Legon
+export const INITIAL_VIEW_STATE: MapViewState = {
   longitude: -0.187,
-  zoom: 15,
-  bearing: 0,
-  pitch: 0,
+  latitude: 5.6505,
+  zoom: 15
 };

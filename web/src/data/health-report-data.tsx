@@ -3,6 +3,7 @@ import { FaTemperatureHigh, FaTint, FaWalking, FaChartLine } from 'react-icons/f
 import { WiBarometer } from 'react-icons/wi';
 import { MdAir } from 'react-icons/md';
 import { UserData } from '../types/common.types';
+import { IconType } from 'react-icons';
 
 interface VitalMetric {
   average: string;
@@ -58,7 +59,7 @@ export interface HealthReportData {
 }
 
 interface HealthStat {
-  icon: React.ComponentType;
+  icon: IconType;
   label: string;
   value: string;
   color: string;

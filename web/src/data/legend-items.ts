@@ -1,11 +1,29 @@
-interface LegendItem {
-  color: string;
-  label: string;
-  description: string;
-}
+import { LegendItem } from '../types/pollutionTracker.types';
 
 export const legendItems: LegendItem[] = [
-  { color: '#FF4444', label: 'High Pollution', description: 'AQI > 150' },
-  { color: '#FFB344', label: 'Medium Pollution', description: 'AQI 51-150' },
-  { color: '#4CAF50', label: 'Low Pollution', description: 'AQI 0-50' },
+  { 
+    color: '#2ECC71',
+    label: 'Low Pollution',
+    description: 'AQI 0-50. Air quality is considered satisfactory.'
+  },
+  { 
+    color: '#F39C12', 
+    label: 'Moderate Pollution', 
+    description: 'AQI 51-100. Acceptable air quality for most.'
+  },
+  { 
+    color: '#E74C3C',
+    label: 'High Pollution',
+    description: 'AQI 101-150. Unhealthy for sensitive groups.'
+  },
+  {
+    color: '#8E44AD',
+    label: 'Very Unhealthy',
+    description: 'AQI 151-200. Health warnings for everyone.'
+  },
+  {
+    color: '#7D3C98',
+    label: 'Hazardous',
+    description: 'AQI 201+. Emergency conditions alert.'
+  }
 ];

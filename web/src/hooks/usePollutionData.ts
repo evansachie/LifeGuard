@@ -26,20 +26,27 @@ const usePollutionData = (sensorData: BLESensorData | null): PollutionData => {
 
   useEffect(() => {
     if (sensorData && sensorData.environmental) {
+      const env = sensorData.environmental;
       setPollutionData((prev) => ({
         ...prev,
-        temperature: sensorData.environmental?.temperature ?? prev.temperature,
-        humidity: sensorData.environmental?.humidity ?? prev.humidity,
-        pressure: sensorData.environmental?.pressure ?? prev.pressure,
-        co2: sensorData.environmental?.co2 ?? prev.co2,
-        gas: sensorData.environmental?.gas ?? prev.gas,
+        temperature: env.temperature ?? prev.temperature,
+        humidity: env.humidity ?? prev.humidity,
+        pressure: env.pressure ?? prev.pressure,
+        co2: env.co2 ?? (env.airQuality?.co2 ?? prev.co2),
+        gas: env.gas ?? prev.gas,
+        // Handle air quality properties if available
+        aqi: env.airQuality?.aqi ?? prev.aqi,
+        pm25: env.airQuality?.pm25 ?? prev.pm25,
+        pm10: env.airQuality?.pm10 ?? prev.pm10,
       }));
     }
 
     if (sensorData && sensorData.motion) {
+      const motion = sensorData.motion;
       setPollutionData((prev) => ({
         ...prev,
-        steps: sensorData.motion?.steps ?? prev.steps,
+        // Handle both steps and stepCount properties
+        steps: motion.steps ?? motion.stepCount ?? prev.steps,
       }));
     }
   }, [sensorData]);

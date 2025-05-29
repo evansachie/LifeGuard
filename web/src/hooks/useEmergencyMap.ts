@@ -1,23 +1,7 @@
 import { useEffect, useRef, RefObject } from 'react';
 import mapboxgl from 'mapbox-gl';
 import { toast } from 'react-toastify';
-
-interface EmergencyUserData {
-  name: string;
-  location: string;
-  phone: string;
-  email: string;
-  medicalInfo: {
-    age: string | number;
-    gender: string;
-    weight: string | number;
-    height: string | number;
-    bio: string;
-  };
-  timestamp: string;
-  mapUrl: string | null;
-  medications: any[];
-}
+import { EmergencyUserData } from '../types/emergency.types';
 
 type Coordinates = [number, number];
 

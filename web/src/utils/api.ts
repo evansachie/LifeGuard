@@ -18,7 +18,6 @@ export const API_BASE_URL = `${BASE_URL}/api`;
 export const NODE_API_URL = 'https://lifeguard-node.onrender.com';
 export const QUOTE_API_URL = 'https://api.allorigins.win/raw?url=https://zenquotes.io/api/random';
 
-// API Endpoints with proper typing
 export const API_ENDPOINTS = {
   LOGIN: '/Account/login',
   REGISTER: '/Account/register',
@@ -42,8 +41,10 @@ export const API_ENDPOINTS = {
 
   MEMOS: `${NODE_API_URL}/api/memos`,
   MEMOS_UNDONE_COUNT: `${NODE_API_URL}/api/memos/undone/count`,
+
   EMERGENCY_CONTACTS: `${NODE_API_URL}/api/emergency-contacts`,
-  EMERGENCY_ALERTS: `${NODE_API_URL}/api/emergency-contacts/alert`,
+  SEND_EMERGENCY_ALERT: `${NODE_API_URL}/api/emergency-contacts/alert`,
+  SEND_TEST_ALERT: (id: string): string => `${NODE_API_URL}/api/emergency-contacts/test-alert/${id}`,
 
   EMERGENCY_TEST_ALERT: (id: string): string => `${NODE_API_URL}/api/emergency-contacts/test-alert/${id}`,
   EMERGENCY_CONTACT_VERIFY: (token: string): string =>
