@@ -2,7 +2,12 @@ import React from 'react';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import AccessibleDropdown from '../AccessibleDropdown/AccessibleDropdown';
 
-const MobileMenuToggle = ({ isOpen, toggleMenu }) => {
+interface MobileMenuToggleProps {
+  isOpen: boolean;
+  toggleMenu: () => void;
+}
+
+const MobileMenuToggle: React.FC<MobileMenuToggleProps> = ({ isOpen, toggleMenu }) => {
   return (
     <AccessibleDropdown
       isOpen={isOpen}

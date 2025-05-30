@@ -1,10 +1,22 @@
-import React from 'react';
+import React, { RefObject } from 'react';
 import UserProfileSection from './UserProfileSection';
 import ThemeToggle from '../../contexts/ThemeToggle';
 import NavigationLinks from './NavigationLinks';
 import LogoutButton from './LogoutButton';
+import { NavItem } from '../../types/common.types';
 
-const MobileSidebar = ({
+interface MobileSidebarProps {
+  isOpen: boolean;
+  sidebarRef: RefObject<HTMLDivElement>;
+  isDarkMode: boolean;
+  displayName: string;
+  profilePhotoUrl: string | null;
+  navItems: NavItem[];
+  handleLogout: () => void;
+  toggleTheme: () => void;
+}
+
+const MobileSidebar: React.FC<MobileSidebarProps> = ({
   isOpen,
   sidebarRef,
   isDarkMode,

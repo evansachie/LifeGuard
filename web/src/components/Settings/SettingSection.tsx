@@ -1,7 +1,13 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 
-const SettingSection = ({ title, children, isDarkMode }) => (
+interface SettingSectionProps {
+  title: string;
+  children: ReactNode;
+  isDarkMode: boolean;
+}
+
+const SettingSection: React.FC<SettingSectionProps> = ({ title, children, isDarkMode }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}

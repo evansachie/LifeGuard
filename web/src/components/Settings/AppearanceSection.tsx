@@ -3,7 +3,12 @@ import { FaMoon, FaSun } from 'react-icons/fa';
 import ToggleSwitch from './ToggleSwitch';
 import SettingSection from './SettingSection';
 
-const AppearanceSection = ({ isDarkMode, handleThemeToggle }) => (
+interface AppearanceSectionProps {
+  isDarkMode: boolean;
+  handleThemeToggle: (enabled: boolean) => void;
+}
+
+const AppearanceSection: React.FC<AppearanceSectionProps> = ({ isDarkMode, handleThemeToggle }) => (
   <SettingSection title="Appearance" isDarkMode={isDarkMode}>
     <div className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-100/5 transition-colors">
       <div className="flex items-center gap-4">

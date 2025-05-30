@@ -1,9 +1,15 @@
 import React from 'react';
 
-const ToggleSwitch = ({ enabled, onChange, isDarkMode }) => (
+interface ToggleSwitchProps {
+  enabled: boolean;
+  onChange: (enabled: boolean) => void;
+  isDarkMode: boolean;
+}
+
+const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ enabled, onChange, isDarkMode }) => (
   <button
     onClick={() => onChange(!enabled)}
-    onKeyDown={(e) => {
+    onKeyDown={(e: React.KeyboardEvent<HTMLButtonElement>) => {
       if (e.key === 'Enter' || e.key === ' ') {
         onChange(!enabled);
       }

@@ -2,7 +2,12 @@ import React from 'react';
 import { generateAvatarUrl } from '../../utils/profileUtils';
 import { Link } from 'react-router-dom';
 
-const UserProfileSection = ({ profilePhotoUrl, displayName }) => {
+interface UserProfileSectionProps {
+  profilePhotoUrl: string | null;
+  displayName: string;
+}
+
+const UserProfileSection: React.FC<UserProfileSectionProps> = ({ profilePhotoUrl, displayName }) => {
   return (
     <div className="user-info">
       <div className="profile-picture-container">
@@ -11,9 +16,9 @@ const UserProfileSection = ({ profilePhotoUrl, displayName }) => {
             src={profilePhotoUrl || generateAvatarUrl(displayName)}
             alt="Profile"
             className="profile-picture"
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = generateAvatarUrl(displayName);
+            onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = generateAvatarUrl(displayName);
             }}
           />
         </Link>

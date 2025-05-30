@@ -5,7 +5,11 @@ import { GiMeditation } from 'react-icons/gi';
 import { IoMdFitness } from 'react-icons/io';
 import { MdOutlineHealthAndSafety } from 'react-icons/md';
 
-function HealthTracker({ isDarkMode }) {
+interface QuickAccessProps {
+  isDarkMode: boolean;
+}
+
+const QuickAccess: React.FC<QuickAccessProps> = ({ isDarkMode }) => {
   return (
     <div className={`health-tracker ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
       <h2 className="health-tracker-heading">Quick Access Tabs</h2>
@@ -38,4 +42,4 @@ function HealthTracker({ isDarkMode }) {
   );
 }
 
-export default HealthTracker;
+export default QuickAccess;

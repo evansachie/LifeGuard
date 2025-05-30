@@ -1,4 +1,3 @@
-// Common UI Types
 export interface SelectOption {
   value: string;
   label: string;
@@ -184,23 +183,17 @@ export interface IconProps {
 }
 
 // Navigation and User Data Types
-export interface NavigationItem {
+export interface NavItem {
   path: string;
-  icon: React.ReactElement;
+  icon: React.ReactNode;
   label: string;
+  subItems?: SubNavItem[];
 }
 
-export interface UserData {
-  userName?: string;
-  email?: string;
-}
-
-export interface UseUserDataReturn {
-  userData: UserData | null;
-  profilePhotoUrl: string | null;
-  isLoading: boolean;
-  error: string | null;
-  getDisplayName: () => string;
+export interface SubNavItem {
+  path: string;
+  icon: React.ReactNode;
+  label: string;
 }
 
 // Dashboard Types
@@ -368,4 +361,27 @@ export interface SignUpFormHook {
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
   handleGoogleLogin: (e: React.MouseEvent<HTMLButtonElement>) => Promise<void>;
+}
+
+export interface UserData {
+  id: string;
+  userName: string;
+  email: string;
+  fullName?: string;
+  profilePhotoUrl?: string;
+  isActive?: boolean;
+  createdAt?: string;
+  roles?: string[];
+  name?: string;
+  location?: {
+    latitude: number;
+    longitude: number;
+  };
+}
+
+// useUserData Hook Return Type
+export interface UseUserDataReturn {
+  profilePhotoUrl: string | null;
+  getDisplayName: () => string;
+  uploadPhoto?: (file: File) => Promise<{ previewUrl: string; cloudinaryUrl: string }>;
 }

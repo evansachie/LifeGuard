@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import AccessibleDropdown from '../AccessibleDropdown/AccessibleDropdown';
+import { NavItem, SubNavItem } from '../../types/common.types';
 
-const NavigationLinks = ({ navItems, onNavLinkClick }) => {
-  const [isActivityDropdownOpen, setIsActivityDropdownOpen] = useState(false);
+interface NavigationLinksProps {
+  navItems: NavItem[];
+  onNavLinkClick?: () => void;
+}
+
+const NavigationLinks: React.FC<NavigationLinksProps> = ({ navItems, onNavLinkClick }) => {
+  const [isActivityDropdownOpen, setIsActivityDropdownOpen] = useState<boolean>(false);
   const location = useLocation();
 
-  const renderNavLink = (item) => (
+  const renderNavLink = (item: NavItem) => (
     <Link
       to={item.path}
       className={`nav-link ${location.pathname === item.path ? 'active' : ''}`}
@@ -38,7 +44,7 @@ const NavigationLinks = ({ navItems, onNavLinkClick }) => {
               </AccessibleDropdown>
               {isActivityDropdownOpen && (
                 <div className="subnav">
-                  {item.subItems.map((subItem, subIndex) => (
+                  {item.subItems.map((subItem: SubNavItem, subIndex) => (
                     <Link
                       key={subIndex}
                       to={subItem.path}

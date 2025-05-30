@@ -1,7 +1,11 @@
 import React from 'react';
 import { FaSignOutAlt } from 'react-icons/fa';
 
-const LogoutButton = ({ onLogout }) => {
+interface LogoutButtonProps {
+  onLogout: () => void;
+}
+
+const LogoutButton: React.FC<LogoutButtonProps> = ({ onLogout }) => {
   return (
     <button className="logout-button" onClick={onLogout}>
       <FaSignOutAlt />

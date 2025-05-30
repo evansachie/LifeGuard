@@ -18,8 +18,23 @@ import Spinner from '../../components/Spinner/Spinner';
 import SettingSection from '../../components/Settings/SettingSection';
 import ToggleSwitch from '../../components/Settings/ToggleSwitch';
 
-const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
-  const [settings, setSettings] = useState({
+interface SettingsProps {
+  isDarkMode: boolean;
+  toggleDarkMode?: () => void;
+}
+
+interface SettingsState {
+  notifications: boolean;
+  email: string;
+  username: string;
+  units: 'metric' | 'imperial';
+  language: string;
+  workoutReminders: boolean;
+  emergencyContacts: boolean;
+}
+
+const SettingsPage: React.FC<SettingsProps> = ({ isDarkMode, toggleDarkMode }) => {
+  const [settings, setSettings] = useState<SettingsState>({
     notifications: true,
     email: '',
     username: '',
@@ -28,14 +43,19 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
     workoutReminders: true,
     emergencyContacts: true,
   });
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchUserData = async (): Promise<void> => {
       setIsLoading(true);
       try {
+        const userId = localStorage.getItem('userId');
+        if (!userId) {
+          throw new Error('User ID not found');
+        }
+        
         const response = await fetchWithAuth(
-          `${API_ENDPOINTS.GET_USER(localStorage.getItem('userId'))}`,
+          `${API_ENDPOINTS.GET_USER(userId)}`,
           {
             method: 'GET',
           }
@@ -43,8 +63,8 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
 
         setSettings((prev) => ({
           ...prev,
-          email: response.email,
-          username: response.userName,
+          email: response.email || '',
+          username: response.userName || '',
         }));
       } catch (error) {
         toast.error('Failed to fetch user data');
@@ -57,13 +77,15 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
     fetchUserData();
   }, []);
 
-  const handleThemeToggle = () => {
-    toggleDarkMode();
-    localStorage.setItem('theme', !isDarkMode ? 'dark' : 'light');
-    toast.success(`Switched to ${!isDarkMode ? 'dark' : 'light'} mode`);
+  const handleThemeToggle = (): void => {
+    if (toggleDarkMode) {
+      toggleDarkMode();
+      localStorage.setItem('theme', !isDarkMode ? 'dark' : 'light');
+      toast.success(`Switched to ${!isDarkMode ? 'dark' : 'light'} mode`);
+    }
   };
 
-  const handleSettingChange = (key, value) => {
+  const handleSettingChange = <K extends keyof SettingsState>(key: K, value: SettingsState[K]): void => {
     setSettings((prev) => ({
       ...prev,
       [key]: value,
@@ -160,7 +182,7 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
               </div>
               <select
                 value={settings.units}
-                onChange={(e) => handleSettingChange('units', e.target.value)}
+                onChange={(e) => handleSettingChange('units', e.target.value as 'metric' | 'imperial')}
                 className={`p-3 rounded-lg border ${
                   isDarkMode
                     ? 'bg-gray-700/50 border-gray-600 text-gray-200'
@@ -177,7 +199,7 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
         {/* Notifications */}
         <SettingSection title="Notifications" isDarkMode={isDarkMode}>
           <div className="space-y-6">
-            {['notifications', 'workoutReminders'].map((setting) => (
+            {(['notifications', 'workoutReminders'] as const).map((setting) => (
               <div
                 key={setting}
                 className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-100/5 transition-colors"
@@ -197,6 +219,7 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
                 <ToggleSwitch
                   enabled={settings[setting]}
                   onChange={(value) => handleSettingChange(setting, value)}
+                  isDarkMode={isDarkMode}
                 />
               </div>
             ))}
