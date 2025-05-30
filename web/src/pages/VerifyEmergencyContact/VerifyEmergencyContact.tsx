@@ -7,17 +7,35 @@ import { Logo } from '../../components/Logo/Logo';
 import { API_ENDPOINTS } from '../../utils/api';
 import './VerifyEmergencyContact.css';
 
-function VerifyEmergencyContact({ isDarkMode, toggleTheme }) {
+interface VerifyEmergencyContactProps {
+  isDarkMode: boolean;
+  toggleTheme: () => void;
+}
+
+interface ContactData {
+  Name: string;
+  Email: string;
+  Phone: string;
+  [key: string]: string;
+}
+
+interface VerificationResponse {
+  success: boolean;
+  contact?: ContactData;
+  error?: string;
+}
+
+const VerifyEmergencyContact: React.FC<VerifyEmergencyContactProps> = ({ isDarkMode, toggleTheme }) => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [verificationStatus, setVerificationStatus] = useState('loading');
-  const [contactData, setContactData] = useState(null);
+  const [verificationStatus, setVerificationStatus] = useState<'loading' | 'success' | 'error'>('loading');
+  const [contactData, setContactData] = useState<ContactData | null>(null);
   const token = searchParams.get('token');
   const contactId = searchParams.get('contactId');
   const contactEmail = searchParams.get('contactEmail');
 
   useEffect(() => {
-    const verifyContact = async () => {
+    const verifyContact = async (): Promise<void> => {
       if (!token && (!contactId || !contactEmail)) {
         setVerificationStatus('error');
         toast.error('Invalid verification parameters');
@@ -25,7 +43,7 @@ function VerifyEmergencyContact({ isDarkMode, toggleTheme }) {
       }
 
       try {
-        let response;
+        let response: Response;
 
         if (token) {
           console.log('Verifying with token:', token);
@@ -45,11 +63,13 @@ function VerifyEmergencyContact({ isDarkMode, toggleTheme }) {
           throw new Error(`Verification failed with status: ${response.status}`);
         }
 
-        const data = await response.json();
+        const data = await response.json() as VerificationResponse;
 
         if (data.success) {
           setVerificationStatus('success');
-          setContactData(data.contact);
+          if (data.contact) {
+            setContactData(data.contact);
+          }
           toast.success('Contact verified successfully!');
         } else {
           setVerificationStatus('error');
@@ -58,14 +78,14 @@ function VerifyEmergencyContact({ isDarkMode, toggleTheme }) {
       } catch (error) {
         console.error('Error verifying contact:', error);
         setVerificationStatus('error');
-        toast.error('Failed to verify contact: ' + error.message);
+        toast.error(`Failed to verify contact: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
     };
 
     verifyContact();
   }, [token, contactId, contactEmail]);
 
-  const handleGoToHome = () => {
+  const handleGoToHome = (): void => {
     navigate('/');
   };
 
@@ -138,6 +158,6 @@ function VerifyEmergencyContact({ isDarkMode, toggleTheme }) {
       </div>
     </div>
   );
-}
+};
 
 export default VerifyEmergencyContact;

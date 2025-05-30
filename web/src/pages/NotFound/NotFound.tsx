@@ -4,14 +4,17 @@ import { Link } from 'react-router-dom';
 import { FaHome } from 'react-icons/fa';
 import astronautImage from '../../assets/error-img.png';
 
-const NotFound = ({ isDarkMode }) => {
+interface NotFoundProps {
+  isDarkMode: boolean;
+}
+
+const NotFound: React.FC<NotFoundProps> = ({ isDarkMode }) => {
   return (
     <div
       className={`min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden ${
         isDarkMode ? 'dark-mode' : 'bg-gray-50 text-gray-900'
       }`}
     >
-      {/* Floating Background Effects */}
       <motion.div
         className="absolute top-10 left-10 w-40 h-40 bg-blue-500 rounded-full filter blur-3xl opacity-50"
         animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0.8, 0.5] }}
@@ -48,7 +51,7 @@ const NotFound = ({ isDarkMode }) => {
         </motion.h1>
         <h2 className="text-2xl font-semibold mb-4">Oops! You seem lost in space.</h2>
         <p className={`mb-8 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-          The page you’re looking for doesn’t exist. Let’s bring you back home.
+          The page you're looking for doesn't exist. Let's bring you back home.
         </p>
         <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="inline-flex">
           <Link
