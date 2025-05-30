@@ -7,6 +7,7 @@ import { useEmergencyContacts } from '../../hooks/useEmergencyContacts';
 import { useProfileImage } from '../../hooks/useProfileImage';
 import { updateUserProfile, deleteUserAccount } from '../../services/profileService';
 import { FaSave, FaTimesCircle } from 'react-icons/fa';
+import { ProfileData, EmergencyContact } from '../../types/profile.types';
 
 import ProfileHeader from '../../components/Profile/ProfileHeader';
 import PersonalInformationForm from '../../components/Profile/PersonalInformationForm';
@@ -16,17 +17,30 @@ import DeleteAccountSection from '../../components/Profile/DeleteAccountSection'
 
 import './Profile.css';
 
-function Profile({ isDarkMode }) {
+interface ProfileProps {
+  isDarkMode: boolean;
+}
+
+const Profile: React.FC<ProfileProps> = ({ isDarkMode }) => {
   const navigate = useNavigate();
-  const [editMode, setEditMode] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [editMode, setEditMode] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
 
   const { profileData, setProfileData, profileLoading, fetchUserProfileData } = useProfileState();
-  const { emergencyContacts, contactsLoading } = useEmergencyContacts();
+  const { contacts: emergencyContacts, contactsLoading } = useEmergencyContacts();
   const { handleImageChange: handleImageUpdate, handleDeletePhoto } = useProfileImage(
-    localStorage.getItem('userId')
+    localStorage.getItem('userId') || ''
   );
+
+  const typedEmergencyContacts: EmergencyContact[] = emergencyContacts.map((contact) => ({
+    ...contact,
+    Id: typeof contact.Id === 'string' ? parseInt(contact.Id) : contact.Id,
+    Name: contact.Name,
+    Phone: contact.Phone,
+    Email: contact.Email || '',
+    Relationship: contact.Relationship || '',
+  }));
 
   useEffect(() => {
     const storedName = localStorage.getItem('userName');
@@ -41,12 +55,12 @@ function Profile({ isDarkMode }) {
     fetchUserProfileData();
   }, []);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {
     const { name, value } = e.target;
     setProfileData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImageChange = async (e) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
     const file = e.target.files?.[0];
     if (file) {
       const result = await handleImageUpdate(file);
@@ -60,30 +74,38 @@ function Profile({ isDarkMode }) {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await updateUserProfile(profileData);
+      const profileDataWithId = {
+        ...profileData,
+        id: localStorage.getItem('userId') || '',
+      };
+      
+      await updateUserProfile(profileDataWithId as ProfileData);
       toast.success('Profile updated successfully!');
       setEditMode(false);
       setTimeout(fetchUserProfileData, 1000);
-    } catch (error) {
+    } catch (error: any) {
       toast.error(error.message || 'Failed to update profile');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleConfirmDelete = async () => {
+  const handleConfirmDelete = async (): Promise<void> => {
     try {
       setIsLoading(true);
       const userId = localStorage.getItem('userId');
+      if (!userId) {
+        throw new Error('User ID not found');
+      }
       await deleteUserAccount(userId);
       localStorage.clear();
       toast.success('Account deleted successfully');
       navigate('/');
-    } catch (error) {
+    } catch (error: any) {
       toast.error(error.message || 'Failed to delete account');
     } finally {
       setIsLoading(false);
@@ -91,17 +113,21 @@ function Profile({ isDarkMode }) {
     }
   };
 
+  const typedProfileData: ProfileData = {
+    ...profileData,
+    id: localStorage.getItem('userId') || '',
+  } as ProfileData;
+
   return (
     <div className={`profile-page ${isDarkMode ? 'dark' : ''}`}>
       <div className={`profile-container ${editMode ? 'edit-mode' : ''}`}>
         <ProfileHeader
-          profileData={profileData}
+          profileData={typedProfileData}
           profileLoading={profileLoading}
           isLoading={isLoading}
           editMode={editMode}
           handleImageChange={handleImageChange}
           handleDeletePhoto={handleDeletePhoto}
-          isDarkMode={isDarkMode}
         />
 
         <motion.div
@@ -112,9 +138,8 @@ function Profile({ isDarkMode }) {
         >
           <form onSubmit={handleSubmit}>
             <PersonalInformationForm
-              profileData={profileData}
+              profileData={typedProfileData}
               profileLoading={profileLoading}
-              isLoading={isLoading}
               editMode={editMode}
               setEditMode={setEditMode}
               handleInputChange={handleInputChange}
@@ -124,7 +149,7 @@ function Profile({ isDarkMode }) {
 
             {!profileLoading && (
               <PhysicalInformationSection
-                profileData={profileData}
+                profileData={typedProfileData}
                 handleInputChange={handleInputChange}
                 editMode={editMode}
                 isDarkMode={isDarkMode}
@@ -157,7 +182,7 @@ function Profile({ isDarkMode }) {
 
         <EmergencyContactsSection
           contactsLoading={contactsLoading}
-          emergencyContacts={emergencyContacts}
+          emergencyContacts={typedEmergencyContacts}
           isDarkMode={isDarkMode}
         />
 
@@ -171,6 +196,6 @@ function Profile({ isDarkMode }) {
       </div>
     </div>
   );
-}
+};
 
 export default Profile;

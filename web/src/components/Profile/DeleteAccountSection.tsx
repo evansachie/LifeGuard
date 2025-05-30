@@ -3,13 +3,21 @@ import { motion } from 'framer-motion';
 import { FaTrash } from 'react-icons/fa';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal/DeleteConfirmationModal';
 
-function DeleteAccountSection({
+interface DeleteAccountSectionProps {
+  isLoading: boolean;
+  isDarkMode: boolean;
+  isDeleteModalOpen: boolean;
+  setIsDeleteModalOpen: (isOpen: boolean) => void;
+  handleConfirmDelete: () => void;
+}
+
+const DeleteAccountSection: React.FC<DeleteAccountSectionProps> = ({
   isLoading,
   isDarkMode,
   isDeleteModalOpen,
   setIsDeleteModalOpen,
   handleConfirmDelete,
-}) {
+}) => {
   return (
     <>
       <motion.div
@@ -46,6 +54,6 @@ function DeleteAccountSection({
       />
     </>
   );
-}
+};
 
 export default DeleteAccountSection;

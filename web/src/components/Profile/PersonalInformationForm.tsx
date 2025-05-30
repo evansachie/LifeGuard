@@ -3,7 +3,25 @@ import { FaUser, FaEnvelope, FaPhone, FaUserEdit } from 'react-icons/fa';
 import { FaPerson } from 'react-icons/fa6';
 import Spinner from '../../components/Spinner/Spinner';
 
-function PersonalInformationForm({
+interface ProfileData {
+  fullName: string;
+  email: string;
+  phone: string;
+  bio: string;
+  [key: string]: string | number | boolean | undefined;
+}
+
+interface PersonalInformationFormProps {
+  profileData: ProfileData;
+  profileLoading: boolean;
+  editMode: boolean;
+  setEditMode: (mode: boolean) => void;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  isDarkMode: boolean;
+}
+
+const PersonalInformationForm: React.FC<PersonalInformationFormProps> = ({
   profileData,
   profileLoading,
   editMode,
@@ -11,7 +29,7 @@ function PersonalInformationForm({
   handleInputChange,
   handleSubmit,
   isDarkMode,
-}) {
+}) => {
   return (
     <div className="profile-section">
       <div className="section-header">
@@ -101,6 +119,6 @@ function PersonalInformationForm({
       )}
     </div>
   );
-}
+};
 
 export default PersonalInformationForm;

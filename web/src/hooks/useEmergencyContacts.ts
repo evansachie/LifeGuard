@@ -1,7 +1,19 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { Contact, ContactFormData, EmergencyContactsHookReturn } from '../types/contact.types';
+import { Contact, ContactFormData } from '../types/contact.types';
 import { fetchWithAuth, API_ENDPOINTS } from '../utils/api';
+
+export interface EmergencyContactsHookReturn {
+  contacts: Contact[];
+  contactsLoading: boolean;
+  isLoading: boolean;
+  isSaving: boolean;
+  isDeleting: boolean;
+  saveContact: (formData: ContactFormData, contactId?: string) => Promise<boolean>;
+  deleteContact: (contactId: string) => Promise<boolean>;
+  sendEmergencyAlert: () => Promise<void>;
+  sendTestAlert: (contactId: string) => Promise<void>;
+}
 
 export const useEmergencyContacts = (): EmergencyContactsHookReturn => {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -57,7 +69,7 @@ export const useEmergencyContacts = (): EmergencyContactsHookReturn => {
         body: JSON.stringify(payload)
       });
       
-      await fetchContacts(); // Refresh contacts list
+      await fetchContacts();
       
       toast.success(contactId ? 'Contact updated successfully' : 'Contact added successfully');
       return true;
@@ -115,6 +127,7 @@ export const useEmergencyContacts = (): EmergencyContactsHookReturn => {
 
   return {
     contacts,
+    contactsLoading: isLoading,
     isLoading,
     isSaving,
     isDeleting,

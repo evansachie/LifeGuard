@@ -3,7 +3,23 @@ import { FaUser, FaPhone, FaPlus, FaUserPlus } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import Spinner from '../../components/Spinner/Spinner';
 
-function EmergencyContactsSection({ contactsLoading, emergencyContacts, isDarkMode }) {
+interface EmergencyContact {
+  Id: number;
+  Name: string;
+  Phone: string;
+}
+
+interface EmergencyContactsSectionProps {
+  contactsLoading: boolean;
+  emergencyContacts: EmergencyContact[];
+  isDarkMode: boolean;
+}
+
+const EmergencyContactsSection: React.FC<EmergencyContactsSectionProps> = ({
+  contactsLoading,
+  emergencyContacts,
+  isDarkMode,
+}) => {
   return (
     <div className="emergency-contacts-section">
       <div className="section-header">
@@ -43,6 +59,6 @@ function EmergencyContactsSection({ contactsLoading, emergencyContacts, isDarkMo
       </div>
     </div>
   );
-}
+};
 
 export default EmergencyContactsSection;

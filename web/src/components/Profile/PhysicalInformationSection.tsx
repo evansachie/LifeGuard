@@ -1,6 +1,26 @@
 import React from 'react';
 
-function PhysicalInformationSection({ profileData, handleInputChange, editMode, isDarkMode }) {
+interface ProfileData {
+  age: string | number;
+  gender: string;
+  weight: string | number;
+  height: string | number;
+  [key: string]: string | number | boolean | undefined;
+}
+
+interface PhysicalInformationSectionProps {
+  profileData: ProfileData;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  editMode: boolean;
+  isDarkMode: boolean;
+}
+
+const PhysicalInformationSection: React.FC<PhysicalInformationSectionProps> = ({ 
+  profileData, 
+  handleInputChange, 
+  editMode, 
+  isDarkMode 
+}) => {
   return (
     <div className="physical-info-section">
       <h3>Physical Information</h3>
@@ -65,6 +85,6 @@ function PhysicalInformationSection({ profileData, handleInputChange, editMode, 
       </div>
     </div>
   );
-}
+};
 
 export default PhysicalInformationSection;

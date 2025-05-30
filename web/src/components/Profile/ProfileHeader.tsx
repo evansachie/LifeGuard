@@ -5,21 +5,39 @@ import Spinner from '../Spinner/Spinner';
 import { generateAvatarUrl } from '../../utils/profileUtils';
 import { fetchWithAuth, API_ENDPOINTS } from '../../utils/api';
 
-function ProfileHeader({
+interface ProfileData {
+  fullName: string;
+  email: string;
+  profilePhotoUrl?: string;
+  profileImage?: string;
+}
+
+interface ProfileHeaderProps {
+  profileData: ProfileData;
+  profileLoading: boolean;
+  isLoading: boolean;
+  editMode: boolean;
+  handleImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleDeletePhoto: () => void;
+  isDarkMode?: boolean; // Make isDarkMode optional
+}
+
+const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   profileData,
   profileLoading,
   isLoading,
   editMode,
   handleImageChange,
   handleDeletePhoto,
-}) {
-  const [profilePhotoUrl, setProfilePhotoUrl] = useState(null);
+  isDarkMode = false, // Provide a default value
+}) => {
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchProfilePhoto = async () => {
+    const fetchProfilePhoto = async (): Promise<void> => {
       try {
         const userId = localStorage.getItem('userId');
-        const response = await fetchWithAuth(API_ENDPOINTS.GET_PHOTO(userId));
+        const response = await fetchWithAuth(API_ENDPOINTS.GET_PHOTO(userId || ''));
 
         if (response?.isSuccess && response?.data?.url) {
           setProfilePhotoUrl(response.data.url);
@@ -54,9 +72,9 @@ function ProfileHeader({
             <img
               src={photoUrl}
               alt={`${profileData.fullName}'s profile`}
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = generateAvatarUrl(profileData.fullName);
+              onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = generateAvatarUrl(profileData.fullName);
               }}
             />
           )}
@@ -65,7 +83,7 @@ function ProfileHeader({
           <div className="avatar-actions">
             <button
               className="edit-image-button"
-              onClick={() => document.getElementById('profilePhotoInput').click()}
+              onClick={() => document.getElementById('profilePhotoInput')?.click()}
               disabled={isLoading}
             >
               <FaCamera />
@@ -94,6 +112,6 @@ function ProfileHeader({
       <p>{profileLoading ? '...' : profileData.email}</p>
     </motion.div>
   );
-}
+};
 
 export default ProfileHeader;
