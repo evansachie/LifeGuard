@@ -1,43 +1,47 @@
-import { FaWind, FaChartLine } from 'react-icons/fa';
-import { MdAir } from 'react-icons/md';
-import { IconType } from 'react-icons';
+import React from 'react';
+import { WiThermometer, WiHumidity, WiBarometer } from 'react-icons/wi';
+import { MdAir, MdAutoGraph } from 'react-icons/md';
 
-interface Tab {
-  id: string;
+export interface Tab {
+  id: 'environment' | 'airQuality' | 'reports';
   label: string;
-  icon: IconType;
-  description: string;
+  icon: React.ReactNode;
 }
 
-interface DateRange {
-  value: string;
-  label: string;
-}
-
-export const TABS: Tab[] = [
+// Use React.createElement to properly create React elements
+export const analyticsTabsData: Tab[] = [
   {
     id: 'environment',
     label: 'Environment',
-    icon: FaWind,
-    description: 'Temperature, Humidity, and Pressure trends',
+    icon: React.createElement(WiThermometer),
+  },
+  {
+    id: 'airQuality',
+    label: 'Air Quality',
+    icon: React.createElement(MdAir),
+  },
+  {
+    id: 'reports',
+    label: 'Reports',
+    icon: React.createElement(MdAutoGraph),
+  },
+];
+
+// Keep the old TABS for backward compatibility if needed
+export const TABS = [
+  {
+    id: 'environment',
+    label: 'Environment',
+    icon: WiThermometer,
   },
   {
     id: 'airQuality',
     label: 'Air Quality',
     icon: MdAir,
-    description: 'CO2 and Gas composition analysis',
   },
   {
     id: 'reports',
     label: 'Reports',
-    icon: FaChartLine,
-    description: 'Data analysis and insights',
+    icon: MdAutoGraph,
   },
-];
-
-export const DATE_RANGES: DateRange[] = [
-  { value: '1h', label: 'Last Hour' },
-  { value: '24h', label: 'Last 24 Hours' },
-  { value: '7d', label: 'Last 7 Days' },
-  { value: '30d', label: 'Last 30 Days' },
 ];

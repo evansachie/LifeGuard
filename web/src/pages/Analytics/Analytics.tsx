@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useBLE } from '../../contexts/BLEContext';
-import { TABS } from '../../utils/constants';
+import { analyticsTabsData } from '../../utils/constants';
 import TabNavigation from '../../components/Analytics/TabNavigation';
 import TabContent from '../../components/Analytics/TabContent';
 import useSensorHistory from '../../hooks/useSensorHistory';
@@ -10,10 +10,17 @@ import './Analytics.css';
 
 registerCharts();
 
-function Analytics({ isDarkMode }) {
+interface AnalyticsProps {
+  isDarkMode: boolean;
+}
+
+type TabType = 'environment' | 'airQuality' | 'reports';
+type DateRangeType = '24h' | '7d' | '30d' | '90d';
+
+const Analytics: React.FC<AnalyticsProps> = ({ isDarkMode }) => {
   const { sensorData } = useBLE();
-  const [activeTab, setActiveTab] = useState('environment');
-  const [dateRange, setDateRange] = useState('24h');
+  const [activeTab, setActiveTab] = useState<TabType>('environment');
+  const [dateRange, setDateRange] = useState<DateRangeType>('24h');
 
   const historicalData = useSensorHistory(sensorData, 30);
 
@@ -26,18 +33,22 @@ function Analytics({ isDarkMode }) {
         </div>
       </div>
 
-      <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} tabs={TABS} />
+      <TabNavigation
+        activeTab={activeTab}
+        onTabChange={(tab: TabType) => setActiveTab(tab)}
+        tabs={analyticsTabsData}
+      />
 
       <div className="analytics-content">
         <TabContent
           activeTab={activeTab}
           historicalData={historicalData}
           dateRange={dateRange}
-          onDateRangeChange={setDateRange}
+          onDateRangeChange={(range: DateRangeType) => setDateRange(range)}
         />
       </div>
     </div>
   );
-}
+};
 
 export default Analytics;
