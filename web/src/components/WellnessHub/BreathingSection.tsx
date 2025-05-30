@@ -1,23 +1,31 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { breathingPatterns } from '../../data/breathing-data';
+import { breathingPatterns, BreathingPattern } from '../../data/breathing-data';
 import BreathingCircle from '../BreathingCircle/BreathingCircle';
 
-const BreathingSection = () => {
-  const [isBreathing, setIsBreathing] = useState(false);
-  const [selectedPattern, setSelectedPattern] = useState(null);
-  const [breathingPhase, setBreathingPhase] = useState('inhale');
+interface BreathingSectionProps {
+  isDarkMode?: boolean;
+}
 
-  const startBreathing = (pattern) => {
+type BreathingPhase = 'inhale' | 'hold' | 'exhale' | 'rest';
+
+const BreathingSection: React.FC<BreathingSectionProps> = ({ isDarkMode }) => {
+  const [isBreathing, setIsBreathing] = useState<boolean>(false);
+  const [selectedPattern, setSelectedPattern] = useState<BreathingPattern | null>(null);
+  const [breathingPhase, setBreathingPhase] = useState<BreathingPhase>('inhale');
+
+  const startBreathing = (pattern: BreathingPattern): void => {
     setSelectedPattern(pattern);
     setIsBreathing(true);
     setBreathingPhase('inhale');
   };
 
-  const handlePhaseComplete = () => {
+  const handlePhaseComplete = (): void => {
     setBreathingPhase((current) => {
-      const phases = selectedPattern.pattern.holdAfterExhale
-        ? ['inhale', 'hold', 'exhale', 'holdAfterExhale']
+      if (!selectedPattern) return 'inhale';
+
+      const phases: BreathingPhase[] = selectedPattern.pattern.holdAfterExhale
+        ? ['inhale', 'hold', 'exhale', 'rest']
         : ['inhale', 'hold', 'exhale'];
 
       const currentIndex = phases.indexOf(current);
@@ -27,7 +35,7 @@ const BreathingSection = () => {
 
   return (
     <motion.div
-      className="breathing-section"
+      className={`breathing-section ${isDarkMode ? 'dark' : ''}`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
@@ -38,7 +46,7 @@ const BreathingSection = () => {
           <motion.div
             key={pattern.id}
             className={`pattern-card ${selectedPattern?.id === pattern.id ? 'active' : ''}`}
-            style={{ '--pattern-color': pattern.color }}
+            style={{ '--pattern-color': pattern.color } as React.CSSProperties}
             whileHover={{ scale: 1.02 }}
           >
             <div className="pattern-icon">{pattern.icon}</div>
@@ -50,7 +58,7 @@ const BreathingSection = () => {
           </motion.div>
         ))}
       </div>
-      {isBreathing && (
+      {isBreathing && selectedPattern && (
         <AnimatePresence>
           <BreathingCircle
             phase={breathingPhase}

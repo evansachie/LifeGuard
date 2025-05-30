@@ -1,3 +1,6 @@
+import { Sound, SearchFilters, SearchResponse } from '../types/wellnessHub.types';
+import { API_ENDPOINTS } from '../utils/api';
+
 interface ImportMetaEnv {
   readonly VITE_FREESOUND_API_KEY: string;
   [key: string]: any;
@@ -5,7 +8,6 @@ interface ImportMetaEnv {
 
 const API_KEY = import.meta.env.VITE_FREESOUND_API_KEY;
 const BASE_URL = 'https://freesound.org/apiv2';
-import { API_ENDPOINTS } from '../utils/api';
 
 interface Categories {
   [key: string]: string;
@@ -23,58 +25,40 @@ const categories: Categories = {
   flute: 'native american flute',
 };
 
-interface SearchFilters {
-  duration?: [number, number];
-  rating?: number;
-  tags?: string;
-}
-
-interface Preview {
-  'preview-hq-mp3': string;
-  'preview-lq-mp3': string;
-  [key: string]: string;
-}
-
-interface Sound {
-  id: number;
-  name: string;
-  username: string;
-  previews: Preview;
-  images: {
-    waveform_m: string;
-    [key: string]: string;
-  };
-  duration: number;
-  description: string;
-  avg_rating: number;
-  tags: string[];
-}
-
-interface SearchResponse {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: Sound[];
-}
-
+/**
+ * Search for sounds on Freesound API
+ * @param category - Category to search for
+ * @param page - Page number for pagination
+ * @param filters - Optional filters for the search
+ * @returns Search results with sounds
+ */
 export const searchSounds = async (
-  category: string, 
-  page: number = 1, 
+  category: string,
+  page: number = 1,
   filters: SearchFilters = {}
 ): Promise<SearchResponse> => {
   try {
     const { duration, rating, tags } = filters;
-    let query = categories[category];
+    let query = categories[category] || category;
 
     if (tags) {
       query += ` ${tags}`;
     }
 
-    const durationFilter = duration ? `&filter=duration:[${duration[0]} TO ${duration[1]}]` : '';
-    const ratingFilter = rating ? `&filter=avg_rating:[${rating} TO 5]` : '';
+    // Parse duration filter
+    let durationFilter = '';
+    if (duration) {
+      durationFilter = `&filter=duration:${duration}`;
+    }
+
+    // Parse rating filter
+    let ratingFilter = '';
+    if (rating) {
+      ratingFilter = `&filter=avg_rating:[${rating} TO 5]`;
+    }
 
     const response = await fetch(
-      `${BASE_URL}/search/text/?query=${query}${durationFilter}${ratingFilter}&fields=id,name,username,previews,images,duration,description,avg_rating,tags&page_size=12&page=${page}&token=${API_KEY}`
+      `${BASE_URL}/search/text/?query=${encodeURIComponent(query)}${durationFilter}${ratingFilter}&fields=id,name,username,previews,images,duration,description,avg_rating,tags&page_size=12&page=${page}&token=${API_KEY}`
     );
 
     if (!response.ok) throw new Error('Failed to fetch sounds');
@@ -86,7 +70,12 @@ export const searchSounds = async (
   }
 };
 
-export const getSound = async (soundId: number): Promise<Sound> => {
+/**
+ * Get sound details by ID
+ * @param soundId - ID of the sound to fetch
+ * @returns Sound details
+ */
+export const getSound = async (soundId: number | string): Promise<Sound> => {
   try {
     const response = await fetch(`${BASE_URL}/sounds/${soundId}/?token=${API_KEY}`);
 
@@ -99,6 +88,11 @@ export const getSound = async (soundId: number): Promise<Sound> => {
   }
 };
 
+/**
+ * Get proxied audio URL to bypass CORS issues
+ * @param originalUrl - Original audio URL
+ * @returns Proxied audio URL as blob
+ */
 export const getProxiedAudioUrl = async (originalUrl: string): Promise<string> => {
   try {
     const response = await fetch(API_ENDPOINTS.FREESOUND_AUDIO_PROXY, {

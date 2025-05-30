@@ -1,8 +1,9 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaKeyboard, FaTimes } from 'react-icons/fa';
+import { KeyboardShortcutsProps } from '../../types/wellnessHub.types';
 
-const KeyboardShortcuts = ({ isOpen, onClose }) => (
+const KeyboardShortcuts: React.FC<KeyboardShortcutsProps> = ({ isOpen, onClose }) => (
   <AnimatePresence>
     {isOpen && (
       <motion.div
@@ -14,7 +15,7 @@ const KeyboardShortcuts = ({ isOpen, onClose }) => (
       >
         <motion.div
           className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md w-full mx-4"
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e: React.MouseEvent) => e.stopPropagation()}
         >
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-bold flex items-center gap-2">

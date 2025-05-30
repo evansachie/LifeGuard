@@ -1,34 +1,39 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
+import { AudioVisualizerProps } from '../../types/wellnessHub.types';
 import { useAudio } from '../../contexts/AudioContext';
 
-const AudioVisualizer = ({ audioRef, isDarkMode }) => {
-  const canvasRef = useRef(null);
-  const animationRef = useRef(null);
-  const [analyser, setAnalyser] = useState(null);
+const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ audioRef, isDarkMode }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animationRef = useRef<number | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
   const { setupAudioContext } = useAudio();
 
   useEffect(() => {
-    if (audioRef.current && !analyser) {
+    if (audioRef.current && !analyserRef.current) {
       const newAnalyser = setupAudioContext(audioRef.current);
-      setAnalyser(newAnalyser);
+      analyserRef.current = newAnalyser;
     }
-  }, [audioRef, analyser, setupAudioContext]);
+  }, [audioRef, setupAudioContext]);
 
   useEffect(() => {
-    if (!analyser) return;
+    if (!analyserRef.current || !canvasRef.current) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-    const bufferLength = analyser.frequencyBinCount;
+    if (!ctx) return;
+
+    const bufferLength = analyserRef.current.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
 
-    const draw = () => {
+    const draw = (): void => {
       canvas.width = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
 
-      const animate = () => {
+      const animate = (): void => {
         animationRef.current = requestAnimationFrame(animate);
-        analyser.getByteFrequencyData(dataArray);
+        
+        if (!analyserRef.current) return;
+        analyserRef.current.getByteFrequencyData(dataArray);
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -60,9 +65,11 @@ const AudioVisualizer = ({ audioRef, isDarkMode }) => {
     draw();
 
     return () => {
-      cancelAnimationFrame(animationRef.current);
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
     };
-  }, [analyser, isDarkMode]);
+  }, [analyserRef.current, isDarkMode]);
 
   return (
     <canvas

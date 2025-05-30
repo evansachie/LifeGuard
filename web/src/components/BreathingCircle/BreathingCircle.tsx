@@ -1,16 +1,22 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { FaTimes } from 'react-icons/fa';
 import { getAnimationProps } from '../../utils/getAnimationProps';
 import './BreathingCircle.css';
 
-interface BreathingCircleProps {
+export interface BreathingCircleProps {
   phase: 'inhale' | 'hold' | 'exhale' | 'rest';
+  pattern: {
+    inhale: number;
+    hold: number;
+    exhale: number;
+    holdAfterExhale?: number;
+  };
   onComplete: () => void;
   onClose: () => void;
 }
 
-const BreathingCircle: React.FC<BreathingCircleProps> = ({ phase, onComplete, onClose }) => {
+const BreathingCircle: React.FC<BreathingCircleProps> = ({ phase, pattern, onComplete, onClose }) => {
   const { scale, duration, backgroundColor } = getAnimationProps(phase);
 
   return (

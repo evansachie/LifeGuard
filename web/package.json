@@ -17,6 +17,7 @@
     "@testing-library/react": "^13.4.0",
     "@tinymce/tinymce-react": "^6.1.0",
     "@types/intro.js": "^5.1.5",
+    "@types/react-tooltip": "^4.2.4",
     "@uiw/react-heat-map": "^2.3.2",
     "@uiw/react-tooltip": "^4.22.3",
     "axios": "^1.7.9",
@@ -36,6 +37,7 @@
     "react-map-gl": "^7.1.7",
     "react-router-dom": "^6.22.3",
     "react-toastify": "^10.0.4",
+    "react-tooltip": "^5.28.1",
     "recharts": "^2.15.3"
   },
   "scripts": {

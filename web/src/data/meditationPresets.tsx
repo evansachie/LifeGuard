@@ -1,15 +1,32 @@
 import React from 'react';
-import { BsClock } from 'react-icons/bs';
-
-interface MeditationPreset {
-  time: number;
-  label: string;
-  icon: React.ReactNode;
-}
+import { MdTimer, MdTimerOff } from 'react-icons/md';
+import { BsFillSunFill, BsFillMoonFill, BsStars } from 'react-icons/bs';
+import { MeditationPreset } from '../types/wellnessHub.types';
 
 export const meditationPresets: MeditationPreset[] = [
-  { time: 300, label: '5 minutes', icon: <BsClock /> },
-  { time: 600, label: '10 minutes', icon: <BsClock /> },
-  { time: 900, label: '15 minutes', icon: <BsClock /> },
-  { time: 1200, label: '20 minutes', icon: <BsClock /> },
+  {
+    time: 300, // 5 minutes
+    label: '5 Min',
+    icon: <MdTimer />,
+  },
+  {
+    time: 600, // 10 minutes
+    label: '10 Min',
+    icon: <BsFillSunFill />,
+  },
+  {
+    time: 900, // 15 minutes
+    label: '15 Min',
+    icon: <BsStars />,
+  },
+  {
+    time: 1200, // 20 minutes
+    label: '20 Min',
+    icon: <BsFillMoonFill />,
+  },
+  {
+    time: 1800, // 30 minutes
+    label: '30 Min',
+    icon: <MdTimerOff />,
+  },
 ];

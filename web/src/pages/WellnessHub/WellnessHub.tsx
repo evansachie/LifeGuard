@@ -8,19 +8,31 @@ import SoundsSection from '../../components/WellnessHub/SoundsSection';
 import soundsData from '../../data/sound-data.json';
 import ParticleBackground from '../../components/WellnessHub/ParticleBackground';
 import AudioVisualizer from '../../components/WellnessHub/AudioVisualizer';
+import { WellnessSection, Sound } from '../../types/wellnessHub.types';
 import './WellnessHub.css';
 
-const WellnessHub = ({ isDarkMode }) => {
-  const [activeSection, setActiveSection] = useState(() => {
-    return localStorage.getItem('wellnessSection') || 'breathing';
+interface WellnessHubProps {
+  isDarkMode: boolean;
+}
+
+interface LocalSound {
+  title: string;
+  location: string;
+  imageName: string;
+  audioURL: string;
+}
+
+const WellnessHub: React.FC<WellnessHubProps> = ({ isDarkMode }) => {
+  const [activeSection, setActiveSection] = useState<WellnessSection>(() => {
+    return (localStorage.getItem('wellnessSection') as WellnessSection) || 'breathing';
   });
-  const [currentSound, setCurrentSound] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(0.5);
+  const [currentSound, setCurrentSound] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [volume, setVolume] = useState<number>(0.5);
 
-  const audioRef = useRef(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
-  const handleSectionChange = (section) => {
+  const handleSectionChange = (section: WellnessSection): void => {
     setActiveSection(section);
     localStorage.setItem('wellnessSection', section);
   };
@@ -40,6 +52,17 @@ const WellnessHub = ({ isDarkMode }) => {
     };
   }, []);
 
+  const mapLocalSoundToSound = (localSound: LocalSound): Sound => {
+    return {
+      id: localSound.title,
+      name: localSound.title,
+      duration: 0,
+      url: localSound.audioURL,
+      location: localSound.location,
+      imageName: localSound.imageName,
+    };
+  };
+
   return (
     <div className={`wellness-hub ${isDarkMode ? 'dark' : ''}`}>
       <ParticleBackground isDarkMode={isDarkMode} />
@@ -51,18 +74,7 @@ const WellnessHub = ({ isDarkMode }) => {
 
           {activeSection === 'meditation' && <MeditationSection isDarkMode={isDarkMode} />}
 
-          {activeSection === 'sounds' && (
-            <SoundsSection
-              isDarkMode={isDarkMode}
-              currentSound={currentSound}
-              setCurrentSound={setCurrentSound}
-              isPlaying={isPlaying}
-              setIsPlaying={setIsPlaying}
-              volume={volume}
-              setVolume={setVolume}
-              audioRef={audioRef}
-            />
-          )}
+          {activeSection === 'sounds' && <SoundsSection isDarkMode={isDarkMode} />}
         </AnimatePresence>
       </div>
 
@@ -71,11 +83,22 @@ const WellnessHub = ({ isDarkMode }) => {
           <AudioVisualizer audioRef={audioRef} isDarkMode={isDarkMode} />
           {activeSection !== 'sounds' && (
             <MiniPlayer
-              sound={soundsData.find((s) => s.title === currentSound)}
+              sound={
+                soundsData.find((s: LocalSound) => s.title === currentSound)
+                  ? mapLocalSoundToSound(soundsData.find((s: LocalSound) => s.title === currentSound) as LocalSound)
+                  : {
+                      id: currentSound,
+                      name: currentSound,
+                      duration: 0,
+                      url: '',
+                    }
+              }
               isPlaying={isPlaying}
               onPlayPause={() => setIsPlaying(!isPlaying)}
               onClose={() => {
-                audioRef.current.pause();
+                if (audioRef.current) {
+                  audioRef.current.pause();
+                }
                 setCurrentSound(null);
                 setIsPlaying(false);
               }}

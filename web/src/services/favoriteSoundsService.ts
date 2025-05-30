@@ -1,61 +1,92 @@
-import { API_ENDPOINTS, fetchWithAuth } from '../utils/api';
+import { fetchWithAuth, API_ENDPOINTS } from '../utils/api';
+import { Sound, FavoriteResponse, FavoriteSound } from '../types/wellnessHub.types';
 
-interface FavoriteSound {
-  id: string;
-  name: string;
+export interface FavoriteSoundResult {
+  error?: string;
+  favorite?: FavoriteSound;
+  id?: string;
+  name?: string;
   url?: string;
-  previews: {
-    'preview-hq-mp3': string;
-    [key: string]: string;
-  };
-  type?: string;
-  duration: string | number;
+  message?: string;
 }
 
-interface FavoriteResponse {
-  id: string;
-  userId: string;
-  soundId: string;
-  soundName: string;
-  soundUrl: string;
-  previewUrl: string;
-  category: string;
-  duration: number;
-  createdAt: string;
-}
-
+/**
+ * Gets all favorite sounds for a user
+ * @param userId - The user's ID
+ * @returns List of favorite sounds
+ */
 export const getFavorites = async (userId: string): Promise<FavoriteResponse[]> => {
   try {
-    return await fetchWithAuth(API_ENDPOINTS.GET_USER_FAVORITES(userId));
+    const response = await fetchWithAuth<FavoriteResponse[]>(
+      API_ENDPOINTS.GET_USER_FAVORITES(userId)
+    );
+    return response || [];
   } catch (error) {
     console.error('Error fetching favorites:', error);
-    throw error;
+    return [];
   }
 };
 
-export const addToFavorites = async (userId: string, sound: FavoriteSound): Promise<FavoriteResponse> => {
+/**
+ * Add a sound to favorites
+ * @param userId - User ID
+ * @param sound - Sound to add to favorites
+ * @returns Result indicating success or failure
+ */
+export const addToFavorites = async (
+  userId: string,
+  sound: Sound
+): Promise<FavoriteResponse | FavoriteSoundResult> => {
   try {
-    return await fetchWithAuth(API_ENDPOINTS.FAVORITE_SOUNDS, {
+    // Make sure we have valid data before proceeding
+    if (!sound.previews || !sound.previews['preview-hq-mp3']) {
+      return {
+        error: 'Missing preview URL',
+        message: 'Sound is missing preview URL',
+      };
+    }
+
+    return await fetchWithAuth<FavoriteResponse>(API_ENDPOINTS.FAVORITE_SOUNDS, {
       method: 'POST',
       body: JSON.stringify({
         userId,
-        soundId: sound.id,
+        soundId: sound.id.toString(),
         soundName: sound.name,
-        soundUrl: sound.url || '', // Add fallback for missing url
+        soundUrl: sound.url || '',
         previewUrl: sound.previews['preview-hq-mp3'],
-        category: sound.type || 'uncategorized', // Add fallback for missing category
-        duration: parseFloat(sound.duration.toString()), // Ensure duration is a number
+        category: sound.type || 'uncategorized',
+        duration: typeof sound.duration === 'string' ? parseFloat(sound.duration) : sound.duration,
       }),
     });
-  } catch (error) {
+  } catch (error: any) {
+    // Check if error is "already favorited"
+    if (error?.message?.includes('already favorited')) {
+      return {
+        error: 'Already favorited',
+        favorite: {
+          sound_id: String(sound.id),
+          name: sound.name,
+          url: (sound.previews && sound.previews['preview-hq-mp3']) || '',
+        },
+      };
+    }
+    
     console.error('Error adding to favorites:', error);
-    throw error;
+    return { 
+      error: 'Error adding to favorites',
+      message: error.message || 'Unknown error'
+    };
   }
 };
 
+/**
+ * Remove a sound from favorites
+ * @param userId - User ID
+ * @param soundId - ID of the sound to remove
+ */
 export const removeFromFavorites = async (userId: string, soundId: string): Promise<void> => {
   try {
-    return await fetchWithAuth(API_ENDPOINTS.REMOVE_FAVORITE(userId, soundId), {
+    await fetchWithAuth(API_ENDPOINTS.REMOVE_FAVORITE(userId, soundId), {
       method: 'DELETE',
     });
   } catch (error) {

@@ -34,25 +34,44 @@ import {
 import { toast } from 'react-toastify';
 import NoMusicIcon from '../../assets/no-music.svg';
 import AccessibleDropdown from '../AccessibleDropdown/AccessibleDropdown';
+import { 
+  Sound, 
+  FavoriteSound, 
+  FavoriteResponse, 
+  SearchFilters,
+  AudioPlayerContextType
+} from '../../types/wellnessHub.types';
 
-const SoundsSection = ({ isDarkMode }) => {
+interface SoundsSectionProps {
+  isDarkMode: boolean;
+}
+
+interface Category {
+  label: string;
+  icon: React.ReactNode;
+}
+
+interface Categories {
+  [key: string]: Category;
+}
+
+const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
   const { currentSound, setCurrentSound, isPlaying, setIsPlaying, volume, setVolume, audioRef } =
-    useAudioPlayer();
-  const [sounds, setSounds] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [activeCategory, setActiveCategory] = useState('nature');
-  const [page, setPage] = useState(1);
-  const [filters, setFilters] = useState({});
-  const [, setHasMore] = useState(true);
-  const [showShortcuts, setShowShortcuts] = useState(false);
-  const [prevVolume, setPrevVolume] = useState(null);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [favorites, setFavorites] = useState([]);
-  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+    useAudioPlayer() as AudioPlayerContextType;
+  const [sounds, setSounds] = useState<Sound[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [activeCategory, setActiveCategory] = useState<string>('nature');
+  const [page, setPage] = useState<number>(1);
+  const [filters, setFilters] = useState<SearchFilters>({});
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [showShortcuts, setShowShortcuts] = useState<boolean>(false);
+  const [prevVolume, setPrevVolume] = useState<number | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [favorites, setFavorites] = useState<FavoriteSound[]>([]);
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState<boolean>(false);
   const userId = localStorage.getItem('userId');
 
-  // Wrap categories in useMemo to prevent it from being recreated on every render
-  const categories = useMemo(
+  const categories: Categories = useMemo(
     () => ({
       nature: { label: 'Forest & Nature', icon: <FaTree /> },
       meditation: { label: 'Tibetan Bowls', icon: <FaYinYang /> },
@@ -65,16 +84,26 @@ const SoundsSection = ({ isDarkMode }) => {
       flute: { label: 'Native Flute', icon: <FaGuitar /> },
     }),
     []
-  ); // Empty dependency array means this will only be created once
+  );
 
-  const loadFavorites = useCallback(async () => {
+  const loadFavorites = useCallback(async (): Promise<void> => {
+    if (!userId) return;
+    
     try {
       const userFavorites = await getFavorites(userId);
-      setFavorites(userFavorites);
+
+      const convertedFavorites: FavoriteSound[] = userFavorites.map((fav) => ({
+        sound_id: fav.soundId,
+        name: fav.name,
+        url: fav.url
+      }));
+      
+      setFavorites(convertedFavorites);
+      
       if (showFavoritesOnly) {
-        const favoriteIds = userFavorites.map((fav) => fav.sound_id);
-        setSounds((prevSounds) =>
-          prevSounds.filter((sound) => favoriteIds.includes(sound.id.toString()))
+        const favoriteIds = convertedFavorites.map((fav) => fav.sound_id);
+        setSounds((prevSounds) => 
+          prevSounds.filter((sound) => favoriteIds.includes(String(sound.id)))
         );
       }
     } catch (error) {
@@ -90,7 +119,7 @@ const SoundsSection = ({ isDarkMode }) => {
   }, [userId, loadFavorites]);
 
   const fetchSounds = useCallback(
-    async (resetPage = false) => {
+    async (resetPage = false): Promise<void> => {
       if (resetPage) setPage(1);
       setLoading(true);
       try {
@@ -106,9 +135,8 @@ const SoundsSection = ({ isDarkMode }) => {
     [activeCategory, page, filters]
   );
 
-  // Apply debounce to fetchSounds
   const debouncedFetchSounds = useCallback(
-    debounce((resetPage) => {
+    debounce((resetPage: boolean) => {
       fetchSounds(resetPage);
     }, 500),
     [fetchSounds]
@@ -117,7 +145,9 @@ const SoundsSection = ({ isDarkMode }) => {
   useEffect(() => {
     if (showFavoritesOnly) {
       const favoriteIds = favorites.map((fav) => fav.sound_id);
-      setSounds((prev) => prev.filter((sound) => favoriteIds.includes(sound.id.toString())));
+      setSounds((prev) => 
+        prev.filter((sound) => favoriteIds.includes(String(sound.id)))
+      );
     } else {
       debouncedFetchSounds(true);
     }
@@ -127,27 +157,44 @@ const SoundsSection = ({ isDarkMode }) => {
     debouncedFetchSounds(true);
   }, [activeCategory, filters, debouncedFetchSounds]);
 
-  const handleToggleFavorite = async (sound) => {
+  const handleToggleFavorite = async (sound: Sound): Promise<void> => {
     if (!userId) {
       toast.error('Please login to favorite sounds');
       return;
     }
 
     try {
-      const isFavorite = favorites.some((fav) => fav.sound_id === sound.id.toString());
+      const isFavorite = favorites.some((fav) => fav.sound_id === String(sound.id));
 
       if (isFavorite) {
-        await removeFromFavorites(userId, sound.id);
-        setFavorites((prev) => prev.filter((fav) => fav.sound_id !== sound.id.toString()));
+        await removeFromFavorites(userId, String(sound.id));
+        setFavorites((prev) => prev.filter((fav) => fav.sound_id !== String(sound.id)));
         toast.success('Removed from favorites');
       } else {
         const result = await addToFavorites(userId, sound);
-        if (result.error === 'Already favorited') {
-          // If already favorited, just update the UI
-          setFavorites((prev) => [...prev, result.favorite]);
-          toast.info('Sound is already in favorites');
+        
+        if ('error' in result) {
+          // Handle already favorited case
+          if (result.favorite) {
+            const favSound: FavoriteSound = {
+              sound_id: String(sound.id),
+              name: sound.name,
+              url: sound.url || (sound.previews && sound.previews['preview-hq-mp3']) || ''
+            };
+            setFavorites((prev) => [...prev, favSound]);
+            toast.info('Sound is already in favorites');
+          } else {
+            toast.error(result.error || 'Error adding to favorites');
+          }
         } else {
-          setFavorites((prev) => [...prev, result]);
+          // Handle successful add
+          const newFavorite: FavoriteSound = {
+            sound_id: String(result.id || sound.id),
+            name: result.name || sound.name,
+            url: result.url || (sound.previews && sound.previews['preview-hq-mp3']) || ''
+          };
+          
+          setFavorites((prev) => [...prev, newFavorite]);
           toast.success('Added to favorites');
         }
       }
@@ -156,18 +203,30 @@ const SoundsSection = ({ isDarkMode }) => {
     }
   };
 
-  const toggleFullscreen = () => {
+  const toggleFullscreen = (): void => {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
-      setIsFullscreen(true);
+      document.documentElement.requestFullscreen()
+        .then(() => {
+          setIsFullscreen(true);
+        })
+        .catch((err) => {
+          console.error('Error attempting to enable fullscreen:', err);
+        });
     } else {
-      document.exitFullscreen();
-      setIsFullscreen(false);
+      if (document.exitFullscreen) {
+        document.exitFullscreen()
+          .then(() => {
+            setIsFullscreen(false);
+          })
+          .catch((err) => {
+            console.error('Error attempting to exit fullscreen:', err);
+          });
+      }
     }
   };
 
   useEffect(() => {
-    const handleKeyPress = (e) => {
+    const handleKeyPress = (e: KeyboardEvent): void => {
       switch (e.key.toLowerCase()) {
         case ' ':
           e.preventDefault();
@@ -218,19 +277,29 @@ const SoundsSection = ({ isDarkMode }) => {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [activeCategory, volume, isPlaying, setIsPlaying, setVolume, prevVolume, categories]);
 
-  const handleSoundPlay = async (sound) => {
+  const handleSoundPlay = async (sound: Sound): Promise<void> => {
     if (audioRef.current) {
       if (currentSound === sound.name) {
         if (isPlaying) {
           audioRef.current.pause();
           setIsPlaying(false);
         } else {
-          await audioRef.current.play();
-          setIsPlaying(true);
+          try {
+            await audioRef.current.play();
+            setIsPlaying(true);
+          } catch (error) {
+            console.error('Error playing audio:', error);
+          }
         }
       } else {
         try {
-          const proxiedUrl = await getProxiedAudioUrl(sound.previews['preview-hq-mp3']);
+          const previewUrl = sound.previews && sound.previews['preview-hq-mp3'];
+          if (!previewUrl) {
+            toast.error('No preview available for this sound');
+            return;
+          }
+          
+          const proxiedUrl = await getProxiedAudioUrl(previewUrl);
           audioRef.current.src = proxiedUrl;
           audioRef.current.load();
           await audioRef.current.play();
@@ -238,12 +307,13 @@ const SoundsSection = ({ isDarkMode }) => {
           setIsPlaying(true);
         } catch (error) {
           console.error('Error playing audio:', error);
+          toast.error('Failed to play audio. Please try again.');
         }
       }
     }
   };
 
-  const renderContent = () => {
+  const renderContent = (): React.ReactNode => {
     if (loading) {
       return (
         <div className="loading-container">
@@ -282,7 +352,7 @@ const SoundsSection = ({ isDarkMode }) => {
             <motion.div
               key={sound.id}
               className={`sound-card ${currentSound === sound.name ? 'playing' : ''}`}
-              style={getBackgroundStyle(sound, activeCategory)}
+              style={getBackgroundStyle(sound, activeCategory as any)}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
@@ -414,10 +484,11 @@ const SoundsSection = ({ isDarkMode }) => {
               max="1"
               step="0.01"
               value={volume}
-              onChange={(e) => {
-                setVolume(parseFloat(e.target.value));
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                const newVolume = parseFloat(e.target.value);
+                setVolume(newVolume);
                 if (audioRef.current) {
-                  audioRef.current.volume = e.target.value;
+                  audioRef.current.volume = newVolume;
                 }
               }}
               aria-label="Volume control"

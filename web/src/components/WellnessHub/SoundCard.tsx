@@ -2,9 +2,17 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaPlay, FaPause, FaStar, FaInfoCircle } from 'react-icons/fa';
 import { Tooltip } from 'react-tooltip';
+import { Sound } from '../../types/wellnessHub.types';
 
-const SoundCard = ({ sound, isPlaying, onPlay, background }) => {
-  const [showInfo, setShowInfo] = useState(false);
+interface SoundCardProps {
+  sound: Sound;
+  isPlaying: boolean;
+  onPlay: (sound: Sound) => void;
+  background: React.CSSProperties;
+}
+
+const SoundCard: React.FC<SoundCardProps> = ({ sound, isPlaying, onPlay, background }) => {
+  const [showInfo, setShowInfo] = useState<boolean>(false);
 
   return (
     <motion.div
@@ -14,7 +22,7 @@ const SoundCard = ({ sound, isPlaying, onPlay, background }) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       whileHover={{ scale: 1.02 }}
-      onKeyPress={(e) => e.key === 'Enter' && onPlay(sound)}
+      onKeyPress={(e: React.KeyboardEvent) => e.key === 'Enter' && onPlay(sound)}
       tabIndex={0}
       role="button"
       aria-label={`Play ${sound.name}`}
@@ -25,7 +33,7 @@ const SoundCard = ({ sound, isPlaying, onPlay, background }) => {
           <FaStar className="text-yellow-400" />
           <span>{sound.avg_rating?.toFixed(1) || '4.0'}</span>
         </div>
-        <Tooltip id={`rating-${sound.id}`} place="top" effect="solid">
+        <Tooltip id={`rating-${sound.id}`} place="top">
           Average user rating
         </Tooltip>
 
