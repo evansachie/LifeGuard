@@ -3,6 +3,7 @@ import { FaSearch, FaSpinner } from 'react-icons/fa';
 import { searchMedications } from '../../services/medicationSearchService';
 import { debounce } from 'lodash';
 import { MedicationSearchProps, MedicationSearchItem } from '../../types/medicationTracker.types';
+import { ariaSelected } from '../../utils/accessibilityUtils';
 
 const MedicationSearch: React.FC<MedicationSearchProps> = ({ value, onChange, isDarkMode }) => {
   const [query, setQuery] = useState<string>(value || '');
@@ -13,14 +14,12 @@ const MedicationSearch: React.FC<MedicationSearchProps> = ({ value, onChange, is
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Update internal state when parent value changes
   useEffect(() => {
     if (value !== query) {
       setQuery(value || '');
     }
   }, [value]);
 
-  // Debounce the search function
   const debouncedSearch = useRef(
     debounce(async (searchQuery: string) => {
       if (searchQuery.length < 2) {
@@ -32,13 +31,12 @@ const MedicationSearch: React.FC<MedicationSearchProps> = ({ value, onChange, is
 
       setLoading(true);
       const searchResults = await searchMedications(searchQuery);
-      setResults(searchResults);
+      setResults(searchResults as unknown as MedicationSearchItem[]);
       setIsOpen(searchResults.length > 0);
       setLoading(false);
     }, 500)
   ).current;
 
-  // Trigger search when query changes
   useEffect(() => {
     debouncedSearch(query);
 
@@ -47,7 +45,6 @@ const MedicationSearch: React.FC<MedicationSearchProps> = ({ value, onChange, is
     };
   }, [query, debouncedSearch]);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent): void => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -59,7 +56,6 @@ const MedicationSearch: React.FC<MedicationSearchProps> = ({ value, onChange, is
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Handle selection from dropdown
   const handleSelect = (medication: MedicationSearchItem): void => {
     setQuery(medication.brandName);
     onChange(medication.brandName, medication);
@@ -113,10 +109,11 @@ const MedicationSearch: React.FC<MedicationSearchProps> = ({ value, onChange, is
       <div
         className="relative"
         role="combobox"
-        aria-expanded={isOpen}
+        aria-expanded="false"
         aria-owns="medication-search-results"
         aria-haspopup="listbox"
         aria-controls="medication-search-results"
+        {...(isOpen && { 'aria-expanded': 'true' })}
       >
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           <FaSearch className={isDarkMode ? 'text-gray-400' : 'text-gray-500'} />
@@ -147,43 +144,40 @@ const MedicationSearch: React.FC<MedicationSearchProps> = ({ value, onChange, is
         )}
       </div>
 
-      {/* Search results dropdown */}
       {isOpen && (
-        <div
+        <ul
           className={`absolute z-10 w-full mt-1 rounded-md shadow-lg 
             ${isDarkMode ? 'bg-gray-800' : 'bg-white'} 
-            max-h-60 overflow-auto`}
+            max-h-60 overflow-auto py-1 text-sm`}
           role="listbox"
           id="medication-search-results"
         >
-          <ul className="py-1 text-sm">
-            {results.map((medication, index) => (
-              <li
-                key={medication.id}
-                id={`medication-${index}`}
-                role="option"
-                aria-selected={index === activeIndex}
-                className={`cursor-pointer px-4 py-2 ${
-                  index === activeIndex ? (isDarkMode ? 'bg-gray-700' : 'bg-gray-100') : ''
-                } hover:bg-opacity-10
-                  ${isDarkMode ? 'hover:bg-white text-gray-200' : 'hover:bg-black text-gray-900'}`}
-                onClick={() => handleSelect(medication)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    handleSelect(medication);
-                  }
-                }}
-                tabIndex={-1}
-              >
-                <div className="font-medium">{medication.brandName}</div>
-                <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  {medication.genericName} • {medication.form} • {medication.strength}
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
+          {results.map((medication, index) => (
+            <li
+              key={medication.id}
+              id={`medication-${index}`}
+              role="option"
+              {...ariaSelected(index === activeIndex)}
+              className={`cursor-pointer px-4 py-2 ${
+                index === activeIndex ? (isDarkMode ? 'bg-gray-700' : 'bg-gray-100') : ''
+              } hover:bg-opacity-10
+                ${isDarkMode ? 'hover:bg-white text-gray-200' : 'hover:bg-black text-gray-900'}`}
+              onClick={() => handleSelect(medication)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleSelect(medication);
+                }
+              }}
+              tabIndex={-1}
+            >
+              <div className="font-medium">{medication.brandName}</div>
+              <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                {medication.genericName} • {medication.form} • {medication.strength}
+              </div>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );

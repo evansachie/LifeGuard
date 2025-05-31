@@ -4,5 +4,5 @@ import { MapViewState } from '../types/pollutionTracker.types';
 export const INITIAL_VIEW_STATE: MapViewState = {
   longitude: -0.187,
   latitude: 5.6505,
-  zoom: 15
+  zoom: 15,
 };

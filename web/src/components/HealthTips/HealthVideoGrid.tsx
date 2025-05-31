@@ -20,7 +20,11 @@ interface HealthVideoGridProps {
   };
 }
 
-const HealthVideoGrid: React.FC<HealthVideoGridProps> = ({ videos, containerVariants, itemVariants }) => {
+const HealthVideoGrid: React.FC<HealthVideoGridProps> = ({
+  videos,
+  containerVariants,
+  itemVariants,
+}) => {
   return (
     <section className="video-section">
       <motion.div

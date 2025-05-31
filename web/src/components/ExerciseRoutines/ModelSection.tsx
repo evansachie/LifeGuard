@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaSyncAlt, FaExpand, FaInfoCircle } from 'react-icons/fa';
 
@@ -25,7 +25,7 @@ interface ModelMessage {
   };
 }
 
-const ModelSection: React.FC<ModelSectionProps> = ({ activeExercise, selectedCategory, isDarkMode }) => {
+const ModelSection = ({ activeExercise, selectedCategory, isDarkMode }: ModelSectionProps) => {
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [highlightedMuscles, setHighlightedMuscles] = useState<string[]>([]);
 
@@ -47,7 +47,7 @@ const ModelSection: React.FC<ModelSectionProps> = ({ activeExercise, selectedCat
           method: 'clearAnnotations',
         },
       };
-      
+
       iframe.contentWindow?.postMessage(clearMessage, '*');
 
       activeExercise.targetMuscles.forEach((muscle) => {
@@ -58,7 +58,7 @@ const ModelSection: React.FC<ModelSectionProps> = ({ activeExercise, selectedCat
             args: [muscle],
           },
         };
-        
+
         iframe.contentWindow?.postMessage(showMessage, '*');
       });
     };
@@ -94,7 +94,7 @@ const ModelSection: React.FC<ModelSectionProps> = ({ activeExercise, selectedCat
         method: 'resetCamera',
       },
     };
-    
+
     iframe.contentWindow?.postMessage(resetMessage, '*');
   };
 
@@ -135,7 +135,7 @@ const ModelSection: React.FC<ModelSectionProps> = ({ activeExercise, selectedCat
               src={MODEL_URL}
               className="w-full h-full border-0"
               allowFullScreen
-              {...{ mozallowfullscreen: "true", webkitallowfullscreen: "true" } as any}
+              {...({ mozallowfullscreen: 'true', webkitallowfullscreen: 'true' } as any)}
             />
           </div>
         </div>
@@ -221,7 +221,7 @@ const ModelSection: React.FC<ModelSectionProps> = ({ activeExercise, selectedCat
                     src={MODEL_URL}
                     className="w-full h-full border-0"
                     allowFullScreen
-                    {...{ mozallowfullscreen: "true", webkitallowfullscreen: "true" } as any}
+                    {...({ mozallowfullscreen: 'true', webkitallowfullscreen: 'true' } as any)}
                   />
                 </div>
               </div>

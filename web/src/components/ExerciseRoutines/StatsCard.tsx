@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { IconType } from 'react-icons';
 
@@ -13,7 +12,7 @@ interface StatsCardProps {
   hoverText?: string;
 }
 
-const StatsCard: React.FC<StatsCardProps> = ({
+const StatsCard = ({
   icon: Icon,
   title,
   value,
@@ -22,7 +21,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
   clickable,
   suffixIcon: SuffixIcon,
   hoverText,
-}) => {
+}: StatsCardProps) => {
   return (
     <motion.div
       className={`rounded-xl p-4 bg-gradient-to-r ${color} text-white shadow-md relative overflow-hidden ${

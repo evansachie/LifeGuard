@@ -91,8 +91,8 @@ const useHealthMetricsData = ({
           weight: response.Weight || '',
           height: response.Height || '',
           gender: (response.Gender as 'male' | 'female') || 'male',
-          activityLevel: response.ActivityLevel as FormData['activityLevel'] || 'sedentary',
-          goal: response.Goal as FormData['goal'] || 'maintain',
+          activityLevel: (response.ActivityLevel as FormData['activityLevel']) || 'sedentary',
+          goal: (response.Goal as FormData['goal']) || 'maintain',
         }));
 
         if (response.BMR && response.TDEE) {
@@ -100,7 +100,10 @@ const useHealthMetricsData = ({
             bmr: response.BMR,
             tdee: response.TDEE,
             macros: calculateMacros(response.TDEE, response.Goal as FormData['goal']),
-            idealWeight: calculateIdealWeight(response.Height, response.Gender as 'male' | 'female'),
+            idealWeight: calculateIdealWeight(
+              response.Height,
+              response.Gender as 'male' | 'female'
+            ),
           });
           setShowResults(true);
         }

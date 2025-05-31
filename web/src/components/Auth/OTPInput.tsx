@@ -1,11 +1,9 @@
-import React from 'react';
-
 interface OTPInputProps {
   otp: string[];
   setOtp: (otp: string[]) => void;
 }
 
-const OTPInput: React.FC<OTPInputProps> = ({ otp, setOtp }) => {
+const OTPInput = ({ otp, setOtp }: OTPInputProps) => {
   const handleChange = (element: HTMLInputElement, index: number): void => {
     if (isNaN(parseInt(element.value, 10)) && element.value !== '') return;
 
@@ -17,7 +15,7 @@ const OTPInput: React.FC<OTPInputProps> = ({ otp, setOtp }) => {
   };
 
   return (
-    <div className="otp-input-container">
+    <div className="otp-input-container" role="group" aria-label="Enter OTP code">
       {otp.map((data, index) => (
         <input
           key={index}
@@ -26,6 +24,10 @@ const OTPInput: React.FC<OTPInputProps> = ({ otp, setOtp }) => {
           value={data}
           onChange={(e) => handleChange(e.target, index)}
           onFocus={(e) => e.target.select()}
+          aria-label={`OTP digit ${index + 1} of ${otp.length}`}
+          inputMode="numeric"
+          pattern="[0-9]"
+          autoComplete="one-time-code"
         />
       ))}
     </div>

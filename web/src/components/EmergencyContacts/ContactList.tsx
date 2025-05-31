@@ -1,4 +1,3 @@
-import React from 'react';
 import { AnimatePresence } from 'framer-motion';
 import EmptyState from '../../assets/empty-state.svg';
 import Spinner from '../Spinner/Spinner';
@@ -14,14 +13,14 @@ interface ContactListProps {
   isDarkMode?: boolean;
 }
 
-const ContactList: React.FC<ContactListProps> = ({
+const ContactList = ({
   contacts,
   isLoading,
   onEdit,
   onDelete,
   onSendTestAlert,
   isDarkMode = false,
-}) => {
+}: ContactListProps) => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">

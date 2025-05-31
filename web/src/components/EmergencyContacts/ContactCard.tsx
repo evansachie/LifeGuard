@@ -10,12 +10,12 @@ interface ContactCardProps {
   isDarkMode?: boolean;
 }
 
-const ContactCard = ({ 
-  contact, 
-  onEdit, 
-  onDelete, 
-  onSendTestAlert, 
-  isDarkMode = false 
+const ContactCard = ({
+  contact,
+  onEdit,
+  onDelete,
+  onSendTestAlert,
+  isDarkMode = false,
 }: ContactCardProps) => {
   const getPriorityLabel = (priority: number): string => {
     switch (priority) {
@@ -63,7 +63,9 @@ const ContactCard = ({
     >
       <div className="flex justify-between items-start mb-4">
         <div>
-          <h3 className={`text-xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>{contact.Name}</h3>
+          <h3 className={`text-xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+            {contact.Name}
+          </h3>
           <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
             {contact.Relationship}
           </p>
@@ -115,7 +117,9 @@ const ContactCard = ({
         </div>
         <div className="flex items-center gap-2 mt-2">
           <div className="flex items-center">
-            <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+            <span
+              className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+            >
               Role:
             </span>
             <span className={`ml-1 px-2 py-0.5 text-xs rounded-full ${getRoleClass(contact.Role)}`}>
@@ -123,10 +127,14 @@ const ContactCard = ({
             </span>
           </div>
           <div className="flex items-center ml-3">
-            <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+            <span
+              className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+            >
               Priority:
             </span>
-            <span className={`ml-1 px-2 py-0.5 text-xs rounded-full ${getPriorityClass(contact.Priority)}`}>
+            <span
+              className={`ml-1 px-2 py-0.5 text-xs rounded-full ${getPriorityClass(contact.Priority)}`}
+            >
               {getPriorityLabel(contact.Priority)}
             </span>
           </div>

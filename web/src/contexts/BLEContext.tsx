@@ -1,11 +1,18 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from 'react';
 import { toast } from 'react-toastify';
-import type { 
-  BLEContextType, 
-  BLEDevice, 
-  SensorReading, 
-  EnvironmentalData, 
-  MotionData 
+import type {
+  BLEContextType,
+  BLEDevice,
+  SensorReading,
+  EnvironmentalData,
+  MotionData,
 } from '../types/ble.types';
 import type { HealthMetrics } from '../types/api.types';
 
@@ -47,7 +54,7 @@ export const BLEProvider: React.FC<BLEProviderProps> = ({ children }) => {
       timestamp: new Date().toISOString(),
       location: {
         latitude: 5.6037 + (Math.random() - 0.5) * 0.01, // Around Accra, Ghana
-        longitude: -0.1870 + (Math.random() - 0.5) * 0.01,
+        longitude: -0.187 + (Math.random() - 0.5) * 0.01,
       },
     };
 
@@ -67,7 +74,9 @@ export const BLEProvider: React.FC<BLEProviderProps> = ({ children }) => {
         y: (Math.random() - 0.5) * 100,
         z: (Math.random() - 0.5) * 100,
       },
-      activity: ['stationary', 'walking', 'running', 'cycling'][Math.floor(Math.random() * 4)] as any,
+      activity: ['stationary', 'walking', 'running', 'cycling'][
+        Math.floor(Math.random() * 4)
+      ] as any,
       stepCount: Math.floor(Math.random() * 10000),
       fallDetected: Math.random() < 0.01, // 1% chance of fall detection
       timestamp: new Date().toISOString(),
@@ -101,7 +110,7 @@ export const BLEProvider: React.FC<BLEProviderProps> = ({ children }) => {
 
     try {
       setIsScanning(true);
-      
+
       // For now, simulate device discovery
       setTimeout(() => {
         const mockDevices: BLEDevice[] = [
@@ -122,12 +131,11 @@ export const BLEProvider: React.FC<BLEProviderProps> = ({ children }) => {
             deviceType: 'heart_rate',
           },
         ];
-        
+
         setDevices(mockDevices);
         setIsScanning(false);
         toast.success('Found BLE devices');
       }, 2000);
-
     } catch (error: any) {
       console.error('Error starting BLE scan:', error);
       toast.error(`Failed to start scanning: ${error.message}`);
@@ -141,84 +149,88 @@ export const BLEProvider: React.FC<BLEProviderProps> = ({ children }) => {
     toast.info('Stopped scanning for devices');
   }, []);
   // Connect to a BLE device
-  const connect = useCallback(async (deviceId: string): Promise<void> => {
-    try {
-      setIsConnecting(true);
-      const device = devices.find(d => d.id === deviceId);
-      if (!device) {
-        throw new Error('Device not found');
-      }
+  const connect = useCallback(
+    async (deviceId: string): Promise<void> => {
+      try {
+        setIsConnecting(true);
+        const device = devices.find((d) => d.id === deviceId);
+        if (!device) {
+          throw new Error('Device not found');
+        }
 
-      // Simulate connection process
-      toast.info(`Connecting to ${device.name}...`);
-      
-      // Update device status
-      setDevices(prev => prev.map(d => 
-        d.id === deviceId 
-          ? { ...d, connected: true }
-          : { ...d, connected: false } // Disconnect other devices
-      ));
-      
-      setConnectedDevice({ ...device, connected: true });
-      toast.success(`Connected to ${device.name}`);
-      
-      // Start generating mock sensor data
-      generateMockSensorData();
-      
-    } catch (error: any) {
-      console.error('Error connecting to device:', error);
-      toast.error(`Failed to connect: ${error.message}`);
-    } finally {
-      setIsConnecting(false);
-    }
-  }, [devices, generateMockSensorData]);
+        // Simulate connection process
+        toast.info(`Connecting to ${device.name}...`);
+
+        // Update device status
+        setDevices((prev) =>
+          prev.map(
+            (d) => (d.id === deviceId ? { ...d, connected: true } : { ...d, connected: false }) // Disconnect other devices
+          )
+        );
+
+        setConnectedDevice({ ...device, connected: true });
+        toast.success(`Connected to ${device.name}`);
+
+        // Start generating mock sensor data
+        generateMockSensorData();
+      } catch (error: any) {
+        console.error('Error connecting to device:', error);
+        toast.error(`Failed to connect: ${error.message}`);
+      } finally {
+        setIsConnecting(false);
+      }
+    },
+    [devices, generateMockSensorData]
+  );
 
   // Disconnect from a BLE device
-  const disconnect = useCallback(async (deviceId: string): Promise<void> => {
-    try {
-      const device = devices.find(d => d.id === deviceId);
-      if (!device) {
-        throw new Error('Device not found');
-      }
+  const disconnect = useCallback(
+    async (deviceId: string): Promise<void> => {
+      try {
+        const device = devices.find((d) => d.id === deviceId);
+        if (!device) {
+          throw new Error('Device not found');
+        }
 
-      // Update device status
-      setDevices(prev => prev.map(d => 
-        d.id === deviceId ? { ...d, connected: false } : d
-      ));
-      
-      setConnectedDevice(null);
-      setLatestSensorData({});
-      
-      toast.success(`Disconnected from ${device.name}`);
-      
-    } catch (error: any) {
-      console.error('Error disconnecting from device:', error);
-      toast.error(`Failed to disconnect: ${error.message}`);
-    }
-  }, [devices]);
+        // Update device status
+        setDevices((prev) => prev.map((d) => (d.id === deviceId ? { ...d, connected: false } : d)));
+
+        setConnectedDevice(null);
+        setLatestSensorData({});
+
+        toast.success(`Disconnected from ${device.name}`);
+      } catch (error: any) {
+        console.error('Error disconnecting from device:', error);
+        toast.error(`Failed to disconnect: ${error.message}`);
+      }
+    },
+    [devices]
+  );
 
   // Send command to BLE device
-  const sendCommand = useCallback(async (deviceId: string, command: string): Promise<void> => {
-    try {
-      const device = devices.find(d => d.id === deviceId);
-      if (!device || !device.connected) {
-        throw new Error('Device not connected');
-      }
+  const sendCommand = useCallback(
+    async (deviceId: string, command: string): Promise<void> => {
+      try {
+        const device = devices.find((d) => d.id === deviceId);
+        if (!device || !device.connected) {
+          throw new Error('Device not connected');
+        }
 
-      // Simulate command sending
-      console.log(`Sending command "${command}" to ${device.name}`);
-      toast.success(`Command sent to ${device.name}`);
-      
-    } catch (error: any) {
-      console.error('Error sending command:', error);
-      toast.error(`Failed to send command: ${error.message}`);
-    }
-  }, [devices]);
+        // Simulate command sending
+        console.log(`Sending command "${command}" to ${device.name}`);
+        toast.success(`Command sent to ${device.name}`);
+      } catch (error: any) {
+        console.error('Error sending command:', error);
+        toast.error(`Failed to send command: ${error.message}`);
+      }
+    },
+    [devices]
+  );
 
   // Periodically update sensor data when connected
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    
+
     if (connectedDevice) {
       interval = setInterval(() => {
         generateMockSensorData();
@@ -250,7 +262,7 @@ export const BLEProvider: React.FC<BLEProviderProps> = ({ children }) => {
     startScanning,
     stopScanning,
     sendCommand,
-    
+
     // Backward compatibility aliases
     bleDevice: connectedDevice,
     isConnecting,
@@ -259,11 +271,7 @@ export const BLEProvider: React.FC<BLEProviderProps> = ({ children }) => {
     disconnectDevice: disconnect,
   };
 
-  return (
-    <BLEContext.Provider value={value}>
-      {children}
-    </BLEContext.Provider>
-  );
+  return <BLEContext.Provider value={value}>{children}</BLEContext.Provider>;
 };
 
 export const useBLE = (): BLEContextType => {

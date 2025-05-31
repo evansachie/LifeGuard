@@ -13,7 +13,12 @@ export const useAudioContext = (audioRef: RefObject<HTMLAudioElement>): Analyser
       analyserRef.current.fftSize = 256;
     }
 
-    if (audioRef.current && audioContextRef.current && analyserRef.current && !sourceNodeRef.current) {
+    if (
+      audioRef.current &&
+      audioContextRef.current &&
+      analyserRef.current &&
+      !sourceNodeRef.current
+    ) {
       sourceNodeRef.current = audioContextRef.current.createMediaElementSource(audioRef.current);
 
       if (sourceNodeRef.current && analyserRef.current) {

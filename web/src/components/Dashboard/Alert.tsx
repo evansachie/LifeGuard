@@ -1,11 +1,10 @@
-import React from 'react';
 import { Alert as AlertType } from '../../types/common.types';
 
 interface AlertProps {
   alert: AlertType;
 }
 
-const Alert: React.FC<AlertProps> = ({ alert }) => {
+const Alert = ({ alert }: AlertProps) => {
   return (
     <div className={`alert-item ${alert.type}`}>
       <div className="alert-message">{alert.message}</div>

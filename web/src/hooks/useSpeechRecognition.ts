@@ -32,10 +32,10 @@ interface SpeechRecognitionType extends EventTarget {
 declare global {
   interface Window {
     SpeechRecognition?: {
-      new(): SpeechRecognitionType;
+      new (): SpeechRecognitionType;
     };
     webkitSpeechRecognition?: {
-      new(): SpeechRecognitionType;
+      new (): SpeechRecognitionType;
     };
   }
 }
@@ -53,7 +53,8 @@ export function useSpeechRecognition(): SpeechRecognitionResult {
 
   useEffect(() => {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognitionConstructor = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const SpeechRecognitionConstructor =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
       if (SpeechRecognitionConstructor) {
         speechRecognitionRef.current = new SpeechRecognitionConstructor();
         speechRecognitionRef.current.continuous = false;

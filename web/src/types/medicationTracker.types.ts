@@ -1,5 +1,3 @@
-import { ReactNode } from 'react';
-
 export interface Medication {
   Id: string;
   Name: string;
@@ -42,7 +40,7 @@ export interface MedicationSearchItem {
   form: string;
   strength: string;
   indications?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface MedicationSearchProps {

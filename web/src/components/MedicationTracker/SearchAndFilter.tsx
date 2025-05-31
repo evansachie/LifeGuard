@@ -3,12 +3,12 @@ import { FaSearch, FaFilter } from 'react-icons/fa';
 import AccessibleDropdown from '../AccessibleDropdown/AccessibleDropdown';
 import { SearchAndFilterProps } from '../../types/medicationTracker.types';
 
-const SearchAndFilter: React.FC<SearchAndFilterProps> = ({ 
-  searchTerm, 
-  onSearchChange, 
-  filters, 
-  onFilterChange, 
-  isDarkMode 
+const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
+  searchTerm,
+  onSearchChange,
+  filters,
+  onFilterChange,
+  isDarkMode,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -55,14 +55,16 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
                 }`}
               >
                 <div className="mb-3">
-                  <div
+                  <label
+                    htmlFor="status-filter"
                     className={`block mb-1 text-sm font-medium ${
                       isDarkMode ? 'text-gray-300' : 'text-gray-700'
                     }`}
                   >
                     Status
-                  </div>
+                  </label>
                   <select
+                    id="status-filter"
                     value={filters.status}
                     onChange={(e) => onFilterChange('status', e.target.value)}
                     className={`w-full p-2 rounded-md border ${
@@ -70,6 +72,7 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
                         ? 'bg-gray-700 border-gray-600 text-white'
                         : 'bg-gray-50 border-gray-300 text-gray-900'
                     }`}
+                    aria-label="Filter by medication status"
                   >
                     <option value="">All</option>
                     <option value="active">Active</option>
@@ -78,14 +81,16 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
                 </div>
 
                 <div className="mb-3">
-                  <div
+                  <label
+                    htmlFor="frequency-filter"
                     className={`block mb-1 text-sm font-medium ${
                       isDarkMode ? 'text-gray-300' : 'text-gray-700'
                     }`}
                   >
                     Frequency
-                  </div>
+                  </label>
                   <select
+                    id="frequency-filter"
                     value={filters.frequency}
                     onChange={(e) => onFilterChange('frequency', e.target.value)}
                     className={`w-full p-2 rounded-md border ${
@@ -93,6 +98,7 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
                         ? 'bg-gray-700 border-gray-600 text-white'
                         : 'bg-gray-50 border-gray-300 text-gray-900'
                     }`}
+                    aria-label="Filter by medication frequency"
                   >
                     <option value="">All</option>
                     <option value="daily">Daily</option>
@@ -102,14 +108,16 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
                 </div>
 
                 <div>
-                  <div
+                  <label
+                    htmlFor="time-of-day-filter"
                     className={`block mb-1 text-sm font-medium ${
                       isDarkMode ? 'text-gray-300' : 'text-gray-700'
                     }`}
                   >
                     Time of Day
-                  </div>
+                  </label>
                   <select
+                    id="time-of-day-filter"
                     value={filters.timeOfDay}
                     onChange={(e) => onFilterChange('timeOfDay', e.target.value)}
                     className={`w-full p-2 rounded-md border ${
@@ -117,6 +125,7 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
                         ? 'bg-gray-700 border-gray-600 text-white'
                         : 'bg-gray-50 border-gray-300 text-gray-900'
                     }`}
+                    aria-label="Filter by time of day"
                   >
                     <option value="">All</option>
                     <option value="morning">Morning</option>

@@ -6,7 +6,7 @@ interface ExerciseStats {
   currentStreak: number;
   longestStreak: number;
   weeklyGoalProgress: number;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface WorkoutData {
@@ -14,10 +14,6 @@ interface WorkoutData {
   workout_type: string;
   calories_burned: number;
   duration_minutes: number;
-}
-
-interface GoalData {
-  goalType: string;
 }
 
 interface WorkoutHistoryResponse {
@@ -58,7 +54,7 @@ const exerciseService = {
    * @param workoutData - The workout details
    * @returns Confirmation of the recorded workout
    */
-  completeWorkout: async (workoutData: WorkoutData): Promise<any> => {
+  completeWorkout: async (workoutData: WorkoutData): Promise<unknown> => {
     return await fetchWithAuth(API_ENDPOINTS.EXERCISE_COMPLETE, {
       method: 'POST',
       body: JSON.stringify(workoutData),
@@ -70,7 +66,7 @@ const exerciseService = {
    * @param goalType - Type of goal (e.g., "streak", "calories", "workouts")
    * @returns The created goal object
    */
-  setGoal: async (goalType: string): Promise<any> => {
+  setGoal: async (goalType: string): Promise<unknown> => {
     return await fetchWithAuth(API_ENDPOINTS.EXERCISE_GOALS, {
       method: 'POST',
       body: JSON.stringify({ goalType }),

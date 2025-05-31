@@ -1,4 +1,3 @@
-import React from 'react';
 import { getAirQualityStatus, getStats } from '../../utils/airQualityUtils';
 import { HistoricalData } from '../../hooks/useSensorHistory';
 
@@ -7,7 +6,7 @@ interface SummaryCardsProps {
   isDarkMode?: boolean;
 }
 
-const SummaryCards: React.FC<SummaryCardsProps> = ({ historicalData, isDarkMode = false }) => {
+const SummaryCards = ({ historicalData, isDarkMode = false }: SummaryCardsProps) => {
   const tempStats = getStats(historicalData.temperature);
   const humidityStats = getStats(historicalData.humidity);
   const pressureStats = getStats(historicalData.pressure);
@@ -16,10 +15,14 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ historicalData, isDarkMode 
 
   return (
     <div className="summary-cards grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-      <div className={`summary-card rounded-xl p-5 shadow-md ${isDarkMode ? 'bg-gray-800 text-gray-200' : 'bg-white text-gray-800'}`}>
+      <div
+        className={`summary-card rounded-xl p-5 shadow-md ${isDarkMode ? 'bg-gray-800 text-gray-200' : 'bg-white text-gray-800'}`}
+      >
         <div className="card-header flex justify-between items-center mb-3">
           <h3 className="text-xl font-medium">Temperature</h3>
-          <span className="icon-temp text-2xl" aria-hidden="true">🌡️</span>
+          <span className="icon-temp text-2xl" aria-hidden="true">
+            🌡️
+          </span>
           <span className="sr-only">Temperature icon</span>
         </div>
         <p className="value text-3xl font-bold">{tempStats.current.toFixed(1)}°C</p>
@@ -37,18 +40,32 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ historicalData, isDarkMode 
             <span className="font-medium">{tempStats.max}°C</span>
           </div>
         </div>
-        <p className="trend" style={{ color: tempStats.trend > 0 ? '#FF4B4B' : '#00C853' }}>
+        <p className={`trend ${tempStats.trend > 0 ? 'text-red-500' : 'text-green-500'}`}>
           {tempStats.trend > 0 ? '↑' : '↓'} {Math.abs(tempStats.trend).toFixed(1)}° from previous
         </p>
       </div>
 
-      <div className={`summary-card rounded-xl p-5 shadow-md ${isDarkMode ? 'bg-gray-800 text-gray-200' : 'bg-white text-gray-800'}`}>
+      <div
+        className={`summary-card rounded-xl p-5 shadow-md ${isDarkMode ? 'bg-gray-800 text-gray-200' : 'bg-white text-gray-800'}`}
+      >
         <div className="card-header flex justify-between items-center mb-3">
           <h3 className="text-xl font-medium">Air Quality</h3>
-          <span className="icon-air text-2xl" aria-hidden="true">💨</span>
+          <span className="icon-air text-2xl" aria-hidden="true">
+            💨
+          </span>
           <span className="sr-only">Air quality icon</span>
         </div>
-        <p className="value text-3xl font-bold" style={{ color: airQuality.color }}>
+        <p
+          className={`value text-3xl font-bold ${
+            airQuality.color === '#4CAF50'
+              ? 'text-green-500'
+              : airQuality.color === '#FF9800'
+                ? 'text-orange-500'
+                : airQuality.color === '#F44336'
+                  ? 'text-red-500'
+                  : 'text-blue-500'
+          }`}
+        >
           {airQuality.status}
         </p>
         <div className="stats-grid grid grid-cols-3 gap-4 my-4">

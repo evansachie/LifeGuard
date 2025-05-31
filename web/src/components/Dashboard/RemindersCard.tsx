@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaStickyNote } from 'react-icons/fa';
 import Spinner from '../Spinner/Spinner';
@@ -12,7 +11,7 @@ interface RemindersCardProps {
   isDarkMode: boolean;
 }
 
-const RemindersCard: React.FC<RemindersCardProps> = ({ memos, loading, isDarkMode }) => {
+const RemindersCard = ({ memos, loading, isDarkMode }: RemindersCardProps) => {
   const activeMemos = memos?.filter((memo) => !memo.Done) || [];
 
   return (

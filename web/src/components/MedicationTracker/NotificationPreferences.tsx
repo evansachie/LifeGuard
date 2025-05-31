@@ -4,9 +4,15 @@ import { FaBell, FaClock } from 'react-icons/fa';
 import { fetchWithAuth, API_ENDPOINTS } from '../../utils/api';
 import { toast } from 'react-toastify';
 import Spinner from '../Spinner/Spinner';
-import { NotificationPreferencesProps, PreferencesState } from '../../types/medicationTracker.types';
+import {
+  NotificationPreferencesProps,
+  PreferencesState,
+} from '../../types/medicationTracker.types';
 
-const NotificationPreferences: React.FC<NotificationPreferencesProps> = ({ isDarkMode, onClose }) => {
+const NotificationPreferences: React.FC<NotificationPreferencesProps> = ({
+  isDarkMode,
+  onClose,
+}) => {
   const [preferences, setPreferences] = useState<PreferencesState>({
     emailNotifications: true,
     reminderLeadTime: 15,
@@ -64,7 +70,9 @@ const NotificationPreferences: React.FC<NotificationPreferencesProps> = ({ isDar
           <div className="flex items-center gap-3">
             <FaBell className="text-blue-500" />
             <div>
-              <h3 className="font-medium">Email Notifications</h3>
+              <label htmlFor="emailNotifications" className="font-medium cursor-pointer">
+                Email Notifications
+              </label>
               <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                 Receive email reminders for your medications
               </p>
@@ -85,6 +93,7 @@ const NotificationPreferences: React.FC<NotificationPreferencesProps> = ({ isDar
                 ? 'bg-gray-800 border-gray-600 text-blue-500'
                 : 'bg-white border-gray-300 text-blue-600'
             }`}
+            aria-describedby="email-notifications-description"
           />
         </div>
 
@@ -92,13 +101,19 @@ const NotificationPreferences: React.FC<NotificationPreferencesProps> = ({ isDar
           <div className="flex items-center gap-3">
             <FaClock className="text-blue-500" />
             <div>
-              <h3 className="font-medium">Reminder Lead Time</h3>
-              <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              <label htmlFor="reminderLeadTime" className="font-medium">
+                Reminder Lead Time
+              </label>
+              <p
+                id="reminder-lead-time-description"
+                className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+              >
                 Minutes before scheduled time
               </p>
             </div>
           </div>
           <select
+            id="reminderLeadTime"
             value={preferences.reminderLeadTime}
             onChange={(e) =>
               setPreferences((prev) => ({
@@ -109,6 +124,7 @@ const NotificationPreferences: React.FC<NotificationPreferencesProps> = ({ isDar
             className={`rounded-lg px-3 py-2 border ${
               isDarkMode ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300'
             }`}
+            aria-describedby="reminder-lead-time-description"
           >
             <option value={5}>5 minutes</option>
             <option value={10}>10 minutes</option>

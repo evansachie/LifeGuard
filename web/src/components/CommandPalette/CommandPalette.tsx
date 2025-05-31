@@ -1,5 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Command } from 'cmdk';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Fuse from 'fuse.js';
 import {
@@ -37,12 +36,7 @@ interface CommandPaletteProps {
   setOpen: (open: boolean) => void;
 }
 
-export const CommandPalette: React.FC<CommandPaletteProps> = ({ 
-  isDarkMode, 
-  toggleTheme, 
-  open, 
-  setOpen 
-}) => {
+export const CommandPalette = ({ isDarkMode, toggleTheme, open, setOpen }: CommandPaletteProps) => {
   const [search, setSearch] = useState<string>('');
   const [, setPages] = useState<string[]>([]);
   const [recentSearches, setRecentSearches] = useState<CommandItem[]>(() => {
@@ -70,7 +64,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     if (open) {
       document.addEventListener('mousedown', handleClickOutside);
     }
-    
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
@@ -179,9 +173,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       try {
         item.action();
       } catch (error) {
-        console.error("Error executing command:", error);
+        console.error('Error executing command:', error);
       }
-      
+
       setOpen(false);
 
       setRecentSearches((prev) => {
@@ -196,13 +190,12 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   if (!open) return null;
 
   return (
-    <div 
-      className="fixed inset-0 flex items-center justify-center z-[1000]"
-      style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+    <div
+      className="fixed inset-0 flex items-center justify-center z-[1000] bg-black bg-opacity-50"
       role="dialog"
       aria-modal="true"
     >
-      <div 
+      <div
         ref={contentRef}
         className={`w-full max-w-xl mx-auto overflow-hidden ${
           isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-700'
@@ -215,37 +208,49 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Type a command or search..."
             className={`w-full p-4 text-lg border-b ${
-              isDarkMode ? 'bg-gray-900 border-gray-700 text-white' : 'bg-white border-gray-200 text-gray-800'
+              isDarkMode
+                ? 'bg-gray-900 border-gray-700 text-white'
+                : 'bg-white border-gray-200 text-gray-800'
             } focus:outline-none`}
             autoFocus
           />
-          
-          <div className={`overflow-y-auto max-h-[60vh] p-2 ${
-            isDarkMode ? 'scrollbar-dark' : 'scrollbar-light'
-          }`}>
+
+          <div
+            className={`overflow-y-auto max-h-[60vh] p-2 ${
+              isDarkMode ? 'scrollbar-dark' : 'scrollbar-light'
+            }`}
+          >
             {search.trim() === '' && recentSearches.length > 0 && (
               <div>
-                <div className={`px-2 py-1 text-xs uppercase tracking-wider font-semibold ${
-                  isDarkMode ? 'text-gray-400' : 'text-gray-500'
-                }`}>
+                <div
+                  className={`px-2 py-1 text-xs uppercase tracking-wider font-semibold ${
+                    isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                  }`}
+                >
                   Recent
                 </div>
                 {recentSearches.map((item) => (
-                  <div 
+                  <div
                     key={item.id}
                     className={`flex items-center gap-2 px-3 py-2 my-1 cursor-pointer rounded-md transition-colors
-                      ${isDarkMode 
-                        ? 'hover:bg-gray-800 text-gray-200' 
-                        : 'hover:bg-gray-100 text-gray-700'}`}
+                      ${
+                        isDarkMode
+                          ? 'hover:bg-gray-800 text-gray-200'
+                          : 'hover:bg-gray-100 text-gray-700'
+                      }`}
                     onClick={() => handleSelect(item)}
                   >
-                    {item.icon && <item.icon className={`w-4 h-4 ${isDarkMode ? 'opacity-70' : 'text-gray-600'}`} />}
+                    {item.icon && (
+                      <item.icon
+                        className={`w-4 h-4 ${isDarkMode ? 'opacity-70' : 'text-gray-600'}`}
+                      />
+                    )}
                     <span>{item.name}</span>
                     {item.shortcut && (
-                      <kbd className={`ml-auto px-2 py-0.5 text-xs font-mono rounded 
-                        ${isDarkMode 
-                          ? 'bg-gray-800 text-gray-400' 
-                          : 'bg-gray-100 text-gray-600'}`}>
+                      <kbd
+                        className={`ml-auto px-2 py-0.5 text-xs font-mono rounded 
+                        ${isDarkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-600'}`}
+                      >
                         {item.shortcut}
                       </kbd>
                     )}
@@ -254,35 +259,42 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               </div>
             )}
 
-            {(search.trim() !== '' || recentSearches.length === 0) && filteredCommands.length === 0 && (
-              <div className="p-4 text-center text-gray-500">
-                No results found.
-              </div>
-            )}
-            
+            {(search.trim() !== '' || recentSearches.length === 0) &&
+              filteredCommands.length === 0 && (
+                <div className="p-4 text-center text-gray-500">No results found.</div>
+              )}
+
             {filteredCommands.map((group) => (
               <div key={group.category}>
-                <div className={`px-2 py-1 text-xs uppercase tracking-wider font-semibold ${
-                  isDarkMode ? 'text-gray-400' : 'text-gray-600'
-                }`}>
+                <div
+                  className={`px-2 py-1 text-xs uppercase tracking-wider font-semibold ${
+                    isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                  }`}
+                >
                   {group.category}
                 </div>
                 {group.items.map((item) => (
-                  <div 
+                  <div
                     key={item.id}
                     className={`flex items-center gap-2 px-3 py-2 my-1 cursor-pointer rounded-md transition-colors
-                      ${isDarkMode 
-                        ? 'hover:bg-gray-800 text-gray-200' 
-                        : 'hover:bg-gray-100 text-gray-700'}`}
+                      ${
+                        isDarkMode
+                          ? 'hover:bg-gray-800 text-gray-200'
+                          : 'hover:bg-gray-100 text-gray-700'
+                      }`}
                     onClick={() => handleSelect(item)}
                   >
-                    {item.icon && <item.icon className={`w-4 h-4 ${isDarkMode ? 'opacity-70' : 'text-gray-600'}`} />}
+                    {item.icon && (
+                      <item.icon
+                        className={`w-4 h-4 ${isDarkMode ? 'opacity-70' : 'text-gray-600'}`}
+                      />
+                    )}
                     <span className="font-medium">{item.name}</span>
                     {item.shortcut && (
-                      <kbd className={`ml-auto px-2 py-0.5 text-xs font-mono rounded 
-                        ${isDarkMode 
-                          ? 'bg-gray-800 text-gray-400' 
-                          : 'bg-gray-100 text-gray-600'}`}>
+                      <kbd
+                        className={`ml-auto px-2 py-0.5 text-xs font-mono rounded 
+                        ${isDarkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-600'}`}
+                      >
                         {item.shortcut}
                       </kbd>
                     )}

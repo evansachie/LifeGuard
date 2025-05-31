@@ -1,4 +1,3 @@
-import React from 'react';
 import { Line } from 'react-chartjs-2';
 import { HistoricalData } from '../../hooks/useSensorHistory';
 import { ChartOptions } from 'chart.js';
@@ -9,16 +8,19 @@ interface EnvironmentChartsProps {
   isDarkMode?: boolean;
 }
 
-const EnvironmentCharts: React.FC<EnvironmentChartsProps> = ({ 
-  historicalData, 
+const EnvironmentCharts = ({
+  historicalData,
   chartOptions,
-  isDarkMode = false
-}) => {
-  
+  isDarkMode = false,
+}: EnvironmentChartsProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-      <div className={`chart-container ${isDarkMode ? 'dark-mode-chart bg-gray-800' : 'light-mode-chart bg-white'} rounded-xl p-6 shadow-md h-[300px] overflow-hidden flex flex-col justify-between`}>
-        <h3 className={`mb-4 text-xl ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Temperature Trend</h3>
+      <div
+        className={`chart-container ${isDarkMode ? 'dark-mode-chart bg-gray-800' : 'light-mode-chart bg-white'} rounded-xl p-6 shadow-md h-[300px] overflow-hidden flex flex-col justify-between`}
+      >
+        <h3 className={`mb-4 text-xl ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+          Temperature Trend
+        </h3>
         <Line
           data={{
             labels: historicalData.timestamps,
@@ -35,8 +37,12 @@ const EnvironmentCharts: React.FC<EnvironmentChartsProps> = ({
         />
       </div>
 
-      <div className={`chart-container ${isDarkMode ? 'dark-mode-chart bg-gray-800' : 'light-mode-chart bg-white'} rounded-xl p-6 shadow-md h-[300px] overflow-hidden flex flex-col justify-between`}>
-        <h3 className={`mb-4 text-xl ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Humidity Trend</h3>
+      <div
+        className={`chart-container ${isDarkMode ? 'dark-mode-chart bg-gray-800' : 'light-mode-chart bg-white'} rounded-xl p-6 shadow-md h-[300px] overflow-hidden flex flex-col justify-between`}
+      >
+        <h3 className={`mb-4 text-xl ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+          Humidity Trend
+        </h3>
         <Line
           data={{
             labels: historicalData.timestamps,
@@ -53,8 +59,12 @@ const EnvironmentCharts: React.FC<EnvironmentChartsProps> = ({
         />
       </div>
 
-      <div className={`chart-container ${isDarkMode ? 'dark-mode-chart bg-gray-800' : 'light-mode-chart bg-white'} rounded-xl p-6 shadow-md h-[300px] overflow-hidden flex flex-col justify-between`}>
-        <h3 className={`mb-4 text-xl ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Pressure Trend</h3>
+      <div
+        className={`chart-container ${isDarkMode ? 'dark-mode-chart bg-gray-800' : 'light-mode-chart bg-white'} rounded-xl p-6 shadow-md h-[300px] overflow-hidden flex flex-col justify-between`}
+      >
+        <h3 className={`mb-4 text-xl ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+          Pressure Trend
+        </h3>
         <Line
           data={{
             labels: historicalData.timestamps,
@@ -71,8 +81,12 @@ const EnvironmentCharts: React.FC<EnvironmentChartsProps> = ({
         />
       </div>
 
-      <div className={`chart-container ${isDarkMode ? 'dark-mode-chart bg-gray-800' : 'light-mode-chart bg-white'} rounded-xl p-6 shadow-md h-[300px] overflow-hidden flex flex-col justify-between`}>
-        <h3 className={`mb-4 text-xl ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Gas Composition Trend</h3>
+      <div
+        className={`chart-container ${isDarkMode ? 'dark-mode-chart bg-gray-800' : 'light-mode-chart bg-white'} rounded-xl p-6 shadow-md h-[300px] overflow-hidden flex flex-col justify-between`}
+      >
+        <h3 className={`mb-4 text-xl ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+          Gas Composition Trend
+        </h3>
         <Line
           data={{
             labels: historicalData.timestamps,
@@ -90,6 +104,6 @@ const EnvironmentCharts: React.FC<EnvironmentChartsProps> = ({
       </div>
     </div>
   );
-}
+};
 
 export default EnvironmentCharts;

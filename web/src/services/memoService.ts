@@ -10,7 +10,9 @@ const memoService = {
    * @returns The number of undone memos
    */
   getUndoneMemoCount: async (): Promise<number> => {
-    const response = await fetchWithAuth<UndoneCountResponse>(`${API_ENDPOINTS.MEMOS}/undone/count`);
+    const response = await fetchWithAuth<UndoneCountResponse>(
+      `${API_ENDPOINTS.MEMOS}/undone/count`
+    );
     return response.count;
   },
 };

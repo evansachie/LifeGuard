@@ -1,23 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaFire, FaPlay, FaInfoCircle } from 'react-icons/fa';
+import { Exercise } from '../../types/exercise.types';
 
-// Update the Exercise interface to match the one from exercise-data.ts
-interface Exercise {
-  id: string;
-  title: string;
-  description: string;
-  duration: string;
-  videoUrl: string;
-  calories: number;
-  targetMuscles: string[];
-}
-
-// Update the ExerciseCardProps interface
 interface ExerciseCardProps {
   exercise: Exercise;
   onExerciseStart: (exercise: Exercise) => void;
-  activeWorkout: Exercise | null;  // Changed from boolean | null to Exercise | null
+  activeWorkout: Exercise | null;
   isDarkMode: boolean;
   compact?: boolean;
 }
@@ -75,6 +64,8 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
                 onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                   e.stopPropagation();
                 }}
+                aria-label={`View information about ${exercise.title}`}
+                type="button"
               >
                 <FaInfoCircle className={compact ? 'text-base' : 'text-lg'} />
               </button>
@@ -128,6 +119,8 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
               onClick={() => onExerciseStart(exercise)}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
+              type="button"
+              aria-label={`Start ${exercise.title} exercise`}
             >
               Start Exercise
             </motion.button>

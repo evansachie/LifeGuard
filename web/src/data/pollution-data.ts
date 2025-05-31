@@ -11,9 +11,9 @@ export const pollutionZones: PollutionZone[] = [
     data: {
       aqi: 156,
       pm25: 75.2,
-      pm10: 142.8
+      pm10: 142.8,
     },
-    description: 'High pollution levels due to dense traffic and construction'
+    description: 'High pollution levels due to dense traffic and construction',
   },
   {
     id: '2',
@@ -24,9 +24,9 @@ export const pollutionZones: PollutionZone[] = [
     data: {
       aqi: 89,
       pm25: 35.5,
-      pm10: 82.3
+      pm10: 82.3,
     },
-    description: 'Moderate pollution due to medium traffic flow'
+    description: 'Moderate pollution due to medium traffic flow',
   },
   {
     id: '3',
@@ -37,9 +37,9 @@ export const pollutionZones: PollutionZone[] = [
     data: {
       aqi: 42,
       pm25: 12.8,
-      pm10: 38.5
+      pm10: 38.5,
     },
-    description: 'Lower pollution levels with good air circulation'
+    description: 'Lower pollution levels with good air circulation',
   },
   {
     id: '4',
@@ -50,9 +50,9 @@ export const pollutionZones: PollutionZone[] = [
     data: {
       aqi: 95,
       pm25: 42.3,
-      pm10: 88.7
+      pm10: 88.7,
     },
-    description: 'Moderate pollution with occasional spikes during events'
+    description: 'Moderate pollution with occasional spikes during events',
   },
   {
     id: '5',
@@ -63,9 +63,9 @@ export const pollutionZones: PollutionZone[] = [
     data: {
       aqi: 190,
       pm25: 78.4,
-      pm10: 150.1
+      pm10: 150.1,
     },
-    description: 'Very high pollution from nearby construction'
+    description: 'Very high pollution from nearby construction',
   },
   {
     id: '6',
@@ -76,9 +76,9 @@ export const pollutionZones: PollutionZone[] = [
     data: {
       aqi: 87,
       pm25: 33.1,
-      pm10: 79.4
+      pm10: 79.4,
     },
-    description: 'Moderate levels with occasional laboratory emissions'
+    description: 'Moderate levels with occasional laboratory emissions',
   },
   {
     id: '7',
@@ -89,9 +89,9 @@ export const pollutionZones: PollutionZone[] = [
     data: {
       aqi: 40,
       pm25: 11.2,
-      pm10: 35.9
+      pm10: 35.9,
     },
-    description: 'Low pollution due to central campus location and greenery'
+    description: 'Low pollution due to central campus location and greenery',
   },
   {
     id: '8',
@@ -102,9 +102,9 @@ export const pollutionZones: PollutionZone[] = [
     data: {
       aqi: 102,
       pm25: 45.6,
-      pm10: 92.4
+      pm10: 92.4,
     },
-    description: 'Medium pollution affected by main road proximity'
+    description: 'Medium pollution affected by main road proximity',
   },
   {
     id: '9',
@@ -115,9 +115,9 @@ export const pollutionZones: PollutionZone[] = [
     data: {
       aqi: 315,
       pm25: 120.3,
-      pm10: 220.5
+      pm10: 220.5,
     },
-    description: 'Hazardous conditions due to cooking smoke and generators'
+    description: 'Hazardous conditions due to cooking smoke and generators',
   },
   {
     id: '10',
@@ -128,8 +128,8 @@ export const pollutionZones: PollutionZone[] = [
     data: {
       aqi: 91,
       pm25: 38.7,
-      pm10: 85.9
+      pm10: 85.9,
     },
-    description: 'Medium pollution levels with regular traffic flow'
-  }
+    description: 'Medium pollution levels with regular traffic flow',
+  },
 ];

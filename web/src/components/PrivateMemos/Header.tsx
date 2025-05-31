@@ -8,7 +8,12 @@ interface HeaderProps {
   searchInputRef: RefObject<HTMLInputElement>;
 }
 
-const Header: React.FC<HeaderProps> = ({ searchTerm, setSearchTerm, toggleNewNoteForm, searchInputRef }) => {
+const Header: React.FC<HeaderProps> = ({
+  searchTerm,
+  setSearchTerm,
+  toggleNewNoteForm,
+  searchInputRef,
+}) => {
   return (
     <div className="header-section">
       <div className="header-left">

@@ -2,7 +2,7 @@ interface Medication {
   Name: string;
   Dosage: string;
   Time: string[];
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 class NotificationService {

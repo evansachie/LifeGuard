@@ -9,7 +9,7 @@ interface FeaturedHealthTipProps {
 
 const FeaturedHealthTip: React.FC<FeaturedHealthTipProps> = ({ featuredTip, onLearnMore }) => {
   if (!featuredTip) return null;
-  
+
   return (
     <motion.section
       className="featured-tip"

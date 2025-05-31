@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaPlay, FaPause, FaVolumeUp, FaVolumeMute } from 'react-icons/fa';
 import { useAudioPlayer } from '../../contexts/AudioPlayerContext';
@@ -12,18 +11,21 @@ interface FloatingAudioPlayerProps {
 
 interface SoundObject {
   name: string;
-  [key: string]: unknown; // Allow additional properties with unknown type for better type safety
+  [key: string]: unknown;
 }
 
-const FloatingAudioPlayer: React.FC<FloatingAudioPlayerProps> = ({ 
-  isDarkMode, 
-  activeCategory = 'nature' 
-}) => {
+const FloatingAudioPlayer = ({
+  isDarkMode,
+  activeCategory = 'nature',
+}: FloatingAudioPlayerProps) => {
   const { currentSound, isPlaying, setIsPlaying, volume, setVolume, audioRef } = useAudioPlayer();
 
   if (!currentSound) return null;
 
-  const soundObject: SoundObject = typeof currentSound === 'object' ? currentSound : { name: currentSound };
+  const soundObject: SoundObject =
+    typeof currentSound === 'object' && currentSound !== null
+      ? (currentSound as SoundObject)
+      : { name: typeof currentSound === 'string' ? currentSound : 'Unknown' };
 
   const backgroundStyle = getBackgroundStyle(soundObject, activeCategory);
 
@@ -47,8 +49,7 @@ const FloatingAudioPlayer: React.FC<FloatingAudioPlayerProps> = ({
         className={`fixed bottom-4 right-24 p-4 rounded-lg shadow-lg z-50 backdrop-blur-md 
           ${isDarkMode ? 'bg-gray-800/90' : 'bg-white/90'} 
           border border-gray-200 dark:border-gray-700
-          w-72 transform hover:scale-102 transition-all`}
-        style={{ maxWidth: 'calc(100vw - 300px)' }}
+          w-72 transform hover:scale-102 transition-all max-w-[calc(100vw-300px)]`}
       >
         <div className="flex items-center gap-3">
           <div className="flex-shrink-0">
@@ -66,7 +67,7 @@ const FloatingAudioPlayer: React.FC<FloatingAudioPlayerProps> = ({
               className={`block text-sm font-medium truncate hover:text-blue-500 
                 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
             >
-              {typeof currentSound === 'object' ? currentSound.name : currentSound}
+              {soundObject.name}
             </Link>
             <p className={`text-xs truncate ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
               Now Playing
@@ -78,6 +79,8 @@ const FloatingAudioPlayer: React.FC<FloatingAudioPlayerProps> = ({
               onClick={handlePlayPause}
               className={`p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700
                 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+              type="button"
+              aria-label={isPlaying ? 'Pause audio' : 'Play audio'}
             >
               {isPlaying ? <FaPause /> : <FaPlay />}
             </button>
@@ -85,6 +88,8 @@ const FloatingAudioPlayer: React.FC<FloatingAudioPlayerProps> = ({
               <button
                 className={`p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700
                   ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                type="button"
+                aria-label={`Volume: ${Math.round(volume * 100)}%`}
               >
                 {volume === 0 ? <FaVolumeMute /> : <FaVolumeUp />}
               </button>
@@ -102,8 +107,9 @@ const FloatingAudioPlayer: React.FC<FloatingAudioPlayerProps> = ({
                       audioRef.current.volume = newVolume;
                     }
                   }}
-                  className="w-24 h-2 appearance-none bg-blue-200 rounded-full"
-                  style={{ transform: 'rotate(-90deg) translateX(-50px)' }}
+                  className="w-24 h-2 appearance-none bg-blue-200 rounded-full -rotate-90 -translate-x-12"
+                  aria-label="Volume control"
+                  title={`Volume: ${Math.round(volume * 100)}%`}
                 />
               </div>
             </div>

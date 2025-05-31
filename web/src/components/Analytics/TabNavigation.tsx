@@ -1,18 +1,18 @@
 import React from 'react';
 
 export interface Tab {
-  id: string;
-  icon: React.ReactNode;
+  id: 'environment' | 'airQuality' | 'reports';
   label: string;
+  icon: React.ReactNode;
 }
 
-interface TabNavigationProps {
-  activeTab: string;
-  onTabChange: (tabId: string) => void;
+export interface TabNavigationProps {
+  activeTab: 'environment' | 'airQuality' | 'reports';
+  onTabChange: (tab: 'environment' | 'airQuality' | 'reports') => void;
   tabs: Tab[];
 }
 
-const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onTabChange, tabs }) => (
+const TabNavigation = ({ activeTab, onTabChange, tabs }: TabNavigationProps) => (
   <div className="tabs">
     {tabs.map((tab) => (
       <button

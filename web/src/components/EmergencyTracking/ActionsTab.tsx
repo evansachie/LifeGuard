@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   FaAmbulance,
   FaPhone,
@@ -17,7 +16,7 @@ interface ActionsTabProps {
   isDarkMode: boolean;
 }
 
-const ActionsTab: React.FC<ActionsTabProps> = ({ userData, actions, isDarkMode }) => {
+const ActionsTab = ({ userData, actions, isDarkMode }: ActionsTabProps) => {
   return (
     <div className="animate__animated animate__fadeIn">
       <div className="mb-4">

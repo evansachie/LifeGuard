@@ -98,22 +98,22 @@ const useSignUp = (): SignUpFormHook => {
 
 const SignUp: React.FC<AuthPageProps> = ({ isDarkMode, toggleTheme }) => {
   const signUpProps = useSignUp();
-  
+
   const signupSlides = [
     {
       image: signupIllustration,
       text: 'Track your runs and outdoor activities with real-time health monitoring.',
-      alt: 'Running activity illustration'
+      alt: 'Running activity illustration',
     },
     {
       image: signupIllustration2,
       text: 'Follow personalized workout routines tailored to your fitness goals.',
-      alt: 'Workout routines illustration'
+      alt: 'Workout routines illustration',
     },
     {
       image: signupIllustration3,
       text: 'Measure your progress with detailed performance analytics and activity tracking.',
-      alt: 'Performance analytics illustration'
+      alt: 'Performance analytics illustration',
     },
   ];
 

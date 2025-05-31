@@ -6,7 +6,7 @@ interface ValidationResult {
 }
 
 export function validateSignUpForm(formData: SignUpFormHook['formData']): ValidationResult {
-  let errors: Record<string, string> = {};
+  const errors: Record<string, string> = {};
   let isValid = true;
 
   if (!formData.name.trim()) {

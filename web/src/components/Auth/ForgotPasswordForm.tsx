@@ -12,13 +12,13 @@ interface ForgotPasswordFormProps {
   isDarkMode?: boolean;
 }
 
-const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ 
-  email, 
-  setEmail, 
-  isLoading, 
+const ForgotPasswordForm = ({
+  email,
+  setEmail,
+  isLoading,
   handleSubmit,
   isDarkMode = false,
-}) => {
+}: ForgotPasswordFormProps) => {
   return (
     <>
       <form onSubmit={handleSubmit}>
@@ -30,11 +30,15 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
           placeholder="Email"
           icon={FiMail}
-          style={isDarkMode ? {
-            backgroundColor: '#1f2937',
-            color: '#fff',
-            borderColor: '#374151'
-          } : undefined}
+          style={
+            isDarkMode
+              ? {
+                  backgroundColor: '#1f2937',
+                  color: '#fff',
+                  borderColor: '#374151',
+                }
+              : undefined
+          }
         />
 
         <Button text="Send Reset Link" isLoading={isLoading} />
@@ -42,7 +46,10 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
 
       <p className="mt-6 text-center !text-gray-500 dark:text-gray-300">
         Remember your password?{' '}
-        <Link to="/log-in" className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium">
+        <Link
+          to="/log-in"
+          className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
+        >
           Log In
         </Link>
       </p>

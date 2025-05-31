@@ -7,20 +7,16 @@ interface LogoProps {
   height?: number | string;
 }
 
-export const Logo: React.FC<LogoProps> = ({ 
-  className = "logo", 
-  width, 
-  height 
-}) => {
+export const Logo: React.FC<LogoProps> = ({ className = 'logo', width, height }) => {
   return (
     <Link to="/">
-      <img 
-        src="/images/lifeguard-2.svg" 
-        alt="lifeguard logo" 
+      <img
+        src="/images/lifeguard-2.svg"
+        alt="lifeguard logo"
         className={className}
-        style={{ 
-          width: width ? width : 'auto', 
-          height: height ? height : 'auto' 
+        style={{
+          width: width ? width : 'auto',
+          height: height ? height : 'auto',
         }}
       />
     </Link>

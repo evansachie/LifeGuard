@@ -11,7 +11,7 @@ interface MessageProps {
   isDarkMode?: boolean;
 }
 
-const Message: React.FC<MessageProps> = ({ message, isDarkMode }) => {
+const Message: React.FC<MessageProps> = ({ message }) => {
   const formatTime = (timestamp: Date | string): string => {
     return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };

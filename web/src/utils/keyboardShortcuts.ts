@@ -59,10 +59,7 @@ export const KEYBOARD_SHORTCUTS: Record<string, KeyboardShortcut> = {
  * @param shortcut - The shortcut definition to match against
  * @returns True if the event matches the shortcut
  */
-export const matchesShortcut = (
-  event: KeyboardEvent,
-  shortcut: KeyboardShortcut
-): boolean => {
+export const matchesShortcut = (event: KeyboardEvent, shortcut: KeyboardShortcut): boolean => {
   // Check if modifiers match (Ctrl or Cmd)
   const hasModifier = event.ctrlKey || event.metaKey;
   if (hasModifier !== shortcut.withModifier) {

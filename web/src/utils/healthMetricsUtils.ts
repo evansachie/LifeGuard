@@ -22,7 +22,12 @@ interface WeightRange {
  * @param gender - Gender ('male' or 'female')
  * @returns BMR value in calories
  */
-export const calculateBMR = (weight: number | string, height: number | string, age: number | string, gender: Gender): number => {
+export const calculateBMR = (
+  weight: number | string,
+  height: number | string,
+  age: number | string,
+  gender: Gender
+): number => {
   const weightInKg = parseFloat(weight.toString()) * 0.453592;
   const heightInCm = parseFloat(height.toString()) * 2.54;
   const ageValue = parseInt(age.toString());

@@ -8,7 +8,13 @@ import {
   FaChevronDown,
   FaKeyboard,
 } from 'react-icons/fa';
-import { DashboardControlsProps, DashboardControlsRef, FilterOptions, SortOption } from '../../types/common.types';
+import {
+  DashboardControlsProps,
+  DashboardControlsRef,
+  FilterOptions,
+  SortOption,
+} from '../../types/common.types';
+import { ariaExpanded } from '../../utils/accessibilityUtils';
 import './DashboardControls.css';
 
 const DashboardControls = forwardRef<DashboardControlsRef, DashboardControlsProps>(
@@ -36,7 +42,7 @@ const DashboardControls = forwardRef<DashboardControlsRef, DashboardControlsProp
     const [searchValue, setSearchValue] = useState<string>('');
     const [localFilters, setLocalFilters] = useState<FilterOptions>(filterOptions);
     const [localSort, setLocalSort] = useState<SortOption>(sortOption);
-    
+
     // Refs
     const searchInputRef = useRef<HTMLInputElement>(null);
     const filterBtnRef = useRef<HTMLButtonElement>(null);
@@ -124,7 +130,7 @@ const DashboardControls = forwardRef<DashboardControlsRef, DashboardControlsProp
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent): void => {
         const target = event.target as HTMLElement;
-        
+
         if (isFilterMenuOpen && !target.closest('.filter-container')) {
           setIsFilterMenuOpen(false);
         }
@@ -163,21 +169,30 @@ const DashboardControls = forwardRef<DashboardControlsRef, DashboardControlsProp
               onClick={toggleFilterMenu}
               title="Filter (Ctrl+F)"
               aria-label="Toggle filter menu"
-              aria-expanded={isFilterMenuOpen}
+              {...ariaExpanded(isFilterMenuOpen)}
+              aria-controls="filter-menu"
+              type="button"
             >
               <FaFilter /> <span>Filter</span> <FaChevronDown />
             </button>
 
             {isFilterMenuOpen && (
-              <div className="dropdown-menu filter-menu" role="menu">
+              <div
+                id="filter-menu"
+                className="dropdown-menu filter-menu"
+                role="group"
+                aria-label="Filter options"
+              >
                 <div className="filter-option">
                   <input
                     type="checkbox"
                     id="temperature"
                     checked={localFilters.temperature}
                     onChange={handleFilterOptionChange}
+                    aria-labelledby="temperature-label"
                   />
                   <div
+                    id="temperature-label"
                     className={`${isDarkMode ? 'text-white' : 'text-black'}`}
                   >
                     Temperature & Weather
@@ -189,8 +204,12 @@ const DashboardControls = forwardRef<DashboardControlsRef, DashboardControlsProp
                     id="airQuality"
                     checked={localFilters.airQuality}
                     onChange={handleFilterOptionChange}
+                    aria-labelledby="airQuality-label"
                   />
-                  <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>
+                  <div
+                    id="airQuality-label"
+                    className={`${isDarkMode ? 'text-white' : 'text-black'}`}
+                  >
                     Air Quality
                   </div>
                 </div>
@@ -200,8 +219,9 @@ const DashboardControls = forwardRef<DashboardControlsRef, DashboardControlsProp
                     id="alerts"
                     checked={localFilters.alerts}
                     onChange={handleFilterOptionChange}
+                    aria-labelledby="alerts-label"
                   />
-                  <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>
+                  <div id="alerts-label" className={`${isDarkMode ? 'text-white' : 'text-black'}`}>
                     Alerts
                   </div>
                 </div>
@@ -216,13 +236,20 @@ const DashboardControls = forwardRef<DashboardControlsRef, DashboardControlsProp
               onClick={toggleSortMenu}
               title="Sort (Ctrl+S)"
               aria-label="Toggle sort menu"
-              aria-expanded={isSortMenuOpen}
+              {...ariaExpanded(isSortMenuOpen)}
+              aria-controls="sort-menu"
+              type="button"
             >
               <FaSortAmountDown /> <span>Sort</span> <FaChevronDown />
             </button>
 
             {isSortMenuOpen && (
-              <div className="dropdown-menu sort-menu" role="menu">
+              <div
+                id="sort-menu"
+                className="dropdown-menu sort-menu"
+                role="radiogroup"
+                aria-label="Sort options"
+              >
                 <div className="sort-option">
                   <input
                     type="radio"
@@ -230,8 +257,9 @@ const DashboardControls = forwardRef<DashboardControlsRef, DashboardControlsProp
                     id="newest"
                     checked={localSort === 'newest'}
                     onChange={handleSortOptionChange}
+                    aria-labelledby="newest-label"
                   />
-                  <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>
+                  <div id="newest-label" className={`${isDarkMode ? 'text-white' : 'text-black'}`}>
                     Newest First
                   </div>
                 </div>
@@ -242,8 +270,9 @@ const DashboardControls = forwardRef<DashboardControlsRef, DashboardControlsProp
                     id="oldest"
                     checked={localSort === 'oldest'}
                     onChange={handleSortOptionChange}
+                    aria-labelledby="oldest-label"
                   />
-                  <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>
+                  <div id="oldest-label" className={`${isDarkMode ? 'text-white' : 'text-black'}`}>
                     Oldest First
                   </div>
                 </div>
@@ -254,8 +283,12 @@ const DashboardControls = forwardRef<DashboardControlsRef, DashboardControlsProp
                     id="priority"
                     checked={localSort === 'priority'}
                     onChange={handleSortOptionChange}
+                    aria-labelledby="priority-label"
                   />
-                  <div className={`${isDarkMode ? 'text-white' : 'text-black'}`}>
+                  <div
+                    id="priority-label"
+                    className={`${isDarkMode ? 'text-white' : 'text-black'}`}
+                  >
                     Priority
                   </div>
                 </div>
@@ -269,6 +302,7 @@ const DashboardControls = forwardRef<DashboardControlsRef, DashboardControlsProp
               onClick={() => handleViewChange('grid')}
               title="Grid View (Ctrl+G)"
               aria-label="Switch to grid view"
+              type="button"
             >
               <FaTh />
             </button>
@@ -277,6 +311,7 @@ const DashboardControls = forwardRef<DashboardControlsRef, DashboardControlsProp
               onClick={() => handleViewChange('list')}
               title="List View (Ctrl+L)"
               aria-label="Switch to list view"
+              type="button"
             >
               <FaListUl />
             </button>
@@ -287,6 +322,7 @@ const DashboardControls = forwardRef<DashboardControlsRef, DashboardControlsProp
             onClick={onShowShortcuts}
             title="Keyboard Shortcuts (?)"
             aria-label="Show keyboard shortcuts"
+            type="button"
           >
             <FaKeyboard />
           </button>

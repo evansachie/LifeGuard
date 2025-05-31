@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FiMail, FiLock } from 'react-icons/fi'; 
+import { FiMail, FiLock } from 'react-icons/fi';
 import Button from '../Buttons/Button';
 import InputField from './InputField';
 import OAuthButton from './OAuthButton';
@@ -17,14 +17,14 @@ interface LoginFormProps {
   isDarkMode?: boolean;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ 
-  formData, 
-  isLoading, 
-  handleChange, 
-  handleSubmit, 
+const LoginForm = ({
+  formData,
+  isLoading,
+  handleChange,
+  handleSubmit,
   handleGoogleLogin,
-  isDarkMode = false
-}) => {
+  isDarkMode = false,
+}: LoginFormProps) => {
   return (
     <>
       <form onSubmit={handleSubmit}>

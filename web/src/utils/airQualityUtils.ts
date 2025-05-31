@@ -19,7 +19,6 @@ export const getAirQualityStatus = (co2Level: number): AirQualityStatus => {
   return { status: 'Dangerous', color: '#FF3D00' };
 };
 
-
 export const getStats = (data: number[]): Stats => ({
   current: data[data.length - 1] || 0,
   average: data.length ? (data.reduce((a, b) => a + b, 0) / data.length).toFixed(1) : 0,

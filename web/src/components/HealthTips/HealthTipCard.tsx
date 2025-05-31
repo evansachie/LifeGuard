@@ -17,9 +17,9 @@ const HealthTipCard: React.FC<HealthTipCardProps> = ({ tip, onReadMore, isDarkMo
     'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800',
     'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800',
     'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800',
-    'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800'
+    'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800',
   ];
-  
+
   const defaultImage = defaultImages[parseInt(String(tip.id).charAt(0), 36) % defaultImages.length];
 
   const categoryLabel = tip.category.charAt(0).toUpperCase() + tip.category.slice(1);

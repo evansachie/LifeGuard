@@ -3,7 +3,7 @@ export interface Medication {
   Dosage: string;
   Notes?: string;
   Time?: string[];
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface MedicalInfo {
@@ -23,7 +23,7 @@ export interface EmergencyUserData {
   medicalInfo: MedicalInfo;
   mapUrl: string | null;
   medications: Medication[];
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface EmergencyActions {
@@ -32,5 +32,5 @@ export interface EmergencyActions {
   findNearbyHospitals: (location: string) => void;
   shareEmergencyInfo: (userData: EmergencyUserData) => void;
   copySuccess?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }

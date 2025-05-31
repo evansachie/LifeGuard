@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 
@@ -8,7 +7,7 @@ interface BackButtonProps {
   isDarkMode?: boolean;
 }
 
-export const BackButton: React.FC<BackButtonProps> = ({ text, to, isDarkMode = false }) => {
+export const BackButton = ({ text, to, isDarkMode = false }: BackButtonProps) => {
   return (
     <div className="mb-8">
       <Link

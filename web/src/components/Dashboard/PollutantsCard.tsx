@@ -1,4 +1,3 @@
-import React from 'react';
 import { WiDust } from 'react-icons/wi';
 import DataCard from './DataCard';
 import { PollutionData } from '../../types/common.types';
@@ -8,7 +7,7 @@ interface PollutantsCardProps {
   formatValue: (value: number, decimals?: number) => string;
 }
 
-const PollutantsCard: React.FC<PollutantsCardProps> = ({ pollutionData, formatValue }) => {
+const PollutantsCard = ({ pollutionData, formatValue }: PollutantsCardProps) => {
   return (
     <DataCard title="Pollutants" icon={WiDust} className="pollutants-card">
       <div className="pollutants-grid">

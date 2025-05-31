@@ -35,37 +35,53 @@ const useSensorHistory = (sensorData: BLESensorData | null, maxDataPoints = 30):
         // Extract environmental data for updating
         if (sensorData.environmental) {
           // Handle temperature
-          if ('temperature' in sensorData.environmental && 
-              sensorData.environmental.temperature !== undefined && 
-              'temperature' in prev) {
-            updated.temperature = [...prev.temperature, sensorData.environmental.temperature].slice(-maxDataPoints);
+          if (
+            'temperature' in sensorData.environmental &&
+            sensorData.environmental.temperature !== undefined &&
+            'temperature' in prev
+          ) {
+            updated.temperature = [...prev.temperature, sensorData.environmental.temperature].slice(
+              -maxDataPoints
+            );
           }
-          
+
           // Handle humidity
-          if ('humidity' in sensorData.environmental && 
-              sensorData.environmental.humidity !== undefined && 
-              'humidity' in prev) {
-            updated.humidity = [...prev.humidity, sensorData.environmental.humidity].slice(-maxDataPoints);
+          if (
+            'humidity' in sensorData.environmental &&
+            sensorData.environmental.humidity !== undefined &&
+            'humidity' in prev
+          ) {
+            updated.humidity = [...prev.humidity, sensorData.environmental.humidity].slice(
+              -maxDataPoints
+            );
           }
-          
+
           // Handle pressure
-          if ('pressure' in sensorData.environmental && 
-              sensorData.environmental.pressure !== undefined && 
-              'pressure' in prev) {
-            updated.pressure = [...prev.pressure, sensorData.environmental.pressure].slice(-maxDataPoints);
+          if (
+            'pressure' in sensorData.environmental &&
+            sensorData.environmental.pressure !== undefined &&
+            'pressure' in prev
+          ) {
+            updated.pressure = [...prev.pressure, sensorData.environmental.pressure].slice(
+              -maxDataPoints
+            );
           }
-          
+
           // Handle co2
-          if ('co2' in sensorData.environmental && 
-              sensorData.environmental.co2 !== undefined && 
-              'co2' in prev) {
+          if (
+            'co2' in sensorData.environmental &&
+            sensorData.environmental.co2 !== undefined &&
+            'co2' in prev
+          ) {
             updated.co2 = [...prev.co2, sensorData.environmental.co2].slice(-maxDataPoints);
           }
-          
+
           // Handle gas
-          if ('gas' in sensorData.environmental && 
-              sensorData.environmental.gas !== undefined && 
-              'gas' in prev) {
+          if (
+            'gas' in sensorData.environmental &&
+            sensorData.environmental.gas !== undefined &&
+            'gas' in prev
+          ) {
             updated.gas = [...prev.gas, sensorData.environmental.gas].slice(-maxDataPoints);
           }
         }

@@ -12,7 +12,7 @@ interface OTPVerificationFormProps {
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }
 
-const OTPVerificationForm: React.FC<OTPVerificationFormProps> = ({
+const OTPVerificationForm = ({
   otp,
   setOtp,
   error,
@@ -20,7 +20,7 @@ const OTPVerificationForm: React.FC<OTPVerificationFormProps> = ({
   timeLeft,
   handleResendOTP,
   handleSubmit,
-}) => {
+}: OTPVerificationFormProps) => {
   return (
     <form onSubmit={handleSubmit}>
       <OTPInput otp={otp} setOtp={setOtp} />

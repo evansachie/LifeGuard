@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaChartLine, FaExclamationTriangle, FaBell, FaClipboardCheck } from 'react-icons/fa';
 import memoService from '../../services/memoService';
 import { StatsData } from '../../types/common.types';
@@ -9,7 +9,7 @@ interface StatsSummaryProps {
   stats?: Partial<StatsData>;
 }
 
-const StatsSummary: React.FC<StatsSummaryProps> = ({ isDarkMode, stats = {} }) => {
+const StatsSummary = ({ isDarkMode, stats = {} }: StatsSummaryProps) => {
   const [undoneTasks, setUndoneTasks] = useState<number>(0);
 
   useEffect(() => {

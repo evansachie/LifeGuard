@@ -9,15 +9,19 @@ interface AirQualityChartsProps {
   isDarkMode?: boolean;
 }
 
-const AirQualityCharts: React.FC<AirQualityChartsProps> = ({ 
-  historicalData, 
+const AirQualityCharts: React.FC<AirQualityChartsProps> = ({
+  historicalData,
   chartOptions,
-  isDarkMode = false
+  isDarkMode = false,
 }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-      <div className={`chart-container ${isDarkMode ? 'dark-mode-chart bg-gray-800' : 'light-mode-chart bg-white'} rounded-xl p-6 shadow-md h-[300px] overflow-hidden flex flex-col justify-between`}>
-        <h3 className={`mb-4 text-xl ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>CO2 Levels</h3>
+      <div
+        className={`chart-container ${isDarkMode ? 'dark-mode-chart bg-gray-800' : 'light-mode-chart bg-white'} rounded-xl p-6 shadow-md h-[300px] overflow-hidden flex flex-col justify-between`}
+      >
+        <h3 className={`mb-4 text-xl ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+          CO2 Levels
+        </h3>
         <Line
           data={{
             labels: historicalData.timestamps,
@@ -34,8 +38,12 @@ const AirQualityCharts: React.FC<AirQualityChartsProps> = ({
         />
       </div>
 
-      <div className={`chart-container ${isDarkMode ? 'dark-mode-chart bg-gray-800' : 'light-mode-chart bg-white'} rounded-xl p-6 shadow-md h-[300px] overflow-hidden flex flex-col justify-between`}>
-        <h3 className={`mb-4 text-xl ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Gas Composition</h3>
+      <div
+        className={`chart-container ${isDarkMode ? 'dark-mode-chart bg-gray-800' : 'light-mode-chart bg-white'} rounded-xl p-6 shadow-md h-[300px] overflow-hidden flex flex-col justify-between`}
+      >
+        <h3 className={`mb-4 text-xl ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+          Gas Composition
+        </h3>
         <Line
           data={{
             labels: historicalData.timestamps,

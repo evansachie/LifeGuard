@@ -5,13 +5,13 @@ import NoMedsIcon from '../../assets/no-meds.svg';
 import MedicationCard from './MedicationCard';
 import { MedicationListProps } from '../../types/medicationTracker.types';
 
-const MedicationList: React.FC<MedicationListProps> = ({ 
-  medications, 
-  loading, 
-  onTrackDose, 
-  onEdit, 
-  onDelete, 
-  isDarkMode 
+const MedicationList: React.FC<MedicationListProps> = ({
+  medications,
+  loading,
+  onTrackDose,
+  onEdit,
+  onDelete,
+  isDarkMode,
 }) => {
   if (loading) {
     return (

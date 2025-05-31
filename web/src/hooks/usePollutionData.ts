@@ -32,7 +32,7 @@ const usePollutionData = (sensorData: BLESensorData | null): PollutionData => {
         temperature: env.temperature ?? prev.temperature,
         humidity: env.humidity ?? prev.humidity,
         pressure: env.pressure ?? prev.pressure,
-        co2: env.co2 ?? (env.airQuality?.co2 ?? prev.co2),
+        co2: env.co2 ?? env.airQuality?.co2 ?? prev.co2,
         gas: env.gas ?? prev.gas,
         // Handle air quality properties if available
         aqi: env.airQuality?.aqi ?? prev.aqi,

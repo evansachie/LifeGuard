@@ -77,19 +77,13 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleTheme, isDarkMode, onCollapsedC
           isCollapsed ? 'collapsed' : ''
         }`}
         ref={sidebarRef}
-      >        <div className="sidebar-header">
-          <UserProfileSection
-            displayName={getDisplayName()}
-            profilePhotoUrl={profilePhotoUrl}
-          />
-          <ThemeToggle
-            isDarkMode={isDarkMode}
-            toggleTheme={toggleTheme}
-          />
+      >
+        {' '}
+        <div className="sidebar-header">
+          <UserProfileSection displayName={getDisplayName()} profilePhotoUrl={profilePhotoUrl} />
+          <ThemeToggle isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
         </div>
-
         <NavigationLinks navItems={navItems} onNavLinkClick={() => {}} />
-
         <LogoutButton onLogout={handleLogout} />
       </div>
 

@@ -1,15 +1,15 @@
-import type { 
-  ApiResponse, 
-  AuthRequest, 
-  AuthResponse, 
-  RegistrationRequest, 
+import type {
+  ApiResponse,
+  AuthRequest,
+  AuthResponse,
+  RegistrationRequest,
   RegistrationResponse,
   VerifyOTPRequest,
   ResendOTPRequest,
   ForgotPasswordRequest,
   ResetPasswordRequest,
   UserProfile,
-  HealthMetrics 
+  HealthMetrics,
 } from '../types/api.types';
 
 export const FRONTEND_URL = window.location.origin;
@@ -44,9 +44,11 @@ export const API_ENDPOINTS = {
 
   EMERGENCY_CONTACTS: `${NODE_API_URL}/api/emergency-contacts`,
   SEND_EMERGENCY_ALERT: `${NODE_API_URL}/api/emergency-contacts/alert`,
-  SEND_TEST_ALERT: (id: string): string => `${NODE_API_URL}/api/emergency-contacts/test-alert/${id}`,
+  SEND_TEST_ALERT: (id: string): string =>
+    `${NODE_API_URL}/api/emergency-contacts/test-alert/${id}`,
 
-  EMERGENCY_TEST_ALERT: (id: string): string => `${NODE_API_URL}/api/emergency-contacts/test-alert/${id}`,
+  EMERGENCY_TEST_ALERT: (id: string): string =>
+    `${NODE_API_URL}/api/emergency-contacts/test-alert/${id}`,
   EMERGENCY_CONTACT_VERIFY: (token: string): string =>
     `${NODE_API_URL}/api/emergency-contacts/verify?token=${encodeURIComponent(token)}`,
   EMERGENCY_ALERTS_HISTORY: `${NODE_API_URL}/api/emergency-contacts/alerts`,
@@ -54,7 +56,8 @@ export const API_ENDPOINTS = {
   FREESOUND_AUDIO_PROXY: `${NODE_API_URL}/api/freesound/audio-proxy`,
   FAVORITE_SOUNDS: `${NODE_API_URL}/api/favorite-sounds`,
   GET_USER_FAVORITES: (userId: string): string => `${NODE_API_URL}/api/favorite-sounds/${userId}`,
-  REMOVE_FAVORITE: (userId: string, soundId: string): string => `${NODE_API_URL}/api/favorite-sounds/${userId}/${soundId}`,
+  REMOVE_FAVORITE: (userId: string, soundId: string): string =>
+    `${NODE_API_URL}/api/favorite-sounds/${userId}/${soundId}`,
 
   RAG_QUERY: `${NODE_API_URL}/api/rag/query`,
   RAG_INITIALIZE: `${NODE_API_URL}/api/rag/initialize`,
@@ -117,14 +120,14 @@ export const handleApiResponse = async <T = any>(response: Response): Promise<T>
     const error: ApiError = new Error(`HTTP error! status: ${response.status}`);
     error.status = response.status;
     error.response = response;
-    
+
     try {
       const errorData = await response.json();
       error.message = errorData.message || error.message;
     } catch {
       // If JSON parsing fails, keep the default error message
     }
-    
+
     throw error;
   }
 
@@ -138,10 +141,10 @@ export const handleApiResponse = async <T = any>(response: Response): Promise<T>
 };
 
 export const fetchApi = async <T = any>(
-  endpoint: string, 
+  endpoint: string,
   options: RequestOptions = {}
 ): Promise<T> => {
-  const defaultHeaders: HeadersInit = 
+  const defaultHeaders: HeadersInit =
     options.body instanceof FormData
       ? { Accept: 'application/json' }
       : {
@@ -190,11 +193,11 @@ export const fetchApi = async <T = any>(
       error,
       requestBody: options.body,
     });
-    
+
     if (error instanceof Error && error.name === 'AbortError') {
       throw new Error('Request timed out. Please try again.');
     }
-    
+
     throw error;
   }
 };
@@ -212,7 +215,7 @@ const PUBLIC_ENDPOINTS = [
 ] as const;
 
 export const fetchWithAuth = async <T = any>(
-  endpoint: string, 
+  endpoint: string,
   options: RequestOptions = {}
 ): Promise<T> => {
   const isPublicEndpoint = PUBLIC_ENDPOINTS.some((publicEndpoint) =>

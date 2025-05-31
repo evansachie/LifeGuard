@@ -36,7 +36,7 @@ interface ProfileUpdateResponse {
     profileId: string;
     userId: string;
     updatedAt: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 
@@ -67,7 +67,9 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfileRespo
   return { userData, profileData, photoUrl };
 };
 
-export const updateUserProfile = async (profileData: ProfileData): Promise<ProfileUpdateResponse> => {
+export const updateUserProfile = async (
+  profileData: ProfileData
+): Promise<ProfileUpdateResponse> => {
   try {
     const completeProfileData: CompleteProfileData = {
       Email: profileData.email || '',
@@ -75,7 +77,7 @@ export const updateUserProfile = async (profileData: ProfileData): Promise<Profi
       Gender: profileData.gender || '',
       Weight: profileData.weight ? parseInt(profileData.weight.toString(), 10) : null,
       Height: profileData.height ? parseInt(profileData.height.toString(), 10) : null,
-      PhoneNumber: profileData.phone || '', 
+      PhoneNumber: profileData.phone || '',
       Bio: profileData.bio || '',
       ProfileImage: profileData.profileImage || null,
     };
@@ -91,7 +93,9 @@ export const updateUserProfile = async (profileData: ProfileData): Promise<Profi
   }
 };
 
-export const deleteUserAccount = async (userId: string): Promise<{ isSuccess: boolean; message?: string }> => {
+export const deleteUserAccount = async (
+  userId: string
+): Promise<{ isSuccess: boolean; message?: string }> => {
   return await fetchWithAuth(API_ENDPOINTS.DELETE_USER(userId), {
     method: 'DELETE',
   });

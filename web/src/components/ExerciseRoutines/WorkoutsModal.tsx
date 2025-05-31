@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { FaExclamationCircle, FaRunning, FaClock, FaFire, FaCalendarCheck } from 'react-icons/fa';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Modal from '../Modal/Modal';
@@ -33,7 +33,7 @@ interface WorkoutsModalProps {
   isDarkMode: boolean;
 }
 
-const WorkoutsModal: React.FC<WorkoutsModalProps> = ({ isOpen, onClose, isDarkMode }) => {
+const WorkoutsModal = ({ isOpen, onClose, isDarkMode }: WorkoutsModalProps) => {
   const [period, setPeriod] = useState<Period>('7days');
   const [workoutData, setWorkoutData] = useState<WorkoutDataState>({
     history: [],
@@ -96,11 +96,7 @@ const WorkoutsModal: React.FC<WorkoutsModalProps> = ({ isOpen, onClose, isDarkMo
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
-                {p === '7days'
-                  ? 'Last 7 Days'
-                  : p === '30days'
-                    ? 'Last 30 Days'
-                    : 'Last 90 Days'}
+                {p === '7days' ? 'Last 7 Days' : p === '30days' ? 'Last 30 Days' : 'Last 90 Days'}
               </button>
             ))}
           </div>
@@ -265,39 +261,19 @@ const WorkoutsModal: React.FC<WorkoutsModalProps> = ({ isOpen, onClose, isDarkMo
                       key={day.date}
                       className={`border-t ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}
                     >
-                      <td
-                        className={`px-4 py-3 ${
-                          isDarkMode ? 'text-gray-300' : 'text-gray-800'
-                        }`}
-                      >
+                      <td className={`px-4 py-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>
                         {formatDate(day.date)}
                       </td>
-                      <td
-                        className={`px-4 py-3 ${
-                          isDarkMode ? 'text-gray-300' : 'text-gray-800'
-                        }`}
-                      >
+                      <td className={`px-4 py-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>
                         {day.workout_count}
                       </td>
-                      <td
-                        className={`px-4 py-3 ${
-                          isDarkMode ? 'text-gray-300' : 'text-gray-800'
-                        }`}
-                      >
+                      <td className={`px-4 py-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>
                         {day.workout_types}
                       </td>
-                      <td
-                        className={`px-4 py-3 ${
-                          isDarkMode ? 'text-gray-300' : 'text-gray-800'
-                        }`}
-                      >
+                      <td className={`px-4 py-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>
                         {day.total_duration} min
                       </td>
-                      <td
-                        className={`px-4 py-3 ${
-                          isDarkMode ? 'text-gray-300' : 'text-gray-800'
-                        }`}
-                      >
+                      <td className={`px-4 py-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>
                         {day.total_calories}
                       </td>
                     </tr>

@@ -23,6 +23,7 @@
     margin-bottom: 1rem;
     background: linear-gradient(135deg, #407CE2 0%, #2B5BBF 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -101,4 +102,4 @@
     .features-grid {
         grid-template-columns: 1fr;
     }
-} 
+}

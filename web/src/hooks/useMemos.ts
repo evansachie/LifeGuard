@@ -185,10 +185,10 @@ export function useMemos(): UseMemosReturn {
       return filter === 'all'
         ? true
         : filter === 'active'
-        ? !memo.Done
-        : filter === 'completed'
-        ? memo.Done
-        : true;
+          ? !memo.Done
+          : filter === 'completed'
+            ? memo.Done
+            : true;
     });
 
     const filteredBySearch = filteredByStatus.filter((memo) =>
@@ -201,12 +201,16 @@ export function useMemos(): UseMemosReturn {
   const sortMemos = (memos: MemoResponse[], sortOrder: MemoSortOrder): MemoResponse[] => {
     switch (sortOrder) {
       case 'oldest':
-        return [...memos].sort((a, b) => new Date(a.CreatedAt).getTime() - new Date(b.CreatedAt).getTime());
+        return [...memos].sort(
+          (a, b) => new Date(a.CreatedAt).getTime() - new Date(b.CreatedAt).getTime()
+        );
       case 'alphabetical':
         return [...memos].sort((a, b) => a.Text.localeCompare(b.Text));
       case 'newest':
       default:
-        return [...memos].sort((a, b) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime());
+        return [...memos].sort(
+          (a, b) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime()
+        );
     }
   };
 

@@ -1,9 +1,5 @@
 import { API_BASE_URL, API_ENDPOINTS, fetchWithAuth, apiMethods } from './api';
-import type { 
-  AuthResponse, 
-  RegistrationResponse,
-  ApiResponse 
-} from '../types/api.types';
+import type { AuthResponse, RegistrationResponse, ApiResponse } from '../types/api.types';
 
 export const isAuthenticated = (): boolean => {
   const token = localStorage.getItem('token');
@@ -16,9 +12,9 @@ export async function requestPasswordReset(email: string): Promise<ApiResponse<v
 }
 
 export async function resetUserPassword(
-  email: string, 
-  token: string, 
-  newPassword: string, 
+  email: string,
+  token: string,
+  newPassword: string,
   confirmPassword: string
 ): Promise<ApiResponse<void>> {
   const decodedToken = decodeURIComponent(token).replace(/ /g, '+');
@@ -55,8 +51,8 @@ export async function loginUser(email: string, password: string): Promise<AuthRe
 }
 
 export const registerUser = async (
-  name: string, 
-  email: string, 
+  name: string,
+  email: string,
   password: string
 ): Promise<RegistrationResponse> => {
   try {
@@ -66,9 +62,13 @@ export const registerUser = async (
       return response.data;
     }
     throw new Error(response?.message || 'Registration failed');
-  } catch (error: any) {
-    if (error.response?.data?.userId) {
-      return error.response.data;
+  } catch (error: unknown) {
+    // Type guard to check if error has response property
+    if (error && typeof error === 'object' && 'response' in error) {
+      const axiosError = error as { response?: { data?: { userId?: string } } };
+      if (axiosError.response?.data?.userId) {
+        return axiosError.response.data as RegistrationResponse;
+      }
     }
     throw error;
   }
@@ -90,7 +90,7 @@ export async function getUserById(id: string): Promise<{ userName: string; email
   const response = await fetchWithAuth<{ userName: string; email: string }>(
     API_ENDPOINTS.GET_USER(id)
   );
-  
+
   return {
     userName: response.userName,
     email: response.email,

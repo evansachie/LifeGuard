@@ -49,8 +49,8 @@ const ImageSlider: React.FC<ImageSliderProps> = ({ slides, interval = 5000 }) =>
           <button
             key={index}
             className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              index === currentIndex 
-                ? 'bg-white scale-125' 
+              index === currentIndex
+                ? 'bg-white scale-125'
                 : 'bg-white bg-opacity-50 hover:bg-opacity-70'
             }`}
             onClick={() => setCurrentIndex(index)}

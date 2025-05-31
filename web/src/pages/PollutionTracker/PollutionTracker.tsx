@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Map, NavigationControl, Marker } from 'react-map-gl';
-import mapboxgl from 'mapbox-gl';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import { RiAlertLine } from 'react-icons/ri';
 import Legend from '../../components/PollutionTracker/Legend';
@@ -26,12 +25,16 @@ const PollutionTracker: React.FC<PollutionTrackerProps> = ({ isDarkMode }) => {
   const [viewState, setViewState] = useState<MapViewState>(INITIAL_VIEW_STATE);
   const [selectedZone, setSelectedZone] = useState<PollutionZone | null>(null);
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
-  const [mapLoaded, setMapLoaded] = useState<boolean>(false);
+  const [, setMapLoaded] = useState<boolean>(false);
 
   useEffect(() => {
     import('mapbox-gl/dist/mapbox-gl-csp-worker')
       .then((workerModule) => {
-        (mapboxgl as any).workerClass = workerModule.default;
+        // Access mapboxgl from global scope instead of import
+        const mapboxgl = (window as unknown as { mapboxgl: { workerClass: unknown } }).mapboxgl;
+        if (mapboxgl && workerModule.default) {
+          mapboxgl.workerClass = workerModule.default;
+        }
       })
       .catch((err) => {
         console.error('Error loading mapbox worker:', err);
