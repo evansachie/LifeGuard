@@ -436,3 +436,32 @@
     background: rgba(0, 0, 0, 0.2);
     border-radius: 4px;
   }
+
+/* Fix for autofill background */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus {
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.dark-mode input:-webkit-autofill,
+.dark-mode input:-webkit-autofill:hover, 
+.dark-mode input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px #1F2937 inset;
+  -webkit-text-fill-color: #ffffff;
+}
+
+/* Autofill styling classes */
+.light-autofill:-webkit-autofill,
+.light-autofill:-webkit-autofill:hover, 
+.light-autofill:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+.dark-autofill:-webkit-autofill,
+.dark-autofill:-webkit-autofill:hover, 
+.dark-autofill:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px #1F2937 inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
