@@ -37,7 +37,6 @@ import AccessibleDropdown from '../AccessibleDropdown/AccessibleDropdown';
 import {
   Sound,
   FavoriteSound,
-  FavoriteResponse,
   SearchFilters,
   AudioPlayerContextType,
 } from '../../types/wellnessHub.types';
@@ -63,7 +62,7 @@ const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
   const [activeCategory, setActiveCategory] = useState<string>('nature');
   const [page, setPage] = useState<number>(1);
   const [filters, setFilters] = useState<SearchFilters>({});
-  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [, setHasMore] = useState<boolean>(true);
   const [showShortcuts, setShowShortcuts] = useState<boolean>(false);
   const [prevVolume, setPrevVolume] = useState<number | null>(null);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);

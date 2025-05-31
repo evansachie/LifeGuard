@@ -162,6 +162,9 @@ const ExerciseRoutines: React.FC<ExerciseRoutinesProps> = ({ isDarkMode }) => {
             <div className="relative flex items-center">
               <button
                 className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mr-2 ${isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'} hover:bg-blue-500 hover:text-white transition-colors`}
+                title="Previous workout categories"
+                aria-label="View previous workout categories"
+                type="button"
               >
                 <FaChevronLeft className="text-sm" />
               </button>
@@ -177,6 +180,9 @@ const ExerciseRoutines: React.FC<ExerciseRoutinesProps> = ({ isDarkMode }) => {
                         : `${isDarkMode ? 'bg-dark-card2 hover:bg-gray-700' : 'bg-gray-50 hover:bg-gray-100'} shadow`
                     } shadow-lg transform hover:-translate-y-1`}
                     onClick={() => handleCategoryChange(category.id as CategoryType)}
+                    title={`Select ${category.label} workouts`}
+                    aria-label={`Select ${category.label} workout category`}
+                    type="button"
                   >
                     <div className="text-2xl mb-1">{category.icon}</div>
                     <span className="text-sm font-medium">{category.label}</span>
@@ -185,6 +191,9 @@ const ExerciseRoutines: React.FC<ExerciseRoutinesProps> = ({ isDarkMode }) => {
               </div>
               <button
                 className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ml-2 ${isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'} hover:bg-blue-500 hover:text-white transition-colors`}
+                title="Next workout categories"
+                aria-label="View next workout categories"
+                type="button"
               >
                 <FaChevronRight className="text-sm" />
               </button>
