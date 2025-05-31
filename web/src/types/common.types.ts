@@ -384,18 +384,14 @@ export interface SignUpFormHook {
 
 export interface UserData {
   id: string;
-  userName: string;
-  email: string;
-  fullName?: string;
-  profilePhotoUrl?: string;
-  isActive?: boolean;
+  userName?: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  profileImage?: string;
+  preferences?: Record<string, unknown>;
   createdAt?: string;
-  roles?: string[];
-  name?: string;
-  location?: {
-    latitude: number;
-    longitude: number;
-  };
+  lastLoginAt?: string;
 }
 
 // useUserData Hook Return Type

@@ -4,7 +4,7 @@ import EmptyStateImg from '../../assets/empty-state.svg';
 
 interface EmptyStateProps {
   onNewNote: () => void;
-  isDarkMode?: boolean; // Added isDarkMode prop as optional
+  isDarkMode?: boolean;
 }
 
 const EmptyState: React.FC<EmptyStateProps> = ({ onNewNote, isDarkMode }) => {
