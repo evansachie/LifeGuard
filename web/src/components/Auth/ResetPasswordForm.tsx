@@ -15,14 +15,14 @@ interface ResetPasswordFormProps {
   isDarkMode?: boolean;
 }
 
-const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ 
-  formData, 
-  passwordError, 
-  isLoading, 
-  handleChange, 
+const ResetPasswordForm = ({
+  formData,
+  passwordError,
+  isLoading,
+  handleChange,
   handleSubmit,
-  isDarkMode = false
-}) => {
+  isDarkMode = false,
+}: ResetPasswordFormProps) => {
   return (
     <form onSubmit={handleSubmit}>
       <InputField

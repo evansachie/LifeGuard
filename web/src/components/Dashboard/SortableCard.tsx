@@ -8,7 +8,7 @@ interface SortableCardProps {
   children: ReactNode;
 }
 
-const SortableCard: React.FC<SortableCardProps> = ({ id, children }) => {
+const SortableCard = ({ id, children }: SortableCardProps) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id,
   });

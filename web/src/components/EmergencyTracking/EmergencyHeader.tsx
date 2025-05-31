@@ -14,9 +14,12 @@ const EmergencyHeader: React.FC<EmergencyHeaderProps> = ({ isDarkMode, toggleThe
       className={`sticky top-0 z-20 p-3 ${isDarkMode ? 'bg-gray-900/90' : 'bg-white/90'} backdrop-blur-sm`}
     >
       <button
-        className="absolute top-3 right-3 z-10 p-2 rounded-full bg-opacity-70 hover:bg-opacity-100 transition-all"
+        className={`absolute top-3 right-3 z-10 p-2 rounded-full transition-all ${
+          isDarkMode ? 'bg-white/20 hover:bg-white/30' : 'bg-black/10 hover:bg-black/20'
+        }`}
         onClick={toggleTheme}
-        style={{ background: isDarkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)' }}
+        type="button"
+        aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
       >
         {isDarkMode ? <FaSun className="text-yellow-300" /> : <FaMoon className="text-gray-700" />}
       </button>

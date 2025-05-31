@@ -18,13 +18,13 @@ interface MetricsFormProps {
   children: ReactNode;
 }
 
-const MetricsForm: React.FC<MetricsFormProps> = ({ 
-  formData, 
-  handleInputChange, 
-  unit, 
-  isDarkMode, 
-  isLoading, 
-  children 
+const MetricsForm: React.FC<MetricsFormProps> = ({
+  formData,
+  handleInputChange,
+  unit,
+  isDarkMode,
+  isLoading,
+  children,
 }) => {
   return (
     <div className="metrics-form">

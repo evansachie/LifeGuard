@@ -6,10 +6,7 @@ interface ScrollToTopProps {
   position?: 'bottom-left' | 'bottom-right';
 }
 
-const ScrollToTop: React.FC<ScrollToTopProps> = ({ 
-  threshold = 300,
-  position = 'bottom-left' 
-}) => {
+const ScrollToTop: React.FC<ScrollToTopProps> = ({ threshold = 300, position = 'bottom-left' }) => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
   useEffect(() => {
@@ -32,9 +29,10 @@ const ScrollToTop: React.FC<ScrollToTopProps> = ({
     });
   };
 
-  const positionClasses = position === 'bottom-right' 
-    ? 'bottom-8 right-8 md:bottom-8 md:right-8' 
-    : 'bottom-8 left-8 md:bottom-8 md:left-8';
+  const positionClasses =
+    position === 'bottom-right'
+      ? 'bottom-8 right-8 md:bottom-8 md:right-8'
+      : 'bottom-8 left-8 md:bottom-8 md:left-8';
 
   return (
     <button

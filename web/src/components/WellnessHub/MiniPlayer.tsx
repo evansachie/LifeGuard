@@ -28,16 +28,10 @@ const MiniPlayer: React.FC<MiniPlayerProps> = ({ sound, isPlaying, onPlayPause, 
         <p>{sound.location || 'Unknown location'}</p>
       </div>
       <div className="mini-player-controls">
-        <button 
-          onClick={onPlayPause}
-          aria-label={isPlaying ? 'Pause sound' : 'Play sound'}
-        >
+        <button onClick={onPlayPause} aria-label={isPlaying ? 'Pause sound' : 'Play sound'}>
           {isPlaying ? <FaPause /> : <FaPlay />}
         </button>
-        <button 
-          onClick={onClose}
-          aria-label="Close player"
-        >
+        <button onClick={onClose} aria-label="Close player">
           <FaTimes />
         </button>
       </div>

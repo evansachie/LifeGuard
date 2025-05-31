@@ -1,16 +1,22 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { toast } from 'react-toastify';
-import type { AuthContextType, User, LoginFormData, SignUpFormData, AuthError } from '../types/auth.types';
+import type {
+  AuthContextType,
+  User,
+  LoginFormData,
+  SignUpFormData,
+  AuthError,
+} from '../types/auth.types';
 import type { UserProfile, ApiResponse } from '../types/api.types';
-import { 
-  loginUser as loginUserAPI, 
-  registerUser as registerUserAPI, 
+import {
+  loginUser as loginUserAPI,
+  registerUser as registerUserAPI,
   verifyOTP as verifyOTPAPI,
   resendOTP as resendOTPAPI,
   requestPasswordReset as requestPasswordResetAPI,
   resetUserPassword as resetUserPasswordAPI,
   getUserById,
-  handleGoogleCallback 
+  handleGoogleCallback,
 } from '../utils/auth';
 import { apiMethods } from '../utils/api';
 
@@ -84,7 +90,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               createdAt: new Date().toISOString(),
             };
             setUser(userData);
-            
+
             // Redirect to dashboard after successful Google login
             window.history.replaceState({}, document.title, '/dashboard');
             toast.success('Successfully logged in with Google!');
@@ -107,7 +113,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
       const authData = await loginUserAPI(email, password);
-      
+
       setToken(authData.token);
       const userData: User = {
         id: authData.id,
@@ -132,14 +138,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
       const response = await registerUserAPI(name, email, password);
-      
+
       if (response.userId) {
         localStorage.setItem('userId', response.userId);
-        
+
         if (response.emailVerified) {
           toast.success('Registration successful! Please verify your email.');
         } else {
-          toast.info(response.message || 'Account created! You can now log in while email verification is pending.');
+          toast.info(
+            response.message ||
+              'Account created! You can now log in while email verification is pending.'
+          );
         }
       }
     } catch (error: any) {
@@ -157,12 +166,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('userId');
     localStorage.removeItem('userName');
     localStorage.removeItem('email');
-    
+
     setUser(null);
     setToken(null);
-    
+
     toast.info('You have been logged out');
-    
+
     // Redirect to home page
     window.location.href = '/';
   };
@@ -171,7 +180,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
       const response = await verifyOTPAPI(email, otp);
-      
+
       if (response.isSuccess) {
         toast.success('Email verified successfully!');
         return true;
@@ -192,7 +201,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
       const response = await resendOTPAPI(email);
-      
+
       if (response.isSuccess) {
         toast.success('OTP sent successfully!');
         return true;
@@ -213,7 +222,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
       const response = await requestPasswordResetAPI(email);
-      
+
       if (response.isSuccess) {
         toast.success('Password reset email sent successfully!');
         return true;
@@ -231,15 +240,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const resetPassword = async (
-    email: string, 
-    token: string, 
-    newPassword: string, 
+    email: string,
+    token: string,
+    newPassword: string,
     confirmPassword: string
   ): Promise<boolean> => {
     try {
       setIsLoading(true);
       const response = await resetUserPasswordAPI(email, token, newPassword, confirmPassword);
-      
+
       if (response.isSuccess) {
         toast.success('Password reset successfully!');
         return true;
@@ -260,13 +269,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
       await apiMethods.updateUserProfile(profileData);
-      
+
       // Update user state if userName changed
       if (profileData.userName && user) {
         setUser({ ...user, userName: profileData.userName });
         localStorage.setItem('userName', profileData.userName);
       }
-      
+
       toast.success('Profile updated successfully!');
     } catch (error: any) {
       const errorMessage = error.message || 'Failed to update profile';
@@ -292,11 +301,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     updateProfile,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = (): AuthContextType => {

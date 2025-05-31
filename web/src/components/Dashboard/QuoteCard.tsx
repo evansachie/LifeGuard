@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { FaQuoteLeft, FaSync } from 'react-icons/fa';
 import Spinner from '../Spinner/Spinner';
 import DataCard from './DataCard';
@@ -11,7 +11,7 @@ interface QuoteCardProps {
   onRefresh?: () => void;
 }
 
-const QuoteCard: React.FC<QuoteCardProps> = ({ quote, loading, isDarkMode, onRefresh }) => {
+const QuoteCard = ({ quote, loading, isDarkMode, onRefresh }: QuoteCardProps) => {
   return (
     <DataCard
       title="Daily Inspiration"

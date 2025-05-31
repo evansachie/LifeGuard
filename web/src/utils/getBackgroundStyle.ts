@@ -8,7 +8,7 @@ interface BackgroundStyle {
 
 export type CategoryType = 'meditation' | 'nature' | 'focus' | 'sleep';
 
-const getBackgroundStyle = (sound: any, category: CategoryType = 'nature'): BackgroundStyle => {
+const getBackgroundStyle = (sound: unknown, category: CategoryType = 'nature'): BackgroundStyle => {
   const bg = categoryBackgrounds[category] || categoryBackgrounds.nature;
   return {
     backgroundImage: `${bg.gradient}, url(${bg.image}?auto=format&fit=crop&w=600&q=80)`,

@@ -2,11 +2,11 @@ import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { FaPlus, FaTrash, FaClock, FaInfoCircle } from 'react-icons/fa';
 import MedicationSearch from './MedicationSearch';
-import { 
-  AddMedicationFormProps, 
-  MedicationData, 
-  MedicationFormData, 
-  MedicationSearchItem
+import {
+  AddMedicationFormProps,
+  MedicationData,
+  MedicationFormData,
+  MedicationSearchItem,
 } from '../../types/medicationTracker.types';
 
 const defaultFormData: MedicationFormData = {
@@ -20,7 +20,11 @@ const defaultFormData: MedicationFormData = {
   active: true,
 };
 
-const AddMedicationForm: React.FC<AddMedicationFormProps> = ({ onSubmit, isDarkMode, initialData = null }) => {
+const AddMedicationForm: React.FC<AddMedicationFormProps> = ({
+  onSubmit,
+  isDarkMode,
+  initialData = null,
+}) => {
   const [formData, setFormData] = useState<MedicationFormData>(() => {
     if (initialData) {
       return {
@@ -94,7 +98,9 @@ const AddMedicationForm: React.FC<AddMedicationFormProps> = ({ onSubmit, isDarkM
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-4">
         <div>
-          <div className="text-sm font-medium mb-1">Medication Name</div>
+          <label htmlFor="medication-name" className="text-sm font-medium mb-1">
+            Medication Name
+          </label>
           <MedicationSearch
             value={formData.name}
             onChange={handleMedicationSelect}
@@ -128,8 +134,11 @@ const AddMedicationForm: React.FC<AddMedicationFormProps> = ({ onSubmit, isDarkM
         )}
 
         <div>
-          <div className="text-sm font-medium mb-1">Dosage</div>
+          <label htmlFor="dosage" className="text-sm font-medium mb-1">
+            Dosage
+          </label>
           <input
+            id="dosage"
             type="text"
             value={formData.dosage}
             onChange={(e) => setFormData((prev) => ({ ...prev, dosage: e.target.value }))}
@@ -140,22 +149,29 @@ const AddMedicationForm: React.FC<AddMedicationFormProps> = ({ onSubmit, isDarkM
             }`}
             placeholder="e.g., 500mg"
             required
+            aria-label="Medication dosage"
           />
         </div>
 
         <div>
-          <div className="text-sm font-medium mb-1">Frequency</div>
+          <label htmlFor="frequency" className="text-sm font-medium mb-1">
+            Frequency
+          </label>
           <select
+            id="frequency"
             value={formData.frequency}
-            onChange={(e) => setFormData((prev) => ({ 
-              ...prev, 
-              frequency: e.target.value as MedicationFormData['frequency'] 
-            }))}
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                frequency: e.target.value as MedicationFormData['frequency'],
+              }))
+            }
             className={`w-full rounded-lg p-2.5 border transition-colors ${
               isDarkMode
                 ? 'bg-dark-card border-gray-700 text-white focus:border-blue-500'
                 : 'bg-white border-gray-300 focus:border-blue-500'
             }`}
+            aria-label="Medication frequency"
           >
             <option value="daily">Daily</option>
             <option value="weekly">Weekly</option>
@@ -164,11 +180,13 @@ const AddMedicationForm: React.FC<AddMedicationFormProps> = ({ onSubmit, isDarkM
         </div>
 
         <div>
-          <div className="text-sm font-medium mb-2">Times</div>
-          <div className="space-y-2">
+          <div className="text-sm font-medium mb-2" id="medication-times">
+            Times
+          </div>
+          <div className="space-y-2" role="group" aria-labelledby="medication-times">
             {formData.times.map((time, index) => (
               <div key={index} className="flex items-center gap-2">
-                <FaClock className="text-gray-400" />
+                <FaClock className="text-gray-400" aria-hidden="true" />
                 <input
                   type="time"
                   value={time}
@@ -182,6 +200,7 @@ const AddMedicationForm: React.FC<AddMedicationFormProps> = ({ onSubmit, isDarkM
                       ? 'bg-gray-800 border-gray-700 text-white focus:border-blue-500'
                       : 'bg-white border-gray-300 focus:border-blue-500'
                   }`}
+                  aria-label={`Medication time ${index + 1}`}
                 />
                 {formData.times.length > 1 && (
                   <button
@@ -201,14 +220,17 @@ const AddMedicationForm: React.FC<AddMedicationFormProps> = ({ onSubmit, isDarkM
             onClick={addTimeSlot}
             className="mt-2 text-sm text-blue-500 hover:text-blue-600 flex items-center gap-1"
           >
-            <FaPlus /> Add Time
+            <FaPlus aria-hidden="true" /> Add Time
           </button>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <div className="text-sm font-medium mb-1">Start Date</div>
+            <label htmlFor="start-date" className="text-sm font-medium mb-1">
+              Start Date
+            </label>
             <input
+              id="start-date"
               type="date"
               value={formData.startDate}
               onChange={(e) => setFormData((prev) => ({ ...prev, startDate: e.target.value }))}
@@ -218,11 +240,15 @@ const AddMedicationForm: React.FC<AddMedicationFormProps> = ({ onSubmit, isDarkM
                   : 'bg-white border-gray-300 focus:border-blue-500'
               }`}
               required
+              aria-label="Medication start date"
             />
           </div>
           <div>
-            <div className="text-sm font-medium mb-1">End Date</div>
+            <label htmlFor="end-date" className="text-sm font-medium mb-1">
+              End Date
+            </label>
             <input
+              id="end-date"
               type="date"
               value={formData.endDate}
               onChange={(e) => setFormData((prev) => ({ ...prev, endDate: e.target.value }))}
@@ -231,13 +257,18 @@ const AddMedicationForm: React.FC<AddMedicationFormProps> = ({ onSubmit, isDarkM
                   ? 'bg-gray-800 border-gray-700 text-white focus:border-blue-500'
                   : 'bg-white border-gray-300 focus:border-blue-500'
               }`}
+              aria-label="Medication end date (optional)"
+              placeholder="Optional"
             />
           </div>
         </div>
 
         <div>
-          <div className="text-sm font-medium mb-1">Notes (Optional)</div>
+          <label htmlFor="notes" className="text-sm font-medium mb-1">
+            Notes (Optional)
+          </label>
           <textarea
+            id="notes"
             value={formData.notes}
             onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
             className={`w-full rounded-lg p-2.5 border transition-colors ${
@@ -247,6 +278,7 @@ const AddMedicationForm: React.FC<AddMedicationFormProps> = ({ onSubmit, isDarkM
             }`}
             rows={3}
             placeholder="Add any special instructions or notes"
+            aria-label="Additional medication notes"
           />
         </div>
 
@@ -265,7 +297,7 @@ const AddMedicationForm: React.FC<AddMedicationFormProps> = ({ onSubmit, isDarkM
           whileTap={isFormValid ? { scale: 0.98 } : {}}
           disabled={!isFormValid}
         >
-          <FaPlus />
+          <FaPlus aria-hidden="true" />
           {initialData ? 'Update Medication' : 'Add Medication'}
         </motion.button>
       </div>

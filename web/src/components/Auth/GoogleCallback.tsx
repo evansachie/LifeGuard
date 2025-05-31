@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { handleGoogleCallback } from '../../utils/auth';
 import { toast } from 'react-toastify';
 
-const GoogleCallback: React.FC = () => {
+const GoogleCallback = () => {
   const navigate = useNavigate();
 
   useEffect(() => {

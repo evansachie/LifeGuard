@@ -3,13 +3,13 @@ import { motion } from 'framer-motion';
 import { FaClock, FaCheck, FaTimes, FaEdit, FaTrash } from 'react-icons/fa';
 import { MedicationCardProps } from '../../types/medicationTracker.types';
 
-const MedicationCard: React.FC<MedicationCardProps> = ({ 
-  medication, 
-  onTrackDose, 
-  onEdit, 
-  onDelete, 
-  isDarkMode, 
-  index 
+const MedicationCard: React.FC<MedicationCardProps> = ({
+  medication,
+  onTrackDose,
+  onEdit,
+  onDelete,
+  isDarkMode,
+  index,
 }) => {
   return (
     <motion.div
@@ -115,7 +115,7 @@ const MedicationCard: React.FC<MedicationCardProps> = ({
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => onDelete(medication)} 
+              onClick={() => onDelete(medication)}
               className={`p-2 rounded-md text-sm font-medium transition-colors ${
                 isDarkMode
                   ? 'bg-red-900/50 hover:bg-red-900 text-red-200'

@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { FaTimes } from 'react-icons/fa';
 import { getAnimationProps } from '../../utils/getAnimationProps';
 import './BreathingCircle.css';
@@ -16,16 +15,12 @@ export interface BreathingCircleProps {
   onClose: () => void;
 }
 
-const BreathingCircle: React.FC<BreathingCircleProps> = ({ phase, pattern, onComplete, onClose }) => {
+const BreathingCircle = ({ phase, onComplete, onClose }: BreathingCircleProps) => {
   const { scale, duration, backgroundColor } = getAnimationProps(phase);
 
   return (
     <div className="breathing-circle-container">
-      <button 
-        className="close-button" 
-        onClick={onClose}
-        aria-label="Close breathing exercise"
-      >
+      <button className="close-button" onClick={onClose} aria-label="Close breathing exercise">
         <FaTimes />
       </button>
       <div className="breathing-instruction">
@@ -53,7 +48,7 @@ const BreathingCircle: React.FC<BreathingCircleProps> = ({ phase, pattern, onCom
         }}
       >
         <motion.div className="circle-ripple" />
-        
+
         <motion.span
           key={`timer-${phase}`}
           initial={{ opacity: 0 }}

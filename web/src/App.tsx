@@ -17,7 +17,7 @@ import { useTheme } from './hooks/useTheme';
 
 import './App.css';
 
-const App: React.FC = () => {
+const App = () => {
   const { isDarkMode, toggleTheme } = useTheme();
   const [commandPaletteOpen, setCommandPaletteOpen] = useState<boolean>(false);
 

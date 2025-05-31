@@ -16,13 +16,6 @@ interface FloatingHealthAssistantProps {
   isDarkMode: boolean;
 }
 
-interface ChatMessage {
-  type: 'user' | 'assistant';
-  content: string;
-  timestamp: Date | string;
-  isError?: boolean;
-}
-
 const FloatingHealthAssistant: React.FC<FloatingHealthAssistantProps> = ({ isDarkMode }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [query, setQuery] = useState<string>('');

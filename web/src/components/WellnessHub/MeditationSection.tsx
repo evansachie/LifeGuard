@@ -78,14 +78,14 @@ const MeditationSection: React.FC<MeditationSectionProps> = ({ isDarkMode }) => 
       <div className="timer-display">
         <div className="time">{formatTime(currentTime)}</div>
         <div className="timer-controls">
-          <button 
+          <button
             onClick={toggleTimer}
             aria-label={isTimerRunning ? 'Pause meditation timer' : 'Start meditation timer'}
             className={isDarkMode ? 'dark' : ''}
           >
             {isTimerRunning ? <FaPause /> : <FaPlay />}
           </button>
-          <button 
+          <button
             onClick={resetTimer}
             aria-label="Reset meditation timer"
             className={isDarkMode ? 'dark' : ''}

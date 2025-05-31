@@ -1,4 +1,3 @@
-import React from 'react';
 import EnvironmentCharts from './EnvironmentCharts';
 import AirQualityCharts from './AirQualityCharts';
 import ReportsSection from './ReportsSection';
@@ -13,31 +12,25 @@ export interface TabContentProps {
   onDateRangeChange: (range: DateRangeType) => void;
 }
 
-const TabContent: React.FC<TabContentProps> = ({ 
-  activeTab, 
-  historicalData, 
-  dateRange, 
-  onDateRangeChange 
-}) => {
+const TabContent = ({
+  activeTab,
+  historicalData,
+  dateRange,
+  onDateRangeChange,
+}: TabContentProps) => {
   const chartOptions = { responsive: true };
 
   const tabComponents = {
     environment: (
       <div className="section">
         <h2 className="text-gray-800">Environmental Conditions</h2>
-        <EnvironmentCharts 
-          historicalData={historicalData} 
-          chartOptions={chartOptions}
-        />
+        <EnvironmentCharts historicalData={historicalData} chartOptions={chartOptions} />
       </div>
     ),
     airQuality: (
       <div className="section">
         <h2 className="text-gray-800">Air Quality Analysis</h2>
-        <AirQualityCharts 
-          historicalData={historicalData} 
-          chartOptions={chartOptions}
-        />
+        <AirQualityCharts historicalData={historicalData} chartOptions={chartOptions} />
       </div>
     ),
     reports: (

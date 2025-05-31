@@ -32,9 +32,9 @@ const useOTPVerification = (email: string | undefined): OTPVerificationFormHook 
   const handleResendOTP = async (): Promise<void> => {
     try {
       if (!email) {
-        throw new Error("Email is missing");
+        throw new Error('Email is missing');
       }
-      
+
       setIsLoading(true);
       await resendOTP(email);
       setTimeLeft(30);

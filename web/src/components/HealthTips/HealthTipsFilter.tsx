@@ -1,6 +1,7 @@
 import React from 'react';
 import { FaThLarge } from 'react-icons/fa';
 import { CategoryType } from '../../types/healthTips.types';
+import { ariaPressed } from '../../utils/accessibilityUtils';
 import './HealthTipsFilter.css';
 
 interface HealthTipsFilterProps {
@@ -12,18 +13,20 @@ interface HealthTipsFilterProps {
   currentSort?: string;
 }
 
-const HealthTipsFilter: React.FC<HealthTipsFilterProps> = ({ 
-  categories, 
-  selectedCategory, 
-  onCategoryChange, 
-  isDarkMode}) => {
+const HealthTipsFilter: React.FC<HealthTipsFilterProps> = ({
+  categories,
+  selectedCategory,
+  onCategoryChange,
+  isDarkMode,
+}) => {
   return (
     <div className={`health-tips-filter ${isDarkMode ? 'dark-mode' : ''}`}>
       <div className="filter-categories">
         <button
           className={`category-btn ${selectedCategory === 'all' ? 'active' : ''}`}
           onClick={() => onCategoryChange('all')}
-          aria-pressed={selectedCategory === 'all'}
+          {...ariaPressed(selectedCategory === 'all')}
+          type="button"
         >
           <FaThLarge />
           <span className="category-label">All</span>
@@ -35,7 +38,8 @@ const HealthTipsFilter: React.FC<HealthTipsFilterProps> = ({
             className={`category-btn ${selectedCategory === category.id ? 'active' : ''}`}
             onClick={() => onCategoryChange(category.id)}
             aria-label={`Filter by ${category.label}`}
-            aria-pressed={selectedCategory === category.id}
+            {...ariaPressed(selectedCategory === category.id)}
+            type="button"
           >
             {category.icon}
             <span className="category-label">{category.label}</span>

@@ -29,7 +29,7 @@ export const useEmergencyContacts = (): EmergencyContactsHookReturn => {
     try {
       setIsLoading(true);
       const response = await fetchWithAuth(API_ENDPOINTS.EMERGENCY_CONTACTS);
-      
+
       if (response && Array.isArray(response)) {
         setContacts(response);
       } else {
@@ -47,7 +47,7 @@ export const useEmergencyContacts = (): EmergencyContactsHookReturn => {
   const saveContact = async (formData: ContactFormData, contactId?: string): Promise<boolean> => {
     try {
       setIsSaving(true);
-      
+
       const payload = {
         Name: formData.name,
         Email: formData.email,
@@ -57,20 +57,20 @@ export const useEmergencyContacts = (): EmergencyContactsHookReturn => {
         Role: formData.role,
       };
 
-      const endpoint = contactId 
-        ? `${API_ENDPOINTS.EMERGENCY_CONTACTS}/${contactId}` 
+      const endpoint = contactId
+        ? `${API_ENDPOINTS.EMERGENCY_CONTACTS}/${contactId}`
         : API_ENDPOINTS.EMERGENCY_CONTACTS;
-      
+
       const method = contactId ? 'PUT' : 'POST';
-      
+
       const response = await fetchWithAuth(endpoint, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
-      
+
       await fetchContacts();
-      
+
       toast.success(contactId ? 'Contact updated successfully' : 'Contact added successfully');
       return true;
     } catch (error) {
@@ -86,10 +86,10 @@ export const useEmergencyContacts = (): EmergencyContactsHookReturn => {
     try {
       setIsDeleting(true);
       await fetchWithAuth(`${API_ENDPOINTS.EMERGENCY_CONTACTS}/${contactId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
-      
-      setContacts(contacts.filter(c => c.Id !== contactId));
+
+      setContacts(contacts.filter((c) => c.Id !== contactId));
       toast.success('Contact deleted successfully');
       return true;
     } catch (error) {
@@ -104,7 +104,7 @@ export const useEmergencyContacts = (): EmergencyContactsHookReturn => {
   const sendEmergencyAlert = async (): Promise<void> => {
     try {
       await fetchWithAuth(API_ENDPOINTS.SEND_EMERGENCY_ALERT, {
-        method: 'POST'
+        method: 'POST',
       });
       toast.success('Emergency alert sent to all contacts');
     } catch (error) {
@@ -116,7 +116,7 @@ export const useEmergencyContacts = (): EmergencyContactsHookReturn => {
   const sendTestAlert = async (contactId: string): Promise<void> => {
     try {
       await fetchWithAuth(API_ENDPOINTS.SEND_TEST_ALERT(contactId), {
-        method: 'POST'
+        method: 'POST',
       });
       toast.success('Test alert sent successfully');
     } catch (error) {
@@ -134,6 +134,6 @@ export const useEmergencyContacts = (): EmergencyContactsHookReturn => {
     saveContact,
     deleteContact,
     sendEmergencyAlert,
-    sendTestAlert
+    sendTestAlert,
   };
 };

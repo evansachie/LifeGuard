@@ -67,10 +67,10 @@ const EmergencyContacts: React.FC<EmergencyContactsProps> = ({ isDarkMode }) => 
 
   return (
     <div className={`min-h-screen p-6 ${isDarkMode ? 'dark-mode' : 'bg-gray-50 text-gray-900'}`}>
-      <PageHeader 
-        onAddClick={handleOpenAddModal} 
+      <PageHeader
+        onAddClick={handleOpenAddModal}
         onEmergencyAlert={sendEmergencyAlert}
-        isDarkMode={isDarkMode} 
+        isDarkMode={isDarkMode}
       />
 
       <ContactList

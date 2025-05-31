@@ -1,11 +1,6 @@
 import { Sound, SearchFilters, SearchResponse } from '../types/wellnessHub.types';
 import { API_ENDPOINTS } from '../utils/api';
 
-interface ImportMetaEnv {
-  readonly VITE_FREESOUND_API_KEY: string;
-  [key: string]: any;
-}
-
 const API_KEY = import.meta.env.VITE_FREESOUND_API_KEY;
 const BASE_URL = 'https://freesound.org/apiv2';
 

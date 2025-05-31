@@ -5,6 +5,7 @@
     right: 0;
     padding: 1rem 5rem;
     background-color: rgba(255, 255, 255, 0.6);
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     transition: all 0.3s ease;
     z-index: 1000;
@@ -177,6 +178,7 @@
         left: 0;
         right: 0;
         background: rgba(255, 255, 255, 0.98);
+        -webkit-backdrop-filter: blur(10px);
         backdrop-filter: blur(10px);
         padding: 2rem;
         flex-direction: column;

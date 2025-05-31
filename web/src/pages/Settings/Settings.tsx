@@ -53,13 +53,10 @@ const SettingsPage: React.FC<SettingsProps> = ({ isDarkMode, toggleDarkMode }) =
         if (!userId) {
           throw new Error('User ID not found');
         }
-        
-        const response = await fetchWithAuth(
-          `${API_ENDPOINTS.GET_USER(userId)}`,
-          {
-            method: 'GET',
-          }
-        );
+
+        const response = await fetchWithAuth(`${API_ENDPOINTS.GET_USER(userId)}`, {
+          method: 'GET',
+        });
 
         setSettings((prev) => ({
           ...prev,
@@ -85,7 +82,10 @@ const SettingsPage: React.FC<SettingsProps> = ({ isDarkMode, toggleDarkMode }) =
     }
   };
 
-  const handleSettingChange = <K extends keyof SettingsState>(key: K, value: SettingsState[K]): void => {
+  const handleSettingChange = <K extends keyof SettingsState>(
+    key: K,
+    value: SettingsState[K]
+  ): void => {
     setSettings((prev) => ({
       ...prev,
       [key]: value,
@@ -182,7 +182,9 @@ const SettingsPage: React.FC<SettingsProps> = ({ isDarkMode, toggleDarkMode }) =
               </div>
               <select
                 value={settings.units}
-                onChange={(e) => handleSettingChange('units', e.target.value as 'metric' | 'imperial')}
+                onChange={(e) =>
+                  handleSettingChange('units', e.target.value as 'metric' | 'imperial')
+                }
                 className={`p-3 rounded-lg border ${
                   isDarkMode
                     ? 'bg-gray-700/50 border-gray-600 text-gray-200'

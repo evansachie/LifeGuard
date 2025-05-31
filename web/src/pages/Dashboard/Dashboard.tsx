@@ -105,9 +105,15 @@ const Dashboard: React.FC<DashboardProps> = ({ isDarkMode }) => {
   };
 
   // BLE Context
-  const { bleDevice, isConnecting, sensorData, connectToDevice: originalConnectToDevice, disconnectDevice: originalDisconnectDevice } = useBLE();
+  const {
+    bleDevice,
+    isConnecting,
+    sensorData,
+    connectToDevice: originalConnectToDevice,
+    disconnectDevice: originalDisconnectDevice,
+  } = useBLE();
   const handleConnectDevice = () => {
-    originalConnectToDevice("default-device-id");
+    originalConnectToDevice('default-device-id');
   };
 
   const handleDisconnectDevice = () => {
@@ -265,7 +271,8 @@ const Dashboard: React.FC<DashboardProps> = ({ isDarkMode }) => {
       ref={dashboardRef}
       className={`dashboard ${isDarkMode ? 'dark-mode' : ''} ${viewMode}-view`}
     >
-      <DashboardHeader userData={userData} dataLoading={dataLoading} />      <div className="dropdown-container-layer" style={{ position: 'relative', zIndex: 50 }}>
+      <DashboardHeader userData={userData} dataLoading={dataLoading} />{' '}
+      <div className="dropdown-container-layer" style={{ position: 'relative', zIndex: 50 }}>
         <DashboardControls
           ref={controlsRef}
           isDarkMode={isDarkMode}
@@ -279,15 +286,12 @@ const Dashboard: React.FC<DashboardProps> = ({ isDarkMode }) => {
           onShowShortcuts={handleShowShortcuts}
         />
       </div>
-
       <TimeframeSelector
         isDarkMode={isDarkMode}
         selectedTimeframe={timeframe}
         onTimeframeChange={handleTimeframeChange}
       />
-
       <StatsSummary isDarkMode={isDarkMode} stats={statsData} />
-
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={cardOrder} strategy={rectSortingStrategy}>
           <div className={`dashboard-grid ${viewMode === 'list' ? 'list-layout' : ''}`}>
@@ -413,13 +417,9 @@ const Dashboard: React.FC<DashboardProps> = ({ isDarkMode }) => {
           </div>
         </SortableContext>
       </DndContext>
-
       {filterOptions.alerts && <AlertsSection alerts={filteredAlerts} />}
-
       <QuickAccess isDarkMode={isDarkMode} />
-
       <FloatingHealthAssistant isDarkMode={isDarkMode} />
-
       <Steps
         enabled={showDashboardTour}
         steps={dashboardSteps}
@@ -445,14 +445,12 @@ const Dashboard: React.FC<DashboardProps> = ({ isDarkMode }) => {
           showStepNumbers: false,
         }}
       />
-
       <BluetoothButton
         bleDevice={bleDevice}
         isConnecting={isConnecting}
         connectToDevice={handleConnectDevice}
         disconnectDevice={handleDisconnectDevice}
       />
-
       <KeyboardShortcutsHelp
         isVisible={showKeyboardShortcuts}
         onClose={() => setShowKeyboardShortcuts(false)}

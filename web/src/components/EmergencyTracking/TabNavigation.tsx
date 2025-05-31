@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaInfoCircle, FaUserMd, FaAmbulance } from 'react-icons/fa';
 
 type TabType = 'info' | 'medical' | 'actions';
@@ -9,7 +8,7 @@ interface TabNavigationProps {
   isDarkMode: boolean;
 }
 
-const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, setActiveTab, isDarkMode }) => {
+const TabNavigation = ({ activeTab, setActiveTab, isDarkMode }: TabNavigationProps) => {
   return (
     <div className="flex border-b border-gray-200 dark:border-gray-700">
       <button

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   FaTrophy,
   FaCalendarCheck,
@@ -54,7 +54,7 @@ interface StreakModalProps {
   isDarkMode: boolean;
 }
 
-const StreakModal: React.FC<StreakModalProps> = ({ isOpen, onClose, isDarkMode }) => {
+const StreakModal = ({ isOpen, onClose, isDarkMode }: StreakModalProps) => {
   const [period, setPeriod] = useState<Period>('7days');
   const [streakData, setStreakData] = useState<StreakDataState>({
     history: [],
@@ -89,11 +89,11 @@ const StreakModal: React.FC<StreakModalProps> = ({ isOpen, onClose, isDarkMode }
 
   const safeFormatDate = (dateInput: string | Date | undefined): string => {
     let dateObj: Date | undefined;
-    
+
     if (!dateInput) {
       return 'N/A';
     }
-    
+
     if (dateInput instanceof Date) {
       dateObj = dateInput;
     } else if (typeof dateInput === 'string') {
@@ -108,44 +108,48 @@ const StreakModal: React.FC<StreakModalProps> = ({ isOpen, onClose, isDarkMode }
       console.warn('Invalid date encountered:', dateInput);
       return 'N/A';
     }
-    
+
     return format(dateObj, 'yyyy/MM/dd');
   };
 
-  const getFullHeatmapData = (workoutDays: WorkoutDay[], startDate: Date, endDate: Date): HeatMapDataItem[] => {
+  const getFullHeatmapData = (
+    workoutDays: WorkoutDay[],
+    startDate: Date,
+    endDate: Date
+  ): HeatMapDataItem[] => {
     if (!isValid(startDate) || !isValid(endDate)) {
       console.warn('Invalid start/end date for heatmap:', startDate, endDate);
       return [];
     }
-    
+
     const allDates = eachDayOfInterval({ start: startDate, end: endDate });
     const activityMap = new Map<string, number>();
-    
+
     (workoutDays || []).forEach((day) => {
       if (!day.date) return;
-      let dateObj = day.date.includes('/') ? new Date(day.date) : parseISO(day.date);
-      
+      const dateObj = day.date.includes('/') ? new Date(day.date) : parseISO(day.date);
+
       if (!isValid(dateObj)) {
         console.warn('Invalid workout day.date:', day.date);
         return;
       }
-      
+
       const date = safeFormatDate(dateObj);
       if (!date) return;
-      
+
       activityMap.set(date, day.workout_count || 1);
     });
-    
+
     return allDates
       .map((dateObj) => {
         if (!isValid(dateObj)) {
           console.warn('Invalid date in allDates:', dateObj);
           return null;
         }
-        
+
         const date = safeFormatDate(dateObj);
         if (!date) return null;
-        
+
         return {
           date,
           count: activityMap.get(date) || 0,
@@ -181,11 +185,7 @@ const StreakModal: React.FC<StreakModalProps> = ({ isOpen, onClose, isDarkMode }
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
-                {p === '7days'
-                  ? 'Last 7 Days'
-                  : p === '30days'
-                    ? 'Last 30 Days'
-                    : 'Last 90 Days'}
+                {p === '7days' ? 'Last 7 Days' : p === '30days' ? 'Last 30 Days' : 'Last 90 Days'}
               </button>
             ))}
           </div>
@@ -244,9 +244,7 @@ const StreakModal: React.FC<StreakModalProps> = ({ isOpen, onClose, isDarkMode }
                     Current Streak
                   </p>
                   <p
-                    className={`text-2xl font-bold ${
-                      isDarkMode ? 'text-white' : 'text-gray-800'
-                    }`}
+                    className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}
                   >
                     {streakData.stats?.CurrentStreak || 0} days
                   </p>
@@ -266,9 +264,7 @@ const StreakModal: React.FC<StreakModalProps> = ({ isOpen, onClose, isDarkMode }
                     Longest Streak
                   </p>
                   <p
-                    className={`text-2xl font-bold ${
-                      isDarkMode ? 'text-white' : 'text-gray-800'
-                    }`}
+                    className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}
                   >
                     {streakData.stats?.LongestStreak || 0} days
                   </p>
@@ -288,9 +284,7 @@ const StreakModal: React.FC<StreakModalProps> = ({ isOpen, onClose, isDarkMode }
                     Active Days
                   </p>
                   <p
-                    className={`text-2xl font-bold ${
-                      isDarkMode ? 'text-white' : 'text-gray-800'
-                    }`}
+                    className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}
                   >
                     {streakData.workoutDays.length}
                   </p>
@@ -309,13 +303,9 @@ const StreakModal: React.FC<StreakModalProps> = ({ isOpen, onClose, isDarkMode }
                   <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                     Last Workout
                   </p>
-                  <p
-                    className={`text-xl font-bold ${
-                      isDarkMode ? 'text-white' : 'text-gray-800'
-                    }`}
-                  >
-                    {streakData.stats?.LastWorkoutDate 
-                      ? new Date(streakData.stats.LastWorkoutDate).toLocaleDateString() 
+                  <p className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                    {streakData.stats?.LastWorkoutDate
+                      ? new Date(streakData.stats.LastWorkoutDate).toLocaleDateString()
                       : 'N/A'}
                   </p>
                 </div>
@@ -339,12 +329,7 @@ const StreakModal: React.FC<StreakModalProps> = ({ isOpen, onClose, isDarkMode }
               </div>
               <div className="w-full flex flex-col items-center">
                 <div
-                  style={{
-                    width: '100%',
-                    maxWidth: 700,
-                    overflowX: 'auto',
-                  }}
-                  className="flex justify-center p-2"
+                  className={`w-full overflow-auto ${isDarkMode ? 'heatmap-container-dark' : 'heatmap-container-light'}`}
                 >
                   {(() => {
                     const validDates = (streakData.workoutDays || [])
@@ -359,9 +344,7 @@ const StreakModal: React.FC<StreakModalProps> = ({ isOpen, onClose, isDarkMode }
                     const today = new Date();
                     let startDate, endDate;
                     if (validDates.length > 0) {
-                      const minDate = new Date(
-                        Math.min(...validDates.map((d) => d.getTime()))
-                      );
+                      const minDate = new Date(Math.min(...validDates.map((d) => d.getTime())));
                       const minRangeStart = new Date(today);
                       minRangeStart.setDate(today.getDate() - 29);
                       startDate = minDate < minRangeStart ? minDate : minRangeStart;
@@ -427,9 +410,7 @@ const StreakModal: React.FC<StreakModalProps> = ({ isOpen, onClose, isDarkMode }
                         rectProps={{
                           rx: 2,
                           style: {
-                            stroke: isDarkMode
-                              ? 'rgba(255, 255, 255, 0.1)'
-                              : 'rgba(0, 0, 0, 0.05)',
+                            stroke: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
                             strokeWidth: 1,
                           },
                         }}
@@ -463,15 +444,19 @@ const StreakModal: React.FC<StreakModalProps> = ({ isOpen, onClose, isDarkMode }
                   ].map((color, index) => (
                     <span
                       key={color}
-                      className="w-3 h-3 rounded-sm inline-block"
-                      style={{
-                        backgroundColor: color,
-
-                        border:
-                          index === 0
-                            ? `1px solid ${isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`
-                            : 'none',
-                      }}
+                      className={`w-3 h-3 rounded-sm inline-block ${
+                        index === 0
+                          ? isDarkMode
+                            ? 'bg-heatmap-dark border border-white border-opacity-10'
+                            : 'bg-heatmap-light border border-black border-opacity-10'
+                          : index === 1
+                            ? 'bg-heatmap-level1'
+                            : index === 2
+                              ? 'bg-heatmap-level2'
+                              : index === 3
+                                ? 'bg-heatmap-level3'
+                                : 'bg-heatmap-level4'
+                      }`}
                     ></span>
                   ))}
                   <span className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>More</span>
@@ -479,28 +464,44 @@ const StreakModal: React.FC<StreakModalProps> = ({ isOpen, onClose, isDarkMode }
               </div>
               <style>{`
                 /* Refine week label styles */
-                .heatmap-dark .w-echarts-heatmap-week-label,
-                .heatmap-light .w-echarts-heatmap-week-label {
-                  font-size: 9px !important; /* Smaller week labels */
-                  fill: ${isDarkMode ? '#a0aec0' : '#4a5568'} !important; /* Match label color */
+                .w-echarts-heatmap-week-label {
+                  font-size: 9px !important;
+                  fill: ${isDarkMode ? '#a0aec0' : '#4a5568'} !important;
                   alignment-baseline: central;
                 }
+                
                 /* Ensure month labels have consistent color */
                 .heatmap-dark text, .heatmap-light text {
                    fill: ${isDarkMode ? '#a0aec0' : '#4a5568'} !important;
                    font-size: 10px !important;
                 }
+                
                 /* Ensure rects don't have unwanted default outlines */
                 .heatmap-dark rect, .heatmap-light rect {
-                  shape-rendering: geometricPrecision; /* Try to make strokes crisper */
+                  shape-rendering: geometricPrecision;
                 }
+                
+                /* Custom color classes for heatmap levels */
+                :root {
+                  --heatmap-dark: #171d27;
+                  --heatmap-light: #ebedf0;
+                  --heatmap-level1: #9be9a8;
+                  --heatmap-level2: #40c463;
+                  --heatmap-level3: #30a14e;
+                  --heatmap-level4: #216e39;
+                }
+                
+                .bg-heatmap-dark { background-color: var(--heatmap-dark); }
+                .bg-heatmap-light { background-color: var(--heatmap-light); }
+                .bg-heatmap-level1 { background-color: var(--heatmap-level1); }
+                .bg-heatmap-level2 { background-color: var(--heatmap-level2); }
+                .bg-heatmap-level3 { background-color: var(--heatmap-level3); }
+                .bg-heatmap-level4 { background-color: var(--heatmap-level4); }
               `}</style>
             </div>
 
             <div
-              className={`rounded-xl overflow-hidden ${
-                isDarkMode ? 'bg-gray-700' : 'bg-gray-50'
-              }`}
+              className={`rounded-xl overflow-hidden ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'}`}
             >
               <table className="w-full">
                 <thead>
@@ -515,36 +516,18 @@ const StreakModal: React.FC<StreakModalProps> = ({ isOpen, onClose, isDarkMode }
                   {streakData.workoutDays.map((day) => (
                     <tr
                       key={day.date}
-                      className={`border-t ${
-                        isDarkMode ? 'border-gray-600' : 'border-gray-200'
-                      }`}
+                      className={`border-t ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}
                     >
-                      <td
-                        className={`px-4 py-3 ${
-                          isDarkMode ? 'text-gray-300' : 'text-gray-800'
-                        }`}
-                      >
+                      <td className={`px-4 py-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>
                         {safeFormatDate(day.date)}
                       </td>
-                      <td
-                        className={`px-4 py-3 ${
-                          isDarkMode ? 'text-gray-300' : 'text-gray-800'
-                        }`}
-                      >
+                      <td className={`px-4 py-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>
                         {day.workout_count}
                       </td>
-                      <td
-                        className={`px-4 py-3 ${
-                          isDarkMode ? 'text-gray-300' : 'text-gray-800'
-                        }`}
-                      >
+                      <td className={`px-4 py-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>
                         {day.workout_types}
                       </td>
-                      <td
-                        className={`px-4 py-3 ${
-                          isDarkMode ? 'text-gray-300' : 'text-gray-800'
-                        }`}
-                      >
+                      <td className={`px-4 py-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>
                         <span
                           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                             day.date === streakData.stats?.LastWorkoutDate
@@ -556,9 +539,7 @@ const StreakModal: React.FC<StreakModalProps> = ({ isOpen, onClose, isDarkMode }
                                 : 'bg-gray-100 text-gray-800'
                           }`}
                         >
-                          {day.date === streakData.stats?.LastWorkoutDate
-                            ? 'Latest'
-                            : 'Completed'}
+                          {day.date === streakData.stats?.LastWorkoutDate ? 'Latest' : 'Completed'}
                         </span>
                       </td>
                     </tr>

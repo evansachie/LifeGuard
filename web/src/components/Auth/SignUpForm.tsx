@@ -20,15 +20,15 @@ interface SignUpFormProps {
   isDarkMode?: boolean;
 }
 
-const SignUpForm: React.FC<SignUpFormProps> = ({
+const SignUpForm = ({
   formData,
   errors,
   isLoading,
   handleChange,
   handleSubmit,
   handleGoogleLogin,
-  isDarkMode = false
-}) => {
+  isDarkMode = false,
+}: SignUpFormProps) => {
   return (
     <>
       <form onSubmit={handleSubmit}>
@@ -93,11 +93,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
         <div className="flex-1 h-px bg-gray-300 dark:bg-gray-700"></div>
       </div>
 
-      <OAuthButton 
-        onClick={handleGoogleLogin} 
-        isLoading={isLoading} 
-        isDarkMode={isDarkMode}
-      />
+      <OAuthButton onClick={handleGoogleLogin} isLoading={isLoading} isDarkMode={isDarkMode} />
 
       <p className="already">
         Already have an account?{' '}

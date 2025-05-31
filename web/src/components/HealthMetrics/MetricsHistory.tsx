@@ -58,7 +58,7 @@ const MetricsHistory: React.FC<MetricsHistoryProps> = ({ history = [], isDarkMod
   return (
     <div className="metrics-history-section">
       <h3>Metrics History</h3>
-      <div className="metrics-chart" style={{ height: '300px', marginTop: '20px' }}>
+      <div className="metrics-chart h-[300px] mt-5">
         <Line
           data={chartData}
           options={{

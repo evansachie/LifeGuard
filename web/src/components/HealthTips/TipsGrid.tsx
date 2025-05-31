@@ -17,12 +17,12 @@ interface TipsGridProps {
   };
 }
 
-const TipsGrid: React.FC<TipsGridProps> = ({ 
-  tips, 
-  onReadMore, 
-  isDarkMode, 
-  containerVariants, 
-  itemVariants 
+const TipsGrid: React.FC<TipsGridProps> = ({
+  tips,
+  onReadMore,
+  isDarkMode,
+  containerVariants,
+  itemVariants,
 }) => {
   return (
     <motion.section

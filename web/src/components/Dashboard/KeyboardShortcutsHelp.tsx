@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { FaKeyboard, FaTimes } from 'react-icons/fa';
 import { KEYBOARD_SHORTCUTS } from '../../utils/keyboardShortcuts';
 import { KeyboardShortcut } from '../../types/common.types';
@@ -10,11 +10,7 @@ interface KeyboardShortcutsHelpProps {
   isDarkMode: boolean;
 }
 
-const KeyboardShortcutsHelp: React.FC<KeyboardShortcutsHelpProps> = ({
-  isVisible,
-  onClose,
-  isDarkMode,
-}) => {
+const KeyboardShortcutsHelp = ({ isVisible, onClose, isDarkMode }: KeyboardShortcutsHelpProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

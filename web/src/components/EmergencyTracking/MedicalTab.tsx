@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaUserMd, FaHeartbeat, FaUser, FaAmbulance, FaHospital, FaPills } from 'react-icons/fa';
 import { EmergencyUserData, EmergencyActions } from '../../types/emergency.types';
 
@@ -8,7 +7,7 @@ interface MedicalTabProps {
   isDarkMode: boolean;
 }
 
-const MedicalTab: React.FC<MedicalTabProps> = ({ userData, actions, isDarkMode }) => {
+const MedicalTab = ({ userData, actions, isDarkMode }: MedicalTabProps) => {
   return (
     <div className="animate__animated animate__fadeIn">
       <div className="mb-4">
@@ -169,7 +168,9 @@ const MedicalTab: React.FC<MedicalTabProps> = ({ userData, actions, isDarkMode }
           </h3>
 
           <div className="bg-gradient-to-r from-red-600 to-red-500 text-white p-4 rounded-lg mb-4">
-            <h4 className="font-bold text-lg text-white">Important Emergency Medical Considerations</h4>
+            <h4 className="font-bold text-lg text-white">
+              Important Emergency Medical Considerations
+            </h4>
             <p className="mt-1 text-sm text-white">
               When responding to a medical emergency, remember these critical points:
             </p>

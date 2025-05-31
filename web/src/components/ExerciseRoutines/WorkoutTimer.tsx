@@ -58,11 +58,15 @@ const WorkoutTimer: React.FC<WorkoutTimerProps> = ({
     return 'text-white';
   };
 
-  const calculateCompletionStats = (): { completionPercentage: number; adjustedCalories: number; duration: number } => {
+  const calculateCompletionStats = (): {
+    completionPercentage: number;
+    adjustedCalories: number;
+    duration: number;
+  } => {
     if (!activeWorkout) {
       return { completionPercentage: 0, adjustedCalories: 0, duration: 0 };
     }
-    
+
     const durationParts = activeWorkout.duration.split(' ');
     const minutes = parseInt(durationParts[0]);
     const totalSeconds = minutes * 60;
@@ -78,7 +82,7 @@ const WorkoutTimer: React.FC<WorkoutTimerProps> = ({
 
   const handleWorkoutComplete = async (isFullyCompleted = false): Promise<boolean> => {
     if (!activeWorkout) return false;
-    
+
     try {
       const stats = calculateCompletionStats();
 
@@ -116,7 +120,7 @@ const WorkoutTimer: React.FC<WorkoutTimerProps> = ({
 
   const handleEndWorkout = async (): Promise<void> => {
     if (!activeWorkout) return;
-    
+
     try {
       const stats = calculateCompletionStats();
 

@@ -70,11 +70,11 @@ export const addToFavorites = async (
         },
       };
     }
-    
+
     console.error('Error adding to favorites:', error);
-    return { 
+    return {
       error: 'Error adding to favorites',
-      message: error.message || 'Unknown error'
+      message: error.message || 'Unknown error',
     };
   }
 };

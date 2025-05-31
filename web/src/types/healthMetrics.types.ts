@@ -44,5 +44,5 @@ export interface MetricHistory {
   BMR: number;
   TDEE: number;
   CreatedAt: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }

@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaExclamationTriangle } from 'react-icons/fa';
 import { Alert as AlertType } from '../../types/common.types';
 import Alert from './Alert';
@@ -7,7 +6,7 @@ interface AlertsSectionProps {
   alerts: AlertType[];
 }
 
-const AlertsSection: React.FC<AlertsSectionProps> = ({ alerts }) => {
+const AlertsSection = ({ alerts }: AlertsSectionProps) => {
   return (
     <div className="dashboard-card alerts-section">
       <h2>

@@ -47,14 +47,8 @@
     "serve": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "lint": "eslint src --ext .js,.jsx",
-    "lint:fix": "eslint src --ext .js,.jsx --fix"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix"
   },
   "browserslist": {
     "production": [

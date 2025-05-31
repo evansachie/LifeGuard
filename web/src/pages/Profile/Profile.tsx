@@ -53,9 +53,11 @@ const Profile: React.FC<ProfileProps> = ({ isDarkMode }) => {
     }));
 
     fetchUserProfileData();
-  }, []);
+  }, [fetchUserProfileData, setProfileData]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ): void => {
     const { name, value } = e.target;
     setProfileData((prev) => ({ ...prev, [name]: value }));
   };
@@ -82,7 +84,7 @@ const Profile: React.FC<ProfileProps> = ({ isDarkMode }) => {
         ...profileData,
         id: localStorage.getItem('userId') || '',
       };
-      
+
       await updateUserProfile(profileDataWithId as ProfileData);
       toast.success('Profile updated successfully!');
       setEditMode(false);

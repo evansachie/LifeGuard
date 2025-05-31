@@ -32,7 +32,10 @@ interface FormattedMedication {
 /**
  * Service to search for medications using OpenFDA API
  */
-export const searchMedications = async (query: string, limit: number = 10): Promise<FormattedMedication[]> => {
+export const searchMedications = async (
+  query: string,
+  limit: number = 10
+): Promise<FormattedMedication[]> => {
   if (!query || query.length < 2) return [];
 
   try {

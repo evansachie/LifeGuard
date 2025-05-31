@@ -12,7 +12,7 @@ export interface TabNavigationProps {
   tabs: Tab[];
 }
 
-const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onTabChange, tabs }) => (
+const TabNavigation = ({ activeTab, onTabChange, tabs }: TabNavigationProps) => (
   <div className="tabs">
     {tabs.map((tab) => (
       <button

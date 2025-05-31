@@ -31,7 +31,7 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ audioRef, isDarkMode 
 
       const animate = (): void => {
         animationRef.current = requestAnimationFrame(animate);
-        
+
         if (!analyserRef.current) return;
         analyserRef.current.getByteFrequencyData(dataArray);
 

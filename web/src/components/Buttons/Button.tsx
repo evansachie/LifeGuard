@@ -7,7 +7,7 @@ interface ButtonProps {
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-const Button: React.FC<ButtonProps> = ({ text, isLoading = false, type = 'submit', onClick }) => {
+const Button = ({ text, isLoading = false, type = 'submit', onClick }: ButtonProps) => {
   return (
     <button
       type={type}

@@ -26,7 +26,9 @@ export const AudioPlayerProvider: React.FC<AudioPlayerProviderProps> = ({ childr
   return (
     <AudioPlayerContext.Provider value={value}>
       {children}
-      <audio ref={audioRef} />
+      <audio ref={audioRef}>
+        <track kind="captions" src="" label="No captions available" default />
+      </audio>
     </AudioPlayerContext.Provider>
   );
 };

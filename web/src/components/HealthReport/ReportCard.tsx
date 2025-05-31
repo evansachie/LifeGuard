@@ -20,7 +20,9 @@ export const ReportCard: React.FC<ReportCardProps> = ({ date, type, status }) =>
     </div>
     <div
       className="report-status"
-      style={{ '--status-color': status === 'Normal' ? '#4CAF50' : '#FF9800' } as React.CSSProperties}
+      style={
+        { '--status-color': status === 'Normal' ? '#4CAF50' : '#FF9800' } as React.CSSProperties
+      }
     >
       {status}
     </div>

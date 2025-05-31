@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MdOutlineFitnessCenter } from 'react-icons/md';
 import { FaFire, FaDumbbell, FaTrophy } from 'react-icons/fa';
 import { BiTargetLock, BiChevronRight } from 'react-icons/bi';
@@ -15,14 +15,13 @@ interface ExerciseStats {
   workoutsCompleted: number;
   currentStreak: number;
   currentGoal: string;
-  [key: string]: string | number;
 }
 
 interface ProgressOverviewProps {
   isDarkMode: boolean;
 }
 
-const ProgressOverview: React.FC<ProgressOverviewProps> = ({ isDarkMode }) => {
+const ProgressOverview = ({ isDarkMode }: ProgressOverviewProps) => {
   const [stats, setStats] = useState<ExerciseStats>({
     caloriesBurned: 0,
     workoutsCompleted: 0,
@@ -43,10 +42,10 @@ const ProgressOverview: React.FC<ProgressOverviewProps> = ({ isDarkMode }) => {
           caloriesBurned: data.totalCaloriesBurned || 0,
           workoutsCompleted: data.totalWorkouts || 0,
           currentStreak: data.currentStreak || 0,
-          currentGoal: data.goalType || 'Not set',
+          currentGoal: typeof data.goalType === 'string' ? data.goalType : 'Not set',
         };
         setStats(transformedData);
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('Error fetching exercise stats:', error);
       } finally {
         setLoading(false);
@@ -61,7 +60,7 @@ const ProgressOverview: React.FC<ProgressOverviewProps> = ({ isDarkMode }) => {
       await exerciseService.setGoal(goalType);
       setStats((prev) => ({ ...prev, currentGoal: goalType }));
       toast.success('Workout goal updated successfully!');
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error setting goal:', error);
       toast.error('Failed to update workout goal');
     }

@@ -21,7 +21,7 @@ interface HealthTipsProps {
 interface HealthData {
   featured: FeaturedTip;
   tips: HealthTip[];
-  videos?: any[];
+  videos?: unknown[];
 }
 
 const ITEMS_PER_PAGE = 6;
@@ -72,12 +72,13 @@ const HealthTips: React.FC<HealthTipsProps> = ({ isDarkMode }) => {
     );
   };
 
-  const filteredTips = healthData?.tips.filter(
-    (tip) =>
-      (selectedCategory === 'all' || tip.category === selectedCategory) &&
-      (tip.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        tip.description.toLowerCase().includes(searchQuery.toLowerCase()))
-  ) || [];
+  const filteredTips =
+    healthData?.tips.filter(
+      (tip) =>
+        (selectedCategory === 'all' || tip.category === selectedCategory) &&
+        (tip.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          tip.description.toLowerCase().includes(searchQuery.toLowerCase()))
+    ) || [];
 
   const sortedAndFilteredTips = sortTips(filteredTips);
 
@@ -140,7 +141,7 @@ const HealthTips: React.FC<HealthTipsProps> = ({ isDarkMode }) => {
   return (
     <div
       className={`p-4 md:p-6 max-w-7xl mx-auto ${
-        isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'
+        isDarkMode ? 'text-white' : 'bg-white text-gray-900'
       }`}
     >
       {error && (
@@ -175,37 +176,41 @@ const HealthTips: React.FC<HealthTipsProps> = ({ isDarkMode }) => {
 
       <FeaturedHealthTip featuredTip={healthData?.featured} onLearnMore={handleFeaturedLearnMore} />
 
-      <section className="my-8 flex flex-col md:flex-row gap-4 items-center justify-between">
-        <div
-          className={`relative w-full md:w-auto md:min-w-[300px] rounded-full overflow-hidden border ${
-            isDarkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-300 bg-gray-50'
-          }`}
-        >
-          <FaSearch
-            className={`absolute left-4 top-1/2 transform -translate-y-1/2 ${
-              isDarkMode ? 'text-gray-400' : 'text-gray-500'
+      <section className="my-8 space-y-4">
+        <div className="flex flex-col gap-4">
+          <div
+            className={`relative w-full max-w-md mx-auto md:mx-0 rounded-full overflow-hidden border ${
+              isDarkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-300 bg-gray-50'
             }`}
-          />
-          <input
-            type="text"
-            placeholder="Search health tips..."
-            value={searchQuery}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
-            aria-label="Search health tips"
-            className={`w-full py-2.5 pl-12 pr-4 ${
-              isDarkMode
-                ? 'bg-gray-800 text-white placeholder-gray-400 focus:bg-gray-700'
-                : 'bg-gray-50 text-gray-900 placeholder-gray-500 focus:bg-white'
-            } focus:outline-none transition-colors`}
-          />
-        </div>
+          >
+            <FaSearch
+              className={`absolute left-4 top-1/2 transform -translate-y-1/2 ${
+                isDarkMode ? 'text-gray-400' : 'text-gray-500'
+              }`}
+            />
+            <input
+              type="text"
+              placeholder="Search health tips..."
+              value={searchQuery}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+              aria-label="Search health tips"
+              className={`w-full py-2.5 pl-12 pr-4 ${
+                isDarkMode
+                  ? 'bg-gray-800 text-white placeholder-gray-400 focus:bg-gray-700'
+                  : 'bg-gray-50 text-gray-900 placeholder-gray-500 focus:bg-white'
+              } focus:outline-none transition-colors`}
+            />
+          </div>
 
-        <HealthTipsFilter
-          categories={categories}
-          selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
-          isDarkMode={isDarkMode}
-        />
+          <div className="w-full">
+            <HealthTipsFilter
+              categories={categories}
+              selectedCategory={selectedCategory}
+              onCategoryChange={setSelectedCategory}
+              isDarkMode={isDarkMode}
+            />
+          </div>
+        </div>
       </section>
 
       {selectedCategory !== 'videos' ? (

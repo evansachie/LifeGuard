@@ -7,7 +7,11 @@ interface SpinnerProps {
   className?: string;
 }
 
-const Spinner: React.FC<SpinnerProps> = ({ size = 'medium', color = '#4285F4', className = '' }) => {
+const Spinner: React.FC<SpinnerProps> = ({
+  size = 'medium',
+  color = '#4285F4',
+  className = '',
+}) => {
   const sizeClass =
     {
       small: 'w-4 h-4',

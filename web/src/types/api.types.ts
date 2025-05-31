@@ -1,5 +1,5 @@
 // Core API Response Types
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   isSuccess: boolean;
   statusCode: number;
   message?: string;

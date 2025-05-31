@@ -28,7 +28,7 @@ const WellnessHub: React.FC<WellnessHubProps> = ({ isDarkMode }) => {
   });
   const [currentSound, setCurrentSound] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [volume, setVolume] = useState<number>(0.5);
+  const [volume] = useState<number>(0.5);
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -47,6 +47,7 @@ const WellnessHub: React.FC<WellnessHubProps> = ({ isDarkMode }) => {
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         audioRef.current.src = '';
       }
     };
@@ -85,7 +86,9 @@ const WellnessHub: React.FC<WellnessHubProps> = ({ isDarkMode }) => {
             <MiniPlayer
               sound={
                 soundsData.find((s: LocalSound) => s.title === currentSound)
-                  ? mapLocalSoundToSound(soundsData.find((s: LocalSound) => s.title === currentSound) as LocalSound)
+                  ? mapLocalSoundToSound(
+                      soundsData.find((s: LocalSound) => s.title === currentSound) as LocalSound
+                    )
                   : {
                       id: currentSound,
                       name: currentSound,

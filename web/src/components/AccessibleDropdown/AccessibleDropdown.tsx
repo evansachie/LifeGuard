@@ -1,14 +1,21 @@
 import React from 'react';
+import { ariaExpanded } from '../../utils/accessibilityUtils';
 
-interface AccessibleDropdownProps {
+interface AccessibleDropdownProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   isOpen: boolean;
   onToggle: () => void;
   ariaLabel: string;
-  className?: string;
   children: React.ReactNode;
 }
 
-const AccessibleDropdown: React.FC<AccessibleDropdownProps> = ({ isOpen, onToggle, ariaLabel, className, children }) => {
+const AccessibleDropdown: React.FC<AccessibleDropdownProps> = ({
+  isOpen,
+  onToggle,
+  ariaLabel,
+  className,
+  children,
+  ...restProps
+}) => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     if (e.key === 'Enter' || e.key === ' ') {
       onToggle();
@@ -21,10 +28,11 @@ const AccessibleDropdown: React.FC<AccessibleDropdownProps> = ({ isOpen, onToggl
       className={className}
       onClick={onToggle}
       onKeyDown={handleKeyDown}
-      aria-expanded={isOpen}
+      {...ariaExpanded(isOpen)}
       aria-haspopup="true"
       aria-label={ariaLabel}
       type="button"
+      {...restProps}
     >
       {children}
     </button>

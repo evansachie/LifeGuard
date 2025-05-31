@@ -18,13 +18,14 @@ const EmptyChatState: React.FC<EmptyChatStateProps> = ({ onExampleClick }) => {
       <p className="examples-title">Examples:</p>
       <ul className="examples-list">
         {exampleQuestions.map((question, index) => (
-          <button
-            key={index}
-            onClick={() => onExampleClick(question)}
-            className="text-left w-full p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
-          >
-            &ldquo;{question}&rdquo;
-          </button>
+          <li key={index} className="mb-2">
+            <button
+              onClick={() => onExampleClick(question)}
+              className="text-left w-full p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
+            >
+              &ldquo;{question}&rdquo;
+            </button>
+          </li>
         ))}
       </ul>
     </div>

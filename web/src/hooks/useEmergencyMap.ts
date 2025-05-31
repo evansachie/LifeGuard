@@ -34,7 +34,7 @@ export function useEmergencyMap(
 
           map.current.on('load', () => {
             if (!map.current) return;
-            
+
             map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
             map.current.addControl(
               new mapboxgl.GeolocateControl({

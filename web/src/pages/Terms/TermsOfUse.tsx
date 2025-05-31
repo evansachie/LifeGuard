@@ -36,7 +36,7 @@ const TermsOfUse: React.FC<TermsOfUseProps> = ({ isDarkMode }) => {
         <div className={`rounded-xl p-6 mb-8 ${isDarkMode ? 'bg-gray-800' : 'bg-white shadow-md'}`}>
           <h2 className="text-xl font-semibold mb-4">Acceptance of Terms</h2>
           <p className="mb-4">
-            By accessing or using the LifeGuard application (the "App"), you agree to be bound by
+            By accessing or using the LifeGuard application (the &quot;App&quot;), you agree to be
             these Terms of Use. If you do not agree to these Terms, you may not use the App.
           </p>
 
@@ -47,8 +47,8 @@ const TermsOfUse: React.FC<TermsOfUseProps> = ({ isDarkMode }) => {
               guardian.
             </li>
             <li>
-              You are responsible for maintaining the confidentiality of your account credentials and
-              for all activities that occur under your account.
+              You are responsible for maintaining the confidentiality of your account credentials
+              and for all activities that occur under your account.
             </li>
             <li>
               You agree not to use the App for any illegal purposes or in violation of any local,
@@ -95,9 +95,10 @@ const TermsOfUse: React.FC<TermsOfUseProps> = ({ isDarkMode }) => {
 
           <h2 className="text-xl font-semibold mb-4 mt-8">Disclaimer of Warranties</h2>
           <p className="mb-4">
-            The App is provided "as is" and "as available" without any warranties of any kind, either
-            express or implied, including but not limited to, the implied warranties of
-            merchantability, fitness for a particular purpose, or non-infringement.
+            The App is provided &quot;as is&quot; and &quot;as available&quot; without any
+            warranties of any kind, either express or implied, including but not limited to, the
+            implied warranties of merchantability, fitness for a particular purpose, or
+            non-infringement.
           </p>
 
           <h2 className="text-xl font-semibold mb-4 mt-8">Limitation of Liability</h2>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { WiThermometer, WiHumidity, WiBarometer } from 'react-icons/wi';
+import { WiThermometer } from 'react-icons/wi';
 import { MdAir, MdAutoGraph } from 'react-icons/md';
 
 export interface Tab {

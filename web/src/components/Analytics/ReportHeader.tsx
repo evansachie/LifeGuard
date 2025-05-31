@@ -1,5 +1,3 @@
-import React from 'react';
-
 type DateRangeType = '24h' | '7d' | '30d' | '90d';
 
 export interface ReportHeaderProps {
@@ -10,13 +8,12 @@ export interface ReportHeaderProps {
   description?: string;
 }
 
-const ReportHeader: React.FC<ReportHeaderProps> = ({ 
-  dateRange, 
-  onDateRangeChange, 
+const ReportHeader = ({
+  dateRange,
+  onDateRangeChange,
   isDarkMode = false,
-  title = "Analytics Reports",
-  description = "Summary of environmental conditions and trends over the selected time period."
-}) => {
+  description = 'Summary of environmental conditions and trends over the selected time period.',
+}: ReportHeaderProps) => {
   return (
     <div className="report-header mb-6">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
@@ -47,9 +44,7 @@ const ReportHeader: React.FC<ReportHeaderProps> = ({
           </select>
         </div>
       </div>
-      <p className={`mt-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-        {description}
-      </p>
+      <p className={`mt-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>{description}</p>
     </div>
   );
 };

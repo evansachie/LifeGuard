@@ -4,14 +4,14 @@ export interface SelectOption {
   disabled?: boolean;
 }
 
-export interface TableColumn<T = any> {
+export interface TableColumn<T = unknown> {
   key: string;
   title: string;
   dataIndex: keyof T;
   width?: number;
   sortable?: boolean;
   filterable?: boolean;
-  render?: (value: any, record: T, index: number) => React.ReactNode;
+  render?: (value: unknown, record: T, index: number) => React.ReactNode;
 }
 
 export interface PaginationConfig {
@@ -35,7 +35,17 @@ export interface ThemeConfig {
 export interface FormField {
   name: string;
   label: string;
-  type: 'text' | 'email' | 'password' | 'number' | 'select' | 'textarea' | 'checkbox' | 'radio' | 'date' | 'file';
+  type:
+    | 'text'
+    | 'email'
+    | 'password'
+    | 'number'
+    | 'select'
+    | 'textarea'
+    | 'checkbox'
+    | 'radio'
+    | 'date'
+    | 'file';
   required?: boolean;
   placeholder?: string;
   options?: SelectOption[];
@@ -45,7 +55,7 @@ export interface FormField {
     max?: number;
     minLength?: number;
     maxLength?: number;
-    custom?: (value: any) => string | null;
+    custom?: (value: unknown) => string | null;
   };
 }
 
@@ -162,7 +172,7 @@ export interface ChartConfig {
 export interface AppError {
   code: string;
   message: string;
-  details?: any;
+  details?: unknown;
   timestamp: string;
   stack?: string;
 }
@@ -288,7 +298,16 @@ export interface Memo {
 }
 
 // Timeframe Types
-export type CardId = 'temperature' | 'humidity' | 'pressure' | 'activities' | 'quote' | 'reminders' | 'aqi' | 'co2' | 'pollutants';
+export type CardId =
+  | 'temperature'
+  | 'humidity'
+  | 'pressure'
+  | 'activities'
+  | 'quote'
+  | 'reminders'
+  | 'aqi'
+  | 'co2'
+  | 'pollutants';
 
 // Keyboard Shortcuts Types
 export interface KeyboardShortcut {

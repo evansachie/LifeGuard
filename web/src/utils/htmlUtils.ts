@@ -49,7 +49,7 @@ export const truncateHtml = (html: string, maxLength: number = 150): string => {
   // Now we need to truncate the HTML intelligently
   let currentLength = 0;
   let truncatedHtml = '';
-  let openTags: string[] = [];
+  const openTags: string[] = [];
 
   // Tokenize the HTML
   const tokenizer = /<[^>]+>|[^<]+/g;

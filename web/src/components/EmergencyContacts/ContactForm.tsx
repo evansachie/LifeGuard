@@ -89,9 +89,9 @@ const ContactForm: React.FC<ContactFormProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ 
-      ...prev, 
-      [name]: name === 'priority' ? parseInt(value, 10) : value 
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === 'priority' ? parseInt(value, 10) : value,
     }));
   };
 
@@ -105,7 +105,9 @@ const ContactForm: React.FC<ContactFormProps> = ({
       <h2 className="text-xl font-bold mb-4">{contact ? 'Edit Contact' : 'Add New Contact'}</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <div className="block mb-1">Full Name</div>
+          <div className="block mb-1" id="name-label">
+            Full Name
+          </div>
           <input
             type="text"
             name="name"
@@ -114,12 +116,16 @@ const ContactForm: React.FC<ContactFormProps> = ({
             className={`w-full p-2 rounded border ${
               isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
             }`}
+            aria-labelledby="name-label"
+            placeholder="Enter full name"
           />
           {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
         </div>
 
         <div>
-          <div className="block mb-1">Phone Number</div>
+          <div className="block mb-1" id="phone-label">
+            Phone Number
+          </div>
           <input
             type="tel"
             name="phone"
@@ -128,12 +134,16 @@ const ContactForm: React.FC<ContactFormProps> = ({
             className={`w-full p-2 rounded border ${
               isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
             }`}
+            aria-labelledby="phone-label"
+            placeholder="(555) 123-4567"
           />
           {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
         </div>
 
         <div>
-          <div className="block mb-1">Email</div>
+          <div className="block mb-1" id="email-label">
+            Email
+          </div>
           <input
             type="email"
             name="email"
@@ -142,12 +152,16 @@ const ContactForm: React.FC<ContactFormProps> = ({
             className={`w-full p-2 rounded border ${
               isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
             }`}
+            aria-labelledby="email-label"
+            placeholder="email@example.com"
           />
           {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
         </div>
 
         <div>
-          <div className="block mb-1">Relationship</div>
+          <div className="block mb-1" id="relationship-label">
+            Relationship
+          </div>
           <input
             type="text"
             name="relationship"
@@ -156,6 +170,8 @@ const ContactForm: React.FC<ContactFormProps> = ({
             className={`w-full p-2 rounded border ${
               isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
             }`}
+            aria-labelledby="relationship-label"
+            placeholder="e.g., Spouse, Parent, Friend"
           />
           {errors.relationship && (
             <p className="text-red-500 text-sm mt-1">{errors.relationship}</p>
@@ -163,7 +179,9 @@ const ContactForm: React.FC<ContactFormProps> = ({
         </div>
 
         <div>
-          <div className="block mb-1">Priority</div>
+          <div className="block mb-1" id="priority-label">
+            Priority
+          </div>
           <select
             name="priority"
             value={formData.priority}
@@ -171,6 +189,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
             className={`w-full p-2 rounded border ${
               isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
             }`}
+            aria-labelledby="priority-label"
           >
             <option value="1">High</option>
             <option value="2">Medium</option>
@@ -179,7 +198,9 @@ const ContactForm: React.FC<ContactFormProps> = ({
         </div>
 
         <div>
-          <div className="block mb-1">Role</div>
+          <div className="block mb-1" id="role-label">
+            Role
+          </div>
           <select
             name="role"
             value={formData.role}
@@ -187,6 +208,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
             className={`w-full p-2 rounded border ${
               isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
             }`}
+            aria-labelledby="role-label"
           >
             <option value="General">General</option>
             <option value="Medical">Medical</option>

@@ -25,10 +25,15 @@ interface VerificationResponse {
   error?: string;
 }
 
-const VerifyEmergencyContact: React.FC<VerifyEmergencyContactProps> = ({ isDarkMode, toggleTheme }) => {
+const VerifyEmergencyContact: React.FC<VerifyEmergencyContactProps> = ({
+  isDarkMode,
+  toggleTheme,
+}) => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [verificationStatus, setVerificationStatus] = useState<'loading' | 'success' | 'error'>('loading');
+  const [verificationStatus, setVerificationStatus] = useState<'loading' | 'success' | 'error'>(
+    'loading'
+  );
   const [contactData, setContactData] = useState<ContactData | null>(null);
   const token = searchParams.get('token');
   const contactId = searchParams.get('contactId');
@@ -63,7 +68,7 @@ const VerifyEmergencyContact: React.FC<VerifyEmergencyContactProps> = ({ isDarkM
           throw new Error(`Verification failed with status: ${response.status}`);
         }
 
-        const data = await response.json() as VerificationResponse;
+        const data = (await response.json()) as VerificationResponse;
 
         if (data.success) {
           setVerificationStatus('success');
@@ -78,7 +83,9 @@ const VerifyEmergencyContact: React.FC<VerifyEmergencyContactProps> = ({ isDarkM
       } catch (error) {
         console.error('Error verifying contact:', error);
         setVerificationStatus('error');
-        toast.error(`Failed to verify contact: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        toast.error(
+          `Failed to verify contact: ${error instanceof Error ? error.message : 'Unknown error'}`
+        );
       }
     };
 

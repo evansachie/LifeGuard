@@ -40,10 +40,13 @@ const generateSignature = async (timestamp: number, folder: string): Promise<str
 
 interface CloudinaryResponse {
   secure_url: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
-const uploadToCloudinary = async (file: File, folder: string = 'profile_photos'): Promise<string> => {
+const uploadToCloudinary = async (
+  file: File,
+  folder: string = 'profile_photos'
+): Promise<string> => {
   try {
     const formData = new FormData();
     formData.append('file', file);

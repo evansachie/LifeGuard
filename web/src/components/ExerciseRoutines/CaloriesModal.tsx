@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect, useCallback } from 'react';
 import {
   FaFire,
   FaDumbbell,
@@ -39,7 +38,7 @@ interface CaloriesModalProps {
   isDarkMode: boolean;
 }
 
-const CaloriesModal: React.FC<CaloriesModalProps> = ({ isOpen, onClose, isDarkMode }) => {
+const CaloriesModal = ({ isOpen, onClose, isDarkMode }: CaloriesModalProps) => {
   const [period, setPeriod] = useState<Period>('7days');
   const [caloriesData, setCaloriesData] = useState<CaloriesData>({
     history: [],
@@ -95,11 +94,7 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ isOpen, onClose, isDarkMo
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
-                {p === '7days'
-                  ? 'Last 7 Days'
-                  : p === '30days'
-                    ? 'Last 30 Days'
-                    : 'Last 90 Days'}
+                {p === '7days' ? 'Last 7 Days' : p === '30days' ? 'Last 30 Days' : 'Last 90 Days'}
               </button>
             ))}
           </div>
@@ -158,9 +153,7 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ isOpen, onClose, isDarkMo
                     Total Calories
                   </p>
                   <p
-                    className={`text-2xl font-bold ${
-                      isDarkMode ? 'text-white' : 'text-gray-800'
-                    }`}
+                    className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}
                   >
                     {caloriesData.trends?.total_calories || 0}
                   </p>
@@ -180,9 +173,7 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ isOpen, onClose, isDarkMo
                     Avg. per Workout
                   </p>
                   <p
-                    className={`text-2xl font-bold ${
-                      isDarkMode ? 'text-white' : 'text-gray-800'
-                    }`}
+                    className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}
                   >
                     {Math.round(caloriesData.trends?.avg_calories_per_workout || 0)}
                   </p>
@@ -202,9 +193,7 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ isOpen, onClose, isDarkMo
                     Total Workouts
                   </p>
                   <p
-                    className={`text-2xl font-bold ${
-                      isDarkMode ? 'text-white' : 'text-gray-800'
-                    }`}
+                    className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}
                   >
                     {caloriesData.trends?.total_workouts || 0}
                   </p>
@@ -224,9 +213,7 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ isOpen, onClose, isDarkMo
                     Active Days
                   </p>
                   <p
-                    className={`text-2xl font-bold ${
-                      isDarkMode ? 'text-white' : 'text-gray-800'
-                    }`}
+                    className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}
                   >
                     {caloriesData.trends?.active_days || 0}
                   </p>
@@ -235,9 +222,7 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ isOpen, onClose, isDarkMo
             </div>
 
             {/* Calories History Chart */}
-            <div
-              className={`p-4 rounded-xl ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} mb-6`}
-            >
+            <div className={`p-4 rounded-xl ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} mb-6`}>
               <h3
                 className={`text-lg font-semibold mb-4 ${
                   isDarkMode ? 'text-white' : 'text-gray-800'
@@ -279,9 +264,7 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ isOpen, onClose, isDarkMo
 
             {/* History Table */}
             <div
-              className={`rounded-xl overflow-hidden ${
-                isDarkMode ? 'bg-gray-700' : 'bg-gray-50'
-              }`}
+              className={`rounded-xl overflow-hidden ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'}`}
             >
               <table className="w-full">
                 <thead>
@@ -296,36 +279,18 @@ const CaloriesModal: React.FC<CaloriesModalProps> = ({ isOpen, onClose, isDarkMo
                   {caloriesData.history.map((day) => (
                     <tr
                       key={day.date}
-                      className={`border-t ${
-                        isDarkMode ? 'border-gray-600' : 'border-gray-200'
-                      }`}
+                      className={`border-t ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}
                     >
-                      <td
-                        className={`px-4 py-3 ${
-                          isDarkMode ? 'text-gray-300' : 'text-gray-800'
-                        }`}
-                      >
+                      <td className={`px-4 py-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>
                         {new Date(day.date).toLocaleDateString()}
                       </td>
-                      <td
-                        className={`px-4 py-3 ${
-                          isDarkMode ? 'text-gray-300' : 'text-gray-800'
-                        }`}
-                      >
+                      <td className={`px-4 py-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>
                         {day.calories}
                       </td>
-                      <td
-                        className={`px-4 py-3 ${
-                          isDarkMode ? 'text-gray-300' : 'text-gray-800'
-                        }`}
-                      >
+                      <td className={`px-4 py-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>
                         {day.workout_count}
                       </td>
-                      <td
-                        className={`px-4 py-3 ${
-                          isDarkMode ? 'text-gray-300' : 'text-gray-800'
-                        }`}
-                      >
+                      <td className={`px-4 py-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>
                         {day.workout_types}
                       </td>
                     </tr>

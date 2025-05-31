@@ -129,8 +129,7 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({ isDarkMode }) => 
       !filters.status || (filters.status === 'active' ? med.Active : !med.Active);
 
     const matchesFrequency =
-      !filters.frequency || 
-      med.Frequency.toLowerCase() === filters.frequency.toLowerCase();
+      !filters.frequency || med.Frequency.toLowerCase() === filters.frequency.toLowerCase();
 
     const matchesTimeOfDay =
       !filters.timeOfDay ||
@@ -174,6 +173,9 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({ isDarkMode }) => 
             className={`p-3 rounded-full ${
               isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50'
             } shadow-lg`}
+            type="button"
+            aria-label="Open notification settings"
+            title="Notification Settings"
           >
             <FaBell className="text-blue-500" />
           </motion.button>
@@ -265,12 +267,16 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({ isDarkMode }) => 
                         onClick={() => setIsModalOpen(false)}
                         className={`rounded-full p-2 hover:bg-opacity-10 
                           ${isDarkMode ? 'hover:bg-white' : 'hover:bg-black'}`}
+                        type="button"
+                        aria-label="Close add medication modal"
+                        title="Close"
                       >
                         <svg
                           className="w-5 h-5"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
+                          aria-hidden="true"
                         >
                           <path
                             strokeLinecap="round"
@@ -341,12 +347,16 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({ isDarkMode }) => 
                         onClick={() => setEditingMedication(null)}
                         className={`rounded-full p-2 hover:bg-opacity-10 
                           ${isDarkMode ? 'hover:bg-white' : 'hover:bg-black'}`}
+                        type="button"
+                        aria-label="Close edit medication modal"
+                        title="Close"
                       >
                         <svg
                           className="w-5 h-5"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
+                          aria-hidden="true"
                         >
                           <path
                             strokeLinecap="round"

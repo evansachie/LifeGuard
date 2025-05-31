@@ -15,7 +15,7 @@ interface InputFieldProps {
   isDarkMode?: boolean;
 }
 
-const InputField: React.FC<InputFieldProps> = ({
+const InputField = ({
   type = 'text',
   name,
   value,
@@ -27,16 +27,20 @@ const InputField: React.FC<InputFieldProps> = ({
   iconPosition = 'left',
   style = {},
   isDarkMode = false,
-}) => {
+}: InputFieldProps) => {
   return (
     <div className={`input-field-container mb-4 ${className}`}>
       <div className="relative">
         {icon && iconPosition === 'left' && (
-          <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-            {React.isValidElement(icon) ? icon : React.createElement(icon as IconType, { size: 18 })}
+          <div
+            className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}
+          >
+            {React.isValidElement(icon)
+              ? icon
+              : React.createElement(icon as IconType, { size: 18 })}
           </div>
         )}
-        
+
         <input
           type={type}
           name={name}
@@ -52,13 +56,15 @@ const InputField: React.FC<InputFieldProps> = ({
           style={{
             paddingLeft: icon && iconPosition === 'left' ? '2.5rem' : undefined,
             paddingRight: icon && iconPosition === 'right' ? '2.5rem' : undefined,
-            ...style
+            ...style,
           }}
         />
-        
+
         {icon && iconPosition === 'right' && (
           <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-500 dark:text-gray-400">
-            {React.isValidElement(icon) ? icon : React.createElement(icon as IconType, { size: 18 })}
+            {React.isValidElement(icon)
+              ? icon
+              : React.createElement(icon as IconType, { size: 18 })}
           </div>
         )}
       </div>

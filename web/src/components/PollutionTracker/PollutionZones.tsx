@@ -16,12 +16,14 @@ const PollutionZones: React.FC<PollutionZonesProps> = ({ onZoneClick }) => {
 
     const handleMapClick = (event: mapboxgl.MapMouseEvent): void => {
       const features = map.queryRenderedFeatures(event.point, {
-        layers: pollutionZones.map(zone => `zone-${zone.id}`)
+        layers: pollutionZones.map((zone) => `zone-${zone.id}`),
       });
-      
+
       if (features.length > 0) {
         const zoneId = features[0].layer.id.replace('zone-', '');
-        const clickedZone = pollutionZones.find(zone => `zone-${zone.id}` === features[0].layer.id);
+        const clickedZone = pollutionZones.find(
+          (zone) => `zone-${zone.id}` === features[0].layer.id
+        );
         if (clickedZone) {
           onZoneClick(clickedZone);
         }
@@ -29,7 +31,7 @@ const PollutionZones: React.FC<PollutionZonesProps> = ({ onZoneClick }) => {
     };
 
     map.on('click', handleMapClick);
-    
+
     return () => {
       map.off('click', handleMapClick);
     };

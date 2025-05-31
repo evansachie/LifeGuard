@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { presetGoals } from '../../data/presetGoals';
 import Modal from '../Modal/Modal';
@@ -10,7 +9,7 @@ interface GoalsModalProps {
   isDarkMode: boolean;
 }
 
-const GoalsModal: React.FC<GoalsModalProps> = ({ isOpen, onClose, onSelectGoal, isDarkMode }) => {
+const GoalsModal = ({ isOpen, onClose, onSelectGoal, isDarkMode }: GoalsModalProps) => {
   return (
     <Modal
       isOpen={isOpen}
@@ -39,9 +38,7 @@ const GoalsModal: React.FC<GoalsModalProps> = ({ isOpen, onClose, onSelectGoal, 
               whileTap={{ scale: 0.98 }}
             >
               <goal.icon className={`text-2xl ${goal.color.replace('bg-', 'text-')}`} />
-              <span
-                className={`ml-3 font-medium ${isDarkMode ? 'text-white' : 'text-gray-800'}`}
-              >
+              <span className={`ml-3 font-medium ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
                 {goal.label}
               </span>
             </motion.button>

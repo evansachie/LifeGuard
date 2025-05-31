@@ -7,7 +7,10 @@ interface UserProfileSectionProps {
   displayName: string;
 }
 
-const UserProfileSection: React.FC<UserProfileSectionProps> = ({ profilePhotoUrl, displayName }) => {
+const UserProfileSection: React.FC<UserProfileSectionProps> = ({
+  profilePhotoUrl,
+  displayName,
+}) => {
   return (
     <div className="user-info">
       <div className="profile-picture-container">

@@ -8,17 +8,13 @@ interface PageHeaderProps {
   isDarkMode?: boolean;
 }
 
-const PageHeader = ({ 
-  onAddClick, 
-  onEmergencyAlert,
-  isDarkMode = false
-}: PageHeaderProps) => {
+const PageHeader = ({ onAddClick, onEmergencyAlert, isDarkMode = false }: PageHeaderProps) => {
   return (
     <>
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
-          <MdOutlineContactEmergency 
-            className={`text-3xl ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`} 
+          <MdOutlineContactEmergency
+            className={`text-3xl ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}
           />
           <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
             Emergency Contacts

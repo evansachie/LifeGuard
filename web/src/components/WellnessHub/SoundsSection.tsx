@@ -34,12 +34,12 @@ import {
 import { toast } from 'react-toastify';
 import NoMusicIcon from '../../assets/no-music.svg';
 import AccessibleDropdown from '../AccessibleDropdown/AccessibleDropdown';
-import { 
-  Sound, 
-  FavoriteSound, 
-  FavoriteResponse, 
+import {
+  Sound,
+  FavoriteSound,
+  FavoriteResponse,
   SearchFilters,
-  AudioPlayerContextType
+  AudioPlayerContextType,
 } from '../../types/wellnessHub.types';
 
 interface SoundsSectionProps {
@@ -88,21 +88,21 @@ const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
 
   const loadFavorites = useCallback(async (): Promise<void> => {
     if (!userId) return;
-    
+
     try {
       const userFavorites = await getFavorites(userId);
 
       const convertedFavorites: FavoriteSound[] = userFavorites.map((fav) => ({
         sound_id: fav.soundId,
         name: fav.name,
-        url: fav.url
+        url: fav.url,
       }));
-      
+
       setFavorites(convertedFavorites);
-      
+
       if (showFavoritesOnly) {
         const favoriteIds = convertedFavorites.map((fav) => fav.sound_id);
-        setSounds((prevSounds) => 
+        setSounds((prevSounds) =>
           prevSounds.filter((sound) => favoriteIds.includes(String(sound.id)))
         );
       }
@@ -145,9 +145,7 @@ const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
   useEffect(() => {
     if (showFavoritesOnly) {
       const favoriteIds = favorites.map((fav) => fav.sound_id);
-      setSounds((prev) => 
-        prev.filter((sound) => favoriteIds.includes(String(sound.id)))
-      );
+      setSounds((prev) => prev.filter((sound) => favoriteIds.includes(String(sound.id))));
     } else {
       debouncedFetchSounds(true);
     }
@@ -172,14 +170,14 @@ const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
         toast.success('Removed from favorites');
       } else {
         const result = await addToFavorites(userId, sound);
-        
+
         if ('error' in result) {
           // Handle already favorited case
           if (result.favorite) {
             const favSound: FavoriteSound = {
               sound_id: String(sound.id),
               name: sound.name,
-              url: sound.url || (sound.previews && sound.previews['preview-hq-mp3']) || ''
+              url: sound.url || (sound.previews && sound.previews['preview-hq-mp3']) || '',
             };
             setFavorites((prev) => [...prev, favSound]);
             toast.info('Sound is already in favorites');
@@ -191,9 +189,9 @@ const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
           const newFavorite: FavoriteSound = {
             sound_id: String(result.id || sound.id),
             name: result.name || sound.name,
-            url: result.url || (sound.previews && sound.previews['preview-hq-mp3']) || ''
+            url: result.url || (sound.previews && sound.previews['preview-hq-mp3']) || '',
           };
-          
+
           setFavorites((prev) => [...prev, newFavorite]);
           toast.success('Added to favorites');
         }
@@ -205,7 +203,8 @@ const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
 
   const toggleFullscreen = (): void => {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen()
+      document.documentElement
+        .requestFullscreen()
         .then(() => {
           setIsFullscreen(true);
         })
@@ -214,7 +213,8 @@ const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
         });
     } else {
       if (document.exitFullscreen) {
-        document.exitFullscreen()
+        document
+          .exitFullscreen()
           .then(() => {
             setIsFullscreen(false);
           })
@@ -298,7 +298,7 @@ const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
             toast.error('No preview available for this sound');
             return;
           }
-          
+
           const proxiedUrl = await getProxiedAudioUrl(previewUrl);
           audioRef.current.src = proxiedUrl;
           audioRef.current.load();

@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FaSearch } from 'react-icons/fa';
 
 interface SearchBoxProps {
-  searchQuery?: string;  // Make this prop optional or required based on usage
+  searchQuery?: string;
   onSearchChange: (query: string) => void;
   isDarkMode: boolean;
   placeholder?: string;
 }
 
-const SearchBox: React.FC<SearchBoxProps> = ({ 
-  searchQuery = '', 
-  onSearchChange, 
+const SearchBox: React.FC<SearchBoxProps> = ({
+  searchQuery = '',
+  onSearchChange,
   isDarkMode,
-  placeholder = "Search for help topics..." 
+  placeholder = 'Search for help topics...',
 }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     onSearchChange(e.target.value);

@@ -2,10 +2,10 @@ import React from 'react';
 import { FaSearch, FaFilter, FaStar } from 'react-icons/fa';
 import { SoundFiltersProps } from '../../types/wellnessHub.types';
 
-const SoundFilters: React.FC<SoundFiltersProps> = ({ 
-  filters, 
-  setFilters, 
-  onSearch, 
+const SoundFilters: React.FC<SoundFiltersProps> = ({
+  filters,
+  setFilters,
+  onSearch,
   isDarkMode,
 }) => {
   return (
@@ -31,7 +31,9 @@ const SoundFilters: React.FC<SoundFiltersProps> = ({
             placeholder="Search sounds..."
             value={filters.tags || ''}
             onChange={(e) => setFilters((prev) => ({ ...prev, tags: e.target.value }))}
-            onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && onSearch()}
+            onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) =>
+              e.key === 'Enter' && onSearch()
+            }
             className={`
               w-full pl-11 pr-4 py-3 rounded-lg
               focus:ring-2 focus:outline-none transition-colors

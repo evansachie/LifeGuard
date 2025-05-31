@@ -9,7 +9,10 @@ interface SectionNavigationProps {
   handleSectionChange: (section: WellnessSection) => void;
 }
 
-const SectionNavigation: React.FC<SectionNavigationProps> = ({ activeSection, handleSectionChange }) => (
+const SectionNavigation: React.FC<SectionNavigationProps> = ({
+  activeSection,
+  handleSectionChange,
+}) => (
   <div className="section-navigation">
     <motion.div className="nav-buttons">
       {(['breathing', 'meditation', 'sounds'] as WellnessSection[]).map((section) => (

@@ -1,7 +1,7 @@
 import React from 'react';
-import { FaTemperatureHigh, FaWalking } from 'react-icons/fa';
+import { FaTemperatureHigh, FaWalking, FaTimes, FaHeart, FaLungs } from 'react-icons/fa';
 import { WiHumidity, WiBarometer } from 'react-icons/wi';
-import { FaDownload, FaFileCsv } from 'react-icons/fa';
+import { FaDownload, FaFileCsv, FaChartLine, FaShieldAlt } from 'react-icons/fa';
 import { generateHealthReport, HealthReportData } from '../../data/health-report-data';
 import Modal from '../Modal/Modal';
 import { UserData } from '../../types/common.types';
@@ -13,14 +13,21 @@ interface HealthReportModalProps {
   isDarkMode: boolean;
 }
 
-const HealthReportModal: React.FC<HealthReportModalProps> = ({ isOpen, onClose, userData, isDarkMode }) => {
+const HealthReportModal: React.FC<HealthReportModalProps> = ({
+  isOpen,
+  onClose,
+  userData,
+  isDarkMode,
+}) => {
   const report: HealthReportData | null = isOpen ? generateHealthReport(userData) : null;
 
   const iconMapping = {
-    temperature: <FaTemperatureHigh size={32} />,
-    humidity: <WiHumidity size={32} />,
-    pressure: <WiBarometer size={42} />,
-    activityLevel: <FaWalking size={32} />,
+    temperature: <FaTemperatureHigh size={24} className="text-red-500" />,
+    humidity: <WiHumidity size={28} className="text-blue-500" />,
+    pressure: <WiBarometer size={32} className="text-purple-500" />,
+    activityLevel: <FaWalking size={24} className="text-green-500" />,
+    heartRate: <FaHeart size={24} className="text-red-500" />,
+    oxygenLevel: <FaLungs size={24} className="text-blue-500" />,
   };
 
   const handlePdfDownload = (): void => {
@@ -30,8 +37,8 @@ const HealthReportModal: React.FC<HealthReportModalProps> = ({ isOpen, onClose, 
   const handleCsvDownload = (): void => {
     if (!report) return;
 
-    // Convert report data to CSV format
     const csvData = [
+      ['LifeGuard Health Report'],
       ['Report ID', report.userInfo.reportId],
       ['Date', report.userInfo.date],
       ['Patient', report.userInfo.name],
@@ -57,12 +64,11 @@ const HealthReportModal: React.FC<HealthReportModalProps> = ({ isOpen, onClose, 
       .map((row) => row.join(','))
       .join('\n');
 
-    // Create and download CSV file
     const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
-    link.setAttribute('download', `health_report_${report.userInfo.reportId}.csv`);
+    link.setAttribute('download', `lifeguard_health_report_${report.userInfo.reportId}.csv`);
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
@@ -72,194 +78,407 @@ const HealthReportModal: React.FC<HealthReportModalProps> = ({ isOpen, onClose, 
   if (!report) return null;
 
   return (
-    <Modal 
-      isOpen={isOpen} 
-      onClose={onClose} 
-      maxWidth="max-w-4xl" 
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      maxWidth="max-w-6xl"
       isDarkMode={isDarkMode}
-      showCloseButton={true}
+      showCloseButton={false}
       zIndex="z-[1100]"
     >
-      <div className="w-full max-h-[80vh] overflow-y-auto">
-        {/* Header with Download Buttons */}
-        <div className="sticky top-0 z-10 flex justify-end items-center p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex gap-3">
-            <button
-              onClick={handlePdfDownload}
-              aria-label="Download PDF"
-              className="flex items-center gap-2 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md transition-colors text-sm font-medium"
-            >
-              <FaDownload /> PDF
-            </button>
-            <button
-              onClick={handleCsvDownload}
-              aria-label="Download CSV"
-              className="flex items-center gap-2 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md transition-colors text-sm font-medium"
-            >
-              <FaFileCsv /> CSV
-            </button>
+      <div
+        className={`w-full max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl ${
+          isDarkMode ? 'bg-gray-900' : 'bg-white'
+        }`}
+      >
+        {/* Modern Header with Gradient */}
+        <div
+          className={`relative overflow-hidden ${
+            isDarkMode
+              ? 'bg-gradient-to-br from-gray-800 via-gray-900 to-black'
+              : 'bg-gradient-to-br from-indigo-600 via-blue-600 to-purple-700'
+          }`}
+        >
+          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="relative p-6">
+            <div className="flex justify-between items-start">
+              <div className="flex items-center space-x-4">
+                <div
+                  className={`p-3 rounded-xl ${
+                    isDarkMode ? 'bg-white/10' : 'bg-white/20'
+                  } backdrop-blur-sm`}
+                >
+                  <FaShieldAlt className="text-2xl text-white" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold text-white mb-1">Health Analytics Report</h1>
+                  <div className="flex items-center space-x-4 text-white/80">
+                    <span className="flex items-center space-x-1">
+                      <span className="text-sm">ID:</span>
+                      <span className="font-mono text-sm">{report.userInfo.reportId}</span>
+                    </span>
+                    <span className="text-sm">{report.userInfo.date}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-3">
+                <button
+                  onClick={handlePdfDownload}
+                  className="flex items-center space-x-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-200 backdrop-blur-sm"
+                  type="button"
+                  aria-label="Download PDF"
+                >
+                  <FaDownload className="text-sm" />
+                  <span className="text-sm font-medium">PDF</span>
+                </button>
+                <button
+                  onClick={handleCsvDownload}
+                  className="flex items-center space-x-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-200 backdrop-blur-sm"
+                  type="button"
+                  aria-label="Download CSV"
+                >
+                  <FaFileCsv className="text-sm" />
+                  <span className="text-sm font-medium">CSV</span>
+                </button>
+                <button
+                  onClick={onClose}
+                  className="p-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-200 backdrop-blur-sm"
+                  type="button"
+                  aria-label="Close report"
+                >
+                  <FaTimes className="text-lg" />
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-4 p-4 bg-white/10 rounded-xl backdrop-blur-sm">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">
+                    {report.userInfo.name.charAt(0)}
+                  </span>
+                </div>
+                <div>
+                  <h2 className="text-xl font-semibold text-white">{report.userInfo.name}</h2>
+                  <p className="text-white/70">Patient Health Summary</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Report Content */}
-        <div className="p-4 md:p-6">
-          {/* Report Header */}
-          <div className="flex flex-col md:flex-row items-center md:items-start gap-4 mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
-            <div className="flex-shrink-0">
-              <img src="/images/lifeguard-2.svg" alt="LifeGuard Logo" className="h-20 w-auto" />
-            </div>
-            <div className="flex-grow text-center md:text-left">
-              <h3 className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">Health Report</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">
-                <span className="font-semibold">Report ID:</span> {report.userInfo.reportId}
-              </p>
-              <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">
-                <span className="font-semibold">Date:</span> {report.userInfo.date}
-              </p>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
-                <span className="font-semibold">Patient:</span> {report.userInfo.name}
-              </p>
-            </div>
-          </div>
-
-          {/* Vital Statistics Section */}
-          <section className="mb-6">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3 pb-1 border-b-2 border-gray-200 dark:border-gray-700">
-              Vital Statistics
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
-              {Object.entries(report.vitals).map(([key, value]) => (
-                <div 
-                  key={key} 
-                  className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm border border-gray-200 dark:border-gray-700 transition-transform hover:-translate-y-1 hover:shadow-md"
-                >
-                  <div className="flex justify-center text-indigo-500 dark:text-indigo-400 mb-2">
-                    {iconMapping[key as keyof typeof iconMapping] || <FaTemperatureHigh />}
-                  </div>
-                  <h3 className="text-md font-medium text-center text-gray-700 dark:text-gray-300 capitalize mb-1">
-                    {key.replace(/([A-Z])/g, ' $1').trim()}
-                  </h3>
-                  <div className="text-xl font-bold text-center text-gray-900 dark:text-gray-100 mb-2">
-                    {value.average}
-                  </div>
-                  <div 
-                    className={`
-                      text-xs font-semibold uppercase text-center py-1 px-2 rounded-full mx-auto w-fit
-                      ${value.status.toLowerCase() === 'normal' 
-                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400' 
-                        : value.status.toLowerCase() === 'low'
-                          ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
-                          : 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400'
-                      }
-                    `}
-                  >
-                    {value.status}
-                  </div>
+        {/* Scrollable Content */}
+        <div className="max-h-[60vh] overflow-y-auto">
+          <div className={`p-6 space-y-8 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+            {/* Vital Statistics - Enhanced Grid */}
+            <section>
+              <div className="flex items-center space-x-3 mb-6">
+                <div className={`p-2 rounded-lg ${isDarkMode ? 'bg-red-500/20' : 'bg-red-100'}`}>
+                  <FaHeart className={`text-lg ${isDarkMode ? 'text-red-400' : 'text-red-600'}`} />
                 </div>
-              ))}
-            </div>
-          </section>
+                <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                  Vital Statistics
+                </h2>
+              </div>
 
-          {/* Environmental Metrics Section */}
-          <section className="mb-6">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3 pb-1 border-b-2 border-gray-200 dark:border-gray-700">
-              Environmental Metrics
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {Object.entries(report.environmentalMetrics).map(([key, value]) => (
-                <div 
-                  key={key} 
-                  className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm border border-gray-200 dark:border-gray-700 transition-transform hover:-translate-y-1 hover:shadow-md"
-                >
-                  <h3 className="text-md font-medium text-gray-700 dark:text-gray-300 capitalize mb-1">
-                    {key.replace(/([A-Z])/g, ' $1').trim()}
-                  </h3>
-                  <div className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                    {value.average}
-                  </div>
-                  <div 
-                    className={`
-                      text-xs font-semibold uppercase py-1 px-2 rounded-full w-fit
-                      ${value.status.toLowerCase() === 'normal' || value.status.toLowerCase() === 'optimal'
-                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400' 
-                        : value.status.toLowerCase() === 'moderate'
-                          ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400'
-                          : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
-                      }
-                    `}
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                {Object.entries(report.vitals).map(([key, value]) => (
+                  <div
+                    key={key}
+                    className={`relative p-6 rounded-2xl border transition-all duration-300 hover:scale-105 ${
+                      isDarkMode
+                        ? 'bg-gray-800 border-gray-700 hover:border-gray-600'
+                        : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-lg'
+                    }`}
                   >
-                    {value.status}
+                    <div className="flex items-center justify-between mb-4">
+                      <div
+                        className={`p-3 rounded-xl ${
+                          value.status.toLowerCase() === 'normal'
+                            ? isDarkMode
+                              ? 'bg-green-500/20'
+                              : 'bg-green-100'
+                            : value.status.toLowerCase() === 'low'
+                              ? isDarkMode
+                                ? 'bg-red-500/20'
+                                : 'bg-red-100'
+                              : isDarkMode
+                                ? 'bg-yellow-500/20'
+                                : 'bg-yellow-100'
+                        }`}
+                      >
+                        {iconMapping[key as keyof typeof iconMapping] || <FaChartLine />}
+                      </div>
+                      <div
+                        className={`px-3 py-1 rounded-full text-xs font-bold ${
+                          value.status.toLowerCase() === 'normal'
+                            ? isDarkMode
+                              ? 'bg-green-500/20 text-green-400'
+                              : 'bg-green-100 text-green-800'
+                            : value.status.toLowerCase() === 'low'
+                              ? isDarkMode
+                                ? 'bg-red-500/20 text-red-400'
+                                : 'bg-red-100 text-red-800'
+                              : isDarkMode
+                                ? 'bg-yellow-500/20 text-yellow-400'
+                                : 'bg-yellow-100 text-yellow-800'
+                        }`}
+                      >
+                        {value.status}
+                      </div>
+                    </div>
+
+                    <h3
+                      className={`text-lg font-semibold mb-2 ${
+                        isDarkMode ? 'text-gray-200' : 'text-gray-700'
+                      }`}
+                    >
+                      {key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())}
+                    </h3>
+
+                    <div
+                      className={`text-3xl font-bold mb-3 ${
+                        isDarkMode ? 'text-white' : 'text-gray-900'
+                      }`}
+                    >
+                      {value.average}
+                    </div>
+
+                    <div className="flex justify-between text-sm">
+                      <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                        Min: {value.min}
+                      </span>
+                      <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                        Max: {value.max}
+                      </span>
+                    </div>
                   </div>
-                  {key === 'airQuality' && 'pollutants' in value && (
-                    <div className="mt-3 pt-2 border-t border-gray-200 dark:border-gray-700 text-sm">
-                      <p className="text-gray-600 dark:text-gray-400 mb-1">
-                        <span className="font-medium">PM2.5:</span> {value.pollutants.pm25}
-                      </p>
-                      <p className="text-gray-600 dark:text-gray-400 mb-1">
-                        <span className="font-medium">PM10:</span> {value.pollutants.pm10}
-                      </p>
-                      <p className="text-gray-600 dark:text-gray-400">
-                        <span className="font-medium">NO₂:</span> {value.pollutants.no2}
+                ))}
+              </div>
+            </section>
+
+            {/* Environmental Metrics - Modern Cards */}
+            <section>
+              <div className="flex items-center space-x-3 mb-6">
+                <div className={`p-2 rounded-lg ${isDarkMode ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
+                  <WiBarometer
+                    className={`text-xl ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}
+                  />
+                </div>
+                <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                  Environmental Metrics
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {Object.entries(report.environmentalMetrics).map(([key, value]) => (
+                  <div
+                    key={key}
+                    className={`p-6 rounded-2xl border transition-all duration-300 hover:scale-105 ${
+                      isDarkMode
+                        ? 'bg-gray-800 border-gray-700 hover:border-gray-600'
+                        : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-lg'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <h3
+                        className={`text-lg font-semibold ${
+                          isDarkMode ? 'text-gray-200' : 'text-gray-700'
+                        }`}
+                      >
+                        {key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())}
+                      </h3>
+                      <div
+                        className={`px-3 py-1 rounded-full text-xs font-bold ${
+                          value.status.toLowerCase() === 'normal' ||
+                          value.status.toLowerCase() === 'optimal'
+                            ? isDarkMode
+                              ? 'bg-green-500/20 text-green-400'
+                              : 'bg-green-100 text-green-800'
+                            : value.status.toLowerCase() === 'moderate'
+                              ? isDarkMode
+                                ? 'bg-yellow-500/20 text-yellow-400'
+                                : 'bg-yellow-100 text-yellow-800'
+                              : isDarkMode
+                                ? 'bg-red-500/20 text-red-400'
+                                : 'bg-red-100 text-red-800'
+                        }`}
+                      >
+                        {value.status}
+                      </div>
+                    </div>
+
+                    <div
+                      className={`text-2xl font-bold mb-4 ${
+                        isDarkMode ? 'text-white' : 'text-gray-900'
+                      }`}
+                    >
+                      {value.average}
+                    </div>
+
+                    {key === 'airQuality' && 'pollutants' in value && (
+                      <div
+                        className={`pt-4 border-t space-y-2 ${
+                          isDarkMode ? 'border-gray-700' : 'border-gray-200'
+                        }`}
+                      >
+                        <div className="flex justify-between">
+                          <span
+                            className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                          >
+                            PM2.5:
+                          </span>
+                          <span
+                            className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                          >
+                            {value.pollutants.pm25}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span
+                            className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                          >
+                            PM10:
+                          </span>
+                          <span
+                            className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                          >
+                            {value.pollutants.pm10}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span
+                            className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                          >
+                            NO₂:
+                          </span>
+                          <span
+                            className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                          >
+                            {value.pollutants.no2}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Activity Metrics */}
+            <section>
+              <div className="flex items-center space-x-3 mb-6">
+                <div
+                  className={`p-2 rounded-lg ${isDarkMode ? 'bg-green-500/20' : 'bg-green-100'}`}
+                >
+                  <FaWalking
+                    className={`text-lg ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}
+                  />
+                </div>
+                <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                  Activity Metrics
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {Object.entries(report.activityMetrics).map(([key, value]) => (
+                  <div
+                    key={key}
+                    className={`p-6 rounded-2xl border transition-all duration-300 hover:scale-105 ${
+                      isDarkMode
+                        ? 'bg-gray-800 border-gray-700 hover:border-gray-600'
+                        : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-lg'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <h3
+                        className={`text-lg font-semibold ${
+                          isDarkMode ? 'text-gray-200' : 'text-gray-700'
+                        }`}
+                      >
+                        {key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())}
+                      </h3>
+                      <div
+                        className={`px-3 py-1 rounded-full text-xs font-bold ${
+                          value.status.toLowerCase() === 'good' ||
+                          value.status.toLowerCase() === 'on track' ||
+                          value.status.toLowerCase() === 'improving'
+                            ? isDarkMode
+                              ? 'bg-green-500/20 text-green-400'
+                              : 'bg-green-100 text-green-800'
+                            : isDarkMode
+                              ? 'bg-yellow-500/20 text-yellow-400'
+                              : 'bg-yellow-100 text-yellow-800'
+                        }`}
+                      >
+                        {value.status}
+                      </div>
+                    </div>
+
+                    <div
+                      className={`text-2xl font-bold mb-2 ${
+                        isDarkMode ? 'text-white' : 'text-gray-900'
+                      }`}
+                    >
+                      {value.average}
+                    </div>
+
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                      Goal: {value.goal}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Recommendations - Enhanced */}
+            <section>
+              <div className="flex items-center space-x-3 mb-6">
+                <div
+                  className={`p-2 rounded-lg ${isDarkMode ? 'bg-purple-500/20' : 'bg-purple-100'}`}
+                >
+                  <FaChartLine
+                    className={`text-lg ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`}
+                  />
+                </div>
+                <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                  Health Recommendations
+                </h2>
+              </div>
+
+              <div
+                className={`p-6 rounded-2xl border-l-4 ${
+                  isDarkMode
+                    ? 'bg-gray-800 border-purple-500'
+                    : 'bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-500'
+                }`}
+              >
+                <div className="space-y-4">
+                  {report.recommendations.map((rec, index) => (
+                    <div key={index} className="flex items-start space-x-3">
+                      <div
+                        className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                          isDarkMode
+                            ? 'bg-purple-500/20 text-purple-400'
+                            : 'bg-purple-100 text-purple-700'
+                        }`}
+                      >
+                        {index + 1}
+                      </div>
+                      <p
+                        className={`text-sm leading-relaxed ${
+                          isDarkMode ? 'text-gray-300' : 'text-gray-700'
+                        }`}
+                      >
+                        {rec}
                       </p>
                     </div>
-                  )}
+                  ))}
                 </div>
-              ))}
-            </div>
-          </section>
-
-          {/* Activity Metrics Section */}
-          <section className="mb-6">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3 pb-1 border-b-2 border-gray-200 dark:border-gray-700">
-              Activity Metrics
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {Object.entries(report.activityMetrics).map(([key, value]) => (
-                <div 
-                  key={key} 
-                  className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm border border-gray-200 dark:border-gray-700 transition-transform hover:-translate-y-1 hover:shadow-md"
-                >
-                  <h3 className="text-md font-medium text-gray-700 dark:text-gray-300 capitalize mb-1">
-                    {key.replace(/([A-Z])/g, ' $1').trim()}
-                  </h3>
-                  <div className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                    {value.average}
-                  </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
-                    Goal: {value.goal}
-                  </p>
-                  <div 
-                    className={`
-                      text-xs font-semibold uppercase py-1 px-2 rounded-full w-fit
-                      ${value.status.toLowerCase() === 'good' || value.status.toLowerCase() === 'on track' || value.status.toLowerCase() === 'improving'
-                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400' 
-                        : 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400'
-                      }
-                    `}
-                  >
-                    {value.status}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* Recommendations Section */}
-          <section>
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3 pb-1 border-b-2 border-gray-200 dark:border-gray-700">
-              Recommendations
-            </h2>
-            <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4 border-l-4 border-indigo-500 dark:border-indigo-600">
-              <ul className="space-y-2">
-                {report.recommendations.map((rec, index) => (
-                  <li key={index} className="flex items-start">
-                    <span className="inline-block h-2 w-2 rounded-full bg-indigo-500 dark:bg-indigo-400 mt-2 mr-3"></span>
-                    <span className="text-gray-700 dark:text-gray-300">{rec}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </section>
+              </div>
+            </section>
+          </div>
         </div>
       </div>
 
@@ -270,7 +489,7 @@ const HealthReportModal: React.FC<HealthReportModalProps> = ({ isOpen, onClose, 
           body * { visibility: hidden; }
           .modal-content, .modal-content * { visibility: visible; }
           .modal-content { position: absolute; left: 0; top: 0; }
-          button, .close-button { display: none !important; }
+          button { display: none !important; }
         }
         `}
       </style>

@@ -70,22 +70,22 @@ const useAuth = (): LoginFormHook => {
 
 const LogIn: React.FC<AuthPageProps> = ({ isDarkMode, toggleTheme }) => {
   const authProps = useAuth();
-  
+
   const loginSlides = [
     {
       image: loginIllustration,
       text: 'Track your fitness routines and exercise progress with personalized feedback.',
-      alt: 'Fitness tracking illustration'
+      alt: 'Fitness tracking illustration',
     },
     {
       image: loginIllustration2,
       text: 'Access guided meditation and sleep tracking for better rest quality.',
-      alt: 'Meditation and sleep tracking illustration'
+      alt: 'Meditation and sleep tracking illustration',
     },
     {
       image: loginIllustration3,
       text: 'Monitor your workout metrics and health activities in one comprehensive dashboard.',
-      alt: 'Health dashboard illustration'
+      alt: 'Health dashboard illustration',
     },
   ];
 

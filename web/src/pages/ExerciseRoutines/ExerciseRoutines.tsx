@@ -141,12 +141,14 @@ const ExerciseRoutines: React.FC<ExerciseRoutinesProps> = ({ isDarkMode }) => {
                       ? `bg-[${level.color}] text-white border-[${level.color}]`
                       : `border-[${level.color}] text-[${level.color}] hover:bg-[${level.color}]/10`
                   }`}
-                  style={{
-                    '--tw-border-opacity': 1,
-                    borderColor: level.color,
-                    color: selectedLevel === level.id ? 'white' : level.color,
-                    backgroundColor: selectedLevel === level.id ? level.color : 'transparent',
-                  } as React.CSSProperties}
+                  style={
+                    {
+                      '--tw-border-opacity': 1,
+                      borderColor: level.color,
+                      color: selectedLevel === level.id ? 'white' : level.color,
+                      backgroundColor: selectedLevel === level.id ? level.color : 'transparent',
+                    } as React.CSSProperties
+                  }
                   onClick={() => setSelectedLevel(level.id as FitnessLevelType)}
                 >
                   {level.label}
@@ -262,16 +264,18 @@ const ExerciseRoutines: React.FC<ExerciseRoutinesProps> = ({ isDarkMode }) => {
             <div className="border-t border-gray-200 dark:border-gray-700 p-5">
               <h3 className="text-lg font-medium mb-4">More Exercises</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {workoutData[selectedLevel][selectedCategory]?.slice(1).map((exercise) => (
-                  <ExerciseCard
-                    key={exercise.id}
-                    exercise={exercise}
-                    onExerciseStart={handleExerciseClick}
-                    activeWorkout={activeWorkout}
-                    isDarkMode={isDarkMode}
-                    compact={true}
-                  />
-                ))}
+                {workoutData[selectedLevel][selectedCategory]
+                  ?.slice(1)
+                  .map((exercise) => (
+                    <ExerciseCard
+                      key={exercise.id}
+                      exercise={exercise}
+                      onExerciseStart={handleExerciseClick}
+                      activeWorkout={activeWorkout}
+                      isDarkMode={isDarkMode}
+                      compact={true}
+                    />
+                  ))}
               </div>
             </div>
           )}

@@ -40,6 +40,6 @@ const QuickAccess: React.FC<QuickAccessProps> = ({ isDarkMode }) => {
       </div>
     </div>
   );
-}
+};
 
 export default QuickAccess;

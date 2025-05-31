@@ -6,7 +6,7 @@ interface DashboardHeaderProps {
   dataLoading: boolean;
 }
 
-const DashboardHeader: React.FC<DashboardHeaderProps> = ({ userData, dataLoading }) => {
+const DashboardHeader = ({ userData, dataLoading }: DashboardHeaderProps) => {
   const getFirstName = (fullName?: string): string => {
     if (!fullName) return 'User';
     // If it's an email, show just the first part

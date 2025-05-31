@@ -93,13 +93,16 @@ const useHealthMetricsState = (): HealthMetricsState => {
     });
   }, []);
 
-  const setMetricsMemoized = useCallback((data: MetricsData | ((prev: MetricsData) => MetricsData)) => {
-    setMetricsData((prev) => {
-      const isEqual =
-        JSON.stringify(prev) === JSON.stringify(typeof data === 'function' ? data(prev) : data);
-      return isEqual ? prev : typeof data === 'function' ? data(prev) : data;
-    });
-  }, []);
+  const setMetricsMemoized = useCallback(
+    (data: MetricsData | ((prev: MetricsData) => MetricsData)) => {
+      setMetricsData((prev) => {
+        const isEqual =
+          JSON.stringify(prev) === JSON.stringify(typeof data === 'function' ? data(prev) : data);
+        return isEqual ? prev : typeof data === 'function' ? data(prev) : data;
+      });
+    },
+    []
+  );
 
   const setShowResultsMemoized = useCallback((value: boolean) => {
     setShowResults((prev) => (prev !== value ? value : prev));
@@ -113,13 +116,16 @@ const useHealthMetricsState = (): HealthMetricsState => {
     setIsLoading((prev) => (prev !== value ? value : prev));
   }, []);
 
-  const setMetricsHistoryMemoized = useCallback((data: MetricHistory[] | ((prev: MetricHistory[]) => MetricHistory[])) => {
-    setMetricsHistory((prev) => {
-      const isEqual =
-        JSON.stringify(prev) === JSON.stringify(typeof data === 'function' ? data(prev) : data);
-      return isEqual ? prev : typeof data === 'function' ? data(prev) : data;
-    });
-  }, []);
+  const setMetricsHistoryMemoized = useCallback(
+    (data: MetricHistory[] | ((prev: MetricHistory[]) => MetricHistory[])) => {
+      setMetricsHistory((prev) => {
+        const isEqual =
+          JSON.stringify(prev) === JSON.stringify(typeof data === 'function' ? data(prev) : data);
+        return isEqual ? prev : typeof data === 'function' ? data(prev) : data;
+      });
+    },
+    []
+  );
 
   const metrics = {
     data: metricsData,

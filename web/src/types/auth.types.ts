@@ -1,4 +1,4 @@
-import { UserProfile } from "./api.types";
+import { UserProfile } from './api.types';
 
 export interface User {
   id: string;
@@ -21,7 +21,12 @@ export interface AuthContextType {
   verifyOTP: (email: string, otp: string) => Promise<boolean>;
   resendOTP: (email: string) => Promise<boolean>;
   forgotPassword: (email: string) => Promise<boolean>;
-  resetPassword: (email: string, token: string, newPassword: string, confirmPassword: string) => Promise<boolean>;
+  resetPassword: (
+    email: string,
+    token: string,
+    newPassword: string,
+    confirmPassword: string
+  ) => Promise<boolean>;
   updateProfile: (profileData: Partial<UserProfile>) => Promise<void>;
 }
 

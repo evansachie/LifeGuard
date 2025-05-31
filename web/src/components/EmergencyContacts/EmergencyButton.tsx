@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaBell } from 'react-icons/fa';
 
 interface EmergencyButtonProps {
@@ -7,11 +6,11 @@ interface EmergencyButtonProps {
   isDarkMode?: boolean;
 }
 
-const EmergencyButton: React.FC<EmergencyButtonProps> = ({ 
-  onClick, 
+const EmergencyButton = ({
+  onClick,
   disabled = false,
-  isDarkMode = false 
-}) => {
+  isDarkMode = false,
+}: EmergencyButtonProps) => {
   return (
     <button
       onClick={onClick}

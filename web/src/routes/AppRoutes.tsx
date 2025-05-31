@@ -102,7 +102,10 @@ const AppRoutes: React.FC<AppRoutesProps> = ({ isDarkMode, toggleTheme }) => {
         <Route path="/wellness-hub" element={<WellnessHub isDarkMode={isDarkMode} />} />
         <Route path="/emergency-contacts" element={<EmergencyContacts isDarkMode={isDarkMode} />} />
         <Route path="/profile" element={<Profile isDarkMode={isDarkMode} />} />
-        <Route path="/settings" element={<Settings isDarkMode={isDarkMode} toggleDarkMode={undefined} />} />
+        <Route
+          path="/settings"
+          element={<Settings isDarkMode={isDarkMode} toggleDarkMode={undefined} />}
+        />
         <Route path="/help" element={<Help isDarkMode={isDarkMode} />} />
         <Route path="/terms-of-use" element={<TermsOfUse isDarkMode={isDarkMode} />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy isDarkMode={isDarkMode} />} />
