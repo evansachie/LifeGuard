@@ -3,7 +3,6 @@ import { FaSearch, FaSpinner } from 'react-icons/fa';
 import { searchMedications } from '../../services/medicationSearchService';
 import { debounce } from 'lodash';
 import { MedicationSearchProps, MedicationSearchItem } from '../../types/medicationTracker.types';
-import { ariaSelected } from '../../utils/accessibilityUtils';
 
 const MedicationSearch: React.FC<MedicationSearchProps> = ({ value, onChange, isDarkMode }) => {
   const [query, setQuery] = useState<string>(value || '');
@@ -18,7 +17,7 @@ const MedicationSearch: React.FC<MedicationSearchProps> = ({ value, onChange, is
     if (value !== query) {
       setQuery(value || '');
     }
-  }, [value]);
+  }, [query, value]);
 
   const debouncedSearch = useRef(
     debounce(async (searchQuery: string) => {
@@ -157,7 +156,7 @@ const MedicationSearch: React.FC<MedicationSearchProps> = ({ value, onChange, is
               key={medication.id}
               id={`medication-${index}`}
               role="option"
-              {...ariaSelected(index === activeIndex)}
+              aria-selected={index === activeIndex ? 'true' : 'false'}
               className={`cursor-pointer px-4 py-2 ${
                 index === activeIndex ? (isDarkMode ? 'bg-gray-700' : 'bg-gray-100') : ''
               } hover:bg-opacity-10

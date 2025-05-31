@@ -20,13 +20,7 @@ module.exports = {
     'plugin:jsx-a11y/recommended',
     'eslint-config-prettier',
   ],
-  plugins: [
-    '@typescript-eslint',
-    'react',
-    'react-hooks',
-    'jsx-a11y',
-    'prettier',
-  ],
+  plugins: ['@typescript-eslint', 'react', 'react-hooks', 'jsx-a11y', 'prettier'],
   rules: {
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
