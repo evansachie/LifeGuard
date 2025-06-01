@@ -1,22 +1,8 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-  ReactNode,
-} from 'react';
+import { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { toast } from 'react-toastify';
-import type {
-  BLEContextType,
-  BLEDevice,
-  SensorReading,
-  EnvironmentalData,
-  MotionData,
-} from '../types/ble.types';
-import type { HealthMetrics } from '../types/api.types';
+import { BLEContextType, BLEDevice, SensorData, emptySensorData } from '../types/ble.types';
 
-const BLEContext = createContext<BLEContextType | undefined>(undefined);
+const BLEContext = createContext<BLEContextType | null>(null);
 
 interface BLEProviderProps {
   children: ReactNode;
@@ -27,111 +13,90 @@ export const BLEProvider: React.FC<BLEProviderProps> = ({ children }) => {
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
   const [connectedDevice, setConnectedDevice] = useState<BLEDevice | null>(null);
-  const [latestSensorData, setLatestSensorData] = useState<{
-    environmental?: EnvironmentalData;
-    motion?: MotionData;
-    health?: HealthMetrics;
-  }>({});
+  const [latestSensorData, setLatestSensorData] = useState<SensorData>(emptySensorData);
 
-  // Check if Web Bluetooth is supported
-  const isBluetoothSupported = (): boolean => {
-    return 'bluetooth' in navigator;
-  };
+  const sensorIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Simulate sensor data for development/testing
-  const generateMockSensorData = useCallback((): void => {
-    const mockEnvironmentalData: EnvironmentalData = {
-      temperature: 22 + Math.random() * 8, // 22-30°C
-      humidity: 40 + Math.random() * 30, // 40-70%
-      pressure: 1013 + Math.random() * 20, // 1013-1033 hPa
-      airQuality: {
-        aqi: Math.floor(50 + Math.random() * 100), // 50-150 AQI
-        co2: 400 + Math.random() * 200, // 400-600 ppm
-        voc: Math.random() * 500, // 0-500 ppb
-        pm25: Math.random() * 35, // 0-35 µg/m³
-        pm10: Math.random() * 50, // 0-50 µg/m³
-      },
-      timestamp: new Date().toISOString(),
-      location: {
-        latitude: 5.6037 + (Math.random() - 0.5) * 0.01, // Around Accra, Ghana
-        longitude: -0.187 + (Math.random() - 0.5) * 0.01,
-      },
-    };
-
-    const mockMotionData: MotionData = {
-      accelerometer: {
-        x: (Math.random() - 0.5) * 2,
-        y: (Math.random() - 0.5) * 2,
-        z: 9.8 + (Math.random() - 0.5) * 0.5,
-      },
-      gyroscope: {
-        x: (Math.random() - 0.5) * 10,
-        y: (Math.random() - 0.5) * 10,
-        z: (Math.random() - 0.5) * 10,
-      },
-      magnetometer: {
-        x: (Math.random() - 0.5) * 100,
-        y: (Math.random() - 0.5) * 100,
-        z: (Math.random() - 0.5) * 100,
-      },
-      activity: ['stationary', 'walking', 'running', 'cycling'][
-        Math.floor(Math.random() * 4)
-      ] as any,
-      stepCount: Math.floor(Math.random() * 10000),
-      fallDetected: Math.random() < 0.01, // 1% chance of fall detection
-      timestamp: new Date().toISOString(),
-    };
-
-    const mockHealthData: HealthMetrics = {
-      userId: localStorage.getItem('userId') || '',
-      heartRate: 60 + Math.random() * 40, // 60-100 bpm
-      bloodPressure: {
-        systolic: 110 + Math.random() * 30, // 110-140 mmHg
-        diastolic: 70 + Math.random() * 20, // 70-90 mmHg
-      },
-      temperature: 36.1 + Math.random() * 1.5, // 36.1-37.6°C
-      oxygenSaturation: 95 + Math.random() * 5, // 95-100%
-      timestamp: new Date().toISOString(),
-    };
-
-    setLatestSensorData({
-      environmental: mockEnvironmentalData,
-      motion: mockMotionData,
-      health: mockHealthData,
-    });
-  }, []);
-
-  // Start scanning for BLE devices
-  const startScanning = useCallback(async (): Promise<void> => {
-    if (!isBluetoothSupported()) {
-      toast.error('Web Bluetooth is not supported in this browser');
-      return;
+  const connect = async (deviceId: string): Promise<void> => {
+    if (!navigator.bluetooth) {
+      throw new Error('Web Bluetooth is not supported in this browser');
     }
 
+    setIsConnecting(true);
     try {
-      setIsScanning(true);
+      const bluetoothDevice = await navigator.bluetooth.requestDevice({
+        acceptAllDevices: true,
+        optionalServices: ['battery_service', 'device_information'],
+      });
 
-      // For now, simulate device discovery
+      const device: BLEDevice = {
+        id: bluetoothDevice.id || deviceId,
+        name: bluetoothDevice.name || `BLE Device ${deviceId}`,
+        connected: true,
+        batteryLevel: 85,
+        lastSeen: new Date().toISOString(),
+      };
+
+      setConnectedDevice(device);
+      setDevices((prev) => {
+        const existingIndex = prev.findIndex((d) => d.id === device.id);
+        if (existingIndex >= 0) {
+          const updated = [...prev];
+          updated[existingIndex] = { ...updated[existingIndex], connected: true };
+          return updated;
+        }
+        return [...prev, device];
+      });
+
+      startSensorDataSimulation();
+    } catch (error) {
+      console.error('Error connecting to device:', error);
+      throw error;
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  const disconnect = async (deviceId: string): Promise<void> => {
+    try {
+      setConnectedDevice(null);
+      setDevices((prev) => prev.map((d) => (d.id === deviceId ? { ...d, connected: false } : d)));
+      setLatestSensorData(emptySensorData);
+
+      if (sensorIntervalRef.current) {
+        clearInterval(sensorIntervalRef.current);
+        sensorIntervalRef.current = null;
+      }
+
+      toast.success(`Disconnected from device`);
+    } catch (error: any) {
+      console.error('Error disconnecting from device:', error);
+      toast.error(`Failed to disconnect: ${error.message}`);
+    }
+  };
+
+  const startScanning = async (): Promise<void> => {
+    if (!navigator.bluetooth) {
+      throw new Error('Web Bluetooth is not supported in this browser');
+    }
+
+    setIsScanning(true);
+    try {
       setTimeout(() => {
         const mockDevices: BLEDevice[] = [
           {
-            id: 'nicla-001',
-            name: 'Arduino Nicla Sense ME',
+            id: 'device-1',
+            name: 'LifeGuard Sensor Pro',
             connected: false,
-            batteryLevel: 85,
-            lastSeen: new Date().toISOString(),
-            deviceType: 'nicla',
+            deviceType: 'health-monitor',
           },
           {
-            id: 'heart-001',
-            name: 'Heart Rate Monitor',
+            id: 'device-2',
+            name: 'Environmental Monitor',
             connected: false,
-            batteryLevel: 72,
-            lastSeen: new Date().toISOString(),
-            deviceType: 'heart_rate',
+            deviceType: 'environmental',
           },
         ];
-
         setDevices(mockDevices);
         setIsScanning(false);
         toast.success('Found BLE devices');
@@ -141,100 +106,152 @@ export const BLEProvider: React.FC<BLEProviderProps> = ({ children }) => {
       toast.error(`Failed to start scanning: ${error.message}`);
       setIsScanning(false);
     }
-  }, []);
+  };
 
-  // Stop scanning for BLE devices
-  const stopScanning = useCallback((): void => {
+  const stopScanning = (): void => {
     setIsScanning(false);
     toast.info('Stopped scanning for devices');
+  };
+
+  const sendCommand = async (deviceId: string, command: string): Promise<void> => {
+    console.log(`Sending command "${command}" to device ${deviceId}`);
+    // Implement command sending logic
+  };
+
+  const startSensorDataSimulation = (): void => {
+    if (sensorIntervalRef.current) {
+      clearInterval(sensorIntervalRef.current);
+    }
+
+    sensorIntervalRef.current = setInterval(() => {
+      if (connectedDevice) {
+        const newSensorData: SensorData = {
+          environmental: {
+            temperature: 20 + Math.random() * 10,
+            humidity: 40 + Math.random() * 20,
+            pressure: 1000 + Math.random() * 50,
+            airQuality: {
+              aqi: 50 + Math.random() * 100,
+              co2: 400 + Math.random() * 200,
+              voc: 0.1 + Math.random() * 0.5,
+              pm25: 10 + Math.random() * 20,
+              pm10: 15 + Math.random() * 25,
+            },
+            timestamp: new Date().toISOString(),
+          },
+          motion: {
+            accelerometer: {
+              x: (Math.random() - 0.5) * 2,
+              y: (Math.random() - 0.5) * 2,
+              z: 9.8 + (Math.random() - 0.5) * 0.5,
+            },
+            gyroscope: {
+              x: (Math.random() - 0.5) * 10,
+              y: (Math.random() - 0.5) * 10,
+              z: (Math.random() - 0.5) * 10,
+            },
+            magnetometer: {
+              x: (Math.random() - 0.5) * 100,
+              y: (Math.random() - 0.5) * 100,
+              z: (Math.random() - 0.5) * 100,
+            },
+            activity: ['stationary', 'walking', 'running'][Math.floor(Math.random() * 3)] as
+              | 'stationary'
+              | 'walking'
+              | 'running',
+            stepCount: Math.floor(Math.random() * 10000),
+            fallDetected: Math.random() < 0.01,
+            timestamp: new Date().toISOString(),
+          },
+          health: {
+            heartRate: 60 + Math.random() * 40,
+            bloodPressure: {
+              systolic: 110 + Math.random() * 20,
+              diastolic: 70 + Math.random() * 15,
+            },
+            oxygenSaturation: 95 + Math.random() * 5,
+            bodyTemperature: 36.5 + Math.random() * 1,
+            timestamp: new Date().toISOString(),
+          },
+          timestamp: new Date().toISOString(),
+        };
+
+        setLatestSensorData(newSensorData);
+      } else {
+        if (sensorIntervalRef.current) {
+          clearInterval(sensorIntervalRef.current);
+          sensorIntervalRef.current = null;
+        }
+      }
+    }, 2000);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (sensorIntervalRef.current) {
+        clearInterval(sensorIntervalRef.current);
+      }
+    };
   }, []);
-  // Connect to a BLE device
-  const connect = useCallback(
-    async (deviceId: string): Promise<void> => {
-      try {
-        setIsConnecting(true);
-        const device = devices.find((d) => d.id === deviceId);
-        if (!device) {
-          throw new Error('Device not found');
-        }
 
-        // Simulate connection process
-        toast.info(`Connecting to ${device.name}...`);
-
-        // Update device status
-        setDevices((prev) =>
-          prev.map(
-            (d) => (d.id === deviceId ? { ...d, connected: true } : { ...d, connected: false }) // Disconnect other devices
-          )
-        );
-
-        setConnectedDevice({ ...device, connected: true });
-        toast.success(`Connected to ${device.name}`);
-
-        // Start generating mock sensor data
-        generateMockSensorData();
-      } catch (error: any) {
-        console.error('Error connecting to device:', error);
-        toast.error(`Failed to connect: ${error.message}`);
-      } finally {
-        setIsConnecting(false);
-      }
-    },
-    [devices, generateMockSensorData]
-  );
-
-  // Disconnect from a BLE device
-  const disconnect = useCallback(
-    async (deviceId: string): Promise<void> => {
-      try {
-        const device = devices.find((d) => d.id === deviceId);
-        if (!device) {
-          throw new Error('Device not found');
-        }
-
-        // Update device status
-        setDevices((prev) => prev.map((d) => (d.id === deviceId ? { ...d, connected: false } : d)));
-
-        setConnectedDevice(null);
-        setLatestSensorData({});
-
-        toast.success(`Disconnected from ${device.name}`);
-      } catch (error: any) {
-        console.error('Error disconnecting from device:', error);
-        toast.error(`Failed to disconnect: ${error.message}`);
-      }
-    },
-    [devices]
-  );
-
-  // Send command to BLE device
-  const sendCommand = useCallback(
-    async (deviceId: string, command: string): Promise<void> => {
-      try {
-        const device = devices.find((d) => d.id === deviceId);
-        if (!device || !device.connected) {
-          throw new Error('Device not connected');
-        }
-
-        // Simulate command sending
-        console.log(`Sending command "${command}" to ${device.name}`);
-        toast.success(`Command sent to ${device.name}`);
-      } catch (error: any) {
-        console.error('Error sending command:', error);
-        toast.error(`Failed to send command: ${error.message}`);
-      }
-    },
-    [devices]
-  );
-
-  // Periodically update sensor data when connected
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
     if (connectedDevice) {
       interval = setInterval(() => {
-        generateMockSensorData();
-      }, 5000); // Update every 5 seconds
+        setLatestSensorData((prevData) => ({
+          ...prevData,
+          environmental: {
+            temperature: 20 + Math.random() * 10,
+            humidity: 40 + Math.random() * 20,
+            pressure: 1000 + Math.random() * 50,
+            airQuality: {
+              aqi: 50 + Math.random() * 100,
+              co2: 400 + Math.random() * 200,
+              voc: 0.1 + Math.random() * 0.5,
+              pm25: 10 + Math.random() * 20,
+              pm10: 15 + Math.random() * 25,
+            },
+            timestamp: new Date().toISOString(),
+            location: prevData.environmental?.location,
+          },
+          motion: {
+            accelerometer: {
+              x: (Math.random() - 0.5) * 2,
+              y: (Math.random() - 0.5) * 2,
+              z: 9.8 + (Math.random() - 0.5) * 0.5,
+            },
+            gyroscope: {
+              x: (Math.random() - 0.5) * 10,
+              y: (Math.random() - 0.5) * 10,
+              z: (Math.random() - 0.5) * 10,
+            },
+            magnetometer: {
+              x: (Math.random() - 0.5) * 100,
+              y: (Math.random() - 0.5) * 100,
+              z: (Math.random() - 0.5) * 100,
+            },
+            activity: ['stationary', 'walking', 'running'][Math.floor(Math.random() * 3)] as
+              | 'stationary'
+              | 'walking'
+              | 'running',
+            stepCount: Math.floor(Math.random() * 10000),
+            fallDetected: Math.random() < 0.01,
+            timestamp: new Date().toISOString(),
+          },
+          health: {
+            heartRate: 60 + Math.random() * 40,
+            bloodPressure: {
+              systolic: 110 + Math.random() * 20,
+              diastolic: 70 + Math.random() * 15,
+            },
+            oxygenSaturation: 95 + Math.random() * 5,
+            bodyTemperature: 36.5 + Math.random() * 1,
+            timestamp: new Date().toISOString(),
+          },
+          timestamp: new Date().toISOString(),
+        }));
+      }, 5000);
     }
 
     return () => {
@@ -242,9 +259,8 @@ export const BLEProvider: React.FC<BLEProviderProps> = ({ children }) => {
         clearInterval(interval);
       }
     };
-  }, [connectedDevice, generateMockSensorData]);
+  }, [connectedDevice]);
 
-  // Handle fall detection alerts
   useEffect(() => {
     if (latestSensorData.motion?.fallDetected) {
       toast.error('⚠️ Fall detected! Emergency contacts will be notified.', {
@@ -252,6 +268,7 @@ export const BLEProvider: React.FC<BLEProviderProps> = ({ children }) => {
       });
     }
   }, [latestSensorData.motion?.fallDetected]);
+
   const value: BLEContextType = {
     devices,
     isScanning,
@@ -262,8 +279,6 @@ export const BLEProvider: React.FC<BLEProviderProps> = ({ children }) => {
     startScanning,
     stopScanning,
     sendCommand,
-
-    // Backward compatibility aliases
     bleDevice: connectedDevice,
     isConnecting,
     sensorData: latestSensorData,
@@ -276,13 +291,12 @@ export const BLEProvider: React.FC<BLEProviderProps> = ({ children }) => {
 
 export const useBLE = (): BLEContextType => {
   const context = useContext(BLEContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useBLE must be used within a BLEProvider');
   }
   return context;
 };
 
-// Backward compatibility alias
 export const useBLEContext = useBLE;
 
 export default BLEContext;

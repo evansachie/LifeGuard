@@ -3,24 +3,15 @@ export interface BLEDevice {
   name: string;
   deviceId?: string;
   connected: boolean;
-}
-
-export interface SensorReading {
-  id: string;
-  deviceId: string;
-  sensorType: string;
-  value: number;
-  unit: string;
-  timestamp: string;
-  accuracy?: number;
+  batteryLevel?: number;
+  lastSeen?: string;
+  deviceType?: string;
 }
 
 export interface EnvironmentalData {
-  temperature?: number;
-  humidity?: number;
-  pressure?: number;
-  co2?: number;
-  gas?: number;
+  temperature: number;
+  humidity: number;
+  pressure: number;
   airQuality?: {
     aqi: number;
     co2: number;
@@ -28,31 +19,85 @@ export interface EnvironmentalData {
     pm25: number;
     pm10: number;
   };
+  timestamp: string;
+  location?: {
+    latitude: number;
+    longitude: number;
+  };
 }
 
 export interface MotionData {
-  steps?: number;
-  stepCount?: number;
-  activity?: string;
-  calories?: number;
-  distance?: number;
-}
-
-export interface HealthMetrics {
-  heartRate?: number;
+  accelerometer: {
+    x: number;
+    y: number;
+    z: number;
+  };
+  gyroscope: {
+    x: number;
+    y: number;
+    z: number;
+  };
+  magnetometer: {
+    x: number;
+    y: number;
+    z: number;
+  };
+  activity: 'stationary' | 'walking' | 'running' | 'cycling';
+  stepCount: number;
+  fallDetected: boolean;
+  timestamp: string;
 }
 
 export interface SensorData {
   environmental?: EnvironmentalData;
   motion?: MotionData;
+  health?: {
+    heartRate?: number;
+    bloodPressure?: {
+      systolic: number;
+      diastolic: number;
+    };
+    oxygenSaturation?: number;
+    bodyTemperature?: number;
+    timestamp?: string;
+  };
   timestamp?: string;
 }
 
+export interface SensorReading {
+  deviceId: string;
+  timestamp: string;
+  environmental?: EnvironmentalData;
+  motion?: MotionData;
+  health?: SensorData['health'];
+}
+
 export interface BLEContextType {
+  devices: BLEDevice[];
+  isScanning: boolean;
+  connectedDevice: BLEDevice | null;
+
+  latestSensorData: SensorData;
+  sensorData: SensorData;
+
+  connect: (deviceId: string) => Promise<void>;
+  disconnect: (deviceId: string) => Promise<void>;
+  startScanning: () => Promise<void>;
+  stopScanning: () => void;
+  sendCommand: (deviceId: string, command: string) => Promise<void>;
+
   bleDevice: BLEDevice | null;
   isConnecting: boolean;
-  sensorData: SensorData | null;
   connectToDevice: (deviceId: string) => Promise<void>;
   disconnectDevice: (deviceId: string) => Promise<void>;
   scanForDevices?: () => Promise<BLEDevice[]>;
 }
+
+export type { BLEDevice as Device, SensorData as Sensors, EnvironmentalData as Environment };
+
+export const emptySensorData: SensorData = {
+  environmental: undefined,
+  motion: undefined,
+  health: undefined,
+  timestamp: undefined,
+};
