@@ -239,11 +239,18 @@ export interface StatsData {
 
 export type ViewMode = 'grid' | 'list';
 export type SortOption = 'newest' | 'oldest' | 'priority';
-export type Timeframe = 'today' | 'week' | 'month' | 'quarter' | 'year';
+export type Timeframe = 'today' | 'week' | 'month' | 'year' | 'all';
 
 export interface TimeframeData {
-  id: Timeframe;
+  value: Timeframe;
   label: string;
+  shortLabel?: string;
+}
+
+export interface TimeframeSelectorProps {
+  selectedTimeframe: Timeframe;
+  onTimeframeChange: (timeframe: Timeframe) => void;
+  isDarkMode: boolean;
 }
 
 // Dashboard Controls Types

@@ -1,94 +1,296 @@
 .timeframe-selector {
   display: flex;
   align-items: center;
+  gap: 0.75rem;
   margin-bottom: 1.5rem;
   padding: 0.75rem 1rem;
-  border-radius: 10px;
-  background-color: #f3f4f6;
+  border-radius: 12px;
+  background-color: #f9fafb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
 .timeframe-selector.dark-mode {
   background-color: #2D2D2D;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .timeframe-label {
-  margin-right: 1rem;
+  font-weight: 600;
+  color: #374151;
   font-size: 0.9rem;
-  font-weight: 500;
-  color: #4b5563;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.timeframe-options {
+.timeframe-selector.dark-mode .timeframe-label {
+  color: #e2e8f0;
+}
+
+.timeframe-buttons {
   display: flex;
   gap: 0.5rem;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
 }
 
 .timeframe-btn {
   padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
   background-color: #fff;
   color: #4b5563;
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .timeframe-btn:hover {
-  background-color: #e5e7eb;
+  background-color: #f3f4f6;
+  border-color: #d1d5db;
 }
 
 .timeframe-btn.active {
   background-color: #3b82f6;
+  border-color: #3b82f6;
   color: white;
 }
 
-/* Dark mode styles */
-.timeframe-selector.dark-mode .timeframe-label {
-  color: #e2e8f0;
+.timeframe-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
 }
 
 .timeframe-selector.dark-mode .timeframe-btn {
-  background-color: #3C3C3C;
-  color: #e5e7eb;
+  background-color: #2A2A2A;
+  border-color: #4a5568;
+  color: #e2e8f0;
 }
 
 .timeframe-selector.dark-mode .timeframe-btn:hover {
-  background-color: #374151;
+  background-color: #4a5568;
+  border-color: #718096;
 }
 
 .timeframe-selector.dark-mode .timeframe-btn.active {
-  background-color: #5A5A5A;
+  background-color: #4299e1;
+  border-color: #4299e1;
   color: white;
 }
 
-/* Responsive styles */
+/* Responsive Styles */
 @media (max-width: 768px) {
   .timeframe-selector {
     flex-direction: column;
-    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    align-items: stretch;
   }
   
   .timeframe-label {
-    margin-bottom: 0.5rem;
+    text-align: center;
+    font-size: 0.85rem;
   }
   
-  .timeframe-options {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    width: 100%;
+  .timeframe-buttons {
+    justify-content: center;
+    gap: 0.4rem;
   }
   
   .timeframe-btn {
-    text-align: center;
-    width: 100%;
+    padding: 0.45rem 0.8rem;
+    font-size: 0.8rem;
+    flex: 1;
+    min-width: 0;
+    max-width: 120px;
+  }
+}
+
+@media (max-width: 640px) {
+  .timeframe-selector {
+    padding: 0.6rem;
+    gap: 0.5rem;
+  }
+  
+  .timeframe-buttons {
+    gap: 0.3rem;
+  }
+  
+  .timeframe-btn {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.75rem;
+    flex: 1;
+    min-width: 0;
   }
 }
 
 @media (max-width: 480px) {
-  .timeframe-options {
+  .timeframe-selector {
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .timeframe-label {
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .timeframe-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+    gap: 0.25rem;
+  }
+  
+  .timeframe-btn {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.7rem;
+    text-align: center;
+  }
+}
+
+@media (max-width: 375px) {
+  .timeframe-selector {
+    padding: 0.4rem;
+  }
+  
+  .timeframe-buttons {
     grid-template-columns: repeat(2, 1fr);
+    gap: 0.2rem;
+  }
+  
+  .timeframe-btn {
+    padding: 0.3rem 0.4rem;
+    font-size: 0.65rem;
+  }
+}
+
+/* When sidebar is active - adjust for reduced width */
+.sidebar-active .timeframe-selector {
+  max-width: calc(100vw - 280px);
+}
+
+@media (max-width: 1200px) {
+  .sidebar-active .timeframe-selector {
+    flex-direction: column;
     gap: 0.5rem;
+  }
+  
+  .sidebar-active .timeframe-buttons {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .sidebar-active .timeframe-btn {
+    flex: 0 1 auto;
+    min-width: 80px;
+  }
+}
+
+/* Force grid layout for very constrained spaces */
+@media (max-width: 900px) {
+  .timeframe-selector {
+    flex-direction: column !important;
+    gap: 0.5rem;
+  }
+  
+  .timeframe-buttons {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+    gap: 0.25rem;
+  }
+  
+  .timeframe-btn {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.5rem;
+  }
+}
+
+/* Horizontal scroll for overflow */
+@media (max-width: 600px) {
+  .timeframe-buttons-overflow {
+    overflow-x: auto;
+    overflow-y: hidden;
+    display: flex !important;
+    gap: 0.3rem;
+    padding-bottom: 2px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .timeframe-buttons-overflow .timeframe-btn {
+    flex-shrink: 0;
+    min-width: fit-content;
+  }
+}
+
+/* Scroll indicators */
+.timeframe-buttons-container {
+  position: relative;
+}
+
+.timeframe-buttons-container::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: 0;
+  bottom: 0;
+  width: 15px;
+  background: linear-gradient(to left, rgba(255,255,255,0.9) 0%, transparent 100%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.timeframe-selector.dark-mode .timeframe-buttons-container::after {
+  background: linear-gradient(to left, rgba(45,45,45,0.9) 0%, transparent 100%);
+}
+
+.timeframe-buttons-container.overflowing::after {
+  opacity: 1;
+}
+
+.timeframe-buttons-container:hover::after {
+  opacity: 1;
+}
+
+/* Keyboard navigation improvements */
+.timeframe-btn:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+.timeframe-selector.dark-mode .timeframe-btn:focus-visible {
+  outline-color: #4299e1;
+}
+
+/* Animation for smooth transitions */
+.timeframe-btn {
+  transform: translateY(0);
+  transition: all 0.2s ease, transform 0.1s ease;
+}
+
+.timeframe-btn:active {
+  transform: translateY(1px);
+}
+
+/* Improved touch targets for mobile */
+@media (max-width: 768px) {
+  .timeframe-btn {
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .timeframe-btn {
+    min-height: 36px;
   }
 }

@@ -42,11 +42,69 @@ const DashboardControls = forwardRef<DashboardControlsRef, DashboardControlsProp
     const [searchValue, setSearchValue] = useState<string>('');
     const [localFilters, setLocalFilters] = useState<FilterOptions>(filterOptions);
     const [localSort, setLocalSort] = useState<SortOption>(sortOption);
+    const [isMobile, setIsMobile] = useState<boolean>(false);
+    const [isOverflowing, setIsOverflowing] = useState<boolean>(false);
 
     // Refs
     const searchInputRef = useRef<HTMLInputElement>(null);
     const filterBtnRef = useRef<HTMLButtonElement>(null);
     const sortBtnRef = useRef<HTMLButtonElement>(null);
+    const controlsRightRef = useRef<HTMLDivElement>(null);
+    const controlsContainerRef = useRef<HTMLDivElement>(null);
+
+    // Detect mobile screen size and overflow
+    useEffect(() => {
+      const checkResponsive = () => {
+        const width = window.innerWidth;
+        setIsMobile(width <= 768);
+
+        // Check if controls are overflowing
+        if (controlsRightRef.current) {
+          const container = controlsRightRef.current;
+          const isOverflow = container.scrollWidth > container.clientWidth;
+          setIsOverflowing(isOverflow);
+          container.setAttribute('data-overflowing', isOverflow.toString());
+        }
+      };
+
+      checkResponsive();
+
+      const resizeObserver = new ResizeObserver(checkResponsive);
+      if (controlsContainerRef.current) {
+        resizeObserver.observe(controlsContainerRef.current);
+      }
+
+      window.addEventListener('resize', checkResponsive);
+
+      return () => {
+        window.removeEventListener('resize', checkResponsive);
+        resizeObserver.disconnect();
+      };
+    }, []);
+
+    // Check for sidebar state changes
+    useEffect(() => {
+      const checkSidebarState = () => {
+        const sidebarActive = document.querySelector('.sidebar')?.classList.contains('active');
+        if (controlsContainerRef.current) {
+          controlsContainerRef.current.classList.toggle('sidebar-active', !!sidebarActive);
+        }
+      };
+
+      checkSidebarState();
+
+      // Listen for sidebar state changes
+      const observer = new MutationObserver(checkSidebarState);
+      const sidebar = document.querySelector('.sidebar');
+      if (sidebar) {
+        observer.observe(sidebar, {
+          attributes: true,
+          attributeFilter: ['class'],
+        });
+      }
+
+      return () => observer.disconnect();
+    }, []);
 
     // Expose methods to parent component
     useImperativeHandle(ref, () => ({
@@ -81,20 +139,14 @@ const DashboardControls = forwardRef<DashboardControlsRef, DashboardControlsProp
     };
 
     const toggleFilterMenu = (): void => {
-      // Close sort menu first to avoid z-index conflicts
       setIsSortMenuOpen(false);
-
-      // Small timeout to ensure proper rendering
       setTimeout(() => {
         setIsFilterMenuOpen(!isFilterMenuOpen);
       }, 10);
     };
 
     const toggleSortMenu = (): void => {
-      // Close filter menu first to avoid z-index conflicts
       setIsFilterMenuOpen(false);
-
-      // Small timeout to ensure proper rendering
       setTimeout(() => {
         setIsSortMenuOpen(!isSortMenuOpen);
       }, 10);
@@ -126,7 +178,7 @@ const DashboardControls = forwardRef<DashboardControlsRef, DashboardControlsProp
       }
     };
 
-    // Close menus when clicking outside
+    // Close menus when clicking outside or on mobile when orientation changes
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent): void => {
         const target = event.target as HTMLElement;
@@ -140,20 +192,54 @@ const DashboardControls = forwardRef<DashboardControlsRef, DashboardControlsProp
         }
       };
 
+      const handleOrientationChange = (): void => {
+        if (isMobile) {
+          setIsFilterMenuOpen(false);
+          setIsSortMenuOpen(false);
+        }
+      };
+
       document.addEventListener('mousedown', handleClickOutside);
+      window.addEventListener('orientationchange', handleOrientationChange);
+
       return () => {
         document.removeEventListener('mousedown', handleClickOutside);
+        window.removeEventListener('orientationchange', handleOrientationChange);
       };
-    }, [isFilterMenuOpen, isSortMenuOpen]);
+    }, [isFilterMenuOpen, isSortMenuOpen, isMobile]);
+
+    // Auto-scroll to active button on mobile
+    const scrollToActiveButton = (buttonRef: React.RefObject<HTMLButtonElement>) => {
+      if ((isMobile || isOverflowing) && controlsRightRef.current && buttonRef.current) {
+        buttonRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'center',
+        });
+      }
+    };
+
+    const handleFilterToggle = () => {
+      toggleFilterMenu();
+      scrollToActiveButton(filterBtnRef);
+    };
+
+    const handleSortToggle = () => {
+      toggleSortMenu();
+      scrollToActiveButton(sortBtnRef);
+    };
 
     return (
-      <div className={`dashboard-controls ${isDarkMode ? 'dark-mode' : ''}`}>
+      <div
+        ref={controlsContainerRef}
+        className={`dashboard-controls ${isDarkMode ? 'dark-mode' : ''}`}
+      >
         <div className="search-container">
           <FaSearch className="search-icon" />
           <input
             ref={searchInputRef}
             type="text"
-            placeholder="Search dashboard... (Press / to focus)"
+            placeholder={isMobile ? 'Search...' : 'Search dashboard... (Press / to focus)'}
             value={searchValue}
             onChange={handleSearchChange}
             className="search-input"
@@ -161,19 +247,19 @@ const DashboardControls = forwardRef<DashboardControlsRef, DashboardControlsProp
           />
         </div>
 
-        <div className="controls-right">
+        <div ref={controlsRightRef} className="controls-right" data-overflowing={isOverflowing}>
           <div className="filter-container">
             <button
               ref={filterBtnRef}
               className={`control-btn ${isFilterMenuOpen ? 'active' : ''}`}
-              onClick={toggleFilterMenu}
+              onClick={handleFilterToggle}
               title="Filter (Ctrl+F)"
               aria-label="Toggle filter menu"
               {...ariaExpanded(isFilterMenuOpen)}
               aria-controls="filter-menu"
               type="button"
             >
-              <FaFilter /> <span>Filter</span> <FaChevronDown />
+              <FaFilter /> {!isMobile && <span>Filter</span>} <FaChevronDown />
             </button>
 
             {isFilterMenuOpen && (
@@ -191,12 +277,13 @@ const DashboardControls = forwardRef<DashboardControlsRef, DashboardControlsProp
                     onChange={handleFilterOptionChange}
                     aria-labelledby="temperature-label"
                   />
-                  <div
+                  <label
                     id="temperature-label"
+                    htmlFor="temperature"
                     className={`${isDarkMode ? 'text-white' : 'text-black'}`}
                   >
                     Temperature & Weather
-                  </div>
+                  </label>
                 </div>
                 <div className="filter-option">
                   <input
@@ -206,12 +293,13 @@ const DashboardControls = forwardRef<DashboardControlsRef, DashboardControlsProp
                     onChange={handleFilterOptionChange}
                     aria-labelledby="airQuality-label"
                   />
-                  <div
+                  <label
                     id="airQuality-label"
+                    htmlFor="airQuality"
                     className={`${isDarkMode ? 'text-white' : 'text-black'}`}
                   >
                     Air Quality
-                  </div>
+                  </label>
                 </div>
                 <div className="filter-option">
                   <input
@@ -221,9 +309,13 @@ const DashboardControls = forwardRef<DashboardControlsRef, DashboardControlsProp
                     onChange={handleFilterOptionChange}
                     aria-labelledby="alerts-label"
                   />
-                  <div id="alerts-label" className={`${isDarkMode ? 'text-white' : 'text-black'}`}>
+                  <label
+                    id="alerts-label"
+                    htmlFor="alerts"
+                    className={`${isDarkMode ? 'text-white' : 'text-black'}`}
+                  >
                     Alerts
-                  </div>
+                  </label>
                 </div>
               </div>
             )}
@@ -233,14 +325,14 @@ const DashboardControls = forwardRef<DashboardControlsRef, DashboardControlsProp
             <button
               ref={sortBtnRef}
               className={`control-btn ${isSortMenuOpen ? 'active' : ''}`}
-              onClick={toggleSortMenu}
+              onClick={handleSortToggle}
               title="Sort (Ctrl+S)"
               aria-label="Toggle sort menu"
               {...ariaExpanded(isSortMenuOpen)}
               aria-controls="sort-menu"
               type="button"
             >
-              <FaSortAmountDown /> <span>Sort</span> <FaChevronDown />
+              <FaSortAmountDown /> {!isMobile && <span>Sort</span>} <FaChevronDown />
             </button>
 
             {isSortMenuOpen && (
@@ -259,9 +351,13 @@ const DashboardControls = forwardRef<DashboardControlsRef, DashboardControlsProp
                     onChange={handleSortOptionChange}
                     aria-labelledby="newest-label"
                   />
-                  <div id="newest-label" className={`${isDarkMode ? 'text-white' : 'text-black'}`}>
+                  <label
+                    id="newest-label"
+                    htmlFor="newest"
+                    className={`${isDarkMode ? 'text-white' : 'text-black'}`}
+                  >
                     Newest First
-                  </div>
+                  </label>
                 </div>
                 <div className="sort-option">
                   <input
@@ -272,9 +368,13 @@ const DashboardControls = forwardRef<DashboardControlsRef, DashboardControlsProp
                     onChange={handleSortOptionChange}
                     aria-labelledby="oldest-label"
                   />
-                  <div id="oldest-label" className={`${isDarkMode ? 'text-white' : 'text-black'}`}>
+                  <label
+                    id="oldest-label"
+                    htmlFor="oldest"
+                    className={`${isDarkMode ? 'text-white' : 'text-black'}`}
+                  >
                     Oldest First
-                  </div>
+                  </label>
                 </div>
                 <div className="sort-option">
                   <input
@@ -285,12 +385,13 @@ const DashboardControls = forwardRef<DashboardControlsRef, DashboardControlsProp
                     onChange={handleSortOptionChange}
                     aria-labelledby="priority-label"
                   />
-                  <div
+                  <label
                     id="priority-label"
+                    htmlFor="priority"
                     className={`${isDarkMode ? 'text-white' : 'text-black'}`}
                   >
                     Priority
-                  </div>
+                  </label>
                 </div>
               </div>
             )}
