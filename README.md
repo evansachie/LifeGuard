@@ -310,6 +310,10 @@ lifeguard/
 
 ## 📚 API Documentation
 
+📖 **[View Complete API Documentation on Postman](https://documenter.getpostman.com/view/28591712/2sB2qak2v6)**
+
+*This interactive documentation includes request/response examples, authentication details, and testing capabilities for all endpoints.*
+
 Below is an overview of the core endpoints for the LifeGuard API.
 
 ### Main Service Endpoints 
@@ -423,11 +427,6 @@ These endpoints are served from the Node-Server (hosted at `https://lifeguard-no
 | GET        | `/api/user-preferences/notifications`  | Get user notification preferences               |
 | POST       | `/api/user-preferences/notifications`  | Update user notification preferences            |
 | POST       | `/api/user-preferences/send-test-email`| Send a test notification email to the user      |
-
-
-📖 **[View Complete API Documentation on Postman](https://documenter.getpostman.com/view/28591712/2sB2qak2v6)**
-
-*This interactive documentation includes request/response examples, authentication details, and testing capabilities for all endpoints.*
 
 ## 👥 Team
 
