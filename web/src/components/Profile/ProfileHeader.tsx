@@ -29,7 +29,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   editMode,
   handleImageChange,
   handleDeletePhoto,
-  isDarkMode = false, // Provide a default value
 }) => {
   const [profilePhotoUrl, setProfilePhotoUrl] = useState<string | null>(null);
 

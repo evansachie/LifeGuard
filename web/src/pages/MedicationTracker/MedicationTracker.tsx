@@ -156,7 +156,6 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({ isDarkMode }) => 
       exit={{ opacity: 0 }}
     >
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* Header with Title and Notification Settings Button */}
         <div className="flex justify-between items-center mb-8">
           <div className="text-center flex-1">
             <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">

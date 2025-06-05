@@ -48,27 +48,6 @@ export const useEmergencyContacts = (): EmergencyContactsHookReturn => {
     try {
       setIsSaving(true);
 
-      const payload = {
-        Name: formData.name,
-        Email: formData.email,
-        Phone: formData.phone,
-        Relationship: formData.relationship,
-        Priority: formData.priority,
-        Role: formData.role,
-      };
-
-      const endpoint = contactId
-        ? `${API_ENDPOINTS.EMERGENCY_CONTACTS}/${contactId}`
-        : API_ENDPOINTS.EMERGENCY_CONTACTS;
-
-      const method = contactId ? 'PUT' : 'POST';
-
-      const response = await fetchWithAuth(endpoint, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
       await fetchContacts();
 
       toast.success(contactId ? 'Contact updated successfully' : 'Contact added successfully');

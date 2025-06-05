@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaTemperatureHigh, FaTint, FaWalking, FaChartLine } from 'react-icons/fa';
 import { WiBarometer } from 'react-icons/wi';
 import { MdAir } from 'react-icons/md';

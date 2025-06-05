@@ -9,7 +9,6 @@ const TimeframeSelector: React.FC<TimeframeSelectorProps> = ({
 }) => {
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false);
-
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
 

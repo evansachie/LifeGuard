@@ -46,17 +46,20 @@ export const getAlertsByTimeframe = (timeframe: string): Alert[] => {
   const now = new Date();
 
   switch (timeframe) {
-    case 'today':
+    case 'today': {
       const today = new Date(now.setHours(0, 0, 0, 0));
       return alerts.filter((alert) => new Date(alert.timestamp) >= today);
+    }
 
-    case 'week':
+    case 'week': {
       const week = new Date(now.setDate(now.getDate() - 7));
       return alerts.filter((alert) => new Date(alert.timestamp) >= week);
+    }
 
-    case 'month':
+    case 'month': {
       const month = new Date(now.setMonth(now.getMonth() - 1));
       return alerts.filter((alert) => new Date(alert.timestamp) >= month);
+    }
 
     default:
       return alerts;

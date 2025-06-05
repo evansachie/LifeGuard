@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
-// Import types from the correct location
-import { EnvironmentalData, MotionData, SensorData as BLESensorData } from '../types/ble.types';
+import { SensorData as BLESensorData } from '../types/ble.types';
 
-// Export the HistoricalData interface so it can be imported by other files
 export interface HistoricalData {
   temperature: number[];
   humidity: number[];
@@ -10,10 +8,8 @@ export interface HistoricalData {
   co2: number[];
   gas: number[];
   timestamps: string[];
-  [key: string]: Array<number | string>;
 }
 
-// Use the imported types from BLE context
 const useSensorHistory = (sensorData: BLESensorData | null, maxDataPoints = 30): HistoricalData => {
   const [historicalData, setHistoricalData] = useState<HistoricalData>({
     temperature: [],
@@ -28,17 +24,21 @@ const useSensorHistory = (sensorData: BLESensorData | null, maxDataPoints = 30):
     if (sensorData) {
       const timestamp = new Date().toLocaleTimeString();
       setHistoricalData((prev) => {
-        const updated = { ...prev };
-
-        updated.timestamps = [...prev.timestamps, timestamp].slice(-maxDataPoints);
+        const updated: HistoricalData = {
+          temperature: [...prev.temperature],
+          humidity: [...prev.humidity],
+          pressure: [...prev.pressure],
+          co2: [...prev.co2],
+          gas: [...prev.gas],
+          timestamps: [...prev.timestamps, timestamp].slice(-maxDataPoints),
+        };
 
         // Extract environmental data for updating
         if (sensorData.environmental) {
           // Handle temperature
           if (
             'temperature' in sensorData.environmental &&
-            sensorData.environmental.temperature !== undefined &&
-            'temperature' in prev
+            typeof sensorData.environmental.temperature === 'number'
           ) {
             updated.temperature = [...prev.temperature, sensorData.environmental.temperature].slice(
               -maxDataPoints
@@ -48,8 +48,7 @@ const useSensorHistory = (sensorData: BLESensorData | null, maxDataPoints = 30):
           // Handle humidity
           if (
             'humidity' in sensorData.environmental &&
-            sensorData.environmental.humidity !== undefined &&
-            'humidity' in prev
+            typeof sensorData.environmental.humidity === 'number'
           ) {
             updated.humidity = [...prev.humidity, sensorData.environmental.humidity].slice(
               -maxDataPoints
@@ -59,8 +58,7 @@ const useSensorHistory = (sensorData: BLESensorData | null, maxDataPoints = 30):
           // Handle pressure
           if (
             'pressure' in sensorData.environmental &&
-            sensorData.environmental.pressure !== undefined &&
-            'pressure' in prev
+            typeof sensorData.environmental.pressure === 'number'
           ) {
             updated.pressure = [...prev.pressure, sensorData.environmental.pressure].slice(
               -maxDataPoints
@@ -70,8 +68,7 @@ const useSensorHistory = (sensorData: BLESensorData | null, maxDataPoints = 30):
           // Handle co2
           if (
             'co2' in sensorData.environmental &&
-            sensorData.environmental.co2 !== undefined &&
-            'co2' in prev
+            typeof sensorData.environmental.co2 === 'number'
           ) {
             updated.co2 = [...prev.co2, sensorData.environmental.co2].slice(-maxDataPoints);
           }
@@ -79,8 +76,7 @@ const useSensorHistory = (sensorData: BLESensorData | null, maxDataPoints = 30):
           // Handle gas
           if (
             'gas' in sensorData.environmental &&
-            sensorData.environmental.gas !== undefined &&
-            'gas' in prev
+            typeof sensorData.environmental.gas === 'number'
           ) {
             updated.gas = [...prev.gas, sensorData.environmental.gas].slice(-maxDataPoints);
           }
