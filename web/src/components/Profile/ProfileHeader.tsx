@@ -19,7 +19,7 @@ interface ProfileHeaderProps {
   editMode: boolean;
   handleImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleDeletePhoto: () => void;
-  isDarkMode?: boolean; // Make isDarkMode optional
+  isDarkMode?: boolean;
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
@@ -29,6 +29,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   editMode,
   handleImageChange,
   handleDeletePhoto,
+  isDarkMode = false,
 }) => {
   const [profilePhotoUrl, setProfilePhotoUrl] = useState<string | null>(null);
 
@@ -81,7 +82,11 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         {editMode && (
           <div className="avatar-actions">
             <button
-              className="edit-image-button"
+              className={`edit-image-button ${
+                isDarkMode
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                  : 'bg-blue-500 hover:bg-blue-600 text-white'
+              } p-2 rounded-full transition-colors`}
               onClick={() => document.getElementById('profilePhotoInput')?.click()}
               disabled={isLoading}
             >
@@ -97,7 +102,11 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             />
             {photoUrl !== generateAvatarUrl(profileData.fullName) && (
               <button
-                className="delete-image-button"
+                className={`delete-image-button ${
+                  isDarkMode
+                    ? 'bg-red-600 hover:bg-red-700 text-white'
+                    : 'bg-red-500 hover:bg-red-600 text-white'
+                } p-2 rounded-full transition-colors`}
                 onClick={handleDeletePhoto}
                 disabled={isLoading}
               >
@@ -107,8 +116,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           </div>
         )}
       </div>
-      <h1>{profileLoading ? 'Loading...' : profileData.fullName}</h1>
-      <p>{profileLoading ? '...' : profileData.email}</p>
+      <h1 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+        {profileLoading ? 'Loading...' : profileData.fullName}
+      </h1>
+      <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+        {profileLoading ? '...' : profileData.email}
+      </p>
     </motion.div>
   );
 };

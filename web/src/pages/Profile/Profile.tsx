@@ -51,7 +51,6 @@ const Profile: React.FC<ProfileProps> = ({ isDarkMode }) => {
         const storedName = localStorage.getItem('userName');
         const storedEmail = localStorage.getItem('email') || localStorage.getItem('userName');
 
-
         setProfileData((prev) => ({
           ...prev,
           fullName: storedName || 'User',
@@ -147,6 +146,7 @@ const Profile: React.FC<ProfileProps> = ({ isDarkMode }) => {
           editMode={editMode}
           handleImageChange={handleImageChange}
           handleDeletePhoto={handleDeletePhoto}
+          isDarkMode={isDarkMode}
         />
 
         <motion.div
