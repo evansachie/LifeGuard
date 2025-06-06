@@ -38,7 +38,6 @@ const ProgressOverview = ({ isDarkMode }: ProgressOverviewProps) => {
     const fetchStats = async (): Promise<void> => {
       try {
         const data = await exerciseService.getStats();
-        console.log('Raw stats data:', data); // Debug log
 
         const transformedData: ExerciseStats = {
           caloriesBurned: data.totalCaloriesBurned || 0,
@@ -47,10 +46,8 @@ const ProgressOverview = ({ isDarkMode }: ProgressOverviewProps) => {
           currentGoal: data.goalType || 'Not set',
         };
 
-        console.log('Transformed stats:', transformedData); // Debug log
         setStats(transformedData);
       } catch (error: unknown) {
-        console.error('Error fetching exercise stats:', error);
         toast.error('Failed to load exercise statistics');
       } finally {
         setLoading(false);
