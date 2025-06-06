@@ -10,6 +10,7 @@ interface ModalProps {
   closeOnOutsideClick?: boolean;
   showCloseButton?: boolean;
   isDarkMode?: boolean;
+  fullWidth?: boolean;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -21,6 +22,7 @@ const Modal: React.FC<ModalProps> = ({
   closeOnOutsideClick = true,
   showCloseButton = false,
   isDarkMode = false,
+  fullWidth = false,
 }) => {
   const modalContentRef = useRef<HTMLDivElement>(null);
 
@@ -72,10 +74,12 @@ const Modal: React.FC<ModalProps> = ({
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
           className={`${
-            isDarkMode ? 'bg-gray-800 text-gray-200' : 'bg-white text-gray-800'
-          } rounded-xl p-6 w-full ${maxWidth} shadow-xl relative`}
+            fullWidth
+              ? 'w-full h-full'
+              : `${isDarkMode ? 'bg-dark-bg text-gray-200' : 'bg-white text-gray-800'} rounded-xl p-6 w-full ${maxWidth} shadow-xl`
+          } relative`}
         >
-          {showCloseButton && (
+          {showCloseButton && !fullWidth && (
             <button
               onClick={onClose}
               className={`absolute top-3 right-3 p-1 rounded-full

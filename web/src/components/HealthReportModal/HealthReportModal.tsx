@@ -87,25 +87,25 @@ const HealthReportModal: React.FC<HealthReportModalProps> = ({
       zIndex="z-[1100]"
     >
       <div
-        className={`w-full max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl ${
-          isDarkMode ? 'bg-gray-900' : 'bg-white'
+        className={`w-full max-w-6xl mx-auto max-h-[90vh] overflow-hidden rounded-2xl ${
+          isDarkMode ? 'bg-dark-bg' : 'bg-white'
         }`}
       >
         {/* Modern Header with Gradient */}
         <div
           className={`relative overflow-hidden ${
             isDarkMode
-              ? 'bg-gradient-to-br from-gray-800 via-gray-900 to-black'
+              ? 'bg-gradient-to-br from-dark-bg via-gray-800 to-gray-700'
               : 'bg-gradient-to-br from-indigo-600 via-blue-600 to-purple-700'
           }`}
         >
-          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="absolute inset-0 bg-black/30"></div>
           <div className="relative p-6">
             <div className="flex justify-between items-start">
               <div className="flex items-center space-x-4">
                 <div
                   className={`p-3 rounded-xl ${
-                    isDarkMode ? 'bg-white/10' : 'bg-white/20'
+                    isDarkMode ? 'bg-gray-800/70' : 'bg-white/20'
                   } backdrop-blur-sm`}
                 >
                   <FaShieldAlt className="text-2xl text-white" />
@@ -125,7 +125,11 @@ const HealthReportModal: React.FC<HealthReportModalProps> = ({
               <div className="flex items-center space-x-3">
                 <button
                   onClick={handlePdfDownload}
-                  className="flex items-center space-x-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-200 backdrop-blur-sm"
+                  className={`flex items-center space-x-2 px-4 py-2 ${
+                    isDarkMode
+                      ? 'bg-gray-800/60 hover:bg-gray-700/60'
+                      : 'bg-white/20 hover:bg-white/30'
+                  } text-white rounded-lg transition-all duration-200 backdrop-blur-sm`}
                   type="button"
                   aria-label="Download PDF"
                 >
@@ -134,7 +138,11 @@ const HealthReportModal: React.FC<HealthReportModalProps> = ({
                 </button>
                 <button
                   onClick={handleCsvDownload}
-                  className="flex items-center space-x-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-200 backdrop-blur-sm"
+                  className={`flex items-center space-x-2 px-4 py-2 ${
+                    isDarkMode
+                      ? 'bg-gray-800/60 hover:bg-gray-700/60'
+                      : 'bg-white/20 hover:bg-white/30'
+                  } text-white rounded-lg transition-all duration-200 backdrop-blur-sm`}
                   type="button"
                   aria-label="Download CSV"
                 >
@@ -143,7 +151,11 @@ const HealthReportModal: React.FC<HealthReportModalProps> = ({
                 </button>
                 <button
                   onClick={onClose}
-                  className="p-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-200 backdrop-blur-sm"
+                  className={`p-2 ${
+                    isDarkMode
+                      ? 'bg-gray-800/60 hover:bg-gray-700/60'
+                      : 'bg-white/20 hover:bg-white/30'
+                  } text-white rounded-lg transition-all duration-200 backdrop-blur-sm`}
                   type="button"
                   aria-label="Close report"
                 >
@@ -152,9 +164,17 @@ const HealthReportModal: React.FC<HealthReportModalProps> = ({
               </div>
             </div>
 
-            <div className="mt-4 p-4 bg-white/10 rounded-xl backdrop-blur-sm">
+            <div
+              className={`mt-4 p-4 ${
+                isDarkMode ? 'bg-gray-800/60' : 'bg-white/10'
+              } rounded-xl backdrop-blur-sm`}
+            >
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                <div
+                  className={`w-12 h-12 ${
+                    isDarkMode ? 'bg-gray-800/80' : 'bg-white/20'
+                  } rounded-full flex items-center justify-center`}
+                >
                   <span className="text-white font-bold text-lg">
                     {report.userInfo.name.charAt(0)}
                   </span>
@@ -170,7 +190,7 @@ const HealthReportModal: React.FC<HealthReportModalProps> = ({
 
         {/* Scrollable Content */}
         <div className="max-h-[60vh] overflow-y-auto">
-          <div className={`p-6 space-y-8 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+          <div className={`p-6 space-y-8 ${isDarkMode ? 'bg-dark-bg' : 'bg-gray-50'}`}>
             {/* Vital Statistics - Enhanced Grid */}
             <section>
               <div className="flex items-center space-x-3 mb-6">
@@ -188,7 +208,7 @@ const HealthReportModal: React.FC<HealthReportModalProps> = ({
                     key={key}
                     className={`relative p-6 rounded-2xl border transition-all duration-300 hover:scale-105 ${
                       isDarkMode
-                        ? 'bg-gray-800 border-gray-700 hover:border-gray-600'
+                        ? 'bg-dark-bg border-gray-700 hover:border-gray-600'
                         : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-lg'
                     }`}
                   >
@@ -277,7 +297,7 @@ const HealthReportModal: React.FC<HealthReportModalProps> = ({
                     key={key}
                     className={`p-6 rounded-2xl border transition-all duration-300 hover:scale-105 ${
                       isDarkMode
-                        ? 'bg-gray-800 border-gray-700 hover:border-gray-600'
+                        ? 'bg-dark-bg border-gray-700 hover:border-gray-600'
                         : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-lg'
                     }`}
                   >
@@ -387,7 +407,7 @@ const HealthReportModal: React.FC<HealthReportModalProps> = ({
                     key={key}
                     className={`p-6 rounded-2xl border transition-all duration-300 hover:scale-105 ${
                       isDarkMode
-                        ? 'bg-gray-800 border-gray-700 hover:border-gray-600'
+                        ? 'bg-dark-bg border-gray-700 hover:border-gray-600'
                         : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-lg'
                     }`}
                   >
@@ -450,7 +470,7 @@ const HealthReportModal: React.FC<HealthReportModalProps> = ({
               <div
                 className={`p-6 rounded-2xl border-l-4 ${
                   isDarkMode
-                    ? 'bg-gray-800 border-purple-500'
+                    ? 'bg-dark-bg border-purple-500'
                     : 'bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-500'
                 }`}
               >
