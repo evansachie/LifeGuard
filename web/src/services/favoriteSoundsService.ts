@@ -15,15 +15,26 @@ export interface FavoriteSoundResult {
  * @param userId - The user's ID
  * @returns List of favorite sounds
  */
-export const getFavorites = async (userId: string): Promise<FavoriteResponse[]> => {
+export const getFavorites = async (userId: string): Promise<FavoriteSound[]> => {
   try {
-    const response = await fetchWithAuth<FavoriteResponse[]>(
-      API_ENDPOINTS.GET_USER_FAVORITES(userId)
-    );
-    return response || [];
-  } catch (error) {
+    const response = await fetchWithAuth<FavoriteSound[]>(API_ENDPOINTS.GET_USER_FAVORITES(userId));
+
+    const favorites = Array.isArray(response) ? response : (response as any)?.data || [];
+
+    return favorites.map((fav: any) => ({
+      sound_id: fav.sound_id || String(fav.id),
+      name: fav.sound_name || fav.name,
+      url: fav.sound_url || fav.url || fav.previewUrl || fav.preview_url,
+    }));
+  } catch (error: any) {
     console.error('Error fetching favorites:', error);
-    return [];
+
+    // If it's a 404 or similar, just return empty array (user has no favorites yet)
+    if (error?.status === 404 || error?.status === 400) {
+      return [];
+    }
+
+    throw error;
   }
 };
 
@@ -46,23 +57,28 @@ export const addToFavorites = async (
       };
     }
 
+    const requestBody = {
+      userId,
+      soundId: sound.id.toString(),
+      soundName: sound.name,
+      soundUrl: sound.url || '',
+      previewUrl: sound.previews['preview-hq-mp3'],
+      category: sound.type || 'uncategorized',
+      duration: typeof sound.duration === 'string' ? parseFloat(sound.duration) : sound.duration,
+    };
+
     return await fetchWithAuth<FavoriteResponse>(API_ENDPOINTS.FAVORITE_SOUNDS, {
       method: 'POST',
-      body: JSON.stringify({
-        userId,
-        soundId: sound.id.toString(),
-        soundName: sound.name,
-        soundUrl: sound.url || '',
-        previewUrl: sound.previews['preview-hq-mp3'],
-        category: sound.type || 'uncategorized',
-        duration: typeof sound.duration === 'string' ? parseFloat(sound.duration) : sound.duration,
-      }),
+      body: JSON.stringify(requestBody),
     });
   } catch (error: any) {
-    // Check if error is "already favorited"
-    if (error?.message?.includes('already favorited')) {
+    console.error('Error adding to favorites:', error);
+
+    // Handle 409 Conflict (already favorited)
+    if (error?.status === 409) {
       return {
         error: 'Already favorited',
+        message: 'This sound is already in your favorites',
         favorite: {
           sound_id: String(sound.id),
           name: sound.name,
@@ -71,10 +87,33 @@ export const addToFavorites = async (
       };
     }
 
-    console.error('Error adding to favorites:', error);
+    // Handle other specific status codes
+    if (error?.status === 400) {
+      return {
+        error: 'Invalid request',
+        message: error.message || 'Invalid sound data',
+      };
+    }
+
+    if (error?.status === 401) {
+      return {
+        error: 'Unauthorized',
+        message: 'Please log in to favorite sounds',
+      };
+    }
+
+    // Handle network errors
+    if (error?.message?.includes('Failed to fetch') || error?.message?.includes('Fetch failed')) {
+      return {
+        error: 'Network error',
+        message: 'Please check your internet connection and try again',
+      };
+    }
+
+    // Generic error handling - wrap as error response instead of throwing
     return {
       error: 'Error adding to favorites',
-      message: error.message || 'Unknown error',
+      message: error.message || 'An unexpected error occurred',
     };
   }
 };

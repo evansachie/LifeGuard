@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaPlay, FaPause, FaStar, FaInfoCircle } from 'react-icons/fa';
+import { FaPlay, FaPause, FaStar, FaInfoCircle, FaHeart } from 'react-icons/fa';
 import { Tooltip } from 'react-tooltip';
 import { Sound } from '../../types/wellnessHub.types';
 
@@ -9,9 +9,18 @@ interface SoundCardProps {
   isPlaying: boolean;
   onPlay: (sound: Sound) => void;
   background: React.CSSProperties;
+  isFavorited?: boolean;
+  onToggleFavorite?: (sound: Sound) => void;
 }
 
-const SoundCard: React.FC<SoundCardProps> = ({ sound, isPlaying, onPlay, background }) => {
+const SoundCard: React.FC<SoundCardProps> = ({
+  sound,
+  isPlaying,
+  onPlay,
+  background,
+  isFavorited = false,
+  onToggleFavorite,
+}) => {
   const [showInfo, setShowInfo] = useState<boolean>(false);
 
   return (
@@ -50,6 +59,20 @@ const SoundCard: React.FC<SoundCardProps> = ({ sound, isPlaying, onPlay, backgro
             {isPlaying ? <FaPause /> : <FaPlay />}
           </motion.button>
 
+          {onToggleFavorite && (
+            <motion.button
+              className={`favorite-button ${
+                isFavorited ? 'active bg-red-500 border-red-500' : 'bg-gray-600/50 border-gray-500'
+              }`}
+              onClick={() => onToggleFavorite(sound)}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              data-tooltip-id={`favorite-${sound.id}`}
+            >
+              <FaHeart className={isFavorited ? 'text-white' : 'text-gray-300'} />
+            </motion.button>
+          )}
+
           <button
             className="info-button"
             onClick={() => setShowInfo(!showInfo)}
@@ -59,22 +82,12 @@ const SoundCard: React.FC<SoundCardProps> = ({ sound, isPlaying, onPlay, backgro
           </button>
         </div>
 
-        {showInfo && (
-          <motion.div
-            className="sound-info"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <p>{sound.description}</p>
-            <div className="tags">
-              {sound.tags?.slice(0, 3).map((tag) => (
-                <span key={tag} className="tag">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </motion.div>
-        )}
+        <Tooltip id={`favorite-${sound.id}`} place="top">
+          {isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+        </Tooltip>
+        <Tooltip id={`info-${sound.id}`} place="top">
+          More information
+        </Tooltip>
       </div>
     </motion.div>
   );
