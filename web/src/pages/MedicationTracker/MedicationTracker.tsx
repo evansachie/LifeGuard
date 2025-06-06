@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { fetchWithAuth, API_ENDPOINTS } from '../../utils/api';
 import { FaPlus, FaBell } from 'react-icons/fa';
 
 import MedicationList from '../../components/MedicationTracker/MedicationList';
 import MedicationStats from '../../components/MedicationTracker/MedicationStats';
-import AddMedicationForm from '../../components/MedicationTracker/AddMedicationForm';
+import AddMedicationModal from '../../components/MedicationTracker/AddMedicationModal';
+import NotificationPreferencesModal from '../../components/MedicationTracker/NotificationPreferencesModal';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal/DeleteConfirmationModal';
 import SearchAndFilter from '../../components/MedicationTracker/SearchAndFilter';
-import NotificationPreferences from '../../components/MedicationTracker/NotificationPreferences';
 import { Medication, MedicationData, FiltersType } from '../../types/medicationTracker.types';
 
 interface MedicationTrackerProps {
@@ -70,6 +70,20 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({ isDarkMode }) => 
     }
   };
 
+  const handleEditMedication = async (medicationData: MedicationData): Promise<void> => {
+    try {
+      await fetchWithAuth(`${API_ENDPOINTS.MEDICATIONS.UPDATE}/${medicationData.Id}`, {
+        method: 'PUT',
+        body: JSON.stringify(medicationData),
+      });
+      fetchMedications();
+      toast.success('Medication updated successfully');
+      setEditingMedication(null);
+    } catch (error) {
+      toast.error('Failed to update medication');
+    }
+  };
+
   const handleTrackDose = async (medicationId: string, taken: boolean): Promise<void> => {
     try {
       await fetchWithAuth(API_ENDPOINTS.MEDICATIONS.TRACK, {
@@ -86,20 +100,6 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({ isDarkMode }) => 
     } catch (error: any) {
       console.error('Track dose error:', error);
       toast.error(error.message || 'Failed to track dose');
-    }
-  };
-
-  const handleEditMedication = async (medicationData: MedicationData): Promise<void> => {
-    try {
-      await fetchWithAuth(`${API_ENDPOINTS.MEDICATIONS.UPDATE}/${medicationData.Id}`, {
-        method: 'PUT',
-        body: JSON.stringify(medicationData),
-      });
-      fetchMedications();
-      toast.success('Medication updated successfully');
-      setEditingMedication(null);
-    } catch (error) {
-      toast.error('Failed to update medication');
     }
   };
 
@@ -224,199 +224,29 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({ isDarkMode }) => 
           />
         </div>
 
-        {/* Modal */}
-        <AnimatePresence>
-          {isModalOpen && (
-            <>
-              {/* Backdrop */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
-                onClick={() => setIsModalOpen(false)}
-              />
+        {/* Add Medication Modal */}
+        <AddMedicationModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={handleAddMedication}
+          isDarkMode={isDarkMode}
+        />
 
-              {/* Modal Container */}
-              <div className="fixed inset-0 flex items-center justify-center z-[70] p-4">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                  transition={{
-                    type: 'spring',
-                    stiffness: 300,
-                    damping: 30,
-                  }}
-                  className={`w-full max-w-2xl max-h-[90vh] rounded-2xl overflow-hidden shadow-2xl 
-                    ${isDarkMode ? 'bg-dark-card' : 'bg-white'}`}
-                >
-                  {/* Modal Header */}
-                  <div
-                    className={`sticky top-0 px-6 py-4 border-b ${
-                      isDarkMode ? 'border-gray-700/50' : 'border-gray-200'
-                    } bg-opacity-80 backdrop-blur-sm`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <h2 className="text-xl font-semibold flex items-center gap-3">
-                        <div className="w-1 h-6 bg-blue-500 rounded-full"></div>
-                        Add New Medication
-                      </h2>
-                      <button
-                        onClick={() => setIsModalOpen(false)}
-                        className={`rounded-full p-2 hover:bg-opacity-10 
-                          ${isDarkMode ? 'hover:bg-white' : 'hover:bg-black'}`}
-                        type="button"
-                        aria-label="Close add medication modal"
-                        title="Close"
-                      >
-                        <svg
-                          className="w-5 h-5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          aria-hidden="true"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M6 18L18 6M6 6l12 12"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Modal Content */}
-                  <div className="overflow-y-auto" style={{ maxHeight: 'calc(90vh - 80px)' }}>
-                    <div className="p-6">
-                      <AddMedicationForm
-                        onSubmit={(data) => {
-                          handleAddMedication(data);
-                          setIsModalOpen(false);
-                        }}
-                        isDarkMode={isDarkMode}
-                      />
-                    </div>
-                  </div>
-                </motion.div>
-              </div>
-            </>
-          )}
-        </AnimatePresence>
-
-        {/* Edit Modal */}
-        <AnimatePresence>
-          {editingMedication && (
-            <>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
-                onClick={() => setEditingMedication(null)}
-              />
-
-              <div className="fixed inset-0 flex items-center justify-center z-[70] p-4">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                  transition={{
-                    type: 'spring',
-                    stiffness: 300,
-                    damping: 30,
-                  }}
-                  className={`w-full max-w-2xl max-h-[90vh] rounded-2xl overflow-hidden shadow-2xl 
-                    ${isDarkMode ? 'bg-dark-card' : 'bg-white'}`}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <div
-                    className={`sticky top-0 px-6 py-4 border-b ${
-                      isDarkMode ? 'border-gray-700/50' : 'border-gray-200'
-                    } bg-opacity-80 backdrop-blur-sm`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <h2 className="text-xl font-semibold flex items-center gap-3">
-                        <div className="w-1 h-6 bg-blue-500 rounded-full"></div>
-                        Edit {editingMedication.Name}
-                      </h2>
-                      <button
-                        onClick={() => setEditingMedication(null)}
-                        className={`rounded-full p-2 hover:bg-opacity-10 
-                          ${isDarkMode ? 'hover:bg-white' : 'hover:bg-black'}`}
-                        type="button"
-                        aria-label="Close edit medication modal"
-                        title="Close"
-                      >
-                        <svg
-                          className="w-5 h-5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          aria-hidden="true"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M6 18L18 6M6 6l12 12"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="p-6 overflow-y-auto" style={{ maxHeight: 'calc(90vh - 80px)' }}>
-                    <AddMedicationForm
-                      initialData={editingMedication}
-                      onSubmit={handleEditMedication}
-                      isDarkMode={isDarkMode}
-                    />
-                  </div>
-                </motion.div>
-              </div>
-            </>
-          )}
-        </AnimatePresence>
+        {/* Edit Medication Modal */}
+        <AddMedicationModal
+          isOpen={!!editingMedication}
+          onClose={() => setEditingMedication(null)}
+          onSubmit={handleEditMedication}
+          editingMedication={editingMedication}
+          isDarkMode={isDarkMode}
+        />
 
         {/* Notification Preferences Modal */}
-        <AnimatePresence>
-          {isNotificationSettingsOpen && (
-            <>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
-                onClick={() => setIsNotificationSettingsOpen(false)}
-              />
-
-              <div className="fixed inset-0 flex items-center justify-center z-[70] p-4">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                  className={`w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl 
-                    ${isDarkMode ? 'bg-dark-card' : 'bg-white'}`}
-                >
-                  <div
-                    className={`px-6 py-4 border-b ${
-                      isDarkMode ? 'border-gray-700' : 'border-gray-200'
-                    }`}
-                  >
-                    <h2 className="text-xl font-semibold">Notification Settings</h2>
-                  </div>
-                  <NotificationPreferences
-                    isDarkMode={isDarkMode}
-                    onClose={() => setIsNotificationSettingsOpen(false)}
-                  />
-                </motion.div>
-              </div>
-            </>
-          )}
-        </AnimatePresence>
+        <NotificationPreferencesModal
+          isOpen={isNotificationSettingsOpen}
+          onClose={() => setIsNotificationSettingsOpen(false)}
+          isDarkMode={isDarkMode}
+        />
 
         {/* Delete Confirmation Modal */}
         <DeleteConfirmationModal
