@@ -30,11 +30,11 @@ module.exports = (pool) => {
             );
 
             res.json({
-                caloriesBurned: stats.rows[0].total_calories,
-                workoutsCompleted: stats.rows[0].workouts_completed,
+                totalCaloriesBurned: stats.rows[0].total_calories,
+                totalWorkouts: stats.rows[0].workouts_completed,
                 currentStreak: streakData.rows[0]?.CurrentStreak || 0,
                 longestStreak: streakData.rows[0]?.LongestStreak || 0,
-                currentGoal: currentGoal.rows[0]?.GoalType || 'Not set'
+                goalType: currentGoal.rows[0]?.GoalType || 'Not set'
             });
         } catch (error) {
             console.error('Error fetching exercise stats:', error);
