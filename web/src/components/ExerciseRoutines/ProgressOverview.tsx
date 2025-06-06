@@ -38,15 +38,20 @@ const ProgressOverview = ({ isDarkMode }: ProgressOverviewProps) => {
     const fetchStats = async (): Promise<void> => {
       try {
         const data = await exerciseService.getStats();
+        console.log('Raw stats data:', data); // Debug log
+
         const transformedData: ExerciseStats = {
           caloriesBurned: data.totalCaloriesBurned || 0,
           workoutsCompleted: data.totalWorkouts || 0,
           currentStreak: data.currentStreak || 0,
-          currentGoal: typeof data.goalType === 'string' ? data.goalType : 'Not set',
+          currentGoal: data.goalType || 'Not set',
         };
+
+        console.log('Transformed stats:', transformedData); // Debug log
         setStats(transformedData);
       } catch (error: unknown) {
         console.error('Error fetching exercise stats:', error);
+        toast.error('Failed to load exercise statistics');
       } finally {
         setLoading(false);
       }
@@ -58,8 +63,25 @@ const ProgressOverview = ({ isDarkMode }: ProgressOverviewProps) => {
   const handleGoalSelect = async (goalType: string): Promise<void> => {
     try {
       await exerciseService.setGoal(goalType);
+      // Optimistically update the UI
       setStats((prev) => ({ ...prev, currentGoal: goalType }));
       toast.success('Workout goal updated successfully!');
+
+      // Refetch stats to ensure data is synchronized
+      setTimeout(async () => {
+        try {
+          const data = await exerciseService.getStats();
+          const transformedData: ExerciseStats = {
+            caloriesBurned: data.totalCaloriesBurned || 0,
+            workoutsCompleted: data.totalWorkouts || 0,
+            currentStreak: data.currentStreak || 0,
+            currentGoal: data.goalType || 'Not set',
+          };
+          setStats(transformedData);
+        } catch (error) {
+          console.error('Error refetching stats:', error);
+        }
+      }, 500);
     } catch (error: unknown) {
       console.error('Error setting goal:', error);
       toast.error('Failed to update workout goal');

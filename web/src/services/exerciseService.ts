@@ -1,43 +1,23 @@
 import { fetchWithAuth, API_ENDPOINTS } from '../utils/api';
 
-interface ExerciseStats {
-  totalWorkouts: number;
+interface ExerciseStatsResponse {
   totalCaloriesBurned: number;
+  totalWorkouts: number;
   currentStreak: number;
   longestStreak: number;
-  weeklyGoalProgress: number;
-  [key: string]: unknown;
+  goalType: string;
 }
 
-interface WorkoutData {
+interface SetGoalRequest {
+  goalType: string;
+}
+
+interface CompleteWorkoutRequest {
   workout_id: string;
   workout_type: string;
   calories_burned: number;
   duration_minutes: number;
 }
-
-interface WorkoutHistoryResponse {
-  data: Array<{
-    date: string;
-    count: number;
-  }>;
-}
-
-interface CaloriesHistoryResponse {
-  data: Array<{
-    date: string;
-    calories: number;
-  }>;
-}
-
-interface StreakHistoryResponse {
-  data: Array<{
-    date: string;
-    streak: number;
-  }>;
-}
-
-type Period = '7days' | '30days' | '90days' | 'year';
 
 const exerciseService = {
   /**
@@ -45,20 +25,14 @@ const exerciseService = {
    * workouts completed, current streak, and longest streak
    * @returns Exercise statistics
    */
-  getStats: async (): Promise<ExerciseStats> => {
-    return await fetchWithAuth(API_ENDPOINTS.EXERCISE_STATS);
-  },
-
-  /**
-   * Records a completed workout session
-   * @param workoutData - The workout details
-   * @returns Confirmation of the recorded workout
-   */
-  completeWorkout: async (workoutData: WorkoutData): Promise<unknown> => {
-    return await fetchWithAuth(API_ENDPOINTS.EXERCISE_COMPLETE, {
-      method: 'POST',
-      body: JSON.stringify(workoutData),
-    });
+  getStats: async (): Promise<ExerciseStatsResponse> => {
+    try {
+      const response = await fetchWithAuth<ExerciseStatsResponse>(API_ENDPOINTS.EXERCISE_STATS);
+      return response;
+    } catch (error) {
+      console.error('Error fetching exercise stats:', error);
+      throw error;
+    }
   },
 
   /**
@@ -66,23 +40,75 @@ const exerciseService = {
    * @param goalType - Type of goal (e.g., "streak", "calories", "workouts")
    * @returns The created goal object
    */
-  setGoal: async (goalType: string): Promise<unknown> => {
-    return await fetchWithAuth(API_ENDPOINTS.EXERCISE_GOALS, {
-      method: 'POST',
-      body: JSON.stringify({ goalType }),
-    });
+  setGoal: async (goalType: string): Promise<void> => {
+    try {
+      await fetchWithAuth(API_ENDPOINTS.EXERCISE_GOALS, {
+        method: 'POST',
+        body: JSON.stringify({ goalType } as SetGoalRequest),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    } catch (error) {
+      console.error('Error setting exercise goal:', error);
+      throw error;
+    }
   },
 
-  getWorkoutHistory: async (period: Period = '7days'): Promise<WorkoutHistoryResponse> => {
-    return await fetchWithAuth(`${API_ENDPOINTS.EXERCISE_WORKOUT_HISTORY}?period=${period}`);
+  /**
+   * Records a completed workout session
+   * @param workoutData - The workout details
+   * @returns Confirmation of the recorded workout
+   */
+  completeWorkout: async (workoutData: CompleteWorkoutRequest): Promise<void> => {
+    try {
+      await fetchWithAuth(API_ENDPOINTS.EXERCISE_COMPLETE, {
+        method: 'POST',
+        body: JSON.stringify(workoutData),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    } catch (error) {
+      console.error('Error completing workout:', error);
+      throw error;
+    }
   },
 
-  getCaloriesHistory: async (period: Period = '7days'): Promise<CaloriesHistoryResponse> => {
-    return await fetchWithAuth(`${API_ENDPOINTS.EXERCISE_CALORIES_HISTORY}?period=${period}`);
+  getWorkoutHistory: async (period: string = '7days'): Promise<any> => {
+    try {
+      const response = await fetchWithAuth(
+        `${API_ENDPOINTS.EXERCISE_WORKOUT_HISTORY}?period=${period}`
+      );
+      return response;
+    } catch (error) {
+      console.error('Error fetching workout history:', error);
+      throw error;
+    }
   },
 
-  getStreakHistory: async (period: Period = '7days'): Promise<StreakHistoryResponse> => {
-    return await fetchWithAuth(`${API_ENDPOINTS.EXERCISE_STREAK_HISTORY}?period=${period}`);
+  getCaloriesHistory: async (period: string = '7days'): Promise<any> => {
+    try {
+      const response = await fetchWithAuth(
+        `${API_ENDPOINTS.EXERCISE_CALORIES_HISTORY}?period=${period}`
+      );
+      return response;
+    } catch (error) {
+      console.error('Error fetching calories history:', error);
+      throw error;
+    }
+  },
+
+  getStreakHistory: async (period: string = '7days'): Promise<any> => {
+    try {
+      const response = await fetchWithAuth(
+        `${API_ENDPOINTS.EXERCISE_STREAK_HISTORY}?period=${period}`
+      );
+      return response;
+    } catch (error) {
+      console.error('Error fetching streak history:', error);
+      throw error;
+    }
   },
 };
 
