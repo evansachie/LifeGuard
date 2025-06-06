@@ -57,7 +57,7 @@ export const useProfileState = (): ProfileStateReturn => {
         fullName: userData?.userName || prev.fullName,
         email: userData?.email || prev.email,
         gender: fetchedProfile?.gender || '',
-        phone: fetchedProfile?.phone || '',
+        phone: fetchedProfile?.phone || fetchedProfile?.phoneNumber || '',
         bio: fetchedProfile?.bio || '',
         birthDate: '',
         age: fetchedProfile?.age?.toString() || '',
