@@ -113,22 +113,27 @@ const SettingsPage: React.FC<SettingsProps> = ({ isDarkMode, toggleDarkMode }) =
             <div className="flex items-center gap-4">
               <FaUser className="text-2xl text-blue-500" />
               <div className="flex-1">
-                <div
+                <label
+                  htmlFor="username-input"
                   className={`block text-sm font-medium mb-2 ${
                     isDarkMode ? 'text-gray-300' : 'text-gray-600'
                   }`}
                 >
                   Username
-                </div>
+                </label>
                 {isLoading ? (
                   <div className="flex justify-center py-2">
                     <Spinner size="small" color={isDarkMode ? '#4285F4' : '#4285F4'} />
                   </div>
                 ) : (
                   <input
+                    id="username-input"
                     type="text"
                     value={settings.username}
                     readOnly
+                    title="Your username (read-only)"
+                    placeholder="Username will appear here"
+                    aria-label="Username field (read-only)"
                     className={`w-full p-3 rounded-lg border ${
                       isDarkMode
                         ? 'bg-gray-700/50 border-gray-600 text-gray-200'
@@ -142,22 +147,27 @@ const SettingsPage: React.FC<SettingsProps> = ({ isDarkMode, toggleDarkMode }) =
             <div className="flex items-center gap-4">
               <FaEnvelope className="text-2xl text-green-500" />
               <div className="flex-1">
-                <div
+                <label
+                  htmlFor="email-input"
                   className={`block text-sm font-medium mb-2 ${
                     isDarkMode ? 'text-gray-300' : 'text-gray-600'
                   }`}
                 >
                   Email
-                </div>
+                </label>
                 {isLoading ? (
                   <div className="flex justify-center py-2">
                     <Spinner size="small" color={isDarkMode ? '#4285F4' : '#4285F4'} />
                   </div>
                 ) : (
                   <input
+                    id="email-input"
                     type="email"
                     value={settings.email}
                     readOnly
+                    title="Your email address (read-only)"
+                    placeholder="Email address will appear here"
+                    aria-label="Email address field (read-only)"
                     className={`w-full p-3 rounded-lg border ${
                       isDarkMode
                         ? 'bg-gray-700/50 border-gray-600 text-gray-200'
@@ -176,15 +186,21 @@ const SettingsPage: React.FC<SettingsProps> = ({ isDarkMode, toggleDarkMode }) =
             <div className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-100/5 transition-colors">
               <div className="flex items-center gap-4">
                 <FaRuler className="text-2xl text-purple-500" />
-                <span className={`text-lg ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                <label
+                  htmlFor="units-select"
+                  className={`text-lg ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}
+                >
                   Measurement Units
-                </span>
+                </label>
               </div>
               <select
+                id="units-select"
                 value={settings.units}
                 onChange={(e) =>
                   handleSettingChange('units', e.target.value as 'metric' | 'imperial')
                 }
+                title="Choose your preferred measurement units"
+                aria-label="Select measurement units preference"
                 className={`p-3 rounded-lg border ${
                   isDarkMode
                     ? 'bg-gray-700/50 border-gray-600 text-gray-200'

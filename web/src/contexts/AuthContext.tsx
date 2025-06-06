@@ -1,13 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { toast } from 'react-toastify';
-import type {
-  AuthContextType,
-  User,
-  LoginFormData,
-  SignUpFormData,
-  AuthError,
-} from '../types/auth.types';
-import type { UserProfile, ApiResponse } from '../types/api.types';
+import type { AuthContextType, User } from '../types/auth.types';
+import type { UserProfile } from '../types/api.types';
 import {
   loginUser as loginUserAPI,
   registerUser as registerUserAPI,

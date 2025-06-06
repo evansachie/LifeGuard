@@ -8,6 +8,7 @@ interface ProfileData {
   weight?: string | number;
   height?: string | number;
   phone?: string;
+  phoneNumber?: string;
   bio?: string;
   profileImage?: string | null;
 }
@@ -41,12 +42,14 @@ interface ProfileUpdateResponse {
 }
 
 export const fetchUserProfile = async (userId: string): Promise<UserProfileResponse> => {
-  // First fetch basic user data
   const userData = await fetchWithAuth(API_ENDPOINTS.GET_USER(userId));
 
-  // Then fetch detailed profile data
   const profileResponse = await fetchWithAuth(API_ENDPOINTS.GET_PROFILE(userId));
   const profileData = profileResponse && profileResponse.data ? profileResponse.data : {};
+
+  if (profileData.phoneNumber && !profileData.phone) {
+    profileData.phone = profileData.phoneNumber;
+  }
 
   // Try to get the profile photo URL
   let photoUrl: string | null = profileData?.profileImage;
@@ -77,7 +80,7 @@ export const updateUserProfile = async (
       Gender: profileData.gender || '',
       Weight: profileData.weight ? parseInt(profileData.weight.toString(), 10) : null,
       Height: profileData.height ? parseInt(profileData.height.toString(), 10) : null,
-      PhoneNumber: profileData.phone || '',
+      PhoneNumber: profileData.phone || profileData.phoneNumber || '',
       Bio: profileData.bio || '',
       ProfileImage: profileData.profileImage || null,
     };

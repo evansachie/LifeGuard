@@ -123,7 +123,16 @@ export const handleApiResponse = async <T = any>(response: Response): Promise<T>
 
     try {
       const errorData = await response.json();
-      error.message = errorData.message || error.message;
+      error.message = errorData.message || errorData.error || error.message;
+
+      // For 409 conflicts, include additional data that might be in the response
+      if (response.status === 409 && errorData) {
+        (error as any).data = errorData;
+        // Preserve original error details for better debugging
+        if (errorData.details || errorData.favorite) {
+          (error as any).details = errorData.details || errorData.favorite;
+        }
+      }
     } catch {
       // If JSON parsing fails, keep the default error message
     }
@@ -161,8 +170,6 @@ export const fetchApi = async <T = any>(
     } else {
       url = `${API_BASE_URL}/${endpoint}`;
     }
-
-    console.log('Making request to:', url);
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), options.timeout || 20000);

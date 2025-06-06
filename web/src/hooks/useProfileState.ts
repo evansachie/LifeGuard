@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { fetchUserProfile } from '../services/profileService';
 
@@ -37,11 +37,18 @@ export const useProfileState = (): ProfileStateReturn => {
   });
   const [profileLoading, setProfileLoading] = useState<boolean>(true);
 
-  const fetchUserProfileData = async (): Promise<void> => {
-    try {
+  const fetchUserProfileData = useCallback(async (): Promise<void> => {
+    // Prevent multiple simultaneous calls
+    if (profileLoading === false) {
       setProfileLoading(true);
+    }
+
+    try {
       const userId = localStorage.getItem('userId');
-      if (!userId) return;
+      if (!userId) {
+        setProfileLoading(false);
+        return;
+      }
 
       const { userData, profileData: fetchedProfile, photoUrl } = await fetchUserProfile(userId);
 
@@ -50,7 +57,7 @@ export const useProfileState = (): ProfileStateReturn => {
         fullName: userData?.userName || prev.fullName,
         email: userData?.email || prev.email,
         gender: fetchedProfile?.gender || '',
-        phone: fetchedProfile?.phone || '',
+        phone: fetchedProfile?.phone || fetchedProfile?.phoneNumber || '',
         bio: fetchedProfile?.bio || '',
         birthDate: '',
         age: fetchedProfile?.age?.toString() || '',
@@ -63,11 +70,12 @@ export const useProfileState = (): ProfileStateReturn => {
         localStorage.setItem('userName', userData.userName);
       }
     } catch (error) {
+      console.error('Profile fetch error:', error);
       toast.error('Failed to load profile data');
     } finally {
       setProfileLoading(false);
     }
-  };
+  }, []); // Empty dependency array - function only needs to be created once
 
   return {
     profileData,

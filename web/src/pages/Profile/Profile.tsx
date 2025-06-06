@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
@@ -26,6 +26,7 @@ const Profile: React.FC<ProfileProps> = ({ isDarkMode }) => {
   const [editMode, setEditMode] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  const hasInitialized = useRef<boolean>(false);
 
   const { profileData, setProfileData, profileLoading, fetchUserProfileData } = useProfileState();
   const { contacts: emergencyContacts, contactsLoading } = useEmergencyContacts();
@@ -43,17 +44,29 @@ const Profile: React.FC<ProfileProps> = ({ isDarkMode }) => {
   }));
 
   useEffect(() => {
-    const storedName = localStorage.getItem('userName');
-    const storedEmail = localStorage.getItem('email') || localStorage.getItem('userName');
+    if (hasInitialized.current) return;
 
-    setProfileData((prev) => ({
-      ...prev,
-      fullName: storedName || 'User',
-      email: storedEmail || 'user@example.com',
-    }));
+    const initializeProfile = async () => {
+      try {
+        const storedName = localStorage.getItem('userName');
+        const storedEmail = localStorage.getItem('email') || localStorage.getItem('userName');
 
-    fetchUserProfileData();
-  }, [fetchUserProfileData, setProfileData]);
+        setProfileData((prev) => ({
+          ...prev,
+          fullName: storedName || 'User',
+          email: storedEmail || 'user@example.com',
+        }));
+
+        // Fetch complete profile data
+        await fetchUserProfileData();
+        hasInitialized.current = true;
+      } catch (error) {
+        console.error('Profile initialization error:', error);
+      }
+    };
+
+    initializeProfile();
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -88,7 +101,10 @@ const Profile: React.FC<ProfileProps> = ({ isDarkMode }) => {
       await updateUserProfile(profileDataWithId as ProfileData);
       toast.success('Profile updated successfully!');
       setEditMode(false);
-      setTimeout(fetchUserProfileData, 1000);
+
+      setTimeout(() => {
+        fetchUserProfileData();
+      }, 1000);
     } catch (error: any) {
       toast.error(error.message || 'Failed to update profile');
     } finally {
@@ -130,6 +146,7 @@ const Profile: React.FC<ProfileProps> = ({ isDarkMode }) => {
           editMode={editMode}
           handleImageChange={handleImageChange}
           handleDeletePhoto={handleDeletePhoto}
+          isDarkMode={isDarkMode}
         />
 
         <motion.div

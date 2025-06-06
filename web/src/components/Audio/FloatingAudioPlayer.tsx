@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaPlay, FaPause, FaVolumeUp, FaVolumeMute } from 'react-icons/fa';
+import { FaPlay, FaPause, FaVolumeUp, FaVolumeMute, FaTimes } from 'react-icons/fa';
 import { useAudioPlayer } from '../../contexts/AudioPlayerContext';
 import { Link } from 'react-router-dom';
 import getBackgroundStyle, { CategoryType } from '../../utils/getBackgroundStyle';
@@ -18,7 +18,8 @@ const FloatingAudioPlayer = ({
   isDarkMode,
   activeCategory = 'nature',
 }: FloatingAudioPlayerProps) => {
-  const { currentSound, isPlaying, setIsPlaying, volume, setVolume, audioRef } = useAudioPlayer();
+  const { currentSound, isPlaying, setIsPlaying, volume, setVolume, audioRef, setCurrentSound } =
+    useAudioPlayer();
 
   if (!currentSound) return null;
 
@@ -40,6 +41,15 @@ const FloatingAudioPlayer = ({
     }
   };
 
+  const handleClose = (): void => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+    setIsPlaying(false);
+    setCurrentSound(null);
+  };
+
   return (
     <AnimatePresence>
       <motion.div
@@ -51,6 +61,17 @@ const FloatingAudioPlayer = ({
           border border-gray-200 dark:border-gray-700
           w-72 transform hover:scale-102 transition-all max-w-[calc(100vw-300px)]`}
       >
+        {/* Close button */}
+        <button
+          onClick={handleClose}
+          className={`absolute top-2 right-2 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors
+            ${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-900'}`}
+          type="button"
+          aria-label="Close audio player"
+        >
+          <FaTimes className="w-3 h-3" />
+        </button>
+
         <div className="flex items-center gap-3">
           <div className="flex-shrink-0">
             <Link
@@ -61,7 +82,7 @@ const FloatingAudioPlayer = ({
             </Link>
           </div>
 
-          <div className="flex-grow min-w-0">
+          <div className="flex-grow min-w-0 pr-6">
             <Link
               to="/wellness-hub"
               className={`block text-sm font-medium truncate hover:text-blue-500 

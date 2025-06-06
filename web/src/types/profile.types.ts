@@ -3,6 +3,7 @@ export interface ProfileData {
   fullName: string;
   email: string;
   phone: string;
+  phoneNumber?: string;
   bio: string;
   age: string | number;
   gender: string;

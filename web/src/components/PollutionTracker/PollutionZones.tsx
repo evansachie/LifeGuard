@@ -20,7 +20,6 @@ const PollutionZones: React.FC<PollutionZonesProps> = ({ onZoneClick }) => {
       });
 
       if (features.length > 0) {
-        const zoneId = features[0].layer.id.replace('zone-', '');
         const clickedZone = pollutionZones.find(
           (zone) => `zone-${zone.id}` === features[0].layer.id
         );

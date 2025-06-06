@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { toast } from 'react-toastify';
 import { fetchWithAuth, API_ENDPOINTS } from '../utils/api';
 
 interface ChatMessage {
@@ -71,6 +70,50 @@ export function useChatHistory(): ChatHistoryReturn {
     setLoading(false);
   };
 
+  const getBasicHealthResponse = (query: string): string => {
+    const lowerQuery = query.toLowerCase();
+
+    // Basic health responses for common questions
+    if (lowerQuery.includes('headache') || lowerQuery.includes('head pain')) {
+      return 'For headaches, try resting in a quiet, dark room, staying hydrated, and applying a cold or warm compress. If headaches persist or are severe, please consult a healthcare professional.';
+    }
+
+    if (lowerQuery.includes('fever') || lowerQuery.includes('temperature')) {
+      return 'For fever, rest, drink plenty of fluids, and consider over-the-counter fever reducers if appropriate. Seek medical attention if fever is high (over 103°F/39.4°C) or persists for more than 3 days.';
+    }
+
+    if (lowerQuery.includes('cough') || lowerQuery.includes('sore throat')) {
+      return 'For cough or sore throat, try warm saltwater gargles, honey (for adults), staying hydrated, and using a humidifier. If symptoms worsen or persist beyond a week, consult a healthcare provider.';
+    }
+
+    if (lowerQuery.includes('stress') || lowerQuery.includes('anxiety')) {
+      return "For stress and anxiety, try deep breathing exercises, regular physical activity, adequate sleep, and mindfulness practices. If you're experiencing persistent anxiety, consider speaking with a mental health professional.";
+    }
+
+    if (lowerQuery.includes('sleep') || lowerQuery.includes('insomnia')) {
+      return 'For better sleep, maintain a regular sleep schedule, avoid screens before bedtime, keep your bedroom cool and dark, and limit caffeine late in the day. If sleep problems persist, consult a healthcare provider.';
+    }
+
+    if (lowerQuery.includes('exercise') || lowerQuery.includes('workout')) {
+      return 'Regular exercise is important for overall health. Aim for at least 150 minutes of moderate aerobic activity per week, plus strength training exercises. Start slowly and gradually increase intensity. Always consult your doctor before starting a new exercise program.';
+    }
+
+    if (
+      lowerQuery.includes('diet') ||
+      lowerQuery.includes('nutrition') ||
+      lowerQuery.includes('eating')
+    ) {
+      return 'A balanced diet includes plenty of fruits, vegetables, whole grains, lean proteins, and healthy fats. Stay hydrated, limit processed foods, and control portion sizes. Consider consulting a registered dietitian for personalized advice.';
+    }
+
+    if (lowerQuery.includes('water') || lowerQuery.includes('hydration')) {
+      return "Staying hydrated is essential for health. Aim for about 8 glasses (64 ounces) of water daily, more if you're active or in hot weather. Signs of good hydration include pale yellow urine and feeling energetic.";
+    }
+
+    // Default response
+    return 'Thank you for your health question. While I can provide general wellness information, I recommend consulting with a qualified healthcare professional for personalized medical advice. In the meantime, maintaining a healthy lifestyle with regular exercise, balanced nutrition, adequate sleep, and stress management is always beneficial.';
+  };
+
   const sendQuery = async (query: string): Promise<string | null> => {
     if (!query.trim()) return null;
     setLoading(true);
@@ -78,34 +121,43 @@ export function useChatHistory(): ChatHistoryReturn {
     try {
       addUserMessage(query);
 
-      // Get user ID from local storage
-      const userData = JSON.parse(localStorage.getItem('user') || '{}');
-      const userId = userData.id || localStorage.getItem('userId') || 'anonymous';
-
-      // Ensure token is available
+      // Check if user is authenticated
       const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('Authentication token not found. Please log in again.');
+      const userId = localStorage.getItem('userId');
+
+      if (token && userId) {
+        // Try authenticated request first
+        try {
+          const result = await fetchWithAuth<QueryResponse>(API_ENDPOINTS.RAG_QUERY, {
+            method: 'POST',
+            body: JSON.stringify({ question: query, userId }),
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          addAssistantMessage(result.response);
+          return result.response;
+        } catch (authError: any) {
+          console.log('Authenticated request failed, falling back to basic responses:', authError);
+          // Fall through to basic response
+        }
       }
 
-      const result = await fetchWithAuth<QueryResponse>(API_ENDPOINTS.RAG_QUERY, {
-        method: 'POST',
-        body: JSON.stringify({ question: query, userId }),
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      // Provide basic health responses for unauthenticated users or when API fails
+      const basicResponse = getBasicHealthResponse(query);
 
-      addAssistantMessage(result.response);
-      return result.response;
+      // Add a note about enhanced features for authenticated users
+      const enhancedResponse = token
+        ? basicResponse
+        : `${basicResponse}\n\n💡 **Tip**: Log in to access our advanced AI health assistant with personalized responses and comprehensive health analysis!`;
+
+      addAssistantMessage(enhancedResponse);
+      return enhancedResponse;
     } catch (error: any) {
-      console.error('Error querying health assistant:', error);
+      console.error('Error in health assistant:', error);
 
-      let errorMessage = 'Failed to get a response. Please try again.';
+      const errorMessage =
+        "I'm currently experiencing some technical difficulties. Here are some general health tips: maintain a balanced diet, exercise regularly, get adequate sleep, stay hydrated, and consult healthcare professionals for any specific concerns.";
 
-      if (error.message && (error.message.includes('token') || error.message.includes('401'))) {
-        errorMessage = 'Authentication error. Please log out and log in again.';
-      }
-
-      toast.error(errorMessage);
       addAssistantMessage(errorMessage, true);
       return null;
     } finally {

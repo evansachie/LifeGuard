@@ -5,7 +5,7 @@ import { UserData, Memo, Quote } from '../types/common.types';
 interface QuoteApiResponse {
   q: string;
   a: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
@@ -20,6 +20,7 @@ export const fetchUserData = async (userId: string): Promise<UserData> => {
   try {
     const response = await fetchWithAuth(`${API_ENDPOINTS.GET_USER(userId)}`);
     return {
+      id: userId,
       userName: response.userName,
       email: response.email,
     };

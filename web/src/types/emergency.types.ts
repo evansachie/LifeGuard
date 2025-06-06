@@ -14,16 +14,21 @@ export interface MedicalInfo {
   bio: string;
 }
 
+export interface EmergencyContact {
+  name: string;
+  phone: string;
+  relationship: string;
+}
+
 export interface EmergencyUserData {
   name: string;
-  location: string;
   phone: string;
   email: string;
+  location: string;
   timestamp: string;
-  medicalInfo: MedicalInfo;
-  mapUrl: string | null;
-  medications: Medication[];
-  [key: string]: unknown;
+  medicalConditions?: string[];
+  medications?: string[];
+  emergencyContacts?: EmergencyContact[];
 }
 
 export interface EmergencyActions {

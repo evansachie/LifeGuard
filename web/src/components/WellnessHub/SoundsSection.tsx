@@ -37,7 +37,6 @@ import AccessibleDropdown from '../AccessibleDropdown/AccessibleDropdown';
 import {
   Sound,
   FavoriteSound,
-  FavoriteResponse,
   SearchFilters,
   AudioPlayerContextType,
 } from '../../types/wellnessHub.types';
@@ -63,7 +62,7 @@ const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
   const [activeCategory, setActiveCategory] = useState<string>('nature');
   const [page, setPage] = useState<number>(1);
   const [filters, setFilters] = useState<SearchFilters>({});
-  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [, setHasMore] = useState<boolean>(true);
   const [showShortcuts, setShowShortcuts] = useState<boolean>(false);
   const [prevVolume, setPrevVolume] = useState<number | null>(null);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
@@ -92,11 +91,11 @@ const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
     try {
       const userFavorites = await getFavorites(userId);
 
-      const convertedFavorites: FavoriteSound[] = userFavorites.map((fav) => ({
-        sound_id: fav.soundId,
-        name: fav.name,
-        url: fav.url,
-      }));
+      // The getFavorites function now returns properly mapped FavoriteSound objects
+      // Filter out any favorites that don't have required fields
+      const convertedFavorites: FavoriteSound[] = userFavorites.filter(
+        (fav) => fav.sound_id && fav.name
+      );
 
       setFavorites(convertedFavorites);
 
@@ -165,39 +164,71 @@ const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
       const isFavorite = favorites.some((fav) => fav.sound_id === String(sound.id));
 
       if (isFavorite) {
+        // Remove from favorites
         await removeFromFavorites(userId, String(sound.id));
         setFavorites((prev) => prev.filter((fav) => fav.sound_id !== String(sound.id)));
         toast.success('Removed from favorites');
       } else {
+        // Add to favorites
         const result = await addToFavorites(userId, sound);
 
         if ('error' in result) {
-          // Handle already favorited case
-          if (result.favorite) {
+          if (result.error === 'Already favorited') {
+            // Handle the case where backend says it's already favorited but UI doesn't show it
             const favSound: FavoriteSound = {
               sound_id: String(sound.id),
               name: sound.name,
               url: sound.url || (sound.previews && sound.previews['preview-hq-mp3']) || '',
             };
-            setFavorites((prev) => [...prev, favSound]);
-            toast.info('Sound is already in favorites');
+
+            setFavorites((prev) => {
+              const exists = prev.some((fav) => fav.sound_id === String(sound.id));
+              if (!exists) {
+                return [...prev, favSound];
+              }
+              return prev;
+            });
+
+            toast.success('Added to favorites');
           } else {
-            toast.error(result.error || 'Error adding to favorites');
+            const errorMessage = result.message || result.error || 'Error adding to favorites';
+            toast.error(errorMessage);
           }
         } else {
           // Handle successful add
           const newFavorite: FavoriteSound = {
-            sound_id: String(result.id || sound.id),
-            name: result.name || sound.name,
-            url: result.url || (sound.previews && sound.previews['preview-hq-mp3']) || '',
+            sound_id: String(sound.id),
+            name: sound.name,
+            url: sound.url || (sound.previews && sound.previews['preview-hq-mp3']) || '',
           };
 
           setFavorites((prev) => [...prev, newFavorite]);
           toast.success('Added to favorites');
         }
       }
-    } catch (error) {
-      toast.error('Error updating favorites');
+    } catch (error: any) {
+      console.error('Unexpected error in handleToggleFavorite:', error);
+
+      if (error?.status === 409) {
+        // Handle 409 conflicts - the sound is already favorited on the backend
+        const favSound: FavoriteSound = {
+          sound_id: String(sound.id),
+          name: sound.name,
+          url: sound.url || (sound.previews && sound.previews['preview-hq-mp3']) || '',
+        };
+
+        setFavorites((prev) => {
+          const exists = prev.some((fav) => fav.sound_id === String(sound.id));
+          if (!exists) {
+            return [...prev, favSound];
+          }
+          return prev;
+        });
+
+        toast.success('Added to favorites');
+      } else {
+        toast.error('An unexpected error occurred');
+      }
     }
   };
 
@@ -313,6 +344,24 @@ const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
     }
   };
 
+  useEffect(() => {
+    if (showFavoritesOnly) {
+      const favoriteIds = favorites.map((fav) => fav.sound_id);
+      setSounds((prev) => prev.filter((sound) => favoriteIds.includes(String(sound.id))));
+    } else {
+      debouncedFetchSounds(true);
+    }
+  }, [showFavoritesOnly, favorites, debouncedFetchSounds]);
+
+  useEffect(() => {
+    if (userId) {
+      const timer = setTimeout(() => {
+        loadFavorites();
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [activeCategory, userId]);
+
   const renderContent = (): React.ReactNode => {
     if (loading) {
       return (
@@ -348,61 +397,67 @@ const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
     return (
       <div className="sounds-grid">
         <AnimatePresence>
-          {filteredSounds.map((sound) => (
-            <motion.div
-              key={sound.id}
-              className={`sound-card ${currentSound === sound.name ? 'playing' : ''}`}
-              style={getBackgroundStyle(sound, activeCategory as any)}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-            >
-              <div className="sound-overlay" />
-              <div className="sound-content">
-                <div className="sound-rating">
-                  <FaStar className="text-yellow-400" />
-                  <span>{sound.avg_rating?.toFixed(1) || '4.0'}</span>
-                </div>
-                <h3 className="sound-title">{sound.name}</h3>
-                <p className="sound-duration">{Math.floor(sound.duration)}s</p>
-                <div className="sound-controls">
-                  <AccessibleDropdown
-                    isOpen={currentSound === sound.name && isPlaying}
-                    onToggle={() => handleSoundPlay(sound)}
-                    ariaLabel={
-                      currentSound === sound.name && isPlaying ? 'Pause sound' : 'Play sound'
-                    }
-                    className="play-button"
-                  >
-                    {currentSound === sound.name && isPlaying ? <FaPause /> : <FaPlay />}
-                  </AccessibleDropdown>
+          {filteredSounds.map((sound) => {
+            // Check if this sound is favorited
+            const isFavorited = favorites.some((fav) => fav.sound_id === sound.id.toString());
 
-                  <AccessibleDropdown
-                    isOpen={favorites.some((fav) => fav.sound_id === sound.id.toString())}
-                    onToggle={() => handleToggleFavorite(sound)}
-                    ariaLabel={
-                      favorites.some((fav) => fav.sound_id === sound.id.toString())
-                        ? 'Remove from favorites'
-                        : 'Add to favorites'
-                    }
-                    className={`favorite-button ${
-                      favorites.some((fav) => fav.sound_id === sound.id.toString())
-                        ? 'active bg-red-500 border-red-500'
-                        : ''
-                    }`}
-                  >
-                    <FaHeart
-                      className={
-                        favorites.some((fav) => fav.sound_id === sound.id.toString())
-                          ? 'text-white'
-                          : 'text-gray-300'
+            return (
+              <motion.div
+                key={sound.id}
+                className={`sound-card ${currentSound === sound.name ? 'playing' : ''}`}
+                style={getBackgroundStyle(sound, activeCategory as any)}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                whileHover={{ scale: 1.02 }}
+                tabIndex={0}
+                role="button"
+                aria-label={`Play ${sound.name}`}
+              >
+                <div className="sound-overlay" />
+                <div className="sound-content">
+                  <div className="sound-rating">
+                    <FaStar className="text-yellow-400" />
+                    <span>{sound.avg_rating?.toFixed(1) || '4.0'}</span>
+                  </div>
+                  <h3 className="sound-title">{sound.name}</h3>
+                  <p className="sound-duration">
+                    {Math.floor(
+                      typeof sound.duration === 'string'
+                        ? parseFloat(sound.duration)
+                        : sound.duration
+                    )}
+                    s
+                  </p>
+                  <div className="sound-controls">
+                    <AccessibleDropdown
+                      isOpen={currentSound === sound.name && isPlaying}
+                      onToggle={() => handleSoundPlay(sound)}
+                      ariaLabel={
+                        currentSound === sound.name && isPlaying ? 'Pause sound' : 'Play sound'
                       }
-                    />
-                  </AccessibleDropdown>
+                      className="play-button"
+                    >
+                      {currentSound === sound.name && isPlaying ? <FaPause /> : <FaPlay />}
+                    </AccessibleDropdown>
+
+                    <AccessibleDropdown
+                      isOpen={isFavorited}
+                      onToggle={() => handleToggleFavorite(sound)}
+                      ariaLabel={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+                      className={`favorite-button ${
+                        isFavorited
+                          ? 'active bg-red-500 border-red-500 hover:bg-red-600'
+                          : 'bg-gray-600/50 border-gray-500 hover:bg-gray-500/60'
+                      } transition-all duration-200`}
+                    >
+                      <FaHeart className={isFavorited ? 'text-white' : 'text-gray-300'} />
+                    </AccessibleDropdown>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </AnimatePresence>
       </div>
     );
@@ -424,37 +479,20 @@ const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
           ariaLabel={showFavoritesOnly ? 'Hide favorites' : 'Show favorites only'}
           className={`category-btn ${showFavoritesOnly ? 'active' : ''}`}
         >
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex items-center whitespace-nowrap"
-          >
-            <span className="category-icon inline-flex mr-2">
-              <FaHeart />
-            </span>
-            <span className="category-text">Favorites ({favorites.length})</span>
-          </motion.div>
+          <FaHeart />
+          Favorites
         </AccessibleDropdown>
 
         {Object.entries(categories).map(([key, { label, icon }]) => (
           <AccessibleDropdown
             key={key}
             isOpen={activeCategory === key}
-            onToggle={() => {
-              setActiveCategory(key);
-              setPage(1);
-            }}
+            onToggle={() => setActiveCategory(key)}
             ariaLabel={`Select ${label} category`}
             className={`category-btn ${activeCategory === key ? 'active' : ''}`}
           >
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex items-center whitespace-nowrap"
-            >
-              <span className="category-icon inline-flex mr-2">{icon}</span>
-              <span className="category-text">{label}</span>
-            </motion.div>
+            {icon}
+            <span>{label}</span>
           </AccessibleDropdown>
         ))}
       </div>
@@ -485,11 +523,7 @@ const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
               step="0.01"
               value={volume}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                const newVolume = parseFloat(e.target.value);
-                setVolume(newVolume);
-                if (audioRef.current) {
-                  audioRef.current.volume = newVolume;
-                }
+                setVolume(parseFloat(e.target.value));
               }}
               aria-label="Volume control"
             />

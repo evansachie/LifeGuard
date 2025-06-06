@@ -14,7 +14,6 @@ import {
   FiMoon,
 } from 'react-icons/fi';
 import { IconType } from 'react-icons';
-
 interface CommandItem {
   id: string;
   name: string;
@@ -39,36 +38,13 @@ interface CommandPaletteProps {
 export const CommandPalette = ({ isDarkMode, toggleTheme, open, setOpen }: CommandPaletteProps) => {
   const [search, setSearch] = useState<string>('');
   const [, setPages] = useState<string[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [recentSearches, setRecentSearches] = useState<CommandItem[]>(() => {
     return JSON.parse(localStorage.getItem('recentSearches') || '[]');
   });
   const navigate = useNavigate();
   const contentRef = useRef<HTMLDivElement>(null);
-
-  // Reset search when dialog closes
-  useEffect(() => {
-    if (!open) {
-      setSearch('');
-      setPages([]);
-    }
-  }, [open]);
-
-  // Close the palette when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (contentRef.current && !contentRef.current.contains(event.target as Node)) {
-        setOpen(false);
-      }
-    };
-
-    if (open) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [open, setOpen]);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const commands = useMemo<CommandGroup[]>(
     () => [
@@ -187,6 +163,92 @@ export const CommandPalette = ({ isDarkMode, toggleTheme, open, setOpen }: Comma
     [setOpen]
   );
 
+  // Reset search when dialog closes
+  useEffect(() => {
+    if (!open) {
+      setSearch('');
+      setPages([]);
+    } else {
+      // Focus input when dialog opens, but with a small delay to ensure it's rendered
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+    }
+  }, [open]);
+
+  // Close the palette when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (contentRef.current && !contentRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    if (open) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [open, setOpen]);
+
+  // Handle keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+      } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        setSelectedIndex((prev) => {
+          const allItems =
+            search.trim() === '' && recentSearches.length > 0
+              ? recentSearches
+              : filteredCommands.flatMap((group) => group.items);
+          return prev < allItems.length - 1 ? prev + 1 : 0;
+        });
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        setSelectedIndex((prev) => {
+          const allItems =
+            search.trim() === '' && recentSearches.length > 0
+              ? recentSearches
+              : filteredCommands.flatMap((group) => group.items);
+          return prev > 0 ? prev - 1 : allItems.length - 1;
+        });
+      } else if (event.key === 'Enter') {
+        event.preventDefault();
+        const allItems =
+          search.trim() === '' && recentSearches.length > 0
+            ? recentSearches
+            : filteredCommands.flatMap((group) => group.items);
+        if (selectedIndex >= 0 && selectedIndex < allItems.length) {
+          handleSelect(allItems[selectedIndex]);
+        }
+      }
+    };
+
+    if (open) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [open, setOpen, selectedIndex, search, recentSearches, filteredCommands, handleSelect]);
+
+  // Reset selected index when search changes
+  useEffect(() => {
+    setSelectedIndex(-1);
+  }, [search]);
+
+  const handleItemKeyDown = (event: React.KeyboardEvent, item: CommandItem) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleSelect(item);
+    }
+  };
+
   if (!open) return null;
 
   return (
@@ -194,6 +256,7 @@ export const CommandPalette = ({ isDarkMode, toggleTheme, open, setOpen }: Comma
       className="fixed inset-0 flex items-center justify-center z-[1000] bg-black bg-opacity-50"
       role="dialog"
       aria-modal="true"
+      aria-labelledby="command-palette-title"
     >
       <div
         ref={contentRef}
@@ -202,7 +265,11 @@ export const CommandPalette = ({ isDarkMode, toggleTheme, open, setOpen }: Comma
         } rounded-xl shadow-2xl`}
       >
         <div className="command-wrapper">
+          <div className="sr-only" id="command-palette-title">
+            Command Palette
+          </div>
           <input
+            ref={inputRef}
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -212,13 +279,19 @@ export const CommandPalette = ({ isDarkMode, toggleTheme, open, setOpen }: Comma
                 ? 'bg-gray-900 border-gray-700 text-white'
                 : 'bg-white border-gray-200 text-gray-800'
             } focus:outline-none`}
-            autoFocus
+            aria-label="Search for commands"
+            role="combobox"
+            aria-expanded="true"
+            aria-controls="command-list"
           />
 
           <div
+            id="command-list"
             className={`overflow-y-auto max-h-[60vh] p-2 ${
               isDarkMode ? 'scrollbar-dark' : 'scrollbar-light'
             }`}
+            role="listbox"
+            aria-label="Available commands"
           >
             {search.trim() === '' && recentSearches.length > 0 && (
               <div>
@@ -226,23 +299,32 @@ export const CommandPalette = ({ isDarkMode, toggleTheme, open, setOpen }: Comma
                   className={`px-2 py-1 text-xs uppercase tracking-wider font-semibold ${
                     isDarkMode ? 'text-gray-400' : 'text-gray-500'
                   }`}
+                  role="group"
+                  aria-label="Recent commands"
                 >
                   Recent
                 </div>
-                {recentSearches.map((item) => (
-                  <div
+                {recentSearches.map((item, index) => (
+                  <button
                     key={item.id}
-                    className={`flex items-center gap-2 px-3 py-2 my-1 cursor-pointer rounded-md transition-colors
+                    className={`w-full flex items-center gap-2 px-3 py-2 my-1 cursor-pointer rounded-md transition-colors text-left
                       ${
                         isDarkMode
-                          ? 'hover:bg-gray-800 text-gray-200'
-                          : 'hover:bg-gray-100 text-gray-700'
-                      }`}
+                          ? 'hover:bg-gray-800 text-gray-200 focus:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                          : 'hover:bg-gray-100 text-gray-700 focus:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                      }
+                      ${selectedIndex === index ? (isDarkMode ? 'bg-gray-800' : 'bg-gray-100') : ''}`}
                     onClick={() => handleSelect(item)}
+                    onKeyDown={(e) => handleItemKeyDown(e, item)}
+                    role="option"
+                    aria-label={`Execute ${item.name}`}
+                    aria-selected={selectedIndex === index ? 'true' : 'false'}
+                    type="button"
                   >
                     {item.icon && (
                       <item.icon
                         className={`w-4 h-4 ${isDarkMode ? 'opacity-70' : 'text-gray-600'}`}
+                        aria-hidden="true"
                       />
                     )}
                     <span>{item.name}</span>
@@ -250,58 +332,85 @@ export const CommandPalette = ({ isDarkMode, toggleTheme, open, setOpen }: Comma
                       <kbd
                         className={`ml-auto px-2 py-0.5 text-xs font-mono rounded 
                         ${isDarkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-600'}`}
+                        aria-label={`Keyboard shortcut: ${item.shortcut}`}
                       >
                         {item.shortcut}
                       </kbd>
                     )}
-                  </div>
+                  </button>
                 ))}
               </div>
             )}
 
             {(search.trim() !== '' || recentSearches.length === 0) &&
               filteredCommands.length === 0 && (
-                <div className="p-4 text-center text-gray-500">No results found.</div>
+                <div className="p-4 text-center text-gray-500" role="status">
+                  No results found.
+                </div>
               )}
 
-            {filteredCommands.map((group) => (
-              <div key={group.category}>
-                <div
-                  className={`px-2 py-1 text-xs uppercase tracking-wider font-semibold ${
-                    isDarkMode ? 'text-gray-400' : 'text-gray-600'
-                  }`}
-                >
-                  {group.category}
-                </div>
-                {group.items.map((item) => (
+            {filteredCommands.map((group) => {
+              const groupStartIndex =
+                search.trim() === '' && recentSearches.length > 0 ? recentSearches.length : 0;
+
+              return (
+                <div key={group.category} role="group" aria-labelledby={`group-${group.category}`}>
                   <div
-                    key={item.id}
-                    className={`flex items-center gap-2 px-3 py-2 my-1 cursor-pointer rounded-md transition-colors
-                      ${
-                        isDarkMode
-                          ? 'hover:bg-gray-800 text-gray-200'
-                          : 'hover:bg-gray-100 text-gray-700'
-                      }`}
-                    onClick={() => handleSelect(item)}
+                    id={`group-${group.category}`}
+                    className={`px-2 py-1 text-xs uppercase tracking-wider font-semibold ${
+                      isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                    }`}
                   >
-                    {item.icon && (
-                      <item.icon
-                        className={`w-4 h-4 ${isDarkMode ? 'opacity-70' : 'text-gray-600'}`}
-                      />
-                    )}
-                    <span className="font-medium">{item.name}</span>
-                    {item.shortcut && (
-                      <kbd
-                        className={`ml-auto px-2 py-0.5 text-xs font-mono rounded 
-                        ${isDarkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-600'}`}
-                      >
-                        {item.shortcut}
-                      </kbd>
-                    )}
+                    {group.category}
                   </div>
-                ))}
-              </div>
-            ))}
+                  {group.items.map((item, itemIndex) => {
+                    const absoluteIndex =
+                      groupStartIndex +
+                      (search.trim() === '' && recentSearches.length > 0
+                        ? 0
+                        : group.items.slice(0, itemIndex).length +
+                          filteredCommands
+                            .slice(0, filteredCommands.indexOf(group))
+                            .reduce((acc, g) => acc + g.items.length, 0));
+                    return (
+                      <button
+                        key={item.id}
+                        className={`w-full flex items-center gap-2 px-3 py-2 my-1 cursor-pointer rounded-md transition-colors text-left
+                          ${
+                            isDarkMode
+                              ? 'hover:bg-gray-800 text-gray-200 focus:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                              : 'hover:bg-gray-100 text-gray-700 focus:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                          }
+                          ${selectedIndex === absoluteIndex ? (isDarkMode ? 'bg-gray-800' : 'bg-gray-100') : ''}`}
+                        onClick={() => handleSelect(item)}
+                        onKeyDown={(e) => handleItemKeyDown(e, item)}
+                        role="option"
+                        aria-label={`Execute ${item.name}`}
+                        aria-selected={selectedIndex === absoluteIndex ? 'true' : 'false'}
+                        type="button"
+                      >
+                        {item.icon && (
+                          <item.icon
+                            className={`w-4 h-4 ${isDarkMode ? 'opacity-70' : 'text-gray-600'}`}
+                            aria-hidden="true"
+                          />
+                        )}
+                        <span className="font-medium">{item.name}</span>
+                        {item.shortcut && (
+                          <kbd
+                            className={`ml-auto px-2 py-0.5 text-xs font-mono rounded 
+                            ${isDarkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-600'}`}
+                            aria-label={`Keyboard shortcut: ${item.shortcut}`}
+                          >
+                            {item.shortcut}
+                          </kbd>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

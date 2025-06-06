@@ -1,12 +1,29 @@
 import React from 'react';
 import { FaSearch, FaFilter, FaStar } from 'react-icons/fa';
-import { SoundFiltersProps } from '../../types/wellnessHub.types';
+
+interface SearchFilters {
+  tags?: string;
+  duration?: string;
+  rating?: string;
+  [key: string]: any;
+}
+
+interface SoundFiltersProps {
+  filters: SearchFilters;
+  setFilters: (filters: (prev: SearchFilters) => SearchFilters) => void;
+  onSearch: () => void;
+  isDarkMode: boolean;
+  showFavoritesOnly?: boolean;
+  onToggleFavorites?: () => void;
+}
 
 const SoundFilters: React.FC<SoundFiltersProps> = ({
   filters,
   setFilters,
   onSearch,
   isDarkMode,
+  showFavoritesOnly = false,
+  onToggleFavorites,
 }) => {
   return (
     <div
@@ -20,8 +37,25 @@ const SoundFilters: React.FC<SoundFiltersProps> = ({
       }
     `}
     >
-      {/* Search Box */}
       <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
+        {onToggleFavorites && (
+          <button
+            onClick={onToggleFavorites}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              showFavoritesOnly
+                ? isDarkMode
+                  ? 'bg-red-600 hover:bg-red-700 text-white'
+                  : 'bg-red-500 hover:bg-red-600 text-white'
+                : isDarkMode
+                  ? 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                  : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+            }`}
+          >
+            {showFavoritesOnly ? 'Show All' : 'Show Favorites'}
+          </button>
+        )}
+
+        {/* Search Box */}
         <div className="relative w-full md:w-96">
           <FaSearch
             className={`absolute left-4 top-3.5 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}
@@ -30,7 +64,9 @@ const SoundFilters: React.FC<SoundFiltersProps> = ({
             type="text"
             placeholder="Search sounds..."
             value={filters.tags || ''}
-            onChange={(e) => setFilters((prev) => ({ ...prev, tags: e.target.value }))}
+            onChange={(e) =>
+              setFilters((prev: SearchFilters) => ({ ...prev, tags: e.target.value }))
+            }
             onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) =>
               e.key === 'Enter' && onSearch()
             }
@@ -58,7 +94,9 @@ const SoundFilters: React.FC<SoundFiltersProps> = ({
             </div>
             <select
               value={filters.duration || ''}
-              onChange={(e) => setFilters((prev) => ({ ...prev, duration: e.target.value }))}
+              onChange={(e) =>
+                setFilters((prev: SearchFilters) => ({ ...prev, duration: e.target.value }))
+              }
               className={`
                 rounded-lg border py-2 px-3 cursor-pointer
                 focus:ring-2 focus:outline-none transition-colors
@@ -86,7 +124,9 @@ const SoundFilters: React.FC<SoundFiltersProps> = ({
             </div>
             <select
               value={filters.rating || ''}
-              onChange={(e) => setFilters((prev) => ({ ...prev, rating: e.target.value }))}
+              onChange={(e) =>
+                setFilters((prev: SearchFilters) => ({ ...prev, rating: e.target.value }))
+              }
               className={`
                 rounded-lg border py-2 px-3 cursor-pointer
                 focus:ring-2 focus:outline-none transition-colors

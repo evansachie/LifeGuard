@@ -30,19 +30,16 @@ export async function resetUserPassword(
 export async function loginUser(email: string, password: string): Promise<AuthResponse> {
   const response = await apiMethods.login({ email, password });
 
-  // Check if response is in the Result wrapper format
   if (!response.isSuccess || !response.data) {
     throw new Error(response.message || 'Login failed');
   }
 
   const { data } = response;
 
-  // Validate auth data
   if (!data.token || !data.id || !data.userName) {
     throw new Error('Invalid login response data');
   }
 
-  // Save auth data
   localStorage.setItem('token', data.token);
   localStorage.setItem('userId', data.id);
   localStorage.setItem('userName', data.userName);
@@ -63,7 +60,6 @@ export const registerUser = async (
     }
     throw new Error(response?.message || 'Registration failed');
   } catch (error: unknown) {
-    // Type guard to check if error has response property
     if (error && typeof error === 'object' && 'response' in error) {
       const axiosError = error as { response?: { data?: { userId?: string } } };
       if (axiosError.response?.data?.userId) {
@@ -99,7 +95,6 @@ export async function getUserById(id: string): Promise<{ userName: string; email
 
 export const initiateGoogleLogin = async (): Promise<void> => {
   try {
-    // Add returnUrl parameter to tell the backend where to redirect after successful auth
     const returnUrl = `${window.location.origin}/signin-google`;
     const googleLoginUrl = `${API_BASE_URL}${API_ENDPOINTS.GOOGLE_LOGIN}?returnUrl=${encodeURIComponent(returnUrl)}`;
     window.location.href = googleLoginUrl;
@@ -117,7 +112,6 @@ interface GoogleCallbackData {
 
 export const handleGoogleCallback = async (): Promise<GoogleCallbackData> => {
   try {
-    // Get the authentication data from URL parameters instead of fetching the current URL
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
     const userId = urlParams.get('userId');
@@ -128,7 +122,6 @@ export const handleGoogleCallback = async (): Promise<GoogleCallbackData> => {
       throw new Error('Invalid authentication data received');
     }
 
-    // Store auth data
     localStorage.setItem('token', token);
     localStorage.setItem('userId', userId);
     localStorage.setItem('userName', userName || email);

@@ -105,20 +105,25 @@ const Dashboard: React.FC<DashboardProps> = ({ isDarkMode }) => {
   };
 
   // BLE Context
-  const {
-    bleDevice,
-    isConnecting,
-    sensorData,
-    connectToDevice: originalConnectToDevice,
-    disconnectDevice: originalDisconnectDevice,
-  } = useBLE();
-  const handleConnectDevice = () => {
-    originalConnectToDevice('default-device-id');
+  const { bleDevice, isConnecting, sensorData, connectToDevice, disconnectDevice } = useBLE();
+
+  const handleConnectDevice = async () => {
+    try {
+      if (!('bluetooth' in navigator)) {
+        console.warn('Bluetooth not supported in this browser');
+        return;
+      }
+
+      // Try to connect to a default device
+      await connectToDevice('lifeguard-device-1');
+    } catch (error) {
+      console.error('Error connecting to device:', error);
+    }
   };
 
-  const handleDisconnectDevice = () => {
+  const handleDisconnectDevice = async () => {
     if (bleDevice) {
-      originalDisconnectDevice(bleDevice.id);
+      await disconnectDevice(bleDevice.id);
     }
   };
 

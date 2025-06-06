@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaWeight, FaHeart, FaRunning, FaDumbbell } from 'react-icons/fa';
 import { GiMuscleUp } from 'react-icons/gi';
 import { IconType } from 'react-icons';

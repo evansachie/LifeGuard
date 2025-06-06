@@ -239,11 +239,18 @@ export interface StatsData {
 
 export type ViewMode = 'grid' | 'list';
 export type SortOption = 'newest' | 'oldest' | 'priority';
-export type Timeframe = 'today' | 'week' | 'month' | 'quarter' | 'year';
+export type Timeframe = 'today' | 'week' | 'month' | 'year' | 'all';
 
 export interface TimeframeData {
-  id: Timeframe;
+  value: Timeframe;
   label: string;
+  shortLabel?: string;
+}
+
+export interface TimeframeSelectorProps {
+  selectedTimeframe: Timeframe;
+  onTimeframeChange: (timeframe: Timeframe) => void;
+  isDarkMode: boolean;
 }
 
 // Dashboard Controls Types
@@ -384,18 +391,14 @@ export interface SignUpFormHook {
 
 export interface UserData {
   id: string;
-  userName: string;
-  email: string;
-  fullName?: string;
-  profilePhotoUrl?: string;
-  isActive?: boolean;
+  userName?: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  profileImage?: string;
+  preferences?: Record<string, unknown>;
   createdAt?: string;
-  roles?: string[];
-  name?: string;
-  location?: {
-    latitude: number;
-    longitude: number;
-  };
+  lastLoginAt?: string;
 }
 
 // useUserData Hook Return Type

@@ -1,11 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { fetchWithAuth, API_ENDPOINTS } from '../utils/api';
-
-interface UserData {
-  userName: string;
-  email: string;
-}
+import { UserData } from '../types/common.types';
 
 interface UseUserDataReturn {
   userData: UserData | null;
@@ -61,6 +57,7 @@ const useUserData = (): UseUserDataReturn => {
 
       if (userDataResponse && (userDataResponse.userName || userDataResponse.email)) {
         setUserData({
+          id: userId,
           userName: userDataResponse.userName,
           email: userDataResponse.email,
         });
