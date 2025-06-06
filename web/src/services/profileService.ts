@@ -80,7 +80,7 @@ export const updateUserProfile = async (
       Gender: profileData.gender || '',
       Weight: profileData.weight ? parseInt(profileData.weight.toString(), 10) : null,
       Height: profileData.height ? parseInt(profileData.height.toString(), 10) : null,
-      PhoneNumber: profileData.phoneNumber || '',
+      PhoneNumber: profileData.phone || profileData.phoneNumber || '',
       Bio: profileData.bio || '',
       ProfileImage: profileData.profileImage || null,
     };
