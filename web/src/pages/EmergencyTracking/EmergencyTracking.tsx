@@ -12,11 +12,7 @@ import InfoTab from '../../components/EmergencyTracking/InfoTab';
 import MedicalTab from '../../components/EmergencyTracking/MedicalTab';
 import ActionsTab from '../../components/EmergencyTracking/ActionsTab';
 
-import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-
-// Configure Mapbox access token
-mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_API_KEY as string;
 
 interface EmergencyTrackingProps {
   isDarkMode: boolean;
