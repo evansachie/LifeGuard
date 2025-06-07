@@ -14,7 +14,7 @@ dependencies:
   http: ^1.1.2
   shared_preferences: ^2.2.2
   provider: ^6.1.1
-  flutter_svg: ^2.0.9
+  flutter_svg: ^2.0.10+1
   google_fonts: ^6.1.0
   intl: ^0.19.0
   fl_chart: ^0.66.0
@@ -28,7 +28,7 @@ dependencies:
   audio_session: ^0.1.18
   youtube_player_iframe: ^5.0.0
   cached_network_image: ^3.3.1
-  url_launcher: ^6.2.4
+  url_launcher: ^6.3.1
   image_picker: ^1.1.2
 
 dev_dependencies:

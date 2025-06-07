@@ -20,6 +20,9 @@ import 'package:lifeguard/providers/audio_provider.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'providers/profile_provider.dart';
 import 'screens/profile/profile_screen.dart';
+import 'screens/settings/privacy_screen.dart';
+import 'screens/settings/help_support_screen.dart';
+import 'screens/settings/about_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -88,6 +91,9 @@ class MyApp extends StatelessWidget {
               return OTPVerificationScreen(email: email);
             },
             '/emergency-contacts': (context) => const EmergencyContactsScreen(),
+            '/privacy': (context) => const PrivacyScreen(),
+            '/help-support': (context) => const HelpSupportScreen(),
+            '/about': (context) => const AboutScreen(),
           },
         ),
       ),

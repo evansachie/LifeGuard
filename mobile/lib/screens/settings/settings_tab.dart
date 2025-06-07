@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:lifeguard/screens/profile/profile_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:lifeguard/providers/theme_provider.dart';
+import 'package:lifeguard/screens/settings/about_screen.dart';
+import 'package:lifeguard/screens/settings/help_support_screen.dart';
+import 'package:lifeguard/screens/settings/privacy_screen.dart';
 
 class SettingsTab extends StatelessWidget {
   const SettingsTab({super.key});
@@ -28,7 +32,14 @@ class SettingsTab extends StatelessWidget {
                 leading: const Icon(Icons.person_outline),
                 title: const Text('Account'),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ProfileScreen(),
+                    ),
+                  );
+                },
               ),
               ListTile(
                 leading: const Icon(Icons.palette_outlined),
@@ -103,19 +114,40 @@ class SettingsTab extends StatelessWidget {
                 leading: const Icon(Icons.privacy_tip_outlined),
                 title: const Text('Privacy'),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PrivacyScreen(),
+                    ),
+                  );
+                },
               ),
               ListTile(
                 leading: const Icon(Icons.help_outline),
                 title: const Text('Help & Support'),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const HelpSupportScreen(),
+                    ),
+                  );
+                },
               ),
               ListTile(
                 leading: const Icon(Icons.info_outline),
                 title: const Text('About'),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AboutScreen(),
+                    ),
+                  );
+                },
               ),
             ],
           ),

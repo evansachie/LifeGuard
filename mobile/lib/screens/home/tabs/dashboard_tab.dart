@@ -51,18 +51,6 @@ class _DashboardTabState extends State<DashboardTab> {
     return name[0].toUpperCase();
   }
 
-  String _getDisplayName(String? fullName) {
-    if (fullName == null || fullName.isEmpty) {
-      // Fallback to stored username from AuthProvider
-      final authProvider = context.read<AuthProvider>();
-      return authProvider.currentUser?.userName.split(' ').first ??
-             authProvider.userName?.split(' ').first ??
-             'User';
-    }
-    final firstName = fullName.split(' ').first;
-    return firstName;
-  }
-
   Widget _buildProfileAvatar() {
     return Consumer<ProfileProvider>(
       builder: (context, profileProvider, child) {
@@ -321,13 +309,21 @@ class _DashboardTabState extends State<DashboardTab> {
     final authProvider = context.watch<AuthProvider>();
 
     // Get the display name from profile or fallback to stored name
-    String displayName = 'User';
-    if (profileProvider.profileData?.fullName.isNotEmpty == true) {
+    String displayName = '...'; // Default loading state
+    
+    if (!profileProvider.isLoading && profileProvider.profileData?.fullName.isNotEmpty == true) {
       displayName = profileProvider.profileData!.fullName.split(' ').first;
-    } else if (authProvider.currentUser?.userName.isNotEmpty == true) {
-      displayName = authProvider.currentUser!.userName.split(' ').first;
-    } else if (authProvider.userName?.isNotEmpty == true) {
-      displayName = authProvider.userName!.split(' ').first;
+    } else if (!authProvider.isLoading && authProvider.currentUser?.userName.isNotEmpty == true) {
+      // Only use auth provider name if it's not an email address
+      final userName = authProvider.currentUser!.userName;
+      if (!userName.contains('@')) {
+        displayName = userName.split(' ').first;
+      }
+    } else if (!authProvider.isLoading && authProvider.userName?.isNotEmpty == true) {
+      final userName = authProvider.userName!;
+      if (!userName.contains('@')) {
+        displayName = userName.split(' ').first;
+      }
     }
 
     return SafeArea(
@@ -378,7 +374,7 @@ class _DashboardTabState extends State<DashboardTab> {
                         child: Icon(
                           Icons.notifications_outlined,
                           color: isDark ? Colors.white70 : Colors.grey[600],
-                          size: 20,
+                          size: 30,
                         ),
                       ),
                     ),
