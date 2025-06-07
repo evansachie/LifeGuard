@@ -1,5 +1,5 @@
 name: lifeguard
-description: "A new Flutter project."
+description: "LifeGuard - Your comprehensive health and wellness application. Track medications, monitor vital health metrics, access emergency services, and maintain your personal wellness journey all in one secure platform."
 publish_to: 'none'
 version: 0.1.0
 
@@ -29,6 +29,7 @@ dependencies:
   youtube_player_iframe: ^5.0.0
   cached_network_image: ^3.3.1
   url_launcher: ^6.2.4
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:
