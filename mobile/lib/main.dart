@@ -18,6 +18,8 @@ import 'package:lifeguard/providers/quote_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:lifeguard/providers/audio_provider.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'providers/profile_provider.dart';
+import 'screens/profile/profile_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,6 +55,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => EmergencyContactProvider()),
         ChangeNotifierProvider(create: (_) => SoundProvider()),
         ChangeNotifierProvider(create: (_) => AudioProvider()),
+        ChangeNotifierProvider(create: (_) => ProfileProvider()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) => MaterialApp(
@@ -75,6 +78,7 @@ class MyApp extends StatelessWidget {
             '/login': (context) => const LoginScreen(),
             '/register': (context) => const RegisterScreen(),
             '/home': (context) => const HomeScreen(),
+            '/profile': (context) => const ProfileScreen(),
             '/forgot-password': (context) => const ForgotPasswordScreen(),
             '/onboarding': (context) => const OnboardingScreen1(),
             '/welcome': (context) => const SplashScreen(),

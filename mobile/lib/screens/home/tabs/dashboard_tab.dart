@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lifeguard/providers/auth_provider.dart';
+import 'package:lifeguard/providers/profile_provider.dart';
 import 'package:lifeguard/screens/bmr_calculator/bmr_calculator.dart';
 import 'package:lifeguard/screens/exercise_routines/exercise_routines.dart';
 import 'package:lifeguard/screens/health_tips/health_tips.dart';
@@ -19,10 +20,11 @@ class _DashboardTabState extends State<DashboardTab> {
   @override
   void initState() {
     super.initState();
-    // Fetch quote when dashboard loads
-    Future.microtask(
-      () => context.read<QuoteProvider>().fetchQuote(),
-    );
+    // Fetch quote and profile when dashboard loads
+    Future.microtask(() {
+      context.read<QuoteProvider>().fetchQuote();
+      context.read<ProfileProvider>().loadProfile();
+    });
   }
 
   Future<void> _handleLogout() async {
@@ -40,267 +42,97 @@ class _DashboardTabState extends State<DashboardTab> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final quoteProvider = context.watch<QuoteProvider>();
+  String _getInitials(String name) {
+    if (name.isEmpty) return 'U';
+    final parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    }
+    return name[0].toUpperCase();
+  }
 
-    return SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Hi, Evans!',
-                      style:
-                          Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: const Color(0xFF4285F4),
-                              ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    PopupMenuButton(
-                      offset: const Offset(0, 40),
-                      child: Container(
-                        padding: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isDark
-                              ? const Color(0xFF1E1E1E)
-                              : Colors.grey[100],
-                          border: Border.all(
-                            color: const Color(0xFF4285F4),
-                            width: 2,
-                          ),
-                        ),
-                        child: SvgPicture.asset(
-                          'assets/images/account.svg',
-                          width: 24,
-                          height: 24,
-                          colorFilter: ColorFilter.mode(
-                            isDark ? Colors.white70 : Colors.grey[600]!,
-                            BlendMode.srcIn,
-                          ),
-                        ),
-                      ),
-                      itemBuilder: (context) => [
-                        const PopupMenuItem(
-                          value: 'profile',
-                          child: Row(
-                            children: [
-                              Icon(Icons.person_outline),
-                              SizedBox(width: 8),
-                              Text('Edit Profile'),
-                            ],
-                          ),
-                        ),
-                        const PopupMenuItem(
-                          value: 'settings',
-                          child: Row(
-                            children: [
-                              Icon(Icons.settings_outlined),
-                              SizedBox(width: 8),
-                              Text('Settings'),
-                            ],
-                          ),
-                        ),
-                        const PopupMenuItem(
-                          value: 'logout',
-                          child: Row(
-                            children: [
-                              Icon(Icons.logout),
-                              SizedBox(width: 8),
-                              Text('Log Out'),
-                            ],
-                          ),
-                        ),
-                      ],
-                      onSelected: (value) {
-                        switch (value) {
-                          case 'profile':
-                            // Navigate to profile
-                            break;
-                          case 'settings':
-                            // Navigate to settings
-                            break;
-                          case 'logout':
-                            _handleLogout();
-                            break;
-                        }
-                      },
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        // Handle notifications
-                      },
-                      icon: Container(
-                        padding: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isDark
-                              ? const Color(0xFF1E1E1E)
-                              : Colors.grey[100],
-                          border: Border.all(
-                            color: const Color(0xFF4285F4),
-                            width: 2,
-                          ),
-                        ),
-                        child: Icon(
-                          Icons.notifications_outlined,
-                          color: isDark ? Colors.white70 : Colors.grey[600],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+  String _getDisplayName(String? fullName) {
+    if (fullName == null || fullName.isEmpty) {
+      // Fallback to stored username from AuthProvider
+      final authProvider = context.read<AuthProvider>();
+      return authProvider.currentUser?.userName.split(' ').first ??
+             authProvider.userName?.split(' ').first ??
+             'User';
+    }
+    final firstName = fullName.split(' ').first;
+    return firstName;
+  }
+
+  Widget _buildProfileAvatar() {
+    return Consumer<ProfileProvider>(
+      builder: (context, profileProvider, child) {
+        final profile = profileProvider.profileData;
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
+        return PopupMenuButton<String>(
+          offset: const Offset(0, 40),
+          onSelected: (value) {
+            switch (value) {
+              case 'profile':
+                Navigator.pushNamed(context, '/profile');
+                break;
+              case 'logout':
+                _handleLogout();
+                break;
+            }
+          },
+          itemBuilder: (context) => [
+            const PopupMenuItem(
+              value: 'profile',
+              child: Row(
+                children: [
+                  Icon(Icons.person_outline),
+                  SizedBox(width: 8),
+                  Text('Profile'),
+                ],
+              ),
             ),
-            const SizedBox(height: 2),
-            if (quoteProvider.isLoading)
-              Text(
-                'Loading inspiration...',
-                style: TextStyle(
-                  fontStyle: FontStyle.italic,
-                  color: isDark ? Colors.white70 : Colors.grey[600],
-                ),
-              )
-            else if (quoteProvider.quote != null)
-              Text.rich(
-                TextSpan(
-                  children: [
-                    TextSpan(
-                      text: '"${quoteProvider.quote!.text}"\n',
+            const PopupMenuItem(
+              value: 'logout',
+              child: Row(
+                children: [
+                  Icon(Icons.logout),
+                  SizedBox(width: 8),
+                  Text('Log Out'),
+                ],
+              ),
+            ),
+          ],
+          child: Container(
+            padding: const EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: const Color(0xFF4285F4),
+                width: 2,
+              ),
+            ),
+            child: CircleAvatar(
+              radius: 20,
+              backgroundColor:
+                  isDark ? const Color(0xFF1E1E1E) : Colors.grey[100],
+              backgroundImage: profile?.profileImage != null
+                  ? NetworkImage(profile!.profileImage!)
+                  : null,
+              child: profile?.profileImage == null
+                  ? Text(
+                      _getInitials(profile?.fullName ?? 'User'),
                       style: TextStyle(
-                        fontStyle: FontStyle.italic,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                         color: isDark ? Colors.white70 : Colors.grey[600],
                       ),
-                    ),
-                    TextSpan(
-                      text: '- ${quoteProvider.quote!.author}',
-                      style: TextStyle(
-                        fontStyle: FontStyle.italic,
-                        color: isDark ? Colors.white60 : Colors.grey[500],
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-            const SizedBox(height: 24),
-
-            // Environmental Metrics
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Environmental Metrics',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : Colors.black,
-                  ),
-                ),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/emergency-contacts');
-                  },
-                  icon: const Icon(Icons.warning_amber_rounded),
-                  label: const Text('EMERGENCY'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                  ),
-                ),
-              ],
+                    )
+                  : null,
             ),
-            const SizedBox(height: 16),
-            GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 16,
-              childAspectRatio: 1.5,
-              children: [
-                _buildMetricCard(
-                  context: context,
-                  icon: 'assets/images/temperature.svg',
-                  title: 'Temperature',
-                  value: '28.5°',
-                  unit: 'Celsius',
-                ),
-                _buildMetricCard(
-                  context: context,
-                  icon: 'assets/images/humidity.svg',
-                  title: 'Humidity',
-                  value: '65%',
-                  unit: 'Relative',
-                ),
-                _buildMetricCard(
-                  context: context,
-                  icon: 'assets/images/reminder.svg',
-                  title: 'Reminders',
-                  value: '3',
-                  unit: 'Active',
-                  onTap: () => Navigator.pushNamed(context, '/memos'),
-                ),
-                _buildMetricCard(
-                  context: context,
-                  icon: 'assets/images/air-quality.svg',
-                  title: 'Air Quality',
-                  value: '75',
-                  unit: 'AQI',
-                ),
-                _buildMetricCard(
-                  context: context,
-                  icon: 'assets/images/steps.svg',
-                  title: 'Activities',
-                  value: '6,248',
-                  unit: 'steps today',
-                ),
-                _buildMetricCard(
-                  context: context,
-                  icon: 'assets/images/atm-pressure.svg',
-                  title: 'Pressure',
-                  value: '1013',
-                  unit: 'hPa',
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 24),
-
-            // Quick Actions
-            Text(
-              'Quick Actions Tab',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : Colors.black,
-              ),
-            ),
-            const SizedBox(height: 16),
-            _buildQuickActions(),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -476,6 +308,223 @@ class _DashboardTabState extends State<DashboardTab> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final quoteProvider = context.watch<QuoteProvider>();
+    final profileProvider = context.watch<ProfileProvider>();
+    final authProvider = context.watch<AuthProvider>();
+
+    // Get the display name from profile or fallback to stored name
+    String displayName = 'User';
+    if (profileProvider.profileData?.fullName.isNotEmpty == true) {
+      displayName = profileProvider.profileData!.fullName.split(' ').first;
+    } else if (authProvider.currentUser?.userName.isNotEmpty == true) {
+      displayName = authProvider.currentUser!.userName.split(' ').first;
+    } else if (authProvider.userName?.isNotEmpty == true) {
+      displayName = authProvider.userName!.split(' ').first;
+    }
+
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Hi, $displayName!',
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF4285F4),
+                            ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ],
+                  ),
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildProfileAvatar(),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      onPressed: () {
+                        // Handle notifications
+                      },
+                      icon: Container(
+                        padding: const EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: isDark ? const Color(0xFF1E1E1E) : Colors.grey[100],
+                          border: Border.all(
+                            color: const Color(0xFF4285F4),
+                            width: 2,
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.notifications_outlined,
+                          color: isDark ? Colors.white70 : Colors.grey[600],
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 2),
+            
+            // Quote section
+            if (quoteProvider.isLoading)
+              Text(
+                'Loading inspiration...',
+                style: TextStyle(
+                  fontStyle: FontStyle.italic,
+                  color: isDark ? Colors.white70 : Colors.grey[600],
+                ),
+              )
+            else if (quoteProvider.quote != null)
+              Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: '"${quoteProvider.quote!.text}"\n',
+                      style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        color: isDark ? Colors.white70 : Colors.grey[600],
+                      ),
+                    ),
+                    TextSpan(
+                      text: '- ${quoteProvider.quote!.author}',
+                      style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        color: isDark ? Colors.white60 : Colors.grey[500],
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+            const SizedBox(height: 24),
+
+            // Environmental Metrics
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    'Environmental Metrics',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/emergency-contacts');
+                  },
+                  icon: const Icon(Icons.warning_amber_rounded, size: 16),
+                  label: const Text('EMERGENCY', style: TextStyle(fontSize: 12)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    minimumSize: const Size(0, 32),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 2,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              childAspectRatio: 1.5,
+              children: [
+                _buildMetricCard(
+                  context: context,
+                  icon: 'assets/images/temperature.svg',
+                  title: 'Temperature',
+                  value: '28.5°',
+                  unit: 'Celsius',
+                ),
+                _buildMetricCard(
+                  context: context,
+                  icon: 'assets/images/humidity.svg',
+                  title: 'Humidity',
+                  value: '65%',
+                  unit: 'Relative',
+                ),
+                _buildMetricCard(
+                  context: context,
+                  icon: 'assets/images/reminder.svg',
+                  title: 'Reminders',
+                  value: '3',
+                  unit: 'Active',
+                  onTap: () => Navigator.pushNamed(context, '/memos'),
+                ),
+                _buildMetricCard(
+                  context: context,
+                  icon: 'assets/images/air-quality.svg',
+                  title: 'Air Quality',
+                  value: '75',
+                  unit: 'AQI',
+                ),
+                _buildMetricCard(
+                  context: context,
+                  icon: 'assets/images/steps.svg',
+                  title: 'Activities',
+                  value: '6,248',
+                  unit: 'steps today',
+                ),
+                _buildMetricCard(
+                  context: context,
+                  icon: 'assets/images/atm-pressure.svg',
+                  title: 'Pressure',
+                  value: '1013',
+                  unit: 'hPa',
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 24),
+
+            // Quick Actions
+            Text(
+              'Quick Actions Tab',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black,
+              ),
+            ),
+            const SizedBox(height: 16),
+            _buildQuickActions(),
+          ],
         ),
       ),
     );
