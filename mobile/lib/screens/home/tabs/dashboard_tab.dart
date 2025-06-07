@@ -359,7 +359,7 @@ class _DashboardTabState extends State<DashboardTab> {
                     const SizedBox(width: 8),
                     IconButton(
                       onPressed: () {
-                        // Handle notifications
+                        Navigator.pushNamed(context, '/notifications');
                       },
                       icon: Container(
                         padding: const EdgeInsets.all(5),

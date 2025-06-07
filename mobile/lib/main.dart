@@ -23,6 +23,7 @@ import 'screens/profile/profile_screen.dart';
 import 'screens/settings/privacy_screen.dart';
 import 'screens/settings/help_support_screen.dart';
 import 'screens/settings/about_screen.dart';
+import 'screens/notifications/notifications_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -94,6 +95,7 @@ class MyApp extends StatelessWidget {
             '/privacy': (context) => const PrivacyScreen(),
             '/help-support': (context) => const HelpSupportScreen(),
             '/about': (context) => const AboutScreen(),
+            '/notifications': (context) => const NotificationsScreen(),
           },
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lifeguard/screens/notifications/notifications_screen.dart';
 import 'package:lifeguard/screens/profile/profile_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:lifeguard/providers/theme_provider.dart';
@@ -108,7 +109,14 @@ class SettingsTab extends StatelessWidget {
                 leading: const Icon(Icons.notifications_outlined),
                 title: const Text('Notifications'),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const NotificationsScreen(),
+                    ),
+                  );
+                },
               ),
               ListTile(
                 leading: const Icon(Icons.privacy_tip_outlined),
