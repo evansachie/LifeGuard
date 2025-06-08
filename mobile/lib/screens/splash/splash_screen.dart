@@ -32,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
     
     if (token != null && userId != null) {
       // User has valid credentials, verify with provider
-      final isLoggedIn = await authProvider.isLoggedIn();
+      final isLoggedIn = await authProvider.checkLoginStatus();
       if (isLoggedIn && mounted) {
         Navigator.pushReplacementNamed(context, '/home');
         return;

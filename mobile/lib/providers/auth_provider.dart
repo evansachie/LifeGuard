@@ -19,6 +19,9 @@ class AuthProvider extends ChangeNotifier {
   String? get userName => _userName;
   String? get email => _email;
 
+  String? get currentToken => _token;
+  String? get currentUserId => _userId;
+
   UserData? get currentUser {
     if (_userId != null && _userName != null && _email != null) {
       return UserData(
@@ -167,8 +170,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // Add this function to check login status
-  Future<bool> isLoggedIn() async {
+  Future<bool> checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final userId = prefs.getString('userId');
