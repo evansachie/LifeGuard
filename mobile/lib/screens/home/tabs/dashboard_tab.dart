@@ -5,6 +5,7 @@ import 'package:lifeguard/providers/profile_provider.dart';
 import 'package:lifeguard/screens/bmr_calculator/bmr_calculator.dart';
 import 'package:lifeguard/screens/exercise_routines/exercise_routines.dart';
 import 'package:lifeguard/screens/health_tips/health_tips.dart';
+import 'package:lifeguard/screens/medication/medication_tracker_screen.dart';
 import 'package:lifeguard/screens/wellness_hub/wellness_hub.dart';
 import 'package:provider/provider.dart';
 import 'package:lifeguard/providers/quote_provider.dart';
@@ -249,6 +250,23 @@ class _DashboardTabState extends State<DashboardTab> {
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => const WellnessHub(),
                 ));
+              },
+            ),
+            _buildActionButton(
+              icon: 'assets/images/meds.svg',
+              title: 'Medication Tracker',
+              color: Colors.blue,
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const MedicationTrackerScreen()
+                ));
+              },
+            ),
+            _buildActionButton(
+              icon: 'assets/images/analytics.svg',
+              title: 'Sensor Analytics',
+              color: Colors.cyan,
+              onTap: () {
               },
             ),
           ],
