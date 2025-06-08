@@ -4,11 +4,11 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/profile_model.dart';
-import '../config/api_config.dart';
+import '../config/constants.dart';
 
 class ProfileService {
-  static const String _baseUrl = ApiConfig.baseUrl;
-  static const String _nodeBaseUrl = ApiConfig.nodeBaseUrl;
+  static const String _baseUrl = Constants.baseUrl;
+  static const String _nodeBaseUrl = Constants.nodeApiUrl;
 
   static Future<String?> _getToken() async {
     final prefs = await SharedPreferences.getInstance();
