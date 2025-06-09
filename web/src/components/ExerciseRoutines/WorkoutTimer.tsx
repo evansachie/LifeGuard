@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaPlay, FaPause, FaRedo, FaStopCircle } from 'react-icons/fa';
 import { toast } from 'react-toastify';
@@ -124,30 +124,31 @@ const WorkoutTimer = ({
     try {
       const stats = calculateCompletionStats();
 
-      if (stats.completionPercentage < 80) {
-        toast.warn('You need to complete at least 80% of the workout for it to count!');
-        setShowConfirm(false);
-        return;
-      }
-
-      await exerciseService.completeWorkout({
-        workout_id: String(activeWorkout.id),
-        workout_type: activeWorkout.title,
-        calories_burned: stats.adjustedCalories,
-        duration_minutes: stats.duration,
-      });
-
-      // Stop the timer before closing
       if (isTimerRunning) {
         onToggleTimer();
       }
 
-      toast.info(`Workout ended at ${Math.round(stats.completionPercentage)}% completion`);
+      if (stats.completionPercentage >= 80) {
+        await exerciseService.completeWorkout({
+          workout_id: String(activeWorkout.id),
+          workout_type: activeWorkout.title,
+          calories_burned: stats.adjustedCalories,
+          duration_minutes: stats.duration,
+        });
+        toast.info(`Workout ended at ${Math.round(stats.completionPercentage)}% completion`);
+      } else {
+        toast.warn('Workout ended early - progress not saved (less than 80% completed)');
+      }
+
+      // Always close the workout regardless of completion percentage
       setShowConfirm(false);
       onEndWorkout();
     } catch (error) {
       console.error('Error completing workout:', error);
       toast.error('Failed to save workout progress');
+      // Still close the workout even if there's an error
+      setShowConfirm(false);
+      onEndWorkout();
     }
   };
 
