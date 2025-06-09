@@ -80,7 +80,7 @@ const usePasswordReset = (): ResetPasswordFormHook => {
   };
 };
 
-const ResetPassword: React.FC<AuthPageProps> = ({ isDarkMode, toggleTheme }) => {
+const ResetPassword = ({ isDarkMode, toggleTheme }: AuthPageProps) => {
   const resetProps = usePasswordReset();
 
   return (

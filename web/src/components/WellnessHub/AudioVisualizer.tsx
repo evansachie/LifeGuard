@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { AudioVisualizerProps } from '../../types/wellnessHub.types';
 
-const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ audioRef, isDarkMode }) => {
+const AudioVisualizer = ({ audioRef, isDarkMode }: AudioVisualizerProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);

@@ -17,7 +17,7 @@ interface MedicationTrackerProps {
   isDarkMode: boolean;
 }
 
-const MedicationTracker: React.FC<MedicationTrackerProps> = ({ isDarkMode }) => {
+const MedicationTracker = ({ isDarkMode }: MedicationTrackerProps) => {
   const [medications, setMedications] = useState<Medication[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [complianceRate, setComplianceRate] = useState<number | null>(null);

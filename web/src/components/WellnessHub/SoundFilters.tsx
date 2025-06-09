@@ -17,14 +17,14 @@ interface SoundFiltersProps {
   onToggleFavorites?: () => void;
 }
 
-const SoundFilters: React.FC<SoundFiltersProps> = ({
+const SoundFilters = ({
   filters,
   setFilters,
   onSearch,
   isDarkMode,
   showFavoritesOnly = false,
   onToggleFavorites,
-}) => {
+}: SoundFiltersProps) => {
   return (
     <div
       className={`

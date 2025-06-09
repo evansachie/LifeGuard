@@ -9,7 +9,7 @@ interface BLEProviderProps {
   children: ReactNode;
 }
 
-export const BLEProvider: React.FC<BLEProviderProps> = ({ children }) => {
+export const BLEProvider = ({ children }: BLEProviderProps) => {
   const [devices, setDevices] = useState<BLEDevice[]>([]);
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [isConnecting, setIsConnecting] = useState<boolean>(false);

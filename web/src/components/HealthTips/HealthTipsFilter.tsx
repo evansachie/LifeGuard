@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaThLarge } from 'react-icons/fa';
 import { CategoryType } from '../../types/healthTips.types';
 import { ariaPressed } from '../../utils/accessibilityUtils';
@@ -13,12 +12,12 @@ interface HealthTipsFilterProps {
   currentSort?: string;
 }
 
-const HealthTipsFilter: React.FC<HealthTipsFilterProps> = ({
+const HealthTipsFilter = ({
   categories,
   selectedCategory,
   onCategoryChange,
   isDarkMode,
-}) => {
+}: HealthTipsFilterProps) => {
   return (
     <div className={`health-tips-filter ${isDarkMode ? 'dark-mode' : ''}`}>
       <div className="filter-categories">

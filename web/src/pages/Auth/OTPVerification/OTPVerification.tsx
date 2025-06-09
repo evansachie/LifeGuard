@@ -88,7 +88,7 @@ const useOTPVerification = (email: string | undefined): OTPVerificationFormHook 
   };
 };
 
-const OTPVerification: React.FC<AuthPageProps> = ({ isDarkMode, toggleTheme }) => {
+const OTPVerification = ({ isDarkMode, toggleTheme }: AuthPageProps) => {
   const location = useLocation();
   const email = location.state?.email as string | undefined;
   const otpProps = useOTPVerification(email);

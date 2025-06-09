@@ -12,7 +12,7 @@ interface ImageSliderProps {
   interval?: number;
 }
 
-const ImageSlider: React.FC<ImageSliderProps> = ({ slides, interval = 5000 }) => {
+const ImageSlider = ({ slides, interval = 5000 }: ImageSliderProps) => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   useEffect(() => {

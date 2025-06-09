@@ -45,7 +45,7 @@ class Particle {
   }
 }
 
-const ParticleBackground: React.FC<ParticleBackgroundProps> = ({ isDarkMode }) => {
+const ParticleBackground = ({ isDarkMode }: ParticleBackgroundProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {

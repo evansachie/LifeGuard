@@ -1,6 +1,4 @@
-import React from 'react';
-
-const TypingIndicator: React.FC = () => {
+const TypingIndicator = () => {
   return (
     <div className="typing-indicator">
       <span></span>

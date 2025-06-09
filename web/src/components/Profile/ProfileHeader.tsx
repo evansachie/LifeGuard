@@ -22,7 +22,7 @@ interface ProfileHeaderProps {
   isDarkMode?: boolean;
 }
 
-const ProfileHeader: React.FC<ProfileHeaderProps> = ({
+const ProfileHeader = ({
   profileData,
   profileLoading,
   isLoading,
@@ -30,7 +30,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   handleImageChange,
   handleDeletePhoto,
   isDarkMode = false,
-}) => {
+}: ProfileHeaderProps) => {
   const [profilePhotoUrl, setProfilePhotoUrl] = useState<string | null>(null);
 
   useEffect(() => {

@@ -20,7 +20,7 @@ interface AudioProviderProps {
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
 
-export const AudioContextProvider: React.FC<AudioProviderProps> = ({ children }) => {
+export const AudioContextProvider = ({ children }: AudioProviderProps) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentTrack, setCurrentTrack] = useState<string | null>(null);
   const [volume, setVolumeState] = useState<number>(0.5);

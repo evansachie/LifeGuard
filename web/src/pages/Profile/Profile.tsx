@@ -22,7 +22,7 @@ interface ProfileProps {
   isDarkMode: boolean;
 }
 
-const Profile: React.FC<ProfileProps> = ({ isDarkMode }) => {
+const Profile = ({ isDarkMode }: ProfileProps) => {
   const navigate = useNavigate();
   const [editMode, setEditMode] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);

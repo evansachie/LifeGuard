@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { FaRegCheckCircle, FaChevronLeft } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
@@ -7,7 +6,7 @@ interface TermsOfUseProps {
   isDarkMode: boolean;
 }
 
-const TermsOfUse: React.FC<TermsOfUseProps> = ({ isDarkMode }) => {
+const TermsOfUse = ({ isDarkMode }: TermsOfUseProps) => {
   return (
     <div
       className={`py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto ${

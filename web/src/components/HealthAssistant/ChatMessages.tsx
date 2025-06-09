@@ -17,12 +17,7 @@ interface ChatMessagesProps {
   onExampleClick: (question: string) => void;
 }
 
-const ChatMessages: React.FC<ChatMessagesProps> = ({
-  chatHistory,
-  loading,
-  isDarkMode,
-  onExampleClick,
-}) => {
+const ChatMessages = ({ chatHistory, loading, isDarkMode, onExampleClick }: ChatMessagesProps) => {
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

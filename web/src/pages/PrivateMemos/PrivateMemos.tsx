@@ -21,7 +21,7 @@ interface PrivateMemosProps {
   isDarkMode: boolean;
 }
 
-const PrivateMemos: React.FC<PrivateMemosProps> = ({ isDarkMode }) => {
+const PrivateMemos = ({ isDarkMode }: PrivateMemosProps) => {
   const [memo, setMemo] = useState<string>('');
   const [filter, setFilter] = useState<FilterType>('all');
   const [sortOrder, setSortOrder] = useState<SortOrderType>('newest');

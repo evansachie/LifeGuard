@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaPlus } from 'react-icons/fa';
 import EmptyStateImg from '../../assets/empty-state.svg';
 
@@ -7,7 +6,7 @@ interface EmptyStateProps {
   isDarkMode?: boolean;
 }
 
-const EmptyState: React.FC<EmptyStateProps> = ({ onNewNote, isDarkMode }) => {
+const EmptyState = ({ onNewNote, isDarkMode }: EmptyStateProps) => {
   return (
     <div className={`memos-empty-state ${isDarkMode ? 'dark-mode' : ''}`}>
       <img src={EmptyStateImg} alt="No notes" className="empty-state-image" />

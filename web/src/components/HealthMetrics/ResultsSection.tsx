@@ -1,4 +1,3 @@
-import React from 'react';
 import MetricCard from './MetricCard';
 import MacrosDisplay from './MacrosDisplay';
 import RecommendationsSection from './RecommendationsSection';
@@ -12,7 +11,7 @@ interface ResultsSectionProps {
   isDarkMode: boolean;
 }
 
-const ResultsSection: React.FC<ResultsSectionProps> = ({ metrics, formData, unit, isDarkMode }) => {
+const ResultsSection = ({ metrics, formData, unit, isDarkMode }: ResultsSectionProps) => {
   return (
     <div className="results-section">
       <div className="metrics-grid">

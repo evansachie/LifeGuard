@@ -8,7 +8,7 @@ interface StatCardProps {
   color: string;
 }
 
-export const StatCard: React.FC<StatCardProps> = ({ icon: Icon, label, value, color }) => (
+export const StatCard = ({ icon: Icon, label, value, color }: StatCardProps) => (
   <div className="stat-card" style={{ '--card-color': color } as React.CSSProperties}>
     <div className="stat-icon">
       <Icon />

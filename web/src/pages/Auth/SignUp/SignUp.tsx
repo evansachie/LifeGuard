@@ -98,7 +98,7 @@ const useSignUp = (): SignUpFormHook => {
   };
 };
 
-const SignUp: React.FC<AuthPageProps> = ({ isDarkMode, toggleTheme }) => {
+const SignUp = ({ isDarkMode, toggleTheme }: AuthPageProps) => {
   const signUpProps = useSignUp();
 
   const signupSlides = [

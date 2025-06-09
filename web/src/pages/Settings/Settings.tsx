@@ -34,7 +34,7 @@ interface SettingsState {
   emergencyContacts: boolean;
 }
 
-const SettingsPage: React.FC<SettingsProps> = ({ isDarkMode, toggleDarkMode }) => {
+const SettingsPage = ({ isDarkMode, toggleDarkMode }: SettingsProps) => {
   const [settings, setSettings] = useState<SettingsState>({
     notifications: true,
     email: '',

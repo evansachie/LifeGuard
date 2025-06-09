@@ -20,7 +20,7 @@ interface NavbarProps {
   isAuthenticated: boolean;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleTheme, isAuthenticated }) => {
+const Navbar = ({ isDarkMode, toggleTheme, isAuthenticated }: NavbarProps) => {
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
@@ -93,7 +93,7 @@ const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleTheme, isAuthenticate
     window.location.reload();
   };
 
-  const AuthButtons: React.FC = () => (
+  const AuthButtons = () => (
     <>
       <Link to="/log-in" className="nav-button login" onClick={() => setIsMobileMenuOpen(false)}>
         Log In
@@ -104,7 +104,7 @@ const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleTheme, isAuthenticate
     </>
   );
 
-  const ProfileDropdown: React.FC = () => {
+  const ProfileDropdown = () => {
     const userName = localStorage.getItem('userName') || 'User';
 
     return (

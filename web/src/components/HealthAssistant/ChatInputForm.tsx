@@ -11,7 +11,7 @@ interface ChatInputFormProps {
   inputRef: RefObject<HTMLInputElement>;
 }
 
-const ChatInputForm: React.FC<ChatInputFormProps> = ({
+const ChatInputForm = ({
   query,
   onQueryChange,
   onSubmit,
@@ -19,7 +19,7 @@ const ChatInputForm: React.FC<ChatInputFormProps> = ({
   isListening,
   toggleListening,
   inputRef,
-}) => {
+}: ChatInputFormProps) => {
   const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
     if (query.trim() && !isLoading && !isListening) {

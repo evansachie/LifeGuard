@@ -7,7 +7,7 @@ interface AppLayoutProps {
   toggleTheme: () => void;
 }
 
-const AppLayout: React.FC<AppLayoutProps> = ({ children, isDarkMode, toggleTheme }) => {
+const AppLayout = ({ children, isDarkMode, toggleTheme }: AppLayoutProps) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(
     localStorage.getItem('sidebarCollapsed') === 'true'
   );

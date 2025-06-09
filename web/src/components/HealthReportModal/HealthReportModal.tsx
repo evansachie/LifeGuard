@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaTemperatureHigh, FaWalking, FaTimes, FaHeart, FaLungs } from 'react-icons/fa';
 import { WiHumidity, WiBarometer } from 'react-icons/wi';
 import { FaDownload, FaFileCsv, FaChartLine, FaShieldAlt } from 'react-icons/fa';
@@ -13,12 +12,7 @@ interface HealthReportModalProps {
   isDarkMode: boolean;
 }
 
-const HealthReportModal: React.FC<HealthReportModalProps> = ({
-  isOpen,
-  onClose,
-  userData,
-  isDarkMode,
-}) => {
+const HealthReportModal = ({ isOpen, onClose, userData, isDarkMode }: HealthReportModalProps) => {
   const report: HealthReportData | null = isOpen ? generateHealthReport(userData) : null;
 
   const iconMapping = {

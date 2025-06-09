@@ -9,10 +9,7 @@ import {
   PreferencesState,
 } from '../../types/medicationTracker.types';
 
-const NotificationPreferences: React.FC<NotificationPreferencesProps> = ({
-  isDarkMode,
-  onClose,
-}) => {
+const NotificationPreferences = ({ isDarkMode, onClose }: NotificationPreferencesProps) => {
   const [preferences, setPreferences] = useState<PreferencesState>({
     emailNotifications: true,
     reminderLeadTime: 15,

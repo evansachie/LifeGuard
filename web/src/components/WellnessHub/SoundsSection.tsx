@@ -55,7 +55,7 @@ interface Categories {
   [key: string]: Category;
 }
 
-const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
+const SoundsSection = ({ isDarkMode }: SoundsSectionProps) => {
   const { currentSound, setCurrentSound, isPlaying, setIsPlaying, volume, setVolume, audioRef } =
     useAudioPlayer() as AudioPlayerContextType;
   const [sounds, setSounds] = useState<Sound[]>([]);

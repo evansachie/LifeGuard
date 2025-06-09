@@ -16,7 +16,7 @@ interface FloatingHealthAssistantProps {
   isDarkMode: boolean;
 }
 
-const FloatingHealthAssistant: React.FC<FloatingHealthAssistantProps> = ({ isDarkMode }) => {
+const FloatingHealthAssistant = ({ isDarkMode }: FloatingHealthAssistantProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [query, setQuery] = useState<string>('');
   const [showShortcuts, setShowShortcuts] = useState<boolean>(false);

@@ -12,7 +12,7 @@ interface MemoFormProps {
   saving?: boolean;
 }
 
-const MemoForm: React.FC<MemoFormProps> = ({
+const MemoForm = ({
   memo,
   setMemo,
   isDarkMode,
@@ -20,7 +20,7 @@ const MemoForm: React.FC<MemoFormProps> = ({
   handleCancel,
   isEditing = false,
   saving = false,
-}) => {
+}: MemoFormProps) => {
   const [isEditorLoading, setIsEditorLoading] = useState<boolean>(true);
 
   const handleEditorChange = (content: string): void => {

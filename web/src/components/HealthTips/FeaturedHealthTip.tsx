@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { FeaturedTip } from '../../types/healthTips.types';
 
@@ -7,7 +6,7 @@ interface FeaturedHealthTipProps {
   onLearnMore: () => void;
 }
 
-const FeaturedHealthTip: React.FC<FeaturedHealthTipProps> = ({ featuredTip, onLearnMore }) => {
+const FeaturedHealthTip = ({ featuredTip, onLearnMore }: FeaturedHealthTipProps) => {
   if (!featuredTip) return null;
 
   return (

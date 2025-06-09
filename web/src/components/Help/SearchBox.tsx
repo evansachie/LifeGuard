@@ -8,12 +8,12 @@ interface SearchBoxProps {
   placeholder?: string;
 }
 
-const SearchBox: React.FC<SearchBoxProps> = ({
+const SearchBox = ({
   searchQuery = '',
   onSearchChange,
   isDarkMode,
   placeholder = 'Search for help topics...',
-}) => {
+}: SearchBoxProps) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     onSearchChange(e.target.value);
   };

@@ -39,7 +39,7 @@ const usePasswordResetForm = () => {
   };
 };
 
-const ForgotPassword: React.FC<AuthPageProps> = ({ isDarkMode, toggleTheme }) => {
+const ForgotPassword = ({ isDarkMode, toggleTheme }: AuthPageProps) => {
   const formProps = usePasswordResetForm();
 
   return (

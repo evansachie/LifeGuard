@@ -70,7 +70,7 @@ const useAuth = (): LoginFormHook => {
   };
 };
 
-const LogIn: React.FC<AuthPageProps> = ({ isDarkMode, toggleTheme }) => {
+const LogIn = ({ isDarkMode, toggleTheme }: AuthPageProps) => {
   const authProps = useAuth();
 
   const loginSlides = [

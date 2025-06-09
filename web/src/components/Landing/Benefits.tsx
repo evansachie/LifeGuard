@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { benefits } from '../../data/benefits';
 import './Benefits.css';
@@ -9,7 +8,7 @@ interface Benefit {
   description: string;
 }
 
-const Benefits: React.FC = () => {
+const Benefits = () => {
   return (
     <section className="benefits-section" id="benefits">
       <div className="benefits-container">

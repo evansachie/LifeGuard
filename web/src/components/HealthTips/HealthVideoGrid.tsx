@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 
 interface HealthVideo {
@@ -20,11 +19,7 @@ interface HealthVideoGridProps {
   };
 }
 
-const HealthVideoGrid: React.FC<HealthVideoGridProps> = ({
-  videos,
-  containerVariants,
-  itemVariants,
-}) => {
+const HealthVideoGrid = ({ videos, containerVariants, itemVariants }: HealthVideoGridProps) => {
   return (
     <section className="video-section">
       <motion.div

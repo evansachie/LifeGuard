@@ -24,7 +24,7 @@ interface WorkoutTimerProps {
   isDarkMode: boolean;
 }
 
-const WorkoutTimer: React.FC<WorkoutTimerProps> = ({
+const WorkoutTimer = ({
   activeWorkout,
   workoutTimer,
   isTimerRunning,
@@ -32,7 +32,7 @@ const WorkoutTimer: React.FC<WorkoutTimerProps> = ({
   onResetTimer,
   onEndWorkout,
   isDarkMode,
-}) => {
+}: WorkoutTimerProps) => {
   const [timeRemaining, setTimeRemaining] = useState<number>(0);
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
 

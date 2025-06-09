@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { FaTrash } from 'react-icons/fa';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal/DeleteConfirmationModal';
@@ -11,13 +10,13 @@ interface DeleteAccountSectionProps {
   handleConfirmDelete: () => void;
 }
 
-const DeleteAccountSection: React.FC<DeleteAccountSectionProps> = ({
+const DeleteAccountSection = ({
   isLoading,
   isDarkMode,
   isDeleteModalOpen,
   setIsDeleteModalOpen,
   handleConfirmDelete,
-}) => {
+}: DeleteAccountSectionProps) => {
   return (
     <>
       <motion.div
