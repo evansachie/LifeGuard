@@ -7,7 +7,7 @@ interface MetricCardProps {
   description?: string;
 }
 
-const MetricCard: React.FC<MetricCardProps> = ({ icon, title, value, description }) => {
+const MetricCard = ({ icon, title, value, description }: MetricCardProps) => {
   return (
     <div className="metric-card">
       <div className="metric-icon-container">{icon}</div>

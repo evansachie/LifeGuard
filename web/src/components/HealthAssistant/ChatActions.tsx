@@ -16,7 +16,7 @@ interface ChatActionsProps {
   isDarkMode: boolean;
 }
 
-const ChatActions: React.FC<ChatActionsProps> = ({ chatHistory, onClearHistory, isDarkMode }) => {
+const ChatActions = ({ chatHistory, onClearHistory, isDarkMode }: ChatActionsProps) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
 
   if (chatHistory.length === 0) return null;

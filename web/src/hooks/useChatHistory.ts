@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { fetchWithAuth, API_ENDPOINTS } from '../utils/api';
+import { handleError, getErrorMessage } from '../utils/errorHandler';
 
 interface ChatMessage {
   type: 'user' | 'assistant';
@@ -136,9 +137,12 @@ export function useChatHistory(): ChatHistoryReturn {
 
           addAssistantMessage(result.response);
           return result.response;
-        } catch (authError: any) {
-          console.log('Authenticated request failed, falling back to basic responses:', authError);
-          // Fall through to basic response
+        } catch (authError: unknown) {
+          const errorMessage = getErrorMessage(authError, 'Authentication failed');
+          console.log(
+            'Authenticated request failed, falling back to basic responses:',
+            errorMessage
+          );
         }
       }
 
@@ -152,8 +156,8 @@ export function useChatHistory(): ChatHistoryReturn {
 
       addAssistantMessage(enhancedResponse);
       return enhancedResponse;
-    } catch (error: any) {
-      console.error('Error in health assistant:', error);
+    } catch (error: unknown) {
+      handleError(error, 'Health assistant query', false);
 
       const errorMessage =
         "I'm currently experiencing some technical difficulties. Here are some general health tips: maintain a balanced diet, exercise regularly, get adequate sleep, stay hydrated, and consult healthcare professionals for any specific concerns.";

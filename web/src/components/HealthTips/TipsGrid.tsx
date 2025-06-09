@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import HealthTipCard from './HealthTipCard';
 import { HealthTip } from '../../types/healthTips.types';
@@ -17,13 +16,13 @@ interface TipsGridProps {
   };
 }
 
-const TipsGrid: React.FC<TipsGridProps> = ({
+const TipsGrid = ({
   tips,
   onReadMore,
   isDarkMode,
   containerVariants,
   itemVariants,
-}) => {
+}: TipsGridProps) => {
   return (
     <motion.section
       className="tips-grid"

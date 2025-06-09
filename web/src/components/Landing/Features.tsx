@@ -1,9 +1,8 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { features } from '../../data/features-data';
 import './Features.css';
 
-const Features: React.FC = () => {
+const Features = () => {
   return (
     <section className="features-section" id="features">
       <div className="features-container">

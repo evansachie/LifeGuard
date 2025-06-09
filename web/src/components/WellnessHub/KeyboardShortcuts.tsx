@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaKeyboard, FaTimes } from 'react-icons/fa';
 import { KeyboardShortcutsProps } from '../../types/wellnessHub.types';
 
-const KeyboardShortcuts: React.FC<KeyboardShortcutsProps> = ({ isOpen, onClose }) => (
+const KeyboardShortcuts = ({ isOpen, onClose }: KeyboardShortcutsProps) => (
   <AnimatePresence>
     {isOpen && (
       <motion.div

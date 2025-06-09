@@ -25,10 +25,7 @@ interface VerificationResponse {
   error?: string;
 }
 
-const VerifyEmergencyContact: React.FC<VerifyEmergencyContactProps> = ({
-  isDarkMode,
-  toggleTheme,
-}) => {
+const VerifyEmergencyContact = ({ isDarkMode, toggleTheme }: VerifyEmergencyContactProps) => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [verificationStatus, setVerificationStatus] = useState<'loading' | 'success' | 'error'>(

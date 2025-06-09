@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import NotificationPreferences from './NotificationPreferences';
 
@@ -8,11 +7,11 @@ interface NotificationPreferencesModalProps {
   isDarkMode: boolean;
 }
 
-const NotificationPreferencesModal: React.FC<NotificationPreferencesModalProps> = ({
+const NotificationPreferencesModal = ({
   isOpen,
   onClose,
   isDarkMode,
-}) => {
+}: NotificationPreferencesModalProps) => {
   return (
     <AnimatePresence>
       {isOpen && (

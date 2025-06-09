@@ -11,7 +11,7 @@ interface EmergencyContactsProps {
   isDarkMode: boolean;
 }
 
-const EmergencyContacts: React.FC<EmergencyContactsProps> = ({ isDarkMode }) => {
+const EmergencyContacts = ({ isDarkMode }: EmergencyContactsProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);

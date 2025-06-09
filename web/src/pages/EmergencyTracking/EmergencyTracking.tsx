@@ -21,7 +21,7 @@ interface EmergencyTrackingProps {
 
 type TabType = 'info' | 'medical' | 'actions';
 
-const EmergencyTracking: React.FC<EmergencyTrackingProps> = ({ isDarkMode, toggleTheme }) => {
+const EmergencyTracking = ({ isDarkMode, toggleTheme }: EmergencyTrackingProps) => {
   const [searchParams] = useSearchParams();
   const userId = searchParams.get('userId');
   const [activeTab, setActiveTab] = useState<TabType>('info');

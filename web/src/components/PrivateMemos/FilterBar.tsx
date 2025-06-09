@@ -1,4 +1,3 @@
-import React from 'react';
 import { MdSort } from 'react-icons/md';
 
 export type FilterType = 'all' | 'active' | 'completed';
@@ -11,7 +10,7 @@ interface FilterBarProps {
   setSortOrder: (sortOrder: SortOrderType) => void;
 }
 
-const FilterBar: React.FC<FilterBarProps> = ({ filter, setFilter, sortOrder, setSortOrder }) => {
+const FilterBar = ({ filter, setFilter, sortOrder, setSortOrder }: FilterBarProps) => {
   return (
     <div className="filters-bar">
       <div className="filter-tabs">

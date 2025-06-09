@@ -13,14 +13,14 @@ interface SoundCardProps {
   onToggleFavorite?: (sound: Sound) => void;
 }
 
-const SoundCard: React.FC<SoundCardProps> = ({
+const SoundCard = ({
   sound,
   isPlaying,
   onPlay,
   background,
   isFavorited = false,
   onToggleFavorite,
-}) => {
+}: SoundCardProps) => {
   const [showInfo, setShowInfo] = useState<boolean>(false);
 
   return (

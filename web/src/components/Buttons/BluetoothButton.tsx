@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaBluetooth, FaSpinner, FaBluetoothB } from 'react-icons/fa';
 import { BLEDevice } from '../../types/ble.types';
 
@@ -10,13 +9,13 @@ interface BluetoothButtonProps {
   disconnectDevice: () => void;
 }
 
-const BluetoothButton: React.FC<BluetoothButtonProps> = ({
+const BluetoothButton = ({
   bleDevice,
   isConnecting,
   isScanning = false,
   connectToDevice,
   disconnectDevice,
-}) => {
+}: BluetoothButtonProps) => {
   const getButtonText = () => {
     if (isScanning) return 'Scanning...';
     if (isConnecting) return 'Connecting...';

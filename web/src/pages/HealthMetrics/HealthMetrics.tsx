@@ -17,7 +17,7 @@ interface HealthMetricsProps {
   isDarkMode: boolean;
 }
 
-const HealthMetrics: React.FC<HealthMetricsProps> = ({ isDarkMode }) => {
+const HealthMetrics = ({ isDarkMode }: HealthMetricsProps) => {
   const {
     formData,
     metrics,

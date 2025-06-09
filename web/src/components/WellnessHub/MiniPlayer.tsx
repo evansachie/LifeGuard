@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { FaPlay, FaPause, FaTimes } from 'react-icons/fa';
 import { Sound } from '../../types/wellnessHub.types';
@@ -10,7 +9,7 @@ interface MiniPlayerProps {
   onClose: () => void;
 }
 
-const MiniPlayer: React.FC<MiniPlayerProps> = ({ sound, isPlaying, onPlayPause, onClose }) => (
+const MiniPlayer = ({ sound, isPlaying, onPlayPause, onClose }: MiniPlayerProps) => (
   <motion.div
     className="mini-player"
     initial={{ x: 100, opacity: 0 }}

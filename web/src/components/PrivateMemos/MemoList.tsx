@@ -1,4 +1,3 @@
-import React from 'react';
 import MemoCard from './MemoCard';
 import EmptyState from './EmptyState';
 import Spinner from '../Spinner/Spinner';
@@ -22,7 +21,7 @@ interface MemoListProps {
   isDarkMode: boolean;
 }
 
-const MemoList: React.FC<MemoListProps> = ({
+const MemoList = ({
   memos,
   isLoading,
   editingMemoId,
@@ -32,7 +31,7 @@ const MemoList: React.FC<MemoListProps> = ({
   handleUpdateMemo,
   setShowNewNoteForm,
   isDarkMode,
-}) => {
+}: MemoListProps) => {
   if (isLoading) {
     return (
       <div className="memos-loading-state">

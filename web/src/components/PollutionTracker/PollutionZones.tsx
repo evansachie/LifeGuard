@@ -8,7 +8,7 @@ interface PollutionZonesProps {
   onZoneClick: (zone: PollutionZone) => void;
 }
 
-const PollutionZones: React.FC<PollutionZonesProps> = ({ onZoneClick }) => {
+const PollutionZones = ({ onZoneClick }: PollutionZonesProps) => {
   const { current: map } = useMap();
 
   useEffect(() => {

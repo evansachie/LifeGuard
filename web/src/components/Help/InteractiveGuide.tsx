@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { FaPlay } from 'react-icons/fa';
 
@@ -7,7 +6,7 @@ interface InteractiveGuideProps {
   isDarkMode: boolean;
 }
 
-const InteractiveGuide: React.FC<InteractiveGuideProps> = ({ onStartTour, isDarkMode }) => {
+const InteractiveGuide = ({ onStartTour, isDarkMode }: InteractiveGuideProps) => {
   return (
     <motion.div
       initial={{ opacity: 0 }}

@@ -7,7 +7,7 @@ interface SettingSectionProps {
   isDarkMode: boolean;
 }
 
-const SettingSection: React.FC<SettingSectionProps> = ({ title, children, isDarkMode }) => (
+const SettingSection = ({ title, children, isDarkMode }: SettingSectionProps) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}

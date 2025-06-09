@@ -1,4 +1,3 @@
-import React from 'react';
 import { Line } from 'react-chartjs-2';
 import { HistoricalData } from '../../hooks/useSensorHistory';
 import { ChartOptions } from 'chart.js';
@@ -9,11 +8,11 @@ interface AirQualityChartsProps {
   isDarkMode?: boolean;
 }
 
-const AirQualityCharts: React.FC<AirQualityChartsProps> = ({
+const AirQualityCharts = ({
   historicalData,
   chartOptions,
   isDarkMode = false,
-}) => {
+}: AirQualityChartsProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
       <div

@@ -9,7 +9,7 @@ interface HealthTipCardProps {
   isDarkMode: boolean;
 }
 
-const HealthTipCard: React.FC<HealthTipCardProps> = ({ tip, onReadMore, isDarkMode }) => {
+const HealthTipCard = ({ tip, onReadMore, isDarkMode }: HealthTipCardProps) => {
   const [imageError, setImageError] = useState<boolean>(false);
   const [imageLoaded, setImageLoaded] = useState<boolean>(false);
 

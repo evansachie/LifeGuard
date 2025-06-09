@@ -6,7 +6,7 @@ interface ToggleSwitchProps {
   isDarkMode: boolean;
 }
 
-const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ enabled, onChange, isDarkMode }) => (
+const ToggleSwitch = ({ enabled, onChange, isDarkMode }: ToggleSwitchProps) => (
   <button
     onClick={() => onChange(!enabled)}
     onKeyDown={(e: React.KeyboardEvent<HTMLButtonElement>) => {

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import './QuickAccess.css';
 import { GiMeditation } from 'react-icons/gi';
@@ -9,7 +8,7 @@ interface QuickAccessProps {
   isDarkMode: boolean;
 }
 
-const QuickAccess: React.FC<QuickAccessProps> = ({ isDarkMode }) => {
+const QuickAccess = ({ isDarkMode }: QuickAccessProps) => {
   return (
     <div className={`health-tracker ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
       <h2 className="health-tracker-heading">Quick Access Tabs</h2>

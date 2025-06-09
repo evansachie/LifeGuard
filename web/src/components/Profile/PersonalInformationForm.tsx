@@ -21,7 +21,7 @@ interface PersonalInformationFormProps {
   isDarkMode: boolean;
 }
 
-const PersonalInformationForm: React.FC<PersonalInformationFormProps> = ({
+const PersonalInformationForm = ({
   profileData,
   profileLoading,
   editMode,
@@ -29,7 +29,7 @@ const PersonalInformationForm: React.FC<PersonalInformationFormProps> = ({
   handleInputChange,
   handleSubmit,
   isDarkMode,
-}) => {
+}: PersonalInformationFormProps) => {
   return (
     <div className="profile-section">
       <div className="section-header">

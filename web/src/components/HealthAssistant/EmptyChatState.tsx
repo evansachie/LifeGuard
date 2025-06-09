@@ -1,11 +1,10 @@
-import React from 'react';
 import { FaHeartbeat } from 'react-icons/fa';
 
 interface EmptyChatStateProps {
   onExampleClick: (question: string) => void;
 }
 
-const EmptyChatState: React.FC<EmptyChatStateProps> = ({ onExampleClick }) => {
+const EmptyChatState = ({ onExampleClick }: EmptyChatStateProps) => {
   const isAuthenticated = !!localStorage.getItem('token');
 
   const exampleQuestions = [

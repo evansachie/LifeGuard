@@ -31,6 +31,7 @@ import {
   addToFavorites,
   removeFromFavorites,
 } from '../../services/favoriteSoundsService';
+import { handleError } from '../../utils/errorHandler';
 import { toast } from 'react-toastify';
 import NoMusicIcon from '../../assets/no-music.svg';
 import AccessibleDropdown from '../AccessibleDropdown/AccessibleDropdown';
@@ -54,7 +55,7 @@ interface Categories {
   [key: string]: Category;
 }
 
-const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
+const SoundsSection = ({ isDarkMode }: SoundsSectionProps) => {
   const { currentSound, setCurrentSound, isPlaying, setIsPlaying, volume, setVolume, audioRef } =
     useAudioPlayer() as AudioPlayerContextType;
   const [sounds, setSounds] = useState<Sound[]>([]);
@@ -105,9 +106,8 @@ const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
           prevSounds.filter((sound) => favoriteIds.includes(String(sound.id)))
         );
       }
-    } catch (error) {
-      console.error('Error loading favorites:', error);
-      toast.error('Failed to load favorites');
+    } catch (error: unknown) {
+      handleError(error, 'Load favorites', true, 'Failed to load favorites');
     }
   }, [userId, showFavoritesOnly]);
 
@@ -125,8 +125,8 @@ const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
         const data = await searchSounds(activeCategory, resetPage ? 1 : page, filters);
         setSounds((prev) => (resetPage ? data.results : [...prev, ...data.results]));
         setHasMore(data.next !== null);
-      } catch (error) {
-        console.error('Error:', error);
+      } catch (error: unknown) {
+        handleError(error, 'Fetch sounds', true, 'Failed to load sounds');
       } finally {
         setLoading(false);
       }
@@ -206,10 +206,11 @@ const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
           toast.success('Added to favorites');
         }
       }
-    } catch (error: any) {
-      console.error('Unexpected error in handleToggleFavorite:', error);
+    } catch (error: unknown) {
+      handleError(error, 'Toggle favorite', false);
 
-      if (error?.status === 409) {
+      // Check for specific 409 conflict error
+      if (error && typeof error === 'object' && 'status' in error && error.status === 409) {
         // Handle 409 conflicts - the sound is already favorited on the backend
         const favSound: FavoriteSound = {
           sound_id: String(sound.id),
@@ -227,7 +228,7 @@ const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
 
         toast.success('Added to favorites');
       } else {
-        toast.error('An unexpected error occurred');
+        toast.error('An unexpected error occurred while updating favorites');
       }
     }
   };
@@ -239,8 +240,8 @@ const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
         .then(() => {
           setIsFullscreen(true);
         })
-        .catch((err) => {
-          console.error('Error attempting to enable fullscreen:', err);
+        .catch((err: unknown) => {
+          handleError(err, 'Enable fullscreen', false, 'Error attempting to enable fullscreen');
         });
     } else {
       if (document.exitFullscreen) {
@@ -249,8 +250,8 @@ const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
           .then(() => {
             setIsFullscreen(false);
           })
-          .catch((err) => {
-            console.error('Error attempting to exit fullscreen:', err);
+          .catch((err: unknown) => {
+            handleError(err, 'Exit fullscreen', false, 'Error attempting to exit fullscreen');
           });
       }
     }
@@ -318,8 +319,8 @@ const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
           try {
             await audioRef.current.play();
             setIsPlaying(true);
-          } catch (error) {
-            console.error('Error playing audio:', error);
+          } catch (error: unknown) {
+            handleError(error, 'Play audio', true, 'Error playing audio');
           }
         }
       } else {
@@ -336,9 +337,8 @@ const SoundsSection: React.FC<SoundsSectionProps> = ({ isDarkMode }) => {
           await audioRef.current.play();
           setCurrentSound(sound.name);
           setIsPlaying(true);
-        } catch (error) {
-          console.error('Error playing audio:', error);
-          toast.error('Failed to play audio. Please try again.');
+        } catch (error: unknown) {
+          handleError(error, 'Play audio', true, 'Failed to play audio. Please try again.');
         }
       }
     }

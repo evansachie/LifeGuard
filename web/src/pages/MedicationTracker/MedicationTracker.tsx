@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { fetchWithAuth, API_ENDPOINTS } from '../../utils/api';
+import { handleError, withErrorHandling } from '../../utils/errorHandler';
 import { FaPlus, FaBell } from 'react-icons/fa';
 
 import MedicationList from '../../components/MedicationTracker/MedicationList';
@@ -16,7 +17,7 @@ interface MedicationTrackerProps {
   isDarkMode: boolean;
 }
 
-const MedicationTracker: React.FC<MedicationTrackerProps> = ({ isDarkMode }) => {
+const MedicationTracker = ({ isDarkMode }: MedicationTrackerProps) => {
   const [medications, setMedications] = useState<Medication[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [complianceRate, setComplianceRate] = useState<number | null>(null);
@@ -38,50 +39,65 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({ isDarkMode }) => 
   }, []);
 
   const fetchMedications = async (): Promise<void> => {
-    try {
-      const response = await fetchWithAuth(API_ENDPOINTS.MEDICATIONS.LIST);
-      setMedications(response.data);
-    } catch (error) {
-      toast.error('Failed to fetch medications');
-    } finally {
-      setLoading(false);
-    }
+    setLoading(true);
+    await withErrorHandling(
+      async () => {
+        const response = await fetchWithAuth(API_ENDPOINTS.MEDICATIONS.LIST);
+        // Handle both direct array response and wrapped response
+        const medicationsData = Array.isArray(response) ? response : response.data || [];
+        setMedications(medicationsData);
+        return medicationsData;
+      },
+      'Fetch medications',
+      false,
+      'Failed to load medications'
+    );
+    setLoading(false);
   };
 
   const fetchComplianceRate = async (): Promise<void> => {
-    try {
-      const response = await fetchWithAuth(API_ENDPOINTS.MEDICATIONS.COMPLIANCE);
-      setComplianceRate(response.data);
-    } catch (error) {
-      console.error('Failed to fetch compliance rate:', error);
-    }
+    await withErrorHandling(
+      async () => {
+        const response = await fetchWithAuth(API_ENDPOINTS.MEDICATIONS.COMPLIANCE);
+        setComplianceRate(response.data);
+        return response.data;
+      },
+      'Fetch compliance rate',
+      false
+    );
   };
 
   const handleAddMedication = async (medicationData: MedicationData): Promise<void> => {
-    try {
-      await fetchWithAuth(API_ENDPOINTS.MEDICATIONS.ADD, {
-        method: 'POST',
-        body: JSON.stringify(medicationData),
-      });
-      fetchMedications();
-      toast.success('Medication added successfully');
-    } catch (error) {
-      toast.error('Failed to add medication');
-    }
+    await withErrorHandling(
+      async () => {
+        await fetchWithAuth(API_ENDPOINTS.MEDICATIONS.ADD, {
+          method: 'POST',
+          body: JSON.stringify(medicationData),
+        });
+        await fetchMedications(); // Re-fetch to update the list
+        toast.success('Medication added successfully');
+      },
+      'Add medication',
+      true,
+      'Failed to add medication'
+    );
   };
 
   const handleEditMedication = async (medicationData: MedicationData): Promise<void> => {
-    try {
-      await fetchWithAuth(`${API_ENDPOINTS.MEDICATIONS.UPDATE}/${medicationData.Id}`, {
-        method: 'PUT',
-        body: JSON.stringify(medicationData),
-      });
-      fetchMedications();
-      toast.success('Medication updated successfully');
-      setEditingMedication(null);
-    } catch (error) {
-      toast.error('Failed to update medication');
-    }
+    await withErrorHandling(
+      async () => {
+        await fetchWithAuth(`${API_ENDPOINTS.MEDICATIONS.UPDATE}/${medicationData.Id}`, {
+          method: 'PUT',
+          body: JSON.stringify(medicationData),
+        });
+        await fetchMedications();
+        toast.success('Medication updated successfully');
+        setEditingMedication(null);
+      },
+      'Update medication',
+      true,
+      'Failed to update medication'
+    );
   };
 
   const handleTrackDose = async (medicationId: string, taken: boolean): Promise<void> => {
@@ -94,29 +110,30 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({ isDarkMode }) => 
           scheduledTime: new Date().toTimeString().split(' ')[0],
         }),
       });
-      fetchMedications();
-      fetchComplianceRate();
+      await fetchMedications();
+      await fetchComplianceRate();
       toast.success('Dose tracked successfully');
-    } catch (error: any) {
-      console.error('Track dose error:', error);
-      toast.error(error.message || 'Failed to track dose');
+    } catch (error: unknown) {
+      handleError(error, 'Track dose', true, 'Failed to track dose');
     }
   };
 
   const handleDeleteMedication = async (medicationId: string): Promise<void> => {
     setIsDeleting(true);
-    try {
-      await fetchWithAuth(`${API_ENDPOINTS.MEDICATIONS.DELETE}/${medicationId}`, {
-        method: 'DELETE',
-      });
-      fetchMedications();
-      toast.success('Medication deleted successfully');
-      setMedicationToDelete(null);
-    } catch (error) {
-      toast.error('Failed to delete medication');
-    } finally {
-      setIsDeleting(false);
-    }
+    await withErrorHandling(
+      async () => {
+        await fetchWithAuth(`${API_ENDPOINTS.MEDICATIONS.DELETE}/${medicationId}`, {
+          method: 'DELETE',
+        });
+        await fetchMedications();
+        toast.success('Medication deleted successfully');
+        setMedicationToDelete(null);
+      },
+      'Delete medication',
+      true,
+      'Failed to delete medication'
+    );
+    setIsDeleting(false);
   };
 
   // Filter medications
@@ -176,7 +193,7 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({ isDarkMode }) => 
             aria-label="Open notification settings"
             title="Notification Settings"
           >
-            <FaBell className="text-blue-500" />
+            <FaBell className="text-blue-500 text-sm" />
           </motion.button>
         </div>
 
@@ -207,7 +224,7 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({ isDarkMode }) => 
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <FaPlus />
+            <FaPlus className="text-sm" />
             Add New Medication
           </motion.button>
         </div>

@@ -1,16 +1,15 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { FaClock, FaCheck, FaTimes, FaEdit, FaTrash } from 'react-icons/fa';
 import { MedicationCardProps } from '../../types/medicationTracker.types';
 
-const MedicationCard: React.FC<MedicationCardProps> = ({
+const MedicationCard = ({
   medication,
   onTrackDose,
   onEdit,
   onDelete,
   isDarkMode,
   index,
-}) => {
+}: MedicationCardProps) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}

@@ -62,7 +62,7 @@ import {
   DashboardControlsRef,
 } from '../../types/common.types';
 
-const Dashboard: React.FC<DashboardProps> = ({ isDarkMode }) => {
+const Dashboard = ({ isDarkMode }: DashboardProps) => {
   const [cardOrder, setCardOrder] = useState<CardId[]>(() => {
     const savedOrder = localStorage.getItem('dashboardCardOrder');
     return savedOrder

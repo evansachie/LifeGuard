@@ -8,7 +8,7 @@ interface SectionProps {
   isDarkMode: boolean;
 }
 
-export const Section: React.FC<SectionProps> = ({ icon, title, children, isDarkMode }) => (
+export const Section = ({ icon, title, children, isDarkMode }: SectionProps) => (
   <motion.section
     whileHover={{ x: 5 }}
     className={`p-6 rounded-lg ${

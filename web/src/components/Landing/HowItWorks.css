@@ -90,7 +90,7 @@
 }
 
 .step-icon {
-    font-size: 2.5rem;
+    font-size: 2rem;
     color: #407CE2;
     margin-bottom: 1.5rem;
 }
@@ -173,6 +173,10 @@
         font-size: 2rem;
     }
 
+    .step-icon {
+        font-size: 1.75rem;
+    }
+
     .steps-container {
         grid-template-columns: 1fr;
         gap: 1.5rem;
@@ -190,5 +194,10 @@
 
     .section-header p {
         font-size: 1rem;
+    }
+
+    .step-icon {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
     }
 }

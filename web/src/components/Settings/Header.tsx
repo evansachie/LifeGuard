@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { CiSettings } from 'react-icons/ci';
 
@@ -6,7 +5,7 @@ interface HeaderProps {
   isDarkMode: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ isDarkMode }) => (
+const Header = ({ isDarkMode }: HeaderProps) => (
   <motion.div
     initial={{ opacity: 0, y: -20 }}
     animate={{ opacity: 1, y: 0 }}

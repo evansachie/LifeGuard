@@ -29,7 +29,7 @@ interface Exercise {
   targetMuscles: string[];
 }
 
-const ExerciseRoutines: React.FC<ExerciseRoutinesProps> = ({ isDarkMode }) => {
+const ExerciseRoutines = ({ isDarkMode }: ExerciseRoutinesProps) => {
   const [selectedLevel, setSelectedLevel] = useState<FitnessLevelType>('beginner');
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>('warmup');
   const [isLoading, setIsLoading] = useState<boolean>(true);

@@ -6,7 +6,7 @@ interface ScrollToTopProps {
   position?: 'bottom-left' | 'bottom-right';
 }
 
-const ScrollToTop: React.FC<ScrollToTopProps> = ({ threshold = 300, position = 'bottom-left' }) => {
+const ScrollToTop = ({ threshold = 300, position = 'bottom-left' }: ScrollToTopProps) => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
   useEffect(() => {

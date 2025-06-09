@@ -2,11 +2,11 @@ import React, { memo, useEffect, useRef, useState } from 'react';
 import { TimeframeSelectorProps, TimeframeData } from '../../types/common.types';
 import './TimeframeSelector.css';
 
-const TimeframeSelector: React.FC<TimeframeSelectorProps> = ({
+const TimeframeSelector = ({
   selectedTimeframe,
   onTimeframeChange,
   isDarkMode,
-}) => {
+}: TimeframeSelectorProps) => {
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);

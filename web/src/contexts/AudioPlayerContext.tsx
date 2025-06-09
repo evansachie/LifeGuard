@@ -7,7 +7,7 @@ interface AudioPlayerProviderProps {
   children: ReactNode;
 }
 
-export const AudioPlayerProvider: React.FC<AudioPlayerProviderProps> = ({ children }) => {
+export const AudioPlayerProvider = ({ children }: AudioPlayerProviderProps) => {
   const [currentSound, setCurrentSound] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [volume, setVolume] = useState<number>(0.7);

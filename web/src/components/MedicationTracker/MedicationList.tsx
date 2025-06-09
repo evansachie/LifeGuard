@@ -1,22 +1,21 @@
-import React from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { FaSpinner } from 'react-icons/fa';
 import NoMedsIcon from '../../assets/no-meds.svg';
 import MedicationCard from './MedicationCard';
 import { MedicationListProps } from '../../types/medicationTracker.types';
 
-const MedicationList: React.FC<MedicationListProps> = ({
+const MedicationList = ({
   medications,
   loading,
   onTrackDose,
   onEdit,
   onDelete,
   isDarkMode,
-}) => {
+}: MedicationListProps) => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <FaSpinner className="animate-spin text-4xl text-blue-500" />
+        <FaSpinner className="animate-spin text-2xl text-blue-500" />
       </div>
     );
   }

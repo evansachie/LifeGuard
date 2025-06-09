@@ -8,14 +8,14 @@ interface AccessibleDropdownProps extends React.ButtonHTMLAttributes<HTMLButtonE
   children: React.ReactNode;
 }
 
-const AccessibleDropdown: React.FC<AccessibleDropdownProps> = ({
+const AccessibleDropdown = ({
   isOpen,
   onToggle,
   ariaLabel,
   className,
   children,
   ...restProps
-}) => {
+}: AccessibleDropdownProps) => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     if (e.key === 'Enter' || e.key === ' ') {
       onToggle();

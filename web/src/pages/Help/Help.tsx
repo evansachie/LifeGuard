@@ -10,7 +10,7 @@ interface HelpProps {
   isDarkMode: boolean;
 }
 
-const Help: React.FC<HelpProps> = ({ isDarkMode }) => {
+const Help = ({ isDarkMode }: HelpProps) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const navigate = useNavigate();

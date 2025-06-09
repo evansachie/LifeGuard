@@ -12,7 +12,7 @@ interface DataCardProps {
   onRefresh?: () => void | null;
 }
 
-const DataCard: React.FC<DataCardProps> = ({
+const DataCard = ({
   title,
   value,
   unit,
@@ -21,7 +21,7 @@ const DataCard: React.FC<DataCardProps> = ({
   valueColor = null,
   children,
   onRefresh = null,
-}) => {
+}: DataCardProps) => {
   return (
     <div className={`dashboard-card ${className}`}>
       <div className="card-header">

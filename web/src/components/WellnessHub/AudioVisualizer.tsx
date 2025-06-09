@@ -1,19 +1,30 @@
 import React, { useEffect, useRef } from 'react';
 import { AudioVisualizerProps } from '../../types/wellnessHub.types';
-import { useAudio } from '../../contexts/AudioContext';
 
-const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ audioRef, isDarkMode }) => {
+const AudioVisualizer = ({ audioRef, isDarkMode }: AudioVisualizerProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
-  const { setupAudioContext } = useAudio();
+  const audioContextRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
     if (audioRef.current && !analyserRef.current) {
-      const newAnalyser = setupAudioContext(audioRef.current);
-      analyserRef.current = newAnalyser;
+      try {
+        // Create audio context and analyser
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const analyser = audioContextRef.current.createAnalyser();
+        const source = audioContextRef.current.createMediaElementSource(audioRef.current);
+
+        source.connect(analyser);
+        analyser.connect(audioContextRef.current.destination);
+
+        analyser.fftSize = 256;
+        analyserRef.current = analyser;
+      } catch (error: unknown) {
+        console.error('Failed to setup audio context:', error);
+      }
     }
-  }, [audioRef, setupAudioContext]);
+  }, [audioRef]);
 
   useEffect(() => {
     if (!analyserRef.current || !canvasRef.current) return;
@@ -69,7 +80,20 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ audioRef, isDarkMode 
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [analyserRef.current, isDarkMode]);
+  }, [isDarkMode]);
+
+  useEffect(() => {
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+        audioContextRef.current.close().catch((error: unknown) => {
+          console.error('Failed to close audio context:', error);
+        });
+      }
+    };
+  }, []);
 
   return (
     <canvas

@@ -6,6 +6,7 @@ import { Logo } from '../../../components/Logo/Logo';
 import './ForgotPassword.css';
 import ForgotPasswordForm from '../../../components/Auth/ForgotPasswordForm';
 import { requestPasswordReset } from '../../../utils/auth';
+import { getErrorMessage } from '../../../utils/errorHandler';
 import { AuthPageProps } from '../../../types/common.types';
 
 // Custom hook to manage form state and submission
@@ -21,8 +22,8 @@ const usePasswordResetForm = () => {
       await requestPasswordReset(email);
       toast.success('Password reset instructions sent to your email');
       setEmail('');
-    } catch (error: any) {
-      const errorMessage = error.message || 'Failed to process request';
+    } catch (error: unknown) {
+      const errorMessage = getErrorMessage(error, 'Failed to process request');
       toast.error(errorMessage);
       console.error('Password reset error:', error);
     } finally {
@@ -38,7 +39,7 @@ const usePasswordResetForm = () => {
   };
 };
 
-const ForgotPassword: React.FC<AuthPageProps> = ({ isDarkMode, toggleTheme }) => {
+const ForgotPassword = ({ isDarkMode, toggleTheme }: AuthPageProps) => {
   const formProps = usePasswordResetForm();
 
   return (

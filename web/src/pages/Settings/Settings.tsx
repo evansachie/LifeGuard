@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { fetchWithAuth, API_ENDPOINTS } from '../../utils/api';
+import { withErrorHandling } from '../../utils/errorHandler';
 import { toast } from 'react-toastify';
 import Header from '../../components/Settings/Header';
 import AppearanceSection from '../../components/Settings/AppearanceSection';
@@ -33,7 +34,7 @@ interface SettingsState {
   emergencyContacts: boolean;
 }
 
-const SettingsPage: React.FC<SettingsProps> = ({ isDarkMode, toggleDarkMode }) => {
+const SettingsPage = ({ isDarkMode, toggleDarkMode }: SettingsProps) => {
   const [settings, setSettings] = useState<SettingsState>({
     notifications: true,
     email: '',
@@ -48,27 +49,30 @@ const SettingsPage: React.FC<SettingsProps> = ({ isDarkMode, toggleDarkMode }) =
   useEffect(() => {
     const fetchUserData = async (): Promise<void> => {
       setIsLoading(true);
-      try {
-        const userId = localStorage.getItem('userId');
-        if (!userId) {
-          throw new Error('User ID not found');
-        }
 
-        const response = await fetchWithAuth(`${API_ENDPOINTS.GET_USER(userId)}`, {
-          method: 'GET',
-        });
+      await withErrorHandling(
+        async () => {
+          const userId = localStorage.getItem('userId');
+          if (!userId) {
+            throw new Error('User ID not found');
+          }
 
-        setSettings((prev) => ({
-          ...prev,
-          email: response.email || '',
-          username: response.userName || '',
-        }));
-      } catch (error) {
-        toast.error('Failed to fetch user data');
-        console.error('Error fetching user data:', error);
-      } finally {
-        setIsLoading(false);
-      }
+          const response = await fetchWithAuth(`${API_ENDPOINTS.GET_USER(userId)}`, {
+            method: 'GET',
+          });
+
+          setSettings((prev) => ({
+            ...prev,
+            email: response.email || '',
+            username: response.userName || '',
+          }));
+        },
+        'Fetch user data',
+        true,
+        'Failed to load user information'
+      );
+
+      setIsLoading(false);
     };
 
     fetchUserData();
@@ -113,14 +117,13 @@ const SettingsPage: React.FC<SettingsProps> = ({ isDarkMode, toggleDarkMode }) =
             <div className="flex items-center gap-4">
               <FaUser className="text-2xl text-blue-500" />
               <div className="flex-1">
-                <label
-                  htmlFor="username-input"
+                <div
                   className={`block text-sm font-medium mb-2 ${
                     isDarkMode ? 'text-gray-300' : 'text-gray-600'
                   }`}
                 >
                   Username
-                </label>
+                </div>
                 {isLoading ? (
                   <div className="flex justify-center py-2">
                     <Spinner size="small" color={isDarkMode ? '#4285F4' : '#4285F4'} />
@@ -147,14 +150,13 @@ const SettingsPage: React.FC<SettingsProps> = ({ isDarkMode, toggleDarkMode }) =
             <div className="flex items-center gap-4">
               <FaEnvelope className="text-2xl text-green-500" />
               <div className="flex-1">
-                <label
-                  htmlFor="email-input"
+                <div
                   className={`block text-sm font-medium mb-2 ${
                     isDarkMode ? 'text-gray-300' : 'text-gray-600'
                   }`}
                 >
                   Email
-                </label>
+                </div>
                 {isLoading ? (
                   <div className="flex justify-center py-2">
                     <Spinner size="small" color={isDarkMode ? '#4285F4' : '#4285F4'} />
@@ -186,12 +188,9 @@ const SettingsPage: React.FC<SettingsProps> = ({ isDarkMode, toggleDarkMode }) =
             <div className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-100/5 transition-colors">
               <div className="flex items-center gap-4">
                 <FaRuler className="text-2xl text-purple-500" />
-                <label
-                  htmlFor="units-select"
-                  className={`text-lg ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}
-                >
+                <div className={`text-lg ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
                   Measurement Units
-                </label>
+                </div>
               </div>
               <select
                 id="units-select"
