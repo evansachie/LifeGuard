@@ -7,6 +7,7 @@ import signupIllustration3 from '../../../assets/auth/signupIllustration3.svg';
 import ImageSlider from '../../../components/ImageSlider/ImageSlider';
 import { registerUser, initiateGoogleLogin } from '../../../utils/auth';
 import { validateSignUpForm } from '../../../utils/validateForm';
+import { getErrorMessage } from '../../../utils/errorHandler';
 import ThemeToggle from '../../../contexts/ThemeToggle';
 import { Logo } from '../../../components/Logo/Logo';
 import SignUpForm from '../../../components/Auth/SignUpForm';
@@ -62,8 +63,8 @@ const useSignUp = (): SignUpFormHook => {
           navigate('/log-in');
         }
       }
-    } catch (error: any) {
-      const errorMessage = error.message || 'Registration failed';
+    } catch (error: unknown) {
+      const errorMessage = getErrorMessage(error, 'Registration failed');
       toast.error(errorMessage);
       setErrors((prev) => ({ ...prev, submit: errorMessage }));
       console.error('Registration error:', error);
@@ -77,10 +78,11 @@ const useSignUp = (): SignUpFormHook => {
     setIsLoading(true);
     try {
       await initiateGoogleLogin();
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error: unknown) {
+      const errorMessage = getErrorMessage(error, 'Google login failed');
+      toast.error(errorMessage);
       console.error('Google login error:', error);
-      setErrors((prev) => ({ ...prev, submit: error.message }));
+      setErrors((prev) => ({ ...prev, submit: errorMessage }));
     } finally {
       setIsLoading(false);
     }

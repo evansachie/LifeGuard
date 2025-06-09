@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { fetchWithAuth, API_ENDPOINTS } from '../../utils/api';
+import { withErrorHandling } from '../../utils/errorHandler';
 import { toast } from 'react-toastify';
 import Header from '../../components/Settings/Header';
 import AppearanceSection from '../../components/Settings/AppearanceSection';
@@ -48,27 +49,30 @@ const SettingsPage: React.FC<SettingsProps> = ({ isDarkMode, toggleDarkMode }) =
   useEffect(() => {
     const fetchUserData = async (): Promise<void> => {
       setIsLoading(true);
-      try {
-        const userId = localStorage.getItem('userId');
-        if (!userId) {
-          throw new Error('User ID not found');
-        }
 
-        const response = await fetchWithAuth(`${API_ENDPOINTS.GET_USER(userId)}`, {
-          method: 'GET',
-        });
+      await withErrorHandling(
+        async () => {
+          const userId = localStorage.getItem('userId');
+          if (!userId) {
+            throw new Error('User ID not found');
+          }
 
-        setSettings((prev) => ({
-          ...prev,
-          email: response.email || '',
-          username: response.userName || '',
-        }));
-      } catch (error) {
-        toast.error('Failed to fetch user data');
-        console.error('Error fetching user data:', error);
-      } finally {
-        setIsLoading(false);
-      }
+          const response = await fetchWithAuth(`${API_ENDPOINTS.GET_USER(userId)}`, {
+            method: 'GET',
+          });
+
+          setSettings((prev) => ({
+            ...prev,
+            email: response.email || '',
+            username: response.userName || '',
+          }));
+        },
+        'Fetch user data',
+        true,
+        'Failed to load user information'
+      );
+
+      setIsLoading(false);
     };
 
     fetchUserData();

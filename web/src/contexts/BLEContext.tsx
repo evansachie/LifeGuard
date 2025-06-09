@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { toast } from 'react-toastify';
+import { handleError, getErrorMessage } from '../utils/errorHandler';
 import { BLEContextType, BLEDevice, SensorData, emptySensorData } from '../types/ble.types';
 
 const BLEContext = createContext<BLEContextType | null>(null);
@@ -69,9 +70,10 @@ export const BLEProvider: React.FC<BLEProviderProps> = ({ children }) => {
       }
 
       toast.success(`Disconnected from device`);
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = getErrorMessage(error, 'Failed to disconnect from device');
       console.error('Error disconnecting from device:', error);
-      toast.error(`Failed to disconnect: ${error.message}`);
+      toast.error(errorMessage);
     }
   };
 
@@ -101,9 +103,8 @@ export const BLEProvider: React.FC<BLEProviderProps> = ({ children }) => {
         setIsScanning(false);
         toast.success('Found BLE devices');
       }, 2000);
-    } catch (error: any) {
-      console.error('Error starting BLE scan:', error);
-      toast.error(`Failed to start scanning: ${error.message}`);
+    } catch (error: unknown) {
+      handleError(error, 'Start BLE scanning', true, 'Failed to start scanning for devices');
       setIsScanning(false);
     }
   };

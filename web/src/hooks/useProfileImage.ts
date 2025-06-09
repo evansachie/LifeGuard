@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { API_ENDPOINTS, fetchWithAuth, extractPhotoUrl } from '../utils/api';
+import { handleError, getErrorMessage } from '../utils/errorHandler';
 
 interface ProfileImageResult {
   previewUrl: string;
@@ -41,8 +42,9 @@ export const useProfileImage = (userId: string): UseProfileImageReturn => {
 
       toast.success('Profile photo updated successfully!');
       return { previewUrl, cloudinaryUrl };
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to update profile photo');
+    } catch (error: unknown) {
+      const errorMessage = getErrorMessage(error, 'Failed to update profile photo');
+      toast.error(errorMessage);
       return null;
     } finally {
       setIsLoading(false);
@@ -63,8 +65,8 @@ export const useProfileImage = (userId: string): UseProfileImageReturn => {
 
       toast.success('Profile photo deleted successfully!');
       return true;
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to delete profile photo');
+    } catch (error: unknown) {
+      handleError(error, 'Delete profile photo', true, 'Failed to delete profile photo');
       return false;
     } finally {
       setIsLoading(false);

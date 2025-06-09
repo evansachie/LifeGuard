@@ -6,6 +6,7 @@ import { useProfileState } from '../../hooks/useProfileState';
 import { useEmergencyContacts } from '../../hooks/useEmergencyContacts';
 import { useProfileImage } from '../../hooks/useProfileImage';
 import { updateUserProfile, deleteUserAccount } from '../../services/profileService';
+import { handleError } from '../../utils/errorHandler';
 import { FaSave, FaTimesCircle } from 'react-icons/fa';
 import { ProfileData, EmergencyContact } from '../../types/profile.types';
 
@@ -66,6 +67,7 @@ const Profile: React.FC<ProfileProps> = ({ isDarkMode }) => {
     };
 
     initializeProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleInputChange = (
@@ -105,8 +107,8 @@ const Profile: React.FC<ProfileProps> = ({ isDarkMode }) => {
       setTimeout(() => {
         fetchUserProfileData();
       }, 1000);
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to update profile');
+    } catch (error: unknown) {
+      handleError(error, 'Update profile', true, 'Failed to update profile');
     } finally {
       setIsLoading(false);
     }
@@ -123,8 +125,8 @@ const Profile: React.FC<ProfileProps> = ({ isDarkMode }) => {
       localStorage.clear();
       toast.success('Account deleted successfully');
       navigate('/');
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to delete account');
+    } catch (error: unknown) {
+      handleError(error, 'Delete account', true, 'Failed to delete account');
     } finally {
       setIsLoading(false);
       setIsDeleteModalOpen(false);

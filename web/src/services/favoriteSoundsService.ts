@@ -1,4 +1,5 @@
 import { fetchWithAuth, API_ENDPOINTS } from '../utils/api';
+import { handleError, getErrorMessage } from '../utils/errorHandler';
 import { Sound, FavoriteResponse, FavoriteSound } from '../types/wellnessHub.types';
 
 export interface FavoriteSoundResult {
@@ -26,11 +27,16 @@ export const getFavorites = async (userId: string): Promise<FavoriteSound[]> => 
       name: fav.sound_name || fav.name,
       url: fav.sound_url || fav.url || fav.previewUrl || fav.preview_url,
     }));
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error fetching favorites:', error);
 
     // If it's a 404 or similar, just return empty array (user has no favorites yet)
-    if (error?.status === 404 || error?.status === 400) {
+    if (
+      error &&
+      typeof error === 'object' &&
+      'status' in error &&
+      (error.status === 404 || error.status === 400)
+    ) {
       return [];
     }
 
@@ -71,11 +77,11 @@ export const addToFavorites = async (
       method: 'POST',
       body: JSON.stringify(requestBody),
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error adding to favorites:', error);
 
     // Handle 409 Conflict (already favorited)
-    if (error?.status === 409) {
+    if (error && typeof error === 'object' && 'status' in error && error.status === 409) {
       return {
         error: 'Already favorited',
         message: 'This sound is already in your favorites',
@@ -88,22 +94,26 @@ export const addToFavorites = async (
     }
 
     // Handle other specific status codes
-    if (error?.status === 400) {
-      return {
-        error: 'Invalid request',
-        message: error.message || 'Invalid sound data',
-      };
-    }
+    if (error && typeof error === 'object' && 'status' in error) {
+      if (error.status === 400) {
+        const errorMessage = getErrorMessage(error, 'Invalid sound data');
+        return {
+          error: 'Invalid request',
+          message: errorMessage,
+        };
+      }
 
-    if (error?.status === 401) {
-      return {
-        error: 'Unauthorized',
-        message: 'Please log in to favorite sounds',
-      };
+      if (error.status === 401) {
+        return {
+          error: 'Unauthorized',
+          message: 'Please log in to favorite sounds',
+        };
+      }
     }
 
     // Handle network errors
-    if (error?.message?.includes('Failed to fetch') || error?.message?.includes('Fetch failed')) {
+    const errorMessage = getErrorMessage(error, 'An unexpected error occurred');
+    if (errorMessage.includes('Failed to fetch') || errorMessage.includes('Fetch failed')) {
       return {
         error: 'Network error',
         message: 'Please check your internet connection and try again',
@@ -113,7 +123,7 @@ export const addToFavorites = async (
     // Generic error handling - wrap as error response instead of throwing
     return {
       error: 'Error adding to favorites',
-      message: error.message || 'An unexpected error occurred',
+      message: errorMessage,
     };
   }
 };
@@ -128,8 +138,8 @@ export const removeFromFavorites = async (userId: string, soundId: string): Prom
     await fetchWithAuth(API_ENDPOINTS.REMOVE_FAVORITE(userId, soundId), {
       method: 'DELETE',
     });
-  } catch (error) {
-    console.error('Error removing from favorites:', error);
+  } catch (error: unknown) {
+    handleError(error, 'Remove from favorites', true, 'Error removing from favorites');
     throw error;
   }
 };
