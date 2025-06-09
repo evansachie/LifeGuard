@@ -18,7 +18,7 @@ interface MedicationTrackerProps {
 }
 
 const MedicationTracker: React.FC<MedicationTrackerProps> = ({ isDarkMode }) => {
-  const [medications] = useState<Medication[]>([]);
+  const [medications, setMedications] = useState<Medication[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [complianceRate, setComplianceRate] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -39,6 +39,19 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({ isDarkMode }) => 
   }, []);
 
   const fetchMedications = async (): Promise<void> => {
+    setLoading(true);
+    await withErrorHandling(
+      async () => {
+        const response = await fetchWithAuth(API_ENDPOINTS.MEDICATIONS.LIST);
+        // Handle both direct array response and wrapped response
+        const medicationsData = Array.isArray(response) ? response : response.data || [];
+        setMedications(medicationsData);
+        return medicationsData;
+      },
+      'Fetch medications',
+      false,
+      'Failed to load medications'
+    );
     setLoading(false);
   };
 
@@ -61,7 +74,7 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({ isDarkMode }) => 
           method: 'POST',
           body: JSON.stringify(medicationData),
         });
-        fetchMedications();
+        await fetchMedications(); // Re-fetch to update the list
         toast.success('Medication added successfully');
       },
       'Add medication',
@@ -77,7 +90,7 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({ isDarkMode }) => 
           method: 'PUT',
           body: JSON.stringify(medicationData),
         });
-        fetchMedications();
+        await fetchMedications();
         toast.success('Medication updated successfully');
         setEditingMedication(null);
       },
@@ -97,8 +110,8 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({ isDarkMode }) => 
           scheduledTime: new Date().toTimeString().split(' ')[0],
         }),
       });
-      fetchMedications();
-      fetchComplianceRate();
+      await fetchMedications();
+      await fetchComplianceRate();
       toast.success('Dose tracked successfully');
     } catch (error: unknown) {
       handleError(error, 'Track dose', true, 'Failed to track dose');
@@ -112,7 +125,7 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({ isDarkMode }) => 
         await fetchWithAuth(`${API_ENDPOINTS.MEDICATIONS.DELETE}/${medicationId}`, {
           method: 'DELETE',
         });
-        fetchMedications();
+        await fetchMedications();
         toast.success('Medication deleted successfully');
         setMedicationToDelete(null);
       },
@@ -120,7 +133,6 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({ isDarkMode }) => 
       true,
       'Failed to delete medication'
     );
-
     setIsDeleting(false);
   };
 
