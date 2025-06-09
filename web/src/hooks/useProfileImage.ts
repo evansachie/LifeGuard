@@ -55,13 +55,9 @@ export const useProfileImage = (userId: string): UseProfileImageReturn => {
     try {
       setIsLoading(true);
 
-      const response = await fetchWithAuth(API_ENDPOINTS.DELETE_PHOTO(userId), {
+      await fetchWithAuth(API_ENDPOINTS.DELETE_PHOTO(userId), {
         method: 'DELETE',
       });
-
-      if (!response) {
-        throw new Error('Failed to delete profile photo');
-      }
 
       toast.success('Profile photo deleted successfully!');
       return true;
