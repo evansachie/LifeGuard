@@ -16,7 +16,7 @@ const MedicationList: React.FC<MedicationListProps> = ({
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <FaSpinner className="animate-spin text-4xl text-blue-500" />
+        <FaSpinner className="animate-spin text-2xl text-blue-500" />
       </div>
     );
   }

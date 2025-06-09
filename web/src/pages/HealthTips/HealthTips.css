@@ -170,6 +170,7 @@
   transform: translateY(-50%);
   color: #a0aec0;
   pointer-events: none;
+  font-size: 0.875rem;
 }
 
 /* Tips Grid with HealthTipCard component */

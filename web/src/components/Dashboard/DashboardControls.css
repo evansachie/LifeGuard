@@ -36,6 +36,7 @@
   top: 50%;
   transform: translateY(-50%);
   color: #94a3b8;
+  font-size: 0.875rem;
 }
 
 .search-input:focus {
@@ -325,6 +326,7 @@
   
   .search-icon {
     left: 0.6rem;
+    font-size: 0.8rem;
   }
 }
 
@@ -367,9 +369,10 @@
   }
   
   .shortcuts-btn {
-    width: 36px;
-    height: 36px;
-    padding: 0.4rem;
+    width: 32px;
+    height: 32px;
+    padding: 0.35rem;
+    font-size: 0.7rem;
   }
   
   .search-input {
@@ -492,6 +495,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  font-size: 0.875rem;
 }
 
 .shortcuts-btn:hover {

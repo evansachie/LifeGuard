@@ -17,19 +17,19 @@ const MedicationStats: React.FC<MedicationStatsProps> = ({
         {
           title: 'Compliance Rate',
           value: complianceRate ? `${Math.round(complianceRate)}%` : 'N/A',
-          icon: <FaChartLine className="text-2xl text-blue-500" />,
+          icon: <FaChartLine className="text-lg text-blue-500" />,
           color: 'blue',
         },
         {
           title: 'Active Medications',
           value: activeMedications.length,
-          icon: <FaPills className="text-2xl text-green-500" />,
+          icon: <FaPills className="text-lg text-green-500" />,
           color: 'green',
         },
         {
           title: "Today's Doses",
           value: totalDoses,
-          icon: <FaClipboardList className="text-2xl text-purple-500" />,
+          icon: <FaClipboardList className="text-lg text-purple-500" />,
           color: 'purple',
         },
       ].map((stat, index) => (

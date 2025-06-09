@@ -113,14 +113,13 @@ const SettingsPage: React.FC<SettingsProps> = ({ isDarkMode, toggleDarkMode }) =
             <div className="flex items-center gap-4">
               <FaUser className="text-2xl text-blue-500" />
               <div className="flex-1">
-                <label
-                  htmlFor="username-input"
+                <div
                   className={`block text-sm font-medium mb-2 ${
                     isDarkMode ? 'text-gray-300' : 'text-gray-600'
                   }`}
                 >
                   Username
-                </label>
+                </div>
                 {isLoading ? (
                   <div className="flex justify-center py-2">
                     <Spinner size="small" color={isDarkMode ? '#4285F4' : '#4285F4'} />
@@ -147,14 +146,13 @@ const SettingsPage: React.FC<SettingsProps> = ({ isDarkMode, toggleDarkMode }) =
             <div className="flex items-center gap-4">
               <FaEnvelope className="text-2xl text-green-500" />
               <div className="flex-1">
-                <label
-                  htmlFor="email-input"
+                <div
                   className={`block text-sm font-medium mb-2 ${
                     isDarkMode ? 'text-gray-300' : 'text-gray-600'
                   }`}
                 >
                   Email
-                </label>
+                </div>
                 {isLoading ? (
                   <div className="flex justify-center py-2">
                     <Spinner size="small" color={isDarkMode ? '#4285F4' : '#4285F4'} />
@@ -186,12 +184,9 @@ const SettingsPage: React.FC<SettingsProps> = ({ isDarkMode, toggleDarkMode }) =
             <div className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-100/5 transition-colors">
               <div className="flex items-center gap-4">
                 <FaRuler className="text-2xl text-purple-500" />
-                <label
-                  htmlFor="units-select"
-                  className={`text-lg ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}
-                >
+                <div className={`text-lg ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
                   Measurement Units
-                </label>
+                </div>
               </div>
               <select
                 id="units-select"

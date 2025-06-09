@@ -176,7 +176,7 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({ isDarkMode }) => 
             aria-label="Open notification settings"
             title="Notification Settings"
           >
-            <FaBell className="text-blue-500" />
+            <FaBell className="text-blue-500 text-sm" />
           </motion.button>
         </div>
 
@@ -207,7 +207,7 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({ isDarkMode }) => 
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <FaPlus />
+            <FaPlus className="text-sm" />
             Add New Medication
           </motion.button>
         </div>
