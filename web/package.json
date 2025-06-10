@@ -87,7 +87,8 @@
     "prettier": "^3.5.3",
     "tailwindcss": "^3.4.4",
     "typescript": "^5.2.2",
-    "vite": "^5.3.1"
+    "vite": "^5.3.1",
+    "@types/web-bluetooth": "^0.0.20"
   },
   "proxy": "http://localhost:5001"
 }

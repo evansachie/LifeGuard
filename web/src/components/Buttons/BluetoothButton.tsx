@@ -19,8 +19,12 @@ const BluetoothButton = ({
   const getButtonText = () => {
     if (isScanning) return 'Scanning...';
     if (isConnecting) return 'Connecting...';
-    if (bleDevice?.connected) return `Connected to ${bleDevice.name}`;
-    return 'Connect Bluetooth';
+    if (bleDevice?.connected) {
+      const deviceName = bleDevice.name || 'Arduino Device';
+      const shortName = deviceName.length > 15 ? `${deviceName.substring(0, 15)}...` : deviceName;
+      return `Connected to ${shortName}`;
+    }
+    return 'Connect Bluetooth Device';
   };
 
   const getButtonClass = () => {
@@ -45,6 +49,12 @@ const BluetoothButton = ({
         onClick={handleClick}
         disabled={isConnecting || isScanning}
         type="button"
+        style={{
+          minWidth: '220px',
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        }}
         aria-label={
           bleDevice?.connected ? 'Disconnect from Bluetooth device' : 'Connect to Bluetooth device'
         }
@@ -56,7 +66,7 @@ const BluetoothButton = ({
         ) : (
           <FaBluetooth />
         )}
-        {getButtonText()}
+        <span style={{ marginLeft: '8px' }}>{getButtonText()}</span>
       </button>
     </div>
   );
