@@ -1,4 +1,4 @@
-import { RAG_BASE_URL } from '@/utils/api';
+import { API_ENDPOINTS } from '../utils/api';
 
 export interface UploadPDFResponse {
   message: string;
@@ -20,7 +20,7 @@ export const ragService = {
     const formData = new FormData();
     formData.append('file', pdfBlob, filename);
 
-    const response = await fetch(`${RAG_BASE_URL}/api/upload?user_id=${userId}`, {
+    const response = await fetch(`${API_ENDPOINTS.RAG_UPLOAD_PDF}?user_id=${userId}`, {
       method: 'POST',
       body: formData,
     });
@@ -33,7 +33,7 @@ export const ragService = {
   },
 
   async askQuestion(request: AskRequest): Promise<AskResponse> {
-    const response = await fetch(`${RAG_BASE_URL}/api/ask`, {
+    const response = await fetch(API_ENDPOINTS.RAG_ASK_QUESTION, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

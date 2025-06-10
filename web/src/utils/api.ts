@@ -67,6 +67,9 @@ export const API_ENDPOINTS = {
   RAG_PROCESS_MEDICAL: `${NODE_API_URL}/api/rag/process/medical`,
   RAG_PROCESS_PROFILES: `${NODE_API_URL}/api/rag/process/profiles`,
 
+  RAG_UPLOAD_PDF: `${RAG_BASE_URL}/api/upload`,
+  RAG_ASK_QUESTION: `${RAG_BASE_URL}/api/ask`,
+
   EXERCISE_STATS: `${NODE_API_URL}/api/exercise/stats`,
   EXERCISE_COMPLETE: `${NODE_API_URL}/api/exercise/complete`,
   EXERCISE_GOALS: `${NODE_API_URL}/api/exercise/goals`,
