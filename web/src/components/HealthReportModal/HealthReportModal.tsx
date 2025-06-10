@@ -1,9 +1,13 @@
 import { FaTemperatureHigh, FaWalking, FaTimes, FaHeart, FaLungs } from 'react-icons/fa';
 import { WiHumidity, WiBarometer } from 'react-icons/wi';
-import { FaDownload, FaFileCsv, FaChartLine, FaShieldAlt } from 'react-icons/fa';
+import { FaDownload, FaChartLine, FaShieldAlt } from 'react-icons/fa';
 import { generateHealthReport, HealthReportData } from '../../data/health-report-data';
 import Modal from '../Modal/Modal';
 import { UserData } from '../../types/common.types';
+import { generateHealthReportPDF } from '../../utils/pdfGenerator';
+import { ragService } from '../../services/ragService';
+import { toast } from 'react-toastify';
+import { useState } from 'react';
 
 interface HealthReportModalProps {
   isOpen: boolean;
@@ -13,6 +17,7 @@ interface HealthReportModalProps {
 }
 
 const HealthReportModal = ({ isOpen, onClose, userData, isDarkMode }: HealthReportModalProps) => {
+  const [isUploading, setIsUploading] = useState<boolean>(false);
   const report: HealthReportData | null = isOpen ? generateHealthReport(userData) : null;
 
   const iconMapping = {
@@ -24,49 +29,57 @@ const HealthReportModal = ({ isOpen, onClose, userData, isDarkMode }: HealthRepo
     oxygenLevel: <FaLungs size={24} className="text-blue-500" />,
   };
 
-  const handlePdfDownload = (): void => {
-    window.print();
-  };
-
-  const handleCsvDownload = (): void => {
+  const handlePdfDownload = async (): Promise<void> => {
     if (!report) return;
 
-    const csvData = [
-      ['LifeGuard Health Report'],
-      ['Report ID', report.userInfo.reportId],
-      ['Date', report.userInfo.date],
-      ['Patient', report.userInfo.name],
-      [''],
-      ['Vital Statistics'],
-      ['Metric', 'Average', 'Min', 'Max', 'Status'],
-      ...Object.entries(report.vitals).map(([key, value]) => [
-        key,
-        value.average,
-        value.min,
-        value.max,
-        value.status,
-      ]),
-      [''],
-      ['Environmental Metrics'],
-      ['Metric', 'Average', 'Status'],
-      ...Object.entries(report.environmentalMetrics).map(([key, value]) => [
-        key,
-        value.average,
-        value.status,
-      ]),
-    ]
-      .map((row) => row.join(','))
-      .join('\n');
+    try {
+      const pdfBlob = await generateHealthReportPDF(report);
 
-    const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `lifeguard_health_report_${report.userInfo.reportId}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+      // Create download link
+      const url = URL.createObjectURL(pdfBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `lifeguard_health_report_${report.userInfo.reportId}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast.success('PDF downloaded successfully!');
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      toast.error('Failed to generate PDF');
+    }
+  };
+
+  const handleGenerateAndUploadToRAG = async (): Promise<void> => {
+    if (!report) return;
+
+    try {
+      setIsUploading(true);
+      const userId = localStorage.getItem('userId');
+
+      if (!userId) {
+        toast.error('User not authenticated');
+        return;
+      }
+
+      // Generate PDF
+      const pdfBlob = await generateHealthReportPDF(report);
+      const filename = `lifeguard_health_report_${report.userInfo.reportId}.pdf`;
+
+      // Upload to RAG system
+      await ragService.uploadPDF(userId, pdfBlob, filename);
+
+      toast.success(
+        'Health report uploaded to AI assistant! You can now ask questions about your health data.'
+      );
+    } catch (error) {
+      console.error('Error uploading to RAG:', error);
+      toast.error('Failed to upload report to AI assistant');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   if (!report) return null;
@@ -128,21 +141,26 @@ const HealthReportModal = ({ isOpen, onClose, userData, isDarkMode }: HealthRepo
                   aria-label="Download PDF"
                 >
                   <FaDownload className="text-sm" />
-                  <span className="text-sm font-medium">PDF</span>
+                  <span className="text-sm font-medium">Download PDF</span>
                 </button>
+
                 <button
-                  onClick={handleCsvDownload}
+                  onClick={handleGenerateAndUploadToRAG}
+                  disabled={isUploading}
                   className={`flex items-center space-x-2 px-4 py-2 ${
                     isDarkMode
-                      ? 'bg-gray-800/60 hover:bg-gray-700/60'
-                      : 'bg-white/20 hover:bg-white/30'
-                  } text-white rounded-lg transition-all duration-200 backdrop-blur-sm`}
+                      ? 'bg-blue-600/60 hover:bg-blue-700/60'
+                      : 'bg-blue-500/80 hover:bg-blue-600/80'
+                  } text-white rounded-lg transition-all duration-200 backdrop-blur-sm disabled:opacity-50`}
                   type="button"
-                  aria-label="Download CSV"
+                  aria-label="Upload to AI Assistant"
                 >
-                  <FaFileCsv className="text-sm" />
-                  <span className="text-sm font-medium">CSV</span>
+                  <FaChartLine className="text-sm" />
+                  <span className="text-sm font-medium">
+                    {isUploading ? 'Uploading...' : 'Upload to AI Assistant'}
+                  </span>
                 </button>
+
                 <button
                   onClick={onClose}
                   className={`p-2 ${
