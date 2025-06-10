@@ -373,7 +373,6 @@ export const generateEnhancedHealthReport = async (
       environmentalMetrics,
       recommendations,
     };
-
     return enhancedReport;
   } catch (error) {
     console.error('Error generating enhanced health report:', error);
@@ -385,7 +384,14 @@ export const generateEnhancedHealthReport = async (
         date: new Date().toLocaleDateString(),
         name: 'LifeGuard User',
       },
-      vitals: generatePersonalizedMockData({}),
+      vitals: generatePersonalizedMockData({
+        fullName: 'Unknown User',
+        age: 30,
+        gender: 'N/A',
+        weight: 'N/A',
+        height: 'N/A',
+        bio: 'No bio available',
+      }),
       environmentalMetrics: generateEnvironmentalMockData(),
       recommendations: [
         'Unable to load personalized data. Please ensure all services are connected.',
