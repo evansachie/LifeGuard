@@ -1,4 +1,5 @@
-import React, { useRef, useState, useEffect, useMemo } from 'react';
+import { toast } from 'react-toastify';
+import { useRef, useState, useEffect, useMemo } from 'react';
 import SortableCard from '../../components/Dashboard/SortableCard';
 import { FaTemperatureHigh } from 'react-icons/fa';
 import { IoFootstepsOutline } from 'react-icons/io5';
@@ -104,20 +105,28 @@ const Dashboard = ({ isDarkMode }: DashboardProps) => {
     }
   };
 
-  // BLE Context
+  // BLE Context with enhanced device handling
   const { bleDevice, isConnecting, sensorData, connectToDevice, disconnectDevice } = useBLE();
 
   const handleConnectDevice = async () => {
     try {
       if (!('bluetooth' in navigator)) {
-        console.warn('Bluetooth not supported in this browser');
+        toast.error('Bluetooth not supported in this browser. Please use Chrome, Edge, or Opera.');
         return;
       }
 
-      // Try to connect to a default device
-      await connectToDevice('lifeguard-device-1');
+      await connectToDevice();
     } catch (error) {
-      console.error('Error connecting to device:', error);
+      console.error('Error connecting to Arduino device:', error);
+      if (error instanceof Error) {
+        if (error.message.includes('User cancelled')) {
+          toast.info('Device selection cancelled');
+        } else if (error.message.includes('not found')) {
+          toast.error('No Arduino devices found. Make sure your device is powered on and nearby.');
+        } else {
+          toast.error(`Connection failed: ${error.message}`);
+        }
+      }
     }
   };
 
@@ -450,12 +459,15 @@ const Dashboard = ({ isDarkMode }: DashboardProps) => {
           showStepNumbers: false,
         }}
       />
-      <BluetoothButton
-        bleDevice={bleDevice}
-        isConnecting={isConnecting}
-        connectToDevice={handleConnectDevice}
-        disconnectDevice={handleDisconnectDevice}
-      />
+      {/* Enhanced Bluetooth Button with device status */}
+      <div className="device-status-container">
+        <BluetoothButton
+          bleDevice={bleDevice}
+          isConnecting={isConnecting}
+          connectToDevice={handleConnectDevice}
+          disconnectDevice={handleDisconnectDevice}
+        />
+      </div>
       <KeyboardShortcutsHelp
         isVisible={showKeyboardShortcuts}
         onClose={() => setShowKeyboardShortcuts(false)}

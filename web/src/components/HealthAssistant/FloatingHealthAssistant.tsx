@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './FloatingHealthAssistant.css';
 
@@ -11,6 +11,7 @@ import ShortcutsPanel from './ShortcutsPanel';
 import ChatMessages from './ChatMessages';
 import ChatActions from './ChatActions';
 import ChatInputForm from './ChatInputForm';
+import EmptyChatState from './EmptyChatState';
 
 interface FloatingHealthAssistantProps {
   isDarkMode: boolean;
@@ -175,11 +176,10 @@ const FloatingHealthAssistant = ({ isDarkMode }: FloatingHealthAssistantProps) =
         {isOpen && (
           <motion.div
             className="chat-window"
+            variants={chatWindowVariants}
             initial="closed"
             animate="open"
             exit="closed"
-            variants={chatWindowVariants}
-            transition={{ type: 'spring', stiffness: 400, damping: 35 }}
           >
             <ChatHeader
               toggleChat={toggleChat}
@@ -190,12 +190,18 @@ const FloatingHealthAssistant = ({ isDarkMode }: FloatingHealthAssistantProps) =
 
             <ShortcutsPanel showShortcuts={showShortcuts} />
 
-            <ChatMessages
-              chatHistory={chatHistory}
-              loading={loading}
-              isDarkMode={isDarkMode}
-              onExampleClick={handleExampleClick}
-            />
+            <div className="chat-body">
+              {chatHistory.length === 0 && !loading ? (
+                <EmptyChatState onExampleClick={handleExampleClick} isDarkMode={isDarkMode} />
+              ) : (
+                <ChatMessages
+                  chatHistory={chatHistory}
+                  loading={loading}
+                  isDarkMode={isDarkMode}
+                  onExampleClick={handleExampleClick}
+                />
+              )}
+            </div>
 
             <ChatActions
               chatHistory={chatHistory}

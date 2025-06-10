@@ -1,59 +1,17 @@
 import { FaTemperatureHigh, FaTint, FaWalking, FaChartLine } from 'react-icons/fa';
 import { WiBarometer } from 'react-icons/wi';
 import { MdAir } from 'react-icons/md';
-import { UserData } from '../types/common.types';
 import { IconType } from 'react-icons';
-
-interface VitalMetric {
-  average: string;
-  min: string;
-  max: string;
-  status: string;
-}
-
-interface AirQualityMetric {
-  average: string;
-  status: string;
-  pollutants: {
-    pm25: string;
-    pm10: string;
-    no2: string;
-  };
-}
-
-interface EnvironmentalMetric {
-  average: string;
-  status: string;
-}
-
-interface ActivityMetric {
-  average: string;
-  goal: string;
-  status: string;
-}
 
 export interface HealthReportData {
   userInfo: {
-    name: string;
-    date: string;
     reportId: string;
+    date: string;
+    name: string;
   };
-  vitals: {
-    temperature: VitalMetric;
-    pressure: VitalMetric;
-    humidity: VitalMetric;
-    activityLevel: VitalMetric;
-  };
-  environmentalMetrics: {
-    airQuality: AirQualityMetric;
-    humidity: EnvironmentalMetric;
-    pressure: EnvironmentalMetric;
-  };
-  activityMetrics: {
-    dailySteps: ActivityMetric;
-    caloriesBurned: ActivityMetric;
-    activeMinutes: ActivityMetric;
-  };
+  vitals: Record<string, any>;
+  environmentalMetrics: Record<string, any>;
+  activityMetrics: Record<string, any>;
   recommendations: string[];
 }
 
@@ -76,81 +34,58 @@ interface HealthData {
   reports: ReportItem[];
 }
 
-export const generateHealthReport = (userData?: UserData): HealthReportData => ({
-  userInfo: {
-    name: userData?.userName || 'Test User',
-    date: new Date().toLocaleDateString(),
-    reportId: `LGR-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
-  },
-  vitals: {
-    temperature: {
-      average: '36.5°C',
-      min: '36.2°C',
-      max: '36.8°C',
-      status: 'Normal',
-    },
-    pressure: {
-      average: '1000hPa',
-      min: '500hPa',
-      max: '1500hPa',
-      status: 'Normal',
-    },
-    humidity: {
-      average: '50%',
-      min: '45%',
-      max: '55%',
-      status: 'Normal',
-    },
-    activityLevel: {
-      average: '200 steps',
-      min: '100 steps',
-      max: '300 steps',
-      status: 'low',
-    },
-  },
-  environmentalMetrics: {
-    airQuality: {
-      average: '75 AQI',
-      status: 'Moderate',
-      pollutants: {
-        pm25: '15.2 µg/m³',
-        pm10: '45.8 µg/m³',
-        no2: '25.4 ppb',
+export const generateHealthReport = async (userData: any): Promise<HealthReportData> => {
+  return new Promise((resolve) => {
+    // Generate basic mock report
+    const reportId = `LG-${Date.now()}`;
+    const reportDate = new Date().toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
+    const mockReport: HealthReportData = {
+      userInfo: {
+        reportId,
+        date: reportDate,
+        name: userData?.name || localStorage.getItem('userName') || 'LifeGuard User',
       },
-    },
-    humidity: {
-      average: '58.8%',
-      status: 'Optimal',
-    },
-    pressure: {
-      average: '1013 hPa',
-      status: 'Normal',
-    },
-  },
-  activityMetrics: {
-    dailySteps: {
-      average: '8,500',
-      goal: '10,000',
-      status: 'Good',
-    },
-    caloriesBurned: {
-      average: '2,150 kcal',
-      goal: '2,500 kcal',
-      status: 'On Track',
-    },
-    activeMinutes: {
-      average: '45 mins',
-      goal: '60 mins',
-      status: 'Improving',
-    },
-  },
-  recommendations: [
-    'Maintain regular physical activity levels',
-    'Consider increasing daily water intake',
-    'Monitor PM2.5 exposure during outdoor activities',
-    'Keep up with the consistent sleep schedule',
-  ],
-});
+      vitals: {
+        heartRate: { average: '72 BPM', min: '65 BPM', max: '85 BPM', status: 'Normal' },
+        bloodPressure: {
+          average: '120/80 mmHg',
+          min: '110/70 mmHg',
+          max: '130/85 mmHg',
+          status: 'Normal',
+        },
+        bodyTemperature: { average: '36.8°C', min: '36.5°C', max: '37.1°C', status: 'Normal' },
+        oxygenSaturation: { average: '98%', min: '96%', max: '99%', status: 'Normal' },
+      },
+      environmentalMetrics: {
+        airQuality: { average: 'Good (45 AQI)', status: 'Good' },
+        temperature: { average: '24°C', status: 'Optimal' },
+        humidity: { average: '55%', status: 'Comfortable' },
+        pressure: { average: '1013 hPa', status: 'Normal' },
+      },
+      activityMetrics: {
+        stepCount: { average: '8,500', status: 'Good', goal: '10,000 steps' },
+        caloriesBurned: { average: '450', status: 'On track', goal: '500 calories' },
+        activeMinutes: { average: '35', status: 'Good', goal: '30 minutes' },
+      },
+      recommendations: [
+        'Maintain your current activity level',
+        'Stay hydrated throughout the day',
+        'Consider adding more vegetables to your diet',
+        'Ensure 7-8 hours of quality sleep',
+      ],
+    };
+
+    // Simulate async operation
+    setTimeout(() => resolve(mockReport), 100);
+  });
+};
 
 export const healthData: HealthData = {
   stats: [

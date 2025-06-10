@@ -2,9 +2,10 @@ import { FaHeartbeat } from 'react-icons/fa';
 
 interface EmptyChatStateProps {
   onExampleClick: (question: string) => void;
+  isDarkMode?: boolean;
 }
 
-const EmptyChatState = ({ onExampleClick }: EmptyChatStateProps) => {
+const EmptyChatState = ({ onExampleClick, isDarkMode = false }: EmptyChatStateProps) => {
   const isAuthenticated = !!localStorage.getItem('token');
 
   const exampleQuestions = [
@@ -56,28 +57,45 @@ const EmptyChatState = ({ onExampleClick }: EmptyChatStateProps) => {
               }
             }}
             style={{
-              background: 'none',
+              background: isDarkMode ? '#4a5568' : 'white',
+              color: isDarkMode ? '#e2e8f0' : '#333',
               border: 'none',
               padding: '10px 15px',
               margin: '0 0 8px 0',
               borderRadius: '8px',
               cursor: 'pointer',
               transition: 'background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease',
-              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
+              boxShadow: isDarkMode
+                ? '0 1px 3px rgba(0, 0, 0, 0.2)'
+                : '0 1px 3px rgba(0, 0, 0, 0.08)',
               fontSize: '14px',
               textAlign: 'left',
               width: '100%',
               display: 'block',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#eef4ff';
+              if (isDarkMode) {
+                e.currentTarget.style.backgroundColor = '#718096';
+                e.currentTarget.style.color = '#ffffff';
+                e.currentTarget.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.25)';
+              } else {
+                e.currentTarget.style.backgroundColor = '#eef4ff';
+                e.currentTarget.style.color = '#333';
+                e.currentTarget.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.1)';
+              }
               e.currentTarget.style.transform = 'translateY(-1px)';
-              e.currentTarget.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.1)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'white';
+              if (isDarkMode) {
+                e.currentTarget.style.backgroundColor = '#4a5568';
+                e.currentTarget.style.color = '#e2e8f0';
+                e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.2)';
+              } else {
+                e.currentTarget.style.backgroundColor = 'white';
+                e.currentTarget.style.color = '#333';
+                e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.08)';
+              }
               e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.08)';
             }}
             onFocus={(e) => {
               e.currentTarget.style.outline = '2px solid #4a90e2';

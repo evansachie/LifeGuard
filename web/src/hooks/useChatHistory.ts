@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { fetchWithAuth, API_ENDPOINTS } from '../utils/api';
 import { handleError, getErrorMessage } from '../utils/errorHandler';
+import { ragService } from '../services/ragService';
 
 interface ChatMessage {
   type: 'user' | 'assistant';
@@ -127,7 +128,44 @@ export function useChatHistory(): ChatHistoryReturn {
       const userId = localStorage.getItem('userId');
 
       if (token && userId) {
-        // Try authenticated request first
+        // Check if query is about health report/PDF data
+        const healthReportKeywords = [
+          'health report',
+          'my report',
+          'pdf',
+          'vitals',
+          'environmental metrics',
+          'activity metrics',
+          'recommendations',
+          'blood pressure',
+          'heart rate',
+          'temperature',
+          'humidity',
+          'air quality',
+        ];
+
+        const isHealthReportQuery = healthReportKeywords.some((keyword) =>
+          query.toLowerCase().includes(keyword)
+        );
+
+        if (isHealthReportQuery) {
+          try {
+            // Try RAG system first for health report queries
+            const ragResponse = await ragService.askQuestion({
+              user_id: userId,
+              question: query,
+              top_k: 3,
+            });
+
+            addAssistantMessage(ragResponse.answer);
+            return ragResponse.answer;
+          } catch (ragError) {
+            console.log('RAG query failed, falling back to regular API:', ragError);
+            // Fall through to regular API if RAG fails
+          }
+        }
+
+        // Try authenticated request for general health queries
         try {
           const result = await fetchWithAuth<QueryResponse>(API_ENDPOINTS.RAG_QUERY, {
             method: 'POST',

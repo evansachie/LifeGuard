@@ -1,4 +1,4 @@
-import { FaRobot } from 'react-icons/fa';
+import { TbMessageChatbot } from 'react-icons/tb';
 
 interface ChatButtonProps {
   isOpen: boolean;
@@ -12,7 +12,7 @@ const ChatButton = ({ isOpen, toggleChat }: ChatButtonProps) => {
       onClick={toggleChat}
       aria-label="Open Health Assistant"
     >
-      <FaRobot />
+      <TbMessageChatbot />
     </button>
   );
 };
