@@ -21,7 +21,7 @@ interface PollutionTrackerProps {
   isDarkMode: boolean;
 }
 
-const PollutionTracker: React.FC<PollutionTrackerProps> = ({ isDarkMode }) => {
+const PollutionTracker = ({ isDarkMode }: PollutionTrackerProps) => {
   const [viewState, setViewState] = useState<MapViewState>(INITIAL_VIEW_STATE);
   const [selectedZone, setSelectedZone] = useState<PollutionZone | null>(null);
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);

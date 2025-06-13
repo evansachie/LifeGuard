@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 
 interface LogoProps {
@@ -7,7 +6,7 @@ interface LogoProps {
   height?: number | string;
 }
 
-export const Logo: React.FC<LogoProps> = ({ className = 'logo', width, height }) => {
+export const Logo = ({ className = 'logo', width, height }: LogoProps) => {
   return (
     <Link to="/">
       <img

@@ -1,4 +1,5 @@
 import { API_BASE_URL, API_ENDPOINTS, fetchWithAuth, apiMethods } from './api';
+import { getErrorMessage } from './errorHandler';
 import type { AuthResponse, RegistrationResponse, ApiResponse } from '../types/api.types';
 
 export const isAuthenticated = (): boolean => {
@@ -98,8 +99,9 @@ export const initiateGoogleLogin = async (): Promise<void> => {
     const returnUrl = `${window.location.origin}/signin-google`;
     const googleLoginUrl = `${API_BASE_URL}${API_ENDPOINTS.GOOGLE_LOGIN}?returnUrl=${encodeURIComponent(returnUrl)}`;
     window.location.href = googleLoginUrl;
-  } catch (error: any) {
-    throw new Error('Failed to initiate Google login: ' + error.message);
+  } catch (error: unknown) {
+    const errorMessage = getErrorMessage(error, 'Failed to initiate Google login');
+    throw new Error(errorMessage);
   }
 };
 
@@ -128,7 +130,7 @@ export const handleGoogleCallback = async (): Promise<GoogleCallbackData> => {
     localStorage.setItem('email', email);
 
     return { token, userId, email, userName: userName || email };
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Google auth callback error:', error);
     throw new Error('Failed to complete Google authentication');
   }

@@ -6,6 +6,7 @@ import loginIllustration2 from '../../../assets/auth/loginIllustration2.svg';
 import loginIllustration3 from '../../../assets/auth/loginIllustration3.svg';
 import ImageSlider from '../../../components/ImageSlider/ImageSlider';
 import { loginUser, initiateGoogleLogin } from '../../../utils/auth';
+import { getErrorMessage } from '../../../utils/errorHandler';
 import ThemeToggle from '../../../contexts/ThemeToggle';
 import { Logo } from '../../../components/Logo/Logo';
 import LoginForm from '../../../components/Auth/LoginForm';
@@ -37,8 +38,8 @@ const useAuth = (): LoginFormHook => {
 
       toast.success('Login successful!');
       navigate('/dashboard');
-    } catch (error: any) {
-      const errorMessage = error.message || 'Login failed';
+    } catch (error: unknown) {
+      const errorMessage = getErrorMessage(error, 'Login failed');
       toast.error(errorMessage);
       console.error('Login error:', error);
     } finally {
@@ -51,8 +52,9 @@ const useAuth = (): LoginFormHook => {
     setIsLoading(true);
     try {
       await initiateGoogleLogin();
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error: unknown) {
+      const errorMessage = getErrorMessage(error, 'Google login failed');
+      toast.error(errorMessage);
       console.error('Google login error:', error);
     } finally {
       setIsLoading(false);
@@ -68,7 +70,7 @@ const useAuth = (): LoginFormHook => {
   };
 };
 
-const LogIn: React.FC<AuthPageProps> = ({ isDarkMode, toggleTheme }) => {
+const LogIn = ({ isDarkMode, toggleTheme }: AuthPageProps) => {
   const authProps = useAuth();
 
   const loginSlides = [

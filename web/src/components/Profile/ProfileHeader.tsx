@@ -18,11 +18,11 @@ interface ProfileHeaderProps {
   isLoading: boolean;
   editMode: boolean;
   handleImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleDeletePhoto: () => void;
+  handleDeletePhoto: () => Promise<boolean>;
   isDarkMode?: boolean;
 }
 
-const ProfileHeader: React.FC<ProfileHeaderProps> = ({
+const ProfileHeader = ({
   profileData,
   profileLoading,
   isLoading,
@@ -30,7 +30,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   handleImageChange,
   handleDeletePhoto,
   isDarkMode = false,
-}) => {
+}: ProfileHeaderProps) => {
   const [profilePhotoUrl, setProfilePhotoUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -49,6 +49,13 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
     fetchProfilePhoto();
   }, []);
+
+  const handleDeletePhotoWithRefresh = async (): Promise<void> => {
+    const success = await handleDeletePhoto();
+    if (success) {
+      setProfilePhotoUrl(null);
+    }
+  };
 
   const photoUrl =
     profilePhotoUrl ||
@@ -107,7 +114,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                     ? 'bg-red-600 hover:bg-red-700 text-white'
                     : 'bg-red-500 hover:bg-red-600 text-white'
                 } p-2 rounded-full transition-colors`}
-                onClick={handleDeletePhoto}
+                onClick={handleDeletePhotoWithRefresh}
                 disabled={isLoading}
               >
                 <FaTrash />

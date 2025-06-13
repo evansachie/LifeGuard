@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import resetPasswordIllustration from '../../../assets/auth/reset-password.svg';
 import { resetUserPassword } from '../../../utils/auth';
 import { validatePassword } from '../../../utils/validatePassword';
+import { getErrorMessage } from '../../../utils/errorHandler';
 import ThemeToggle from '../../../contexts/ThemeToggle';
 import { Logo } from '../../../components/Logo/Logo';
 import ResetPasswordForm from '../../../components/Auth/ResetPasswordForm';
@@ -61,8 +62,8 @@ const usePasswordReset = (): ResetPasswordFormHook => {
       await resetUserPassword(email, token, formData.newPassword, formData.confirmPassword);
       toast.success('Password reset successful');
       navigate('/log-in');
-    } catch (error: any) {
-      const errorMessage = error.message || 'Failed to reset password. Please try again.';
+    } catch (error: unknown) {
+      const errorMessage = getErrorMessage(error, 'Failed to reset password. Please try again.');
       toast.error(errorMessage);
       console.error('Password reset error:', error);
     } finally {
@@ -79,7 +80,7 @@ const usePasswordReset = (): ResetPasswordFormHook => {
   };
 };
 
-const ResetPassword: React.FC<AuthPageProps> = ({ isDarkMode, toggleTheme }) => {
+const ResetPassword = ({ isDarkMode, toggleTheme }: AuthPageProps) => {
   const resetProps = usePasswordReset();
 
   return (

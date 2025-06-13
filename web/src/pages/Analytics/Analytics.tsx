@@ -17,7 +17,7 @@ interface AnalyticsProps {
 type TabType = 'environment' | 'airQuality' | 'reports';
 type DateRangeType = '24h' | '7d' | '30d' | '90d';
 
-const Analytics: React.FC<AnalyticsProps> = ({ isDarkMode }) => {
+const Analytics = ({ isDarkMode }: AnalyticsProps) => {
   const { sensorData } = useBLE();
   const [activeTab, setActiveTab] = useState<TabType>('environment');
   const [dateRange, setDateRange] = useState<DateRangeType>('24h');

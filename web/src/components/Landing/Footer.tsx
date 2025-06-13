@@ -1,9 +1,8 @@
-import React from 'react';
 import { FaGithub, FaTwitter, FaLinkedin } from 'react-icons/fa';
 import AccessibleDropdown from '../AccessibleDropdown/AccessibleDropdown';
 import './Footer.css';
 
-const Footer: React.FC = () => {
+const Footer = () => {
   const scrollToSection = (sectionId: string): void => {
     const element = document.getElementById(sectionId);
     if (element) {

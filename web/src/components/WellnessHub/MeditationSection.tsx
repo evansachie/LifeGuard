@@ -9,7 +9,7 @@ interface MeditationSectionProps {
   isDarkMode?: boolean;
 }
 
-const MeditationSection: React.FC<MeditationSectionProps> = ({ isDarkMode }) => {
+const MeditationSection = ({ isDarkMode }: MeditationSectionProps) => {
   const [meditationTime, setMeditationTime] = useState<number>(600);
   const [currentTime, setCurrentTime] = useState<number>(600);
   const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false);

@@ -21,12 +21,7 @@ interface CategoryCardProps {
   isDarkMode: boolean;
 }
 
-const CategoryCard: React.FC<CategoryCardProps> = ({
-  category,
-  isActive,
-  toggleActive,
-  isDarkMode,
-}) => {
+const CategoryCard = ({ category, isActive, toggleActive, isDarkMode }: CategoryCardProps) => {
   return (
     <motion.div
       layout

@@ -13,6 +13,7 @@ import {
   handleGoogleCallback,
 } from '../utils/auth';
 import { apiMethods } from '../utils/api';
+import { getErrorMessage } from '../utils/errorHandler';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -20,7 +21,7 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -43,7 +44,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               id: storedUserId,
               userName: storedUserName,
               email: localStorage.getItem('email') || '',
-              isEmailVerified: true, // Assume verified if logged in
+              isEmailVerified: true,
               createdAt: new Date().toISOString(),
             };
             setUser(userData);
@@ -119,8 +120,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser(userData);
 
       toast.success('Login successful!');
-    } catch (error: any) {
-      const errorMessage = error.message || 'Login failed';
+    } catch (error: unknown) {
+      const errorMessage = getErrorMessage(error, 'Login failed');
       toast.error(errorMessage);
       throw new Error(errorMessage);
     } finally {
@@ -145,8 +146,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           );
         }
       }
-    } catch (error: any) {
-      const errorMessage = error.message || 'Registration failed';
+    } catch (error: unknown) {
+      const errorMessage = getErrorMessage(error, 'Registration failed');
       toast.error(errorMessage);
       throw new Error(errorMessage);
     } finally {
@@ -182,8 +183,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         toast.error(response.message || 'OTP verification failed');
         return false;
       }
-    } catch (error: any) {
-      const errorMessage = error.message || 'OTP verification failed';
+    } catch (error: unknown) {
+      const errorMessage = getErrorMessage(error, 'OTP verification failed');
       toast.error(errorMessage);
       return false;
     } finally {
@@ -203,8 +204,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         toast.error(response.message || 'Failed to resend OTP');
         return false;
       }
-    } catch (error: any) {
-      const errorMessage = error.message || 'Failed to resend OTP';
+    } catch (error: unknown) {
+      const errorMessage = getErrorMessage(error, 'Failed to resend OTP');
       toast.error(errorMessage);
       return false;
     } finally {
@@ -224,8 +225,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         toast.error(response.message || 'Failed to send password reset email');
         return false;
       }
-    } catch (error: any) {
-      const errorMessage = error.message || 'Failed to send password reset email';
+    } catch (error: unknown) {
+      const errorMessage = getErrorMessage(error, 'Failed to send password reset email');
       toast.error(errorMessage);
       return false;
     } finally {
@@ -250,8 +251,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         toast.error(response.message || 'Failed to reset password');
         return false;
       }
-    } catch (error: any) {
-      const errorMessage = error.message || 'Failed to reset password';
+    } catch (error: unknown) {
+      const errorMessage = getErrorMessage(error, 'Failed to reset password');
       toast.error(errorMessage);
       return false;
     } finally {
@@ -271,8 +272,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       toast.success('Profile updated successfully!');
-    } catch (error: any) {
-      const errorMessage = error.message || 'Failed to update profile';
+    } catch (error: unknown) {
+      const errorMessage = getErrorMessage(error, 'Failed to update profile');
       toast.error(errorMessage);
       throw new Error(errorMessage);
     } finally {

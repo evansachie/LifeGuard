@@ -27,13 +27,13 @@ interface FormErrors {
   relationship?: string;
 }
 
-const ContactForm: React.FC<ContactFormProps> = ({
+const ContactForm = ({
   contact = null,
   onSubmit,
   onCancel,
   isSaving = false,
   isDarkMode = false,
-}) => {
+}: ContactFormProps) => {
   const [formData, setFormData] = useState<ContactFormData>({
     name: '',
     phone: '',

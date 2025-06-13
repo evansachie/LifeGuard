@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getErrorMessage } from './errorHandler';
 
 const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET as string;
 const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME as string;
@@ -79,9 +80,10 @@ const uploadToCloudinary = async (
     } else {
       throw new Error('Invalid response from Cloudinary');
     }
-  } catch (error: any) {
-    console.error('Error uploading image:', error.response?.data || error.message);
-    throw new Error('Failed to upload image to Cloudinary');
+  } catch (error: unknown) {
+    const errorMessage = getErrorMessage(error, 'Failed to upload image to Cloudinary');
+    console.error('Error uploading image:', error);
+    throw new Error(errorMessage);
   }
 };
 

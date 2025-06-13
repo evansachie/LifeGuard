@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { FaHome } from 'react-icons/fa';
@@ -8,7 +7,7 @@ interface NotFoundProps {
   isDarkMode: boolean;
 }
 
-const NotFound: React.FC<NotFoundProps> = ({ isDarkMode }) => {
+const NotFound = ({ isDarkMode }: NotFoundProps) => {
   return (
     <div
       className={`min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden ${

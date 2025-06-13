@@ -9,7 +9,7 @@ interface BreathingSectionProps {
 
 type BreathingPhase = 'inhale' | 'hold' | 'exhale' | 'rest';
 
-const BreathingSection: React.FC<BreathingSectionProps> = ({ isDarkMode }) => {
+const BreathingSection = ({ isDarkMode }: BreathingSectionProps) => {
   const [isBreathing, setIsBreathing] = useState<boolean>(false);
   const [selectedPattern, setSelectedPattern] = useState<BreathingPattern | null>(null);
   const [breathingPhase, setBreathingPhase] = useState<BreathingPhase>('inhale');

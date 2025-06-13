@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import {
   FaShieldAlt,
@@ -17,7 +16,7 @@ interface PrivacyPolicyProps {
   isDarkMode: boolean;
 }
 
-const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ isDarkMode }) => {
+const PrivacyPolicy = ({ isDarkMode }: PrivacyPolicyProps) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}

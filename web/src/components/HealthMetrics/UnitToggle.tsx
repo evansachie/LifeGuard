@@ -1,11 +1,9 @@
-import React from 'react';
-
 interface UnitToggleProps {
   unit: 'metric' | 'imperial';
   setUnit: (unit: 'metric' | 'imperial') => void;
 }
 
-const UnitToggle: React.FC<UnitToggleProps> = ({ unit, setUnit }) => {
+const UnitToggle = ({ unit, setUnit }: UnitToggleProps) => {
   return (
     <div className="unit-toggle">
       <button className={unit === 'imperial' ? 'active' : ''} onClick={() => setUnit('imperial')}>

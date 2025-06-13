@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface Macros {
   protein: number;
   carbs: number;
@@ -10,7 +8,7 @@ interface MacrosDisplayProps {
   macros: Macros | null;
 }
 
-const MacrosDisplay: React.FC<MacrosDisplayProps> = ({ macros }) => {
+const MacrosDisplay = ({ macros }: MacrosDisplayProps) => {
   if (!macros) return null;
 
   return (

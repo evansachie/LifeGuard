@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { fetchWithAuth, API_ENDPOINTS } from '../utils/api';
+import { getErrorMessage } from '../utils/errorHandler';
 import { UserData } from '../types/common.types';
 
 interface UseUserDataReturn {
@@ -33,7 +34,7 @@ const useUserData = (): UseUserDataReturn => {
         return response.data.url;
       }
       return null;
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error fetching profile photo:', error);
       return null;
     }
@@ -70,9 +71,10 @@ const useUserData = (): UseUserDataReturn => {
       } else {
         throw new Error('Invalid user data response');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = getErrorMessage(error, 'Failed to load user data');
       console.error('Error loading user data:', error);
-      setError(error.message || 'Failed to load user data');
+      setError(errorMessage);
       toast.error('Failed to fetch user data');
     } finally {
       setIsLoading(false);

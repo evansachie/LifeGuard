@@ -22,7 +22,7 @@ interface LocalSound {
   audioURL: string;
 }
 
-const WellnessHub: React.FC<WellnessHubProps> = ({ isDarkMode }) => {
+const WellnessHub = ({ isDarkMode }: WellnessHubProps) => {
   const [activeSection, setActiveSection] = useState<WellnessSection>(() => {
     return (localStorage.getItem('wellnessSection') as WellnessSection) || 'breathing';
   });

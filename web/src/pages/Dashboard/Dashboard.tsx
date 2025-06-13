@@ -1,4 +1,5 @@
-import React, { useRef, useState, useEffect, useMemo } from 'react';
+import { toast } from 'react-toastify';
+import { useRef, useState, useEffect, useMemo } from 'react';
 import SortableCard from '../../components/Dashboard/SortableCard';
 import { FaTemperatureHigh } from 'react-icons/fa';
 import { IoFootstepsOutline } from 'react-icons/io5';
@@ -40,7 +41,7 @@ import RemindersCard from '../../components/Dashboard/RemindersCard';
 import PollutantsCard from '../../components/Dashboard/PollutantsCard';
 import AlertsSection from '../../components/Dashboard/AlertsSection';
 import { alerts, getAlertsByTimeframe } from '../../data/alerts';
-import BluetoothButton from '../../components/Buttons/BluetoothButton';
+import ConnectivityButton from '../../components/Buttons/ConnectivityButton';
 
 // Custom hooks
 import useUserData from '../../hooks/useUserData';
@@ -48,6 +49,7 @@ import useQuoteData from '../../hooks/useQuoteData';
 import useMemoData from '../../hooks/useMemoData';
 import usePollutionData from '../../hooks/usePollutionData';
 import useDashboardTour from '../../hooks/useDashboardTour';
+import useFirebaseData from '../../hooks/useFirebaseData';
 
 // Types
 import {
@@ -62,7 +64,7 @@ import {
   DashboardControlsRef,
 } from '../../types/common.types';
 
-const Dashboard: React.FC<DashboardProps> = ({ isDarkMode }) => {
+const Dashboard = ({ isDarkMode }: DashboardProps) => {
   const [cardOrder, setCardOrder] = useState<CardId[]>(() => {
     const savedOrder = localStorage.getItem('dashboardCardOrder');
     return savedOrder
@@ -104,20 +106,28 @@ const Dashboard: React.FC<DashboardProps> = ({ isDarkMode }) => {
     }
   };
 
-  // BLE Context
+  // BLE Context with enhanced device handling
   const { bleDevice, isConnecting, sensorData, connectToDevice, disconnectDevice } = useBLE();
 
   const handleConnectDevice = async () => {
     try {
       if (!('bluetooth' in navigator)) {
-        console.warn('Bluetooth not supported in this browser');
+        toast.error('Bluetooth not supported in this browser. Please use Chrome, Edge, or Opera.');
         return;
       }
 
-      // Try to connect to a default device
-      await connectToDevice('lifeguard-device-1');
+      await connectToDevice();
     } catch (error) {
-      console.error('Error connecting to device:', error);
+      console.error('Error connecting to Arduino device:', error);
+      if (error instanceof Error) {
+        if (error.message.includes('User cancelled')) {
+          toast.info('Device selection cancelled');
+        } else if (error.message.includes('not found')) {
+          toast.error('No Arduino devices found. Make sure your device is powered on and nearby.');
+        } else {
+          toast.error(`Connection failed: ${error.message}`);
+        }
+      }
     }
   };
 
@@ -126,12 +136,21 @@ const Dashboard: React.FC<DashboardProps> = ({ isDarkMode }) => {
       await disconnectDevice(bleDevice.id);
     }
   };
-
   const { userData, isLoading: dataLoading } = useUserData();
   const { quote, isLoading: quotesLoading } = useQuoteData();
   const { memos: savedMemos, isLoading: memosLoading } = useMemoData();
   const pollutionData = usePollutionData(sensorData);
   const { showTour: showDashboardTour, handleTourExit } = useDashboardTour();
+
+  // Firebase real-time data
+  const {
+    sensorData: firebaseSensorData,
+    isLoading: firebaseLoading,
+    error: firebaseError,
+  } = useFirebaseData({
+    deviceId: bleDevice?.id,
+    enabled: bleDevice?.connected,
+  });
 
   // Dashboard UI state
   const [timeframe, setTimeframe] = useState<Timeframe>('today');
@@ -156,6 +175,7 @@ const Dashboard: React.FC<DashboardProps> = ({ isDarkMode }) => {
     co2: true,
     pollutants: true,
   });
+  const [syncCount, setSyncCount] = useState(0);
 
   const dashboardRef = useRef<HTMLDivElement>(null);
   const controlsRef = useRef<DashboardControlsRef>(null);
@@ -263,6 +283,13 @@ const Dashboard: React.FC<DashboardProps> = ({ isDarkMode }) => {
   const handleShowShortcuts = (): void => {
     setShowKeyboardShortcuts(true);
   };
+
+  // Update sync count when new Firebase data comes in
+  useEffect(() => {
+    if (firebaseSensorData?.timestamp) {
+      setSyncCount((prev) => prev + 1);
+    }
+  }, [firebaseSensorData?.timestamp]);
 
   const statsData: StatsData = {
     readings: 124,
@@ -449,13 +476,22 @@ const Dashboard: React.FC<DashboardProps> = ({ isDarkMode }) => {
           tooltipPosition: 'auto',
           showStepNumbers: false,
         }}
-      />
-      <BluetoothButton
-        bleDevice={bleDevice}
-        isConnecting={isConnecting}
-        connectToDevice={handleConnectDevice}
-        disconnectDevice={handleDisconnectDevice}
-      />
+      />{' '}
+      {/* Bluetooth Button with device status */}
+      <div className="device-status-container">
+        <ConnectivityButton
+          bleDevice={bleDevice}
+          isConnecting={isConnecting}
+          connectToDevice={handleConnectDevice}
+          disconnectDevice={handleDisconnectDevice}
+          firebaseConnected={!!firebaseSensorData}
+          firebaseLoading={firebaseLoading}
+          firebaseError={firebaseError}
+          lastSync={firebaseSensorData?.timestamp}
+          syncCount={syncCount}
+          isDarkMode={isDarkMode}
+        />
+      </div>
       <KeyboardShortcutsHelp
         isVisible={showKeyboardShortcuts}
         onClose={() => setShowKeyboardShortcuts(false)}

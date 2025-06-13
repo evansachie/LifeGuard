@@ -15,7 +15,7 @@ interface LandingPageProps {
   isAuthenticated: boolean;
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ isDarkMode, toggleTheme, isAuthenticated }) => {
+const LandingPage = ({ isDarkMode, toggleTheme, isAuthenticated }: LandingPageProps) => {
   return (
     <div className={`landing-page ${isDarkMode ? 'dark-mode' : ''}`}>
       <Navbar isDarkMode={isDarkMode} toggleTheme={toggleTheme} isAuthenticated={isAuthenticated} />

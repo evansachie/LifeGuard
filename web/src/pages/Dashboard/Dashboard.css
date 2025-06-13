@@ -529,51 +529,110 @@
     z-index: 100;
 }
 
+/* Enhanced Connectivity Button */
+.connectivity-button-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 250px;
+}
+
 .connect-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 20px;
-    border-radius: 8px;
-    border: none;
-    background: #407CE2;
-    color: white;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  background: #407CE2;
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  min-width: 250px;
+  white-space: nowrap;
+  justify-content: flex-start;
+  position: relative;
 }
 
 .connect-btn:hover {
-    background: #2B5BBF;
+  background: #2B5BBF;
 }
 
 .connect-btn.connected {
-    background: #22C55E;
+  background: #22C55E;
 }
 
 .connect-btn.connected:hover {
-    background: #16A34A;
+  background: #16A34A;
 }
 
 .connect-btn.loading {
-    background: #6B7280;
-    cursor: wait;
+  background: #6B7280;
+  cursor: wait;
+}
+
+.button-text {
+  flex-grow: 1;
+  text-align: center;
+}
+
+.firebase-status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  padding-left: 8px;
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.firebase-status-text {
+  white-space: nowrap;
+  font-size: 0.7rem;
+}
+
+.last-sync-time {
+  font-size: 0.7rem;
+  color: #6b7280;
+  margin-top: 4px;
+  text-align: right;
+  padding-right: 3px;
+}
+
+.last-sync-time.dark {
+  color: #9ca3af;
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .dark-mode .connect-btn {
-    background: #4B5563;
+  background: #4B5563;
 }
 
 .dark-mode .connect-btn:hover {
-    background: #374151;
+  background: #374151;
 }
 
 .dark-mode .connect-btn.connected {
-    background: #059669;
+  background: #059669;
 }
 
 .dark-mode .connect-btn.connected:hover {
-    background: #047857;
+  background: #047857;
 }
 
 /* Health Assistant Styling */
@@ -687,5 +746,181 @@
 .dashboard .floating-health-assistant .chat-window {
   bottom: 100px !important;
   right: 40px !important;
+}
+
+/* Device Status Styling */
+.device-status-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.device-status {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  min-width: 200px;
+  animation: slideIn 0.3s ease-out;
+  display: none;
+}
+
+.device-status.dark-mode {
+  background: rgba(45, 45, 45, 0.95);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.status-dot.connected {
+  background-color: #10b981;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+}
+
+.status-dot.disconnected {
+  background-color: #ef4444;
+  animation: none;
+}
+
+.device-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.data-timestamp {
+  font-size: 0.8rem;
+  color: #6b7280;
+  opacity: 0.8;
+}
+
+.device-status.dark-mode .data-timestamp {
+  color: #9ca3af;
+}
+
+/* Live data indicator */
+.dashboard-card.live-data {
+  border-left: 4px solid #10b981;
+  animation: livePulse 3s infinite;
+}
+
+.live-indicator {
+  font-size: 0.6rem;
+  margin-left: 4px;
+  animation: blink 1.5s infinite;
+}
+
+.last-updated {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 8px;
+  opacity: 0.7;
+}
+
+.dark-mode .last-updated {
+  color: #9ca3af;
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+@keyframes livePulse {
+  0%, 100% {
+    border-left-color: #10b981;
+  }
+  50% {
+    border-left-color: #34d399;
+  }
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0.3;
+  }
+}
+
+/* Firebase Status Display */
+.firebase-status {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  min-width: 160px;
+  transition: all 0.3s ease;
+}
+
+.firebase-status.dark {
+  background: rgba(45, 45, 45, 0.95);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+}
+
+@keyframes syncPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.firebase-status .text-green-500 {
+  animation: syncPulse 1s ease;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .device-status-container {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-bottom: 1rem;
+  }
+  
+  .device-status {
+    min-width: auto;
+    width: 100%;
+  }
 }
 

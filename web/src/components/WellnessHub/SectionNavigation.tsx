@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { GiMeditation } from 'react-icons/gi';
 import { FaVolumeUp } from 'react-icons/fa';
@@ -9,10 +8,7 @@ interface SectionNavigationProps {
   handleSectionChange: (section: WellnessSection) => void;
 }
 
-const SectionNavigation: React.FC<SectionNavigationProps> = ({
-  activeSection,
-  handleSectionChange,
-}) => (
+const SectionNavigation = ({ activeSection, handleSectionChange }: SectionNavigationProps) => (
   <div className="section-navigation">
     <motion.div className="nav-buttons">
       {(['breathing', 'meditation', 'sounds'] as WellnessSection[]).map((section) => (

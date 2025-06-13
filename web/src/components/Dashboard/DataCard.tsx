@@ -1,4 +1,4 @@
-import React, { memo, ReactNode } from 'react';
+import { memo, ReactNode } from 'react';
 import { IconType } from 'react-icons';
 
 interface DataCardProps {
@@ -9,10 +9,12 @@ interface DataCardProps {
   className?: string;
   valueColor?: string | null;
   children?: ReactNode;
-  onRefresh?: () => void | null;
+  onRefresh?: () => void;
+  isLive?: boolean;
+  lastUpdated?: string;
 }
 
-const DataCard: React.FC<DataCardProps> = ({
+const DataCard = ({
   title,
   value,
   unit,
@@ -20,13 +22,20 @@ const DataCard: React.FC<DataCardProps> = ({
   className = '',
   valueColor = null,
   children,
-  onRefresh = null,
-}) => {
+  onRefresh,
+  isLive = false,
+  lastUpdated,
+}: DataCardProps) => {
   return (
-    <div className={`dashboard-card ${className}`}>
+    <div className={`dashboard-card ${className} ${isLive ? 'live-data' : ''}`}>
       <div className="card-header">
         <h2>
           {Icon && <Icon aria-hidden="true" />} {title}
+          {isLive && (
+            <span className="live-indicator" title="Real-time data">
+              🔴
+            </span>
+          )}
         </h2>
         {onRefresh && (
           <button onClick={onRefresh} className="refresh-btn" aria-label={`Refresh ${title} data`}>
@@ -35,10 +44,17 @@ const DataCard: React.FC<DataCardProps> = ({
         )}
       </div>
       {children || (
-        <div className="card-value" style={valueColor ? { color: valueColor } : {}}>
-          {value}
-          {unit}
-        </div>
+        <>
+          <div className="card-value" style={valueColor ? { color: valueColor } : {}}>
+            {value}
+            {unit}
+          </div>
+          {lastUpdated && (
+            <div className="last-updated">
+              Updated: {new Date(lastUpdated).toLocaleTimeString()}
+            </div>
+          )}
+        </>
       )}
     </div>
   );

@@ -18,7 +18,7 @@ interface MemoCardProps {
   isDarkMode: boolean;
 }
 
-const MemoCard: React.FC<MemoCardProps> = ({
+const MemoCard = ({
   memo,
   onEdit,
   onDelete,
@@ -26,7 +26,7 @@ const MemoCard: React.FC<MemoCardProps> = ({
   onUpdateMemo,
   isEditing,
   isDarkMode,
-}) => {
+}: MemoCardProps) => {
   const [editText, setEditText] = useState<string>(memo.Text);
 
   const formatDate = (dateString: string): string => {

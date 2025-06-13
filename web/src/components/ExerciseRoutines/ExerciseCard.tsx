@@ -11,13 +11,13 @@ interface ExerciseCardProps {
   compact?: boolean;
 }
 
-const ExerciseCard: React.FC<ExerciseCardProps> = ({
+const ExerciseCard = ({
   exercise,
   onExerciseStart,
   activeWorkout,
   isDarkMode,
   compact = false,
-}) => {
+}: ExerciseCardProps) => {
   return (
     <>
       <motion.div

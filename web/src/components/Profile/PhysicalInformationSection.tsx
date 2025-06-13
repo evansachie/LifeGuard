@@ -15,12 +15,12 @@ interface PhysicalInformationSectionProps {
   isDarkMode: boolean;
 }
 
-const PhysicalInformationSection: React.FC<PhysicalInformationSectionProps> = ({
+const PhysicalInformationSection = ({
   profileData,
   handleInputChange,
   editMode,
   isDarkMode,
-}) => {
+}: PhysicalInformationSectionProps) => {
   return (
     <div className="physical-info-section">
       <h3>Physical Information</h3>

@@ -6,6 +6,7 @@ import ThemeToggle from '../../../contexts/ThemeToggle';
 import { Logo } from '../../../components/Logo/Logo';
 import OTPVerificationForm from '../../../components/Auth/OTPVerificationForm';
 import { verifyOTP, resendOTP } from '../../../utils/auth';
+import { getErrorMessage } from '../../../utils/errorHandler';
 import { AuthPageProps, OTPVerificationFormHook } from '../../../types/common.types';
 import './OTPVerification.css';
 
@@ -40,8 +41,8 @@ const useOTPVerification = (email: string | undefined): OTPVerificationFormHook 
       setTimeLeft(30);
       setError('');
       toast.info('OTP has been resent to your email');
-    } catch (error: any) {
-      const errorMessage = error.message || 'Failed to resend OTP';
+    } catch (error: unknown) {
+      const errorMessage = getErrorMessage(error, 'Failed to resend OTP');
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {
@@ -68,8 +69,8 @@ const useOTPVerification = (email: string | undefined): OTPVerificationFormHook 
       await verifyOTP(email, otpValue);
       toast.success('OTP verified successfully!');
       navigate('/log-in');
-    } catch (error: any) {
-      const errorMessage = error.message || 'Invalid OTP';
+    } catch (error: unknown) {
+      const errorMessage = getErrorMessage(error, 'Invalid OTP');
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -87,7 +88,7 @@ const useOTPVerification = (email: string | undefined): OTPVerificationFormHook 
   };
 };
 
-const OTPVerification: React.FC<AuthPageProps> = ({ isDarkMode, toggleTheme }) => {
+const OTPVerification = ({ isDarkMode, toggleTheme }: AuthPageProps) => {
   const location = useLocation();
   const email = location.state?.email as string | undefined;
   const otpProps = useOTPVerification(email);

@@ -18,14 +18,14 @@ interface MetricsFormProps {
   children: ReactNode;
 }
 
-const MetricsForm: React.FC<MetricsFormProps> = ({
+const MetricsForm = ({
   formData,
   handleInputChange,
   unit,
   isDarkMode,
   isLoading,
   children,
-}) => {
+}: MetricsFormProps) => {
   return (
     <div className="metrics-form">
       <div className={`input-section ${isLoading ? 'loading-pulse' : ''}`}>

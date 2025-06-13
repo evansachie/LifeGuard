@@ -8,7 +8,7 @@ interface NavigationLinksProps {
   onNavLinkClick?: () => void;
 }
 
-const NavigationLinks: React.FC<NavigationLinksProps> = ({ navItems, onNavLinkClick }) => {
+const NavigationLinks = ({ navItems, onNavLinkClick }: NavigationLinksProps) => {
   const [isActivityDropdownOpen, setIsActivityDropdownOpen] = useState<boolean>(false);
   const location = useLocation();
 

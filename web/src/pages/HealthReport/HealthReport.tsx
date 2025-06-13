@@ -12,7 +12,7 @@ interface HealthReportProps {
   isDarkMode: boolean;
 }
 
-const HealthReport: React.FC<HealthReportProps> = ({ isDarkMode }) => {
+const HealthReport = ({ isDarkMode }: HealthReportProps) => {
   const [showReportModal, setShowReportModal] = useState<boolean>(false);
 
   return (

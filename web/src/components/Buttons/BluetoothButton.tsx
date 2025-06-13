@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaBluetooth, FaSpinner, FaBluetoothB } from 'react-icons/fa';
 import { BLEDevice } from '../../types/ble.types';
 
@@ -10,18 +9,22 @@ interface BluetoothButtonProps {
   disconnectDevice: () => void;
 }
 
-const BluetoothButton: React.FC<BluetoothButtonProps> = ({
+const BluetoothButton = ({
   bleDevice,
   isConnecting,
   isScanning = false,
   connectToDevice,
   disconnectDevice,
-}) => {
+}: BluetoothButtonProps) => {
   const getButtonText = () => {
     if (isScanning) return 'Scanning...';
     if (isConnecting) return 'Connecting...';
-    if (bleDevice?.connected) return `Connected to ${bleDevice.name}`;
-    return 'Connect Bluetooth';
+    if (bleDevice?.connected) {
+      const deviceName = bleDevice.name || 'Arduino Device';
+      const shortName = deviceName.length > 15 ? `${deviceName.substring(0, 15)}...` : deviceName;
+      return `Connected to ${shortName}`;
+    }
+    return 'Connect Bluetooth Device';
   };
 
   const getButtonClass = () => {
@@ -46,6 +49,12 @@ const BluetoothButton: React.FC<BluetoothButtonProps> = ({
         onClick={handleClick}
         disabled={isConnecting || isScanning}
         type="button"
+        style={{
+          minWidth: '220px',
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        }}
         aria-label={
           bleDevice?.connected ? 'Disconnect from Bluetooth device' : 'Connect to Bluetooth device'
         }
@@ -57,7 +66,7 @@ const BluetoothButton: React.FC<BluetoothButtonProps> = ({
         ) : (
           <FaBluetooth />
         )}
-        {getButtonText()}
+        <span style={{ marginLeft: '8px' }}>{getButtonText()}</span>
       </button>
     </div>
   );

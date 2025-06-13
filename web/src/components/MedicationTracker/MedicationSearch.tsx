@@ -4,7 +4,7 @@ import { searchMedications } from '../../services/medicationSearchService';
 import { debounce } from 'lodash';
 import { MedicationSearchProps, MedicationSearchItem } from '../../types/medicationTracker.types';
 
-const MedicationSearch: React.FC<MedicationSearchProps> = ({ value, onChange, isDarkMode }) => {
+const MedicationSearch = ({ value, onChange, isDarkMode }: MedicationSearchProps) => {
   const [query, setQuery] = useState<string>(value || '');
   const [results, setResults] = useState<MedicationSearchItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);

@@ -3,13 +3,13 @@ import { FaSearch, FaFilter } from 'react-icons/fa';
 import AccessibleDropdown from '../AccessibleDropdown/AccessibleDropdown';
 import { SearchAndFilterProps } from '../../types/medicationTracker.types';
 
-const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
+const SearchAndFilter = ({
   searchTerm,
   onSearchChange,
   filters,
   onFilterChange,
   isDarkMode,
-}) => {
+}: SearchAndFilterProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 

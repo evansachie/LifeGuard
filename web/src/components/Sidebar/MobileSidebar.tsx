@@ -16,7 +16,7 @@ interface MobileSidebarProps {
   toggleTheme: () => void;
 }
 
-const MobileSidebar: React.FC<MobileSidebarProps> = ({
+const MobileSidebar = ({
   isOpen,
   sidebarRef,
   isDarkMode,
@@ -25,7 +25,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
   navItems,
   handleLogout,
   toggleTheme,
-}) => {
+}: MobileSidebarProps) => {
   return (
     <div
       ref={sidebarRef}

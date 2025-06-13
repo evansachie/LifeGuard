@@ -13,7 +13,7 @@ interface ModalProps {
   fullWidth?: boolean;
 }
 
-const Modal: React.FC<ModalProps> = ({
+const Modal = ({
   isOpen,
   onClose,
   children,
@@ -23,7 +23,7 @@ const Modal: React.FC<ModalProps> = ({
   showCloseButton = false,
   isDarkMode = false,
   fullWidth = false,
-}) => {
+}: ModalProps) => {
   const modalContentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

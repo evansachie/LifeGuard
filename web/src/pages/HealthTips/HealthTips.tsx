@@ -26,7 +26,7 @@ interface HealthData {
 
 const ITEMS_PER_PAGE = 6;
 
-const HealthTips: React.FC<HealthTipsProps> = ({ isDarkMode }) => {
+const HealthTips = ({ isDarkMode }: HealthTipsProps) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);

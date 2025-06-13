@@ -1,4 +1,3 @@
-import React from 'react';
 import { Routes, Route, Outlet } from 'react-router-dom';
 
 import LandingPage from '../pages/Landing/LandingPage';
@@ -44,7 +43,7 @@ interface AppRoutesProps {
   toggleTheme: () => void;
 }
 
-const AppRoutes: React.FC<AppRoutesProps> = ({ isDarkMode, toggleTheme }) => {
+const AppRoutes = ({ isDarkMode, toggleTheme }: AppRoutesProps) => {
   return (
     <Routes>
       <Route

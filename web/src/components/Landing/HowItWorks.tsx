@@ -1,9 +1,8 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { steps } from '../../data/steps';
 import './HowItWorks.css';
 
-const HowItWorks: React.FC = () => {
+const HowItWorks = () => {
   return (
     <section className="how-it-works-section" id="how-it-works">
       <div className="how-it-works-container">

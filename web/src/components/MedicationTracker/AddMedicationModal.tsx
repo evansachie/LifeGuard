@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import AddMedicationForm from './AddMedicationForm';
 import { Medication, MedicationData } from '../../types/medicationTracker.types';
@@ -11,13 +10,13 @@ interface AddMedicationModalProps {
   isDarkMode: boolean;
 }
 
-const AddMedicationModal: React.FC<AddMedicationModalProps> = ({
+const AddMedicationModal = ({
   isOpen,
   onClose,
   onSubmit,
   editingMedication,
   isDarkMode,
-}) => {
+}: AddMedicationModalProps) => {
   const isEditing = !!editingMedication;
   const title = isEditing ? `Edit ${editingMedication.Name}` : 'Add New Medication';
 

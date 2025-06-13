@@ -7,7 +7,7 @@ interface ReportCardProps {
   status: string;
 }
 
-export const ReportCard: React.FC<ReportCardProps> = ({ date, type, status }) => (
+export const ReportCard = ({ date, type, status }: ReportCardProps) => (
   <div className="report-card">
     <div className="report-card-left">
       <div className="report-icon">

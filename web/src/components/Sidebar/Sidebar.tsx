@@ -21,7 +21,7 @@ interface SidebarProps {
   onCollapsedChange?: (collapsed: boolean) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ toggleTheme, isDarkMode, onCollapsedChange }) => {
+const Sidebar = ({ toggleTheme, isDarkMode, onCollapsedChange }: SidebarProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isCollapsed, setIsCollapsed] = useState<boolean>(
     localStorage.getItem('sidebarCollapsed') === 'true'

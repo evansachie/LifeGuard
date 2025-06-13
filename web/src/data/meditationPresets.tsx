@@ -1,4 +1,3 @@
-import React from 'react';
 import { MdTimer, MdTimerOff } from 'react-icons/md';
 import { BsFillSunFill, BsFillMoonFill, BsStars } from 'react-icons/bs';
 import { MeditationPreset } from '../types/wellnessHub.types';

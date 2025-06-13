@@ -10,7 +10,7 @@ interface HealthTipModalProps {
   isDarkMode: boolean;
 }
 
-const HealthTipModal: React.FC<HealthTipModalProps> = ({ tip, isOpen, onClose, isDarkMode }) => {
+const HealthTipModal = ({ tip, isOpen, onClose, isDarkMode }: HealthTipModalProps) => {
   if (!isOpen || !tip) return null;
 
   const handleShare = (): void => {

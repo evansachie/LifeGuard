@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaTimes, FaKeyboard } from 'react-icons/fa';
 import { IoVolumeHigh, IoVolumeMute } from 'react-icons/io5';
 
@@ -9,12 +8,12 @@ interface ChatHeaderProps {
   toggleShowShortcuts: () => void;
 }
 
-const ChatHeader: React.FC<ChatHeaderProps> = ({
+const ChatHeader = ({
   toggleChat,
   toggleTextToSpeech,
   textToSpeechEnabled,
   toggleShowShortcuts,
-}) => {
+}: ChatHeaderProps) => {
   return (
     <div className="chat-header">
       <h3>Health Assistant</h3>

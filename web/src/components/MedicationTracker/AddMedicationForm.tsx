@@ -20,11 +20,11 @@ const defaultFormData: MedicationFormData = {
   active: true,
 };
 
-const AddMedicationForm: React.FC<AddMedicationFormProps> = ({
+const AddMedicationForm = ({
   onSubmit,
   isDarkMode,
   initialData = null,
-}) => {
+}: AddMedicationFormProps) => {
   const [formData, setFormData] = useState<MedicationFormData>(() => {
     if (initialData) {
       return {

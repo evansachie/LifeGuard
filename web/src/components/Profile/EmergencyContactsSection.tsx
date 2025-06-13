@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaUser, FaPhone, FaPlus, FaUserPlus } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import Spinner from '../../components/Spinner/Spinner';
@@ -15,11 +14,11 @@ interface EmergencyContactsSectionProps {
   isDarkMode: boolean;
 }
 
-const EmergencyContactsSection: React.FC<EmergencyContactsSectionProps> = ({
+const EmergencyContactsSection = ({
   contactsLoading,
   emergencyContacts,
   isDarkMode,
-}) => {
+}: EmergencyContactsSectionProps) => {
   return (
     <div className={`emergency-contacts-section ${isDarkMode ? 'dark' : 'light'}`}>
       <div className="section-header">

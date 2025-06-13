@@ -76,21 +76,19 @@ export interface BLEContextType {
   devices: BLEDevice[];
   isScanning: boolean;
   connectedDevice: BLEDevice | null;
-
   latestSensorData: SensorData;
-  sensorData: SensorData;
-
-  connect: (deviceId: string) => Promise<void>;
+  connect: () => Promise<void>;
   disconnect: (deviceId: string) => Promise<void>;
   startScanning: () => Promise<void>;
   stopScanning: () => void;
   sendCommand: (deviceId: string, command: string) => Promise<void>;
 
+  // Legacy aliases for backward compatibility
   bleDevice: BLEDevice | null;
   isConnecting: boolean;
-  connectToDevice: (deviceId: string) => Promise<void>;
+  sensorData: SensorData;
+  connectToDevice: () => Promise<void>;
   disconnectDevice: (deviceId: string) => Promise<void>;
-  scanForDevices?: () => Promise<BLEDevice[]>;
 }
 
 export type { BLEDevice as Device, SensorData as Sensors, EnvironmentalData as Environment };

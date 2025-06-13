@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface Macros {
   protein: number;
   carbs: number;
@@ -21,10 +19,7 @@ interface RecommendationsSectionProps {
   isDarkMode: boolean;
 }
 
-const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
-  formData,
-  isDarkMode,
-}) => {
+const RecommendationsSection = ({ formData, isDarkMode }: RecommendationsSectionProps) => {
   // Generate recommendations based on form data
   const getRecommendations = (): string[] => {
     const recommendations: string[] = [];
