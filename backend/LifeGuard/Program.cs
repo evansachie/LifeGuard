@@ -27,8 +27,6 @@ namespace LifeGuard
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
-
             string env = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
             Console.WriteLine(Directory.GetCurrentDirectory());
             if (env == "Development")
@@ -39,6 +37,9 @@ namespace LifeGuard
             {
                 Env.Load("../.env.local");
             }
+            var builder = WebApplication.CreateBuilder(args);
+
+            
             //Add services to the container.
 
             var connectionStringAuth = Environment.GetEnvironmentVariable("CONNECTION_STRING_AUTH");
