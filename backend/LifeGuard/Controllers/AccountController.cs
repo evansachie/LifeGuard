@@ -197,7 +197,7 @@ namespace LifeGuard_API.Controllers
         [HttpGet("signin-google")]
         public async Task<IActionResult> GoogleResponse()
         {
-            var authenticateResult = await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
+            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
             if (!authenticateResult.Succeeded)
                 return Unauthorized();
