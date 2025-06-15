@@ -10,9 +10,9 @@
     {
         public string DefaultUrl { get; }
         
-        public ReturnUrlValidator(IConfiguration config)
+        public ReturnUrlValidator()
         {
-            DefaultUrl = config["FRONTEND"];
+            DefaultUrl = Environment.GetEnvironmentVariable("FRONTEND_URL") ?? throw new InvalidOperationException("FRONTEND_URL variable not set") ;
 
         }
         private static readonly string[] _allowedHosts = new[]
