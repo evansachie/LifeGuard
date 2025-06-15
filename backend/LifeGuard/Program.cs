@@ -105,7 +105,7 @@ namespace LifeGuard
                     options.ClientId = client_id;
                     options.ClientSecret = client_secret;
                     //options.CallbackPath = "/api/Account/signin-google";
-                    //options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     options.SaveTokens = true;
                     options.Scope.Add("email");
                 });
