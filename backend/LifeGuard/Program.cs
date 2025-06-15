@@ -20,6 +20,7 @@ using Persistence;
 using Application.Contracts.Photos;
 using Infrastructure.Photos;
 using Microsoft.AspNetCore.HttpOverrides;
+using LifeGuard.Services;
 namespace LifeGuard
 {
     public class Program
@@ -48,6 +49,7 @@ namespace LifeGuard
             var jwt_duration_in_minutes = Environment.GetEnvironmentVariable("JWT_DURATIONINMINUTES");
             var client_id = Environment.GetEnvironmentVariable("CLIENT_ID");
             var client_secret = Environment.GetEnvironmentVariable("CLIENT_SECRET");
+            var default_url = Environment.GetEnvironmentVariable("FRONTEND_URL");
             // Add services to the container.
               
             builder.Services.AddDbContext<LifeGuardIdentityDbContext>(options => 
@@ -71,6 +73,7 @@ namespace LifeGuard
             builder.Services.AddScoped<IPhotoAccessor, PhotoAccessor>();
             builder.Services.AddScoped<IUserPhotoService, UserPhotoService>();
 
+            builder.Services.AddScoped<IReturnUrlValidator, ReturnUrlValidator>();
 
             builder.Services.AddAuthentication(options =>
             {
