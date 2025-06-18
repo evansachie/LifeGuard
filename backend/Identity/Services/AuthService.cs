@@ -9,6 +9,7 @@ using Application.Models;
 using Application.Models.ApiResult;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.WebUtilities;
 
 
 
@@ -263,7 +264,7 @@ namespace Identity.Services
 
 
 
-        public async Task<Result<object>> HandleGoogleLoginAsync(ClaimsPrincipal externalPrincipal)
+        public async Task<Result<object>> HandleGoogleLoginAsync(ClaimsPrincipal externalPrincipal, string returnUrl)
         {
             var emailClaim = externalPrincipal.FindFirst(ClaimTypes.Email);
             var nameClaim = externalPrincipal.FindFirst(ClaimTypes.Name);
@@ -296,10 +297,18 @@ namespace Identity.Services
             }
 
             var jwtToken = await GenerateToken(user);
-            var Token = new JwtSecurityTokenHandler().WriteToken(jwtToken);
+            var token = new JwtSecurityTokenHandler().WriteToken(jwtToken);
 
-            var redirectUrl = $"{_frontEndUrl}/dashboard?token={Token}&userId={user.Id}&" +
-                $"email={user.Email}&userName={user.UserName}";
+            var redirectUrl = QueryHelpers.AddQueryString(
+                $"{returnUrl}/dashboard",
+                new Dictionary<string, string?>
+                {
+                    ["token"] = token,
+                    ["userId"] = user.Id,
+                    ["email"] = user.Email,
+                    ["userName"] = user.UserName
+                });
+            
 
             return new Result<object>(true, ResultStatusCode.Success, null, redirectUrl);
         }
