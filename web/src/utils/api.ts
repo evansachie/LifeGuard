@@ -60,15 +60,17 @@ export const API_ENDPOINTS = {
   REMOVE_FAVORITE: (userId: string, soundId: string): string =>
     `${NODE_API_URL}/api/favorite-sounds/${userId}/${soundId}`,
 
-  RAG_QUERY: `${NODE_API_URL}/api/rag/query`,
-  RAG_INITIALIZE: `${NODE_API_URL}/api/rag/initialize`,
-  RAG_PROCESS_HEALTH: `${NODE_API_URL}/api/rag/process/health`,
-  RAG_PROCESS_ENVIRONMENTAL: `${NODE_API_URL}/api/rag/process/environmental`,
-  RAG_PROCESS_MEDICAL: `${NODE_API_URL}/api/rag/process/medical`,
-  RAG_PROCESS_PROFILES: `${NODE_API_URL}/api/rag/process/profiles`,
-
   RAG_UPLOAD_PDF: `${RAG_BASE_URL}/api/upload`,
   RAG_ASK_QUESTION: `${RAG_BASE_URL}/api/ask`,
+
+  // Deprecated Node RAG endpoints - keeping for backward compatibility
+  // These will be removed in a future version
+  RAG_QUERY: `${NODE_API_URL}/api/rag/query`, // Now forwards to Python service
+  RAG_INITIALIZE: `${NODE_API_URL}/api/rag/initialize`, // Deprecated
+  RAG_PROCESS_HEALTH: `${NODE_API_URL}/api/rag/process/health`, // Deprecated
+  RAG_PROCESS_ENVIRONMENTAL: `${NODE_API_URL}/api/rag/process/environmental`, // Deprecated
+  RAG_PROCESS_MEDICAL: `${NODE_API_URL}/api/rag/process/medical`, // Deprecated
+  RAG_PROCESS_PROFILES: `${NODE_API_URL}/api/rag/process/profiles`, // Deprecated
 
   EXERCISE_STATS: `${NODE_API_URL}/api/exercise/stats`,
   EXERCISE_COMPLETE: `${NODE_API_URL}/api/exercise/complete`,
