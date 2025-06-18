@@ -152,7 +152,7 @@ namespace LifeGuard
                 {
                     policy
                         .WithOrigins("https://lifeguard-vq69.onrender.com",
-                        "https://lifeguard-vert.vercel.app/",
+                        "https://lifeguard-vert.vercel.app",
                         "http://localhost:3000"
                         )   
                         .AllowAnyMethod()                                     
