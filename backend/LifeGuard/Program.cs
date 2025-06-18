@@ -146,6 +146,15 @@ namespace LifeGuard
             }
             );
 
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("EmailConfirmed", policy =>
+                policy.RequireAssertion(context =>
+                context.User.HasClaim(c => c.Type == "email_verified" && c.Value == "true")));
+            }
+            );
+                
+
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("Frontend", policy =>
