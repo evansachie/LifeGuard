@@ -28,23 +28,36 @@ export async function resetUserPassword(
 }
 
 export async function loginUser(email: string, password: string): Promise<AuthResponse> {
-  const response = await apiMethods.login({ email, password });
+  try {
+    const response = await apiMethods.login({ email, password });
 
-  if (!response.isSuccess || !response.data) {
-    throw new Error(response.message || 'Login failed');
+    if (!response.isSuccess || !response.data) {
+      throw new Error(response.message || 'Login failed');
+    }
+
+    const { data } = response;
+
+    if (!data.token || !data.id || !data.userName) {
+      throw new Error('Invalid login response data');
+    }
+
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('userId', data.id);
+    localStorage.setItem('userName', data.userName);
+
+    return data;
+  } catch (error) {
+    console.error('Login error:', error);
+
+    // Provide more helpful error messages for timeout issues
+    if (error instanceof Error && error.message.includes('timed out')) {
+      throw new Error(
+        'Login is taking longer than usual. The server may be starting up, please try again.'
+      );
+    }
+
+    throw error;
   }
-
-  const { data } = response;
-
-  if (!data.token || !data.id || !data.userName) {
-    throw new Error('Invalid login response data');
-  }
-
-  localStorage.setItem('token', data.token);
-  localStorage.setItem('userId', data.id);
-  localStorage.setItem('userName', data.userName);
-
-  return data;
 }
 
 export const registerUser = async (
@@ -60,6 +73,15 @@ export const registerUser = async (
     }
     throw new Error(response?.message || 'Registration failed');
   } catch (error: unknown) {
+    console.error('Registration error:', error);
+
+    // Provide more helpful error messages for timeout issues
+    if (error instanceof Error && error.message.includes('timed out')) {
+      throw new Error(
+        'Registration is taking longer than usual. The server may be starting up, please try again.'
+      );
+    }
+
     if (error && typeof error === 'object' && 'response' in error) {
       const axiosError = error as { response?: { data?: { userId?: string } } };
       if (axiosError.response?.data?.userId) {
@@ -103,8 +125,16 @@ export const initiateGoogleLogin = async (): Promise<void> => {
     // This will create: https://lifeguard-hiij.onrender.com/api/Account/google-login?returnUrl=http://localhost:3000
     console.log('🔗 Redirecting to backend Google login URL:', googleLoginUrl);
 
+    // Show a loading message for slow connections
+    const toastId = setTimeout(() => {
+      console.log('⏳ Google login is taking longer than usual, please wait...');
+    }, 3000);
+
     // Redirect to backend Google login endpoint with returnUrl
     window.location.href = googleLoginUrl;
+
+    // Clear the timeout if redirect happens quickly
+    clearTimeout(toastId);
   } catch (error) {
     console.error('❌ Error initiating Google login:', error);
     throw error;
