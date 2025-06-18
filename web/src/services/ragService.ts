@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-const RAG_BASE_URL = 'https://lifeguard-rag.onrender.com';
+import { API_ENDPOINTS } from '../utils/api';
 
 // Type for askQuestion request parameters
 interface AskQuestionParams {
@@ -25,9 +24,9 @@ class RagService {
       const formData = new FormData();
       formData.append('file', pdfBlob, filename);
 
-      // Make the upload request
+      // Make the upload request using the defined endpoint
       const response = await axios.post(
-        `${RAG_BASE_URL}/api/upload?user_id=${encodeURIComponent(userId)}`,
+        `${API_ENDPOINTS.RAG_UPLOAD_PDF}?user_id=${encodeURIComponent(userId)}`,
         formData,
         {
           headers: {
@@ -62,9 +61,9 @@ class RagService {
    */
   async askQuestion(params: AskQuestionParams): Promise<AskQuestionResponse> {
     try {
-      // Make the ask request
+      // Make the ask request using the defined endpoint
       const response = await axios.post(
-        `${RAG_BASE_URL}/api/ask`,
+        API_ENDPOINTS.RAG_ASK_QUESTION,
         {
           user_id: params.user_id,
           question: params.question,
