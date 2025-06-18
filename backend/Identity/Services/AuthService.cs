@@ -141,7 +141,7 @@ namespace Identity.Services
 
             if (existingEmail == null)
             {
-                var result = await _userManager.CreateAsync(user);
+                var result = await _userManager.CreateAsync(user, request.Password);
 
                 if (result.Succeeded)
                 {
