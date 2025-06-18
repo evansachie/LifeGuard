@@ -10,12 +10,28 @@ class AuthProvider extends ChangeNotifier {
   String? _token;
   String? _userId;
   String? _userName;
+  String? _email;
 
   bool get isAuthenticated => _isAuthenticated;
   bool get isLoading => _isLoading;
   String? get token => _token;
   String? get userId => _userId;
   String? get userName => _userName;
+  String? get email => _email;
+
+  String? get currentToken => _token;
+  String? get currentUserId => _userId;
+
+  UserData? get currentUser {
+    if (_userId != null && _userName != null && _email != null) {
+      return UserData(
+        id: _userId!,
+        userName: _userName!,
+        email: _email!,
+      );
+    }
+    return null;
+  }
 
   Future<void> login(String email, String password) async {
     try {
@@ -33,10 +49,13 @@ class AuthProvider extends ChangeNotifier {
       await prefs.setString('token', response['token']);
       await prefs.setString('userId', response['id']);
       await prefs.setString('userName', response['userName']);
+      await prefs.setString('email', response['email']);
+      await prefs.setBool('isLoggedIn', true);
 
       _token = response['token'];
       _userId = response['id'];
       _userName = response['userName'];
+      _email = response['email'];
       _isAuthenticated = true;
 
     } catch (e) {
@@ -82,6 +101,7 @@ class AuthProvider extends ChangeNotifier {
       _token = null;
       _userId = null;
       _userName = null;
+      _email = null;
       notifyListeners();
     } catch (e) {
       throw Exception('Failed to logout: $e');
@@ -93,11 +113,14 @@ class AuthProvider extends ChangeNotifier {
     final token = prefs.getString('token');
     final userId = prefs.getString('userId');
     final userName = prefs.getString('userName');
+    final email = prefs.getString('email');
+    final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
 
-    if (token != null && userId != null) {
+    if (token != null && userId != null && isLoggedIn) {
       _token = token;
       _userId = userId;
       _userName = userName;
+      _email = email;
       _isAuthenticated = true;
       notifyListeners();
       return true;
@@ -147,8 +170,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // Add this function to check login status
-  Future<bool> isLoggedIn() async {
+  Future<bool> checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final userId = prefs.getString('userId');
@@ -157,10 +179,23 @@ class AuthProvider extends ChangeNotifier {
       _token = token;
       _userId = userId;
       _userName = prefs.getString('userName');
+      _email = prefs.getString('email');
       _isAuthenticated = true;
       notifyListeners();
       return true;
     }
     return false;
   }
+}
+
+class UserData {
+  final String id;
+  final String userName;
+  final String email;
+
+  UserData({
+    required this.id,
+    required this.userName,
+    required this.email,
+  });
 }

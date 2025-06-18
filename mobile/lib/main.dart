@@ -18,6 +18,14 @@ import 'package:lifeguard/providers/quote_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:lifeguard/providers/audio_provider.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'providers/profile_provider.dart';
+import 'providers/medication_provider.dart';
+import 'screens/profile/profile_screen.dart';
+import 'screens/settings/privacy_screen.dart';
+import 'screens/settings/help_support_screen.dart';
+import 'screens/settings/about_screen.dart';
+import 'screens/notifications/notifications_screen.dart';
+import 'screens/medication/medication_tracker_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,6 +61,14 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => EmergencyContactProvider()),
         ChangeNotifierProvider(create: (_) => SoundProvider()),
         ChangeNotifierProvider(create: (_) => AudioProvider()),
+        ChangeNotifierProvider(create: (_) => ProfileProvider()),
+        ChangeNotifierProxyProvider<AuthProvider, MedicationProvider>(
+          create: (_) => MedicationProvider(),
+          update: (_, authProvider, medicationProvider) {
+            medicationProvider!.setAuthProvider(authProvider);
+            return medicationProvider;
+          },
+        ),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) => MaterialApp(
@@ -75,6 +91,7 @@ class MyApp extends StatelessWidget {
             '/login': (context) => const LoginScreen(),
             '/register': (context) => const RegisterScreen(),
             '/home': (context) => const HomeScreen(),
+            '/profile': (context) => const ProfileScreen(),
             '/forgot-password': (context) => const ForgotPasswordScreen(),
             '/onboarding': (context) => const OnboardingScreen1(),
             '/welcome': (context) => const SplashScreen(),
@@ -84,6 +101,11 @@ class MyApp extends StatelessWidget {
               return OTPVerificationScreen(email: email);
             },
             '/emergency-contacts': (context) => const EmergencyContactsScreen(),
+            '/privacy': (context) => const PrivacyScreen(),
+            '/help-support': (context) => const HelpSupportScreen(),
+            '/about': (context) => const AboutScreen(),
+            '/notifications': (context) => const NotificationsScreen(),
+            '/medication-tracker': (context) => const MedicationTrackerScreen(),
           },
         ),
       ),
