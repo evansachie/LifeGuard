@@ -1,28 +1,30 @@
 import React, { useState } from 'react';
-import { FaRegTrashAlt, FaDownload } from 'react-icons/fa';
+import { FaRegTrashAlt, FaDownload, FaVolumeUp, FaVolumeMute } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import DeleteConfirmationModal from '../DeleteConfirmationModal/DeleteConfirmationModal';
-
-interface ChatMessage {
-  type: 'user' | 'assistant';
-  content: string;
-  timestamp: Date | string;
-  isError?: boolean;
-}
+import { Message } from '../../types/chat.types';
 
 interface ChatActionsProps {
-  chatHistory: ChatMessage[];
+  messages: Message[];
   onClearHistory: () => void;
+  onToggleSpeech: () => void;
+  isSpeechEnabled: boolean;
   isDarkMode: boolean;
 }
 
-const ChatActions = ({ chatHistory, onClearHistory, isDarkMode }: ChatActionsProps) => {
+const ChatActions = ({
+  messages,
+  onClearHistory,
+  onToggleSpeech,
+  isSpeechEnabled,
+  isDarkMode,
+}: ChatActionsProps) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
 
-  if (chatHistory.length === 0) return null;
+  if (messages.length === 0) return null;
 
   const handleExportHistory = (): void => {
-    if (chatHistory.length === 0) {
+    if (messages.length === 0) {
       toast.info('No conversation to export');
       return;
     }
@@ -31,11 +33,11 @@ const ChatActions = ({ chatHistory, onClearHistory, isDarkMode }: ChatActionsPro
 
     let formattedChat = `LifeGuard Health Assistant Chat History - ${new Date().toLocaleDateString()}\n\n`;
 
-    chatHistory.forEach((message) => {
+    messages.forEach((message) => {
       const sender = message.type === 'user' ? userName : 'LifeGuard';
       const time = new Date(message.timestamp).toLocaleTimeString();
       const date = new Date(message.timestamp).toLocaleDateString();
-      formattedChat += `[${date} ${time}] ${sender}:\n${message.content}\n\n`;
+      formattedChat += `[${date} ${time}] ${sender}:\n${message.text}\n\n`;
     });
 
     // Create a blob and download link
@@ -70,6 +72,13 @@ const ChatActions = ({ chatHistory, onClearHistory, isDarkMode }: ChatActionsPro
           title="Clear conversation"
         >
           <FaRegTrashAlt />
+        </button>
+        <button
+          className="action-button"
+          onClick={onToggleSpeech}
+          title={isSpeechEnabled ? 'Turn off text-to-speech' : 'Turn on text-to-speech'}
+        >
+          {isSpeechEnabled ? <FaVolumeUp /> : <FaVolumeMute />}
         </button>
         <button className="action-button" onClick={handleExportHistory} title="Export conversation">
           <FaDownload />

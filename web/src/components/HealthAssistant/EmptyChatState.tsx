@@ -1,11 +1,17 @@
-import { FaHeartbeat } from 'react-icons/fa';
+import { FaHeartbeat, FaFileUpload } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 interface EmptyChatStateProps {
   onExampleClick: (question: string) => void;
   isDarkMode?: boolean;
+  hasRagContext?: boolean | null;
 }
 
-const EmptyChatState = ({ onExampleClick, isDarkMode = false }: EmptyChatStateProps) => {
+const EmptyChatState = ({
+  onExampleClick,
+  isDarkMode = false,
+  hasRagContext = null,
+}: EmptyChatStateProps) => {
   const isAuthenticated = !!localStorage.getItem('token');
 
   const exampleQuestions = [
@@ -16,26 +22,73 @@ const EmptyChatState = ({ onExampleClick, isDarkMode = false }: EmptyChatStatePr
     'How do I start exercising safely?',
   ];
 
+  const personalizedQuestions = [
+    'What is my current health status?',
+    'What should I focus on improving?',
+    'Am I getting enough exercise?',
+    'Analyze my latest health metrics',
+    'What are my risk factors?',
+  ];
+
+  // Show personalized questions if user has RAG context
+  const displayQuestions = hasRagContext === true ? personalizedQuestions : exampleQuestions;
+
   return (
     <div className="empty-chat">
       <FaHeartbeat size={40} color="#4a90e2" />
       <p>Hello! I&apos;m your LifeGuard Health Assistant.</p>
-      <p>
-        {isAuthenticated
-          ? 'Ask me anything about your health and wellness!'
-          : 'Ask me general health questions, or log in for personalized advice!'}
-      </p>
+
+      {hasRagContext === true && (
+        <p>I have access to your health data and can provide personalized insights!</p>
+      )}
+
+      {hasRagContext === false && isAuthenticated && (
+        <div
+          className="upload-prompt"
+          style={{
+            padding: '12px',
+            marginBottom: '15px',
+            borderRadius: '8px',
+            background: isDarkMode ? '#2d3748' : '#f0f9ff',
+            border: `1px solid ${isDarkMode ? '#4a5568' : '#bfdbfe'}`,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '10px',
+          }}
+        >
+          <FaFileUpload size={24} color="#4a90e2" />
+          <p style={{ margin: 0, fontSize: '14px', textAlign: 'center' }}>
+            Upload your health report to get personalized advice!
+          </p>
+          <Link
+            to="/health-report"
+            style={{
+              display: 'inline-block',
+              padding: '8px 16px',
+              background: '#4a90e2',
+              color: 'white',
+              borderRadius: '6px',
+              textDecoration: 'none',
+              fontSize: '14px',
+              fontWeight: 'bold',
+            }}
+          >
+            Go to Health Report
+          </Link>
+        </div>
+      )}
 
       {!isAuthenticated && (
         <div
           className="auth-notice"
           style={{
-            background: '#e3f2fd',
+            background: isDarkMode ? '#2d3748' : '#e3f2fd',
             padding: '8px 12px',
             borderRadius: '8px',
             margin: '10px 0',
             fontSize: '12px',
-            color: '#1976d2',
+            color: isDarkMode ? '#90cdf4' : '#1976d2',
           }}
         >
           💡 Log in to unlock advanced AI health analysis and personalized recommendations!
@@ -44,7 +97,7 @@ const EmptyChatState = ({ onExampleClick, isDarkMode = false }: EmptyChatStatePr
 
       <p className="examples-title">Try asking about:</p>
       <div className="examples-list" role="list">
-        {exampleQuestions.map((question, index) => (
+        {displayQuestions.map((question, index) => (
           <button
             key={index}
             type="button"
