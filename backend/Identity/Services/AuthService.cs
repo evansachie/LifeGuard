@@ -134,7 +134,7 @@ namespace Identity.Services
                 Name = request.Name,
                 UserName = request.Email,
                 EmailConfirmed = false,
-                PasswordHash = new PasswordHasher<ApplicationUser>().HashPassword(null, request.Password)
+                
             };
 
             var existingEmail = await _userManager.FindByEmailAsync(request.Email);
