@@ -21,8 +21,6 @@ const NotificationService = require('./services/NotificationService');
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// Configure CORS more comprehensively
-// This middleware must be added before any routes
 const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = [
