@@ -84,7 +84,7 @@ const SignUpForm = ({
           {errors.confirmPassword && <span className="error">{errors.confirmPassword}</span>}
         </div>
 
-        <Button text="Sign Up" isLoading={isLoading} />
+        <Button text={isLoading ? 'Creating account...' : 'Sign Up'} isLoading={isLoading} />
       </form>
 
       <div className="my-6 flex items-center">
@@ -102,7 +102,16 @@ const SignUpForm = ({
         </Link>
       </p>
 
-      {errors.submit && <div className="error-message">{errors.submit}</div>}
+      {errors.submit && (
+        <div className="error-message">
+          {errors.submit}
+          {errors.submit.includes('timed out') && (
+            <div className="mt-2 text-sm opacity-75">
+              💡 Tip: Free hosting may take 30-60 seconds to start up
+            </div>
+          )}
+        </div>
+      )}
     </>
   );
 };

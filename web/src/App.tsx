@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import { cleanupFirebaseStructure } from './services/firebaseCleanup';
 
 import 'react-toastify/dist/ReactToastify.css';
 import 'intro.js/introjs.css';
@@ -20,6 +21,14 @@ import './App.css';
 const App = () => {
   const { isDarkMode, toggleTheme } = useTheme();
   const [commandPaletteOpen, setCommandPaletteOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    const knownDeviceId = '8YwKdRqqkvbj5EAhQQiBjw==';
+
+    cleanupFirebaseStructure(knownDeviceId)
+      .then(() => console.log('Firebase cleanup completed on startup'))
+      .catch((err) => console.error('Firebase cleanup failed:', err));
+  }, []);
 
   useEffect(() => {
     const down = (e: KeyboardEvent): void => {

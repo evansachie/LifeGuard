@@ -41,7 +41,7 @@ import RemindersCard from '../../components/Dashboard/RemindersCard';
 import PollutantsCard from '../../components/Dashboard/PollutantsCard';
 import AlertsSection from '../../components/Dashboard/AlertsSection';
 import { alerts, getAlertsByTimeframe } from '../../data/alerts';
-import BluetoothButton from '../../components/Buttons/BluetoothButton';
+import ConnectivityButton from '../../components/Buttons/ConnectivityButton';
 
 // Custom hooks
 import useUserData from '../../hooks/useUserData';
@@ -49,6 +49,7 @@ import useQuoteData from '../../hooks/useQuoteData';
 import useMemoData from '../../hooks/useMemoData';
 import usePollutionData from '../../hooks/usePollutionData';
 import useDashboardTour from '../../hooks/useDashboardTour';
+import useFirebaseData from '../../hooks/useFirebaseData';
 
 // Types
 import {
@@ -135,12 +136,21 @@ const Dashboard = ({ isDarkMode }: DashboardProps) => {
       await disconnectDevice(bleDevice.id);
     }
   };
-
   const { userData, isLoading: dataLoading } = useUserData();
   const { quote, isLoading: quotesLoading } = useQuoteData();
   const { memos: savedMemos, isLoading: memosLoading } = useMemoData();
   const pollutionData = usePollutionData(sensorData);
   const { showTour: showDashboardTour, handleTourExit } = useDashboardTour();
+
+  // Firebase real-time data
+  const {
+    sensorData: firebaseSensorData,
+    isLoading: firebaseLoading,
+    error: firebaseError,
+  } = useFirebaseData({
+    deviceId: bleDevice?.id,
+    enabled: bleDevice?.connected,
+  });
 
   // Dashboard UI state
   const [timeframe, setTimeframe] = useState<Timeframe>('today');
@@ -165,6 +175,7 @@ const Dashboard = ({ isDarkMode }: DashboardProps) => {
     co2: true,
     pollutants: true,
   });
+  const [syncCount, setSyncCount] = useState(0);
 
   const dashboardRef = useRef<HTMLDivElement>(null);
   const controlsRef = useRef<DashboardControlsRef>(null);
@@ -272,6 +283,13 @@ const Dashboard = ({ isDarkMode }: DashboardProps) => {
   const handleShowShortcuts = (): void => {
     setShowKeyboardShortcuts(true);
   };
+
+  // Update sync count when new Firebase data comes in
+  useEffect(() => {
+    if (firebaseSensorData?.timestamp) {
+      setSyncCount((prev) => prev + 1);
+    }
+  }, [firebaseSensorData?.timestamp]);
 
   const statsData: StatsData = {
     readings: 124,
@@ -458,14 +476,20 @@ const Dashboard = ({ isDarkMode }: DashboardProps) => {
           tooltipPosition: 'auto',
           showStepNumbers: false,
         }}
-      />
-      {/* Enhanced Bluetooth Button with device status */}
+      />{' '}
+      {/* Bluetooth Button with device status */}
       <div className="device-status-container">
-        <BluetoothButton
+        <ConnectivityButton
           bleDevice={bleDevice}
           isConnecting={isConnecting}
           connectToDevice={handleConnectDevice}
           disconnectDevice={handleDisconnectDevice}
+          firebaseConnected={!!firebaseSensorData}
+          firebaseLoading={firebaseLoading}
+          firebaseError={firebaseError}
+          lastSync={firebaseSensorData?.timestamp}
+          syncCount={syncCount}
+          isDarkMode={isDarkMode}
         />
       </div>
       <KeyboardShortcutsHelp

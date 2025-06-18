@@ -29,7 +29,7 @@ export const API_ENDPOINTS = {
   COMPLETE_PROFILE: '/Account/CompleteProfile',
 
   GOOGLE_LOGIN: '/Account/google-login',
-  GOOGLE_CALLBACK: '/signin-google',
+  GOOGLE_CALLBACK: '/Account/signin-google',
 
   GET_USER: (id: string): string => `/Account/${id}`,
   GET_PROFILE: (id: string): string => `/Account/GetProfile/${id}`,
@@ -176,7 +176,8 @@ export const fetchApi = async <T = any>(
     }
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), options.timeout || 20000);
+    // Increase timeout for free Render instances
+    const timeoutId = setTimeout(() => controller.abort(), options.timeout || 45000);
 
     const response = await fetch(url, {
       ...options,
@@ -206,11 +207,62 @@ export const fetchApi = async <T = any>(
     });
 
     if (error instanceof Error && error.name === 'AbortError') {
-      throw new Error('Request timed out. Please try again.');
+      throw new Error(
+        'Request timed out. The server may be starting up, please try again in a moment.'
+      );
     }
 
     throw error;
   }
+};
+
+// Add retry wrapper for critical operations
+export const fetchWithRetry = async <T = any>(
+  endpoint: string,
+  options: RequestOptions = {},
+  maxRetries: number = 3,
+  baseDelay: number = 1000
+): Promise<T> => {
+  let lastError: Error = new Error('Unknown error'); // Initialize with default error
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`🔄 Attempt ${attempt}/${maxRetries} for ${endpoint}`);
+
+      // Increase timeout progressively for each retry
+      const timeoutMultiplier = attempt;
+      const timeoutOptions = {
+        ...options,
+        timeout: (options.timeout || 45000) * timeoutMultiplier,
+      };
+
+      return await fetchApi<T>(endpoint, timeoutOptions);
+    } catch (error) {
+      lastError = error as Error;
+
+      // Don't retry on certain types of errors
+      if (error instanceof Error) {
+        // Don't retry on authentication errors or client errors (4xx)
+        if (
+          error.message.includes('401') ||
+          error.message.includes('403') ||
+          error.message.includes('400') ||
+          error.message.includes('404')
+        ) {
+          throw error;
+        }
+      }
+
+      if (attempt < maxRetries) {
+        // Exponential backoff with jitter
+        const delay = baseDelay * Math.pow(2, attempt - 1) + Math.random() * 1000;
+        console.log(`⏳ Retrying in ${Math.round(delay)}ms...`);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
+    }
+  }
+
+  throw lastError;
 };
 
 // List of endpoints that don't require authentication
@@ -282,32 +334,53 @@ export const extractPhotoUrl = (response: ApiResponse<{ url?: string }>): string
   return null;
 };
 
-// Typed API methods for common operations
+// Enhanced API methods with retry logic for critical operations
 export const apiMethods = {
-  // Authentication
+  // Authentication - critical operations with retry
   login: (credentials: AuthRequest): Promise<ApiResponse<AuthResponse>> =>
-    fetchApi<ApiResponse<AuthResponse>>(API_ENDPOINTS.LOGIN, {
-      method: 'POST',
-      body: JSON.stringify(credentials),
-    }),
+    fetchWithRetry<ApiResponse<AuthResponse>>(
+      API_ENDPOINTS.LOGIN,
+      {
+        method: 'POST',
+        body: JSON.stringify(credentials),
+      },
+      3,
+      2000
+    ),
 
   register: (userData: RegistrationRequest): Promise<ApiResponse<RegistrationResponse>> =>
-    fetchWithAuth<ApiResponse<RegistrationResponse>>(API_ENDPOINTS.REGISTER, {
-      method: 'POST',
-      body: JSON.stringify(userData),
-    }),
+    fetchWithRetry<ApiResponse<RegistrationResponse>>(
+      API_ENDPOINTS.REGISTER,
+      {
+        method: 'POST',
+        body: JSON.stringify(userData),
+      },
+      3,
+      2000
+    ),
 
+  // Less critical operations with shorter retry
   verifyOTP: (data: VerifyOTPRequest): Promise<ApiResponse<void>> =>
-    fetchWithAuth<ApiResponse<void>>(API_ENDPOINTS.VERIFY_OTP, {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
+    fetchWithRetry<ApiResponse<void>>(
+      API_ENDPOINTS.VERIFY_OTP,
+      {
+        method: 'POST',
+        body: JSON.stringify(data),
+      },
+      2,
+      1000
+    ),
 
   resendOTP: (data: ResendOTPRequest): Promise<ApiResponse<void>> =>
-    fetchWithAuth<ApiResponse<void>>(API_ENDPOINTS.RESEND_OTP, {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
+    fetchWithRetry<ApiResponse<void>>(
+      API_ENDPOINTS.RESEND_OTP,
+      {
+        method: 'POST',
+        body: JSON.stringify(data),
+      },
+      2,
+      1000
+    ),
 
   forgotPassword: (data: ForgotPasswordRequest): Promise<ApiResponse<void>> =>
     fetchApi<ApiResponse<void>>(API_ENDPOINTS.FORGOT_PASSWORD, {

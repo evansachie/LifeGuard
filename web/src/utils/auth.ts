@@ -1,5 +1,4 @@
-import { API_BASE_URL, API_ENDPOINTS, fetchWithAuth, apiMethods } from './api';
-import { getErrorMessage } from './errorHandler';
+import { API_BASE_URL, FRONTEND_URL, API_ENDPOINTS, fetchWithAuth, apiMethods } from './api';
 import type { AuthResponse, RegistrationResponse, ApiResponse } from '../types/api.types';
 
 export const isAuthenticated = (): boolean => {
@@ -29,23 +28,36 @@ export async function resetUserPassword(
 }
 
 export async function loginUser(email: string, password: string): Promise<AuthResponse> {
-  const response = await apiMethods.login({ email, password });
+  try {
+    const response = await apiMethods.login({ email, password });
 
-  if (!response.isSuccess || !response.data) {
-    throw new Error(response.message || 'Login failed');
+    if (!response.isSuccess || !response.data) {
+      throw new Error(response.message || 'Login failed');
+    }
+
+    const { data } = response;
+
+    if (!data.token || !data.id || !data.userName) {
+      throw new Error('Invalid login response data');
+    }
+
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('userId', data.id);
+    localStorage.setItem('userName', data.userName);
+
+    return data;
+  } catch (error) {
+    console.error('Login error:', error);
+
+    // Provide more helpful error messages for timeout issues
+    if (error instanceof Error && error.message.includes('timed out')) {
+      throw new Error(
+        'Login is taking longer than usual. The server may be starting up, please try again.'
+      );
+    }
+
+    throw error;
   }
-
-  const { data } = response;
-
-  if (!data.token || !data.id || !data.userName) {
-    throw new Error('Invalid login response data');
-  }
-
-  localStorage.setItem('token', data.token);
-  localStorage.setItem('userId', data.id);
-  localStorage.setItem('userName', data.userName);
-
-  return data;
 }
 
 export const registerUser = async (
@@ -61,6 +73,15 @@ export const registerUser = async (
     }
     throw new Error(response?.message || 'Registration failed');
   } catch (error: unknown) {
+    console.error('Registration error:', error);
+
+    // Provide more helpful error messages for timeout issues
+    if (error instanceof Error && error.message.includes('timed out')) {
+      throw new Error(
+        'Registration is taking longer than usual. The server may be starting up, please try again.'
+      );
+    }
+
     if (error && typeof error === 'object' && 'response' in error) {
       const axiosError = error as { response?: { data?: { userId?: string } } };
       if (axiosError.response?.data?.userId) {
@@ -96,42 +117,73 @@ export async function getUserById(id: string): Promise<{ userName: string; email
 
 export const initiateGoogleLogin = async (): Promise<void> => {
   try {
-    const returnUrl = `${window.location.origin}/signin-google`;
-    const googleLoginUrl = `${API_BASE_URL}${API_ENDPOINTS.GOOGLE_LOGIN}?returnUrl=${encodeURIComponent(returnUrl)}`;
+    console.log('🔄 Initiating Google login with returnUrl:', FRONTEND_URL);
+
+    // Build the complete backend URL for Google login
+    const googleLoginUrl = `${API_BASE_URL}${API_ENDPOINTS.GOOGLE_LOGIN}?returnUrl=${encodeURIComponent(FRONTEND_URL)}`;
+
+    // This will create: https://lifeguard-hiij.onrender.com/api/Account/google-login?returnUrl=http://localhost:3000
+    console.log('🔗 Redirecting to backend Google login URL:', googleLoginUrl);
+
+    // Show a loading message for slow connections
+    const toastId = setTimeout(() => {
+      console.log('⏳ Google login is taking longer than usual, please wait...');
+    }, 3000);
+
+    // Redirect to backend Google login endpoint with returnUrl
     window.location.href = googleLoginUrl;
-  } catch (error: unknown) {
-    const errorMessage = getErrorMessage(error, 'Failed to initiate Google login');
-    throw new Error(errorMessage);
+
+    // Clear the timeout if redirect happens quickly
+    clearTimeout(toastId);
+  } catch (error) {
+    console.error('❌ Error initiating Google login:', error);
+    throw error;
   }
 };
 
-interface GoogleCallbackData {
+export const handleGoogleCallback = async (): Promise<{
   token: string;
   userId: string;
   email: string;
   userName: string;
-}
-
-export const handleGoogleCallback = async (): Promise<GoogleCallbackData> => {
+}> => {
   try {
+    // Extract authentication data from URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
     const userId = urlParams.get('userId');
     const email = urlParams.get('email');
     const userName = urlParams.get('userName');
 
-    if (!token || !userId || !email) {
-      throw new Error('Invalid authentication data received');
+    if (!token || !userId || !email || !userName) {
+      throw new Error('Missing authentication data in callback URL');
     }
 
+    console.log('✅ Google callback data received:', {
+      userId,
+      email,
+      userName,
+      hasToken: !!token,
+    });
+
+    // Store authentication data in localStorage
     localStorage.setItem('token', token);
     localStorage.setItem('userId', userId);
-    localStorage.setItem('userName', userName || email);
     localStorage.setItem('email', email);
+    localStorage.setItem('userName', userName);
 
-    return { token, userId, email, userName: userName || email };
-  } catch (error: unknown) {
-    console.error('Google auth callback error:', error);
-    throw new Error('Failed to complete Google authentication');
+    // Clean up URL parameters
+    const cleanUrl = window.location.pathname;
+    window.history.replaceState({}, document.title, cleanUrl);
+
+    return {
+      token,
+      userId,
+      email,
+      userName,
+    };
+  } catch (error) {
+    console.error('❌ Error handling Google callback:', error);
+    throw error;
   }
 };
