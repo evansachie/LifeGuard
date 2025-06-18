@@ -16,6 +16,7 @@ namespace LifeGuard.Controllers
             _userPhotoService = userPhotoService;
         }
 
+        [Authorize("EmailConfirmed")]
         [HttpPost("{id}/photo")]
         public async Task<IActionResult> AddPhoto(string id, IFormFile file)
         {
@@ -30,6 +31,7 @@ namespace LifeGuard.Controllers
             }
         }
 
+        [Authorize("EmailConfirmed")]
         [HttpDelete("{id}/photo")]
         public async Task<IActionResult> DeletePhoto(string id)
         {
