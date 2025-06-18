@@ -8,7 +8,6 @@ const memoRoutes = require('./Routes/memoRoutes');
 const bmrCalculatorRoutes = require('./Routes/bmrCalculatorRoutes')
 const settingsRoutes = require('./Routes/bmrCalculatorRoutes');
 const emergencyContactsRoutes = require('./Routes/emergencyContactsRoutes');
-const ragRoutes = require('./Routes/ragRoutes');
 const freesoundRoutes = require('./Routes/freesoundRoutes');
 const favoriteSoundsRoutes = require('./Routes/favoriteSoundsRoutes');
 const exerciseRoutes = require('./Routes/exerciseRoutes');
@@ -16,15 +15,12 @@ const healthMetricsRoutes = require('./Routes/healthMetricsRoutes');
 const medicationRoutes = require('./Routes/medicationRoutes');
 const userPreferencesRoutes = require('./Routes/userPreferencesRoutes');
 
-const { connectToDatabase } = require('./config/mongodb');
 const nodemailer = require('nodemailer');
 const NotificationService = require('./services/NotificationService');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// Configure CORS more comprehensively
-// This middleware must be added before any routes
 const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = [
@@ -131,16 +127,10 @@ pool.connect((err, client, release) => {
     }
 });
 
-// Connect to MongoDB for RAG functionality
-connectToDatabase()
-    .then(() => console.log('Connected to MongoDB for RAG'))
-    .catch(err => console.error('Failed to connect to MongoDB:', err));
-
 app.use('/api/memos', memoRoutes(pool));
 app.use('/api/calories', bmrCalculatorRoutes(pool));
 app.use('/api/settings', settingsRoutes(pool));
 app.use('/api/emergency-contacts', emergencyContactsRoutes(pool));
-app.use('/api/rag', ragRoutes);
 app.use('/api/freesound', freesoundRoutes(pool));
 app.use('/api/favorite-sounds', favoriteSoundsRoutes(pool));
 app.use('/api/exercise', exerciseRoutes(pool));

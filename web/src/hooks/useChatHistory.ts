@@ -1,218 +1,261 @@
-import { useState, useEffect } from 'react';
-import { fetchWithAuth, API_ENDPOINTS } from '../utils/api';
-import { handleError, getErrorMessage } from '../utils/errorHandler';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { Message, ChatHistoryHook } from '../types/chat.types';
 import { ragService } from '../services/ragService';
 
-interface ChatMessage {
-  type: 'user' | 'assistant';
-  content: string;
-  timestamp: string;
-  isError?: boolean;
-}
+let messageCounter = 0;
 
-interface ChatHistoryReturn {
-  chatHistory: ChatMessage[];
-  loading: boolean;
-  sendQuery: (query: string) => Promise<string | null>;
-  clearHistory: () => void;
-  addUserMessage: (content: string) => ChatMessage;
-  addAssistantMessage: (content: string, isError?: boolean) => ChatMessage;
-}
+export const useChatHistory = (): ChatHistoryHook => {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasRagContext, setHasRagContext] = useState<boolean | null>(null);
+  const userId = localStorage.getItem('userId');
+  const abortControllerRef = useRef<AbortController | null>(null);
 
-interface QueryResponse {
-  response: string;
-  [key: string]: any;
-}
-
-export function useChatHistory(): ChatHistoryReturn {
-  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-
+  // Load initial state
   useEffect(() => {
-    const savedChatHistory = localStorage.getItem('healthAssistantChatHistory');
-    if (savedChatHistory) {
+    // Load any stored messages from localStorage
+    const storedMessages = localStorage.getItem('chatMessages');
+    if (storedMessages) {
       try {
-        setChatHistory(JSON.parse(savedChatHistory));
+        setMessages(JSON.parse(storedMessages));
       } catch (error) {
-        console.error('Error parsing saved chat history:', error);
-        localStorage.removeItem('healthAssistantChatHistory');
+        console.error('Failed to parse stored messages:', error);
       }
     }
   }, []);
 
   useEffect(() => {
-    if (chatHistory.length > 0) {
-      localStorage.setItem('healthAssistantChatHistory', JSON.stringify(chatHistory));
+    if (messages.length > 0) {
+      localStorage.setItem('chatMessages', JSON.stringify(messages));
     }
-  }, [chatHistory]);
+  }, [messages]);
 
-  const addUserMessage = (content: string): ChatMessage => {
-    const message: ChatMessage = {
-      type: 'user',
-      content,
-      timestamp: new Date().toISOString(),
-    };
-    setChatHistory((prev) => [...prev, message]);
-    return message;
-  };
-
-  const addAssistantMessage = (content: string, isError = false): ChatMessage => {
-    const message: ChatMessage = {
-      type: 'assistant',
-      content,
-      timestamp: new Date().toISOString(),
-      isError,
-    };
-    setChatHistory((prev) => [...prev, message]);
-    return message;
-  };
-
-  const clearHistory = (): void => {
-    setChatHistory([]);
-    setLoading(false);
-  };
-
-  const getBasicHealthResponse = (query: string): string => {
-    const lowerQuery = query.toLowerCase();
-
-    // Basic health responses for common questions
-    if (lowerQuery.includes('headache') || lowerQuery.includes('head pain')) {
-      return 'For headaches, try resting in a quiet, dark room, staying hydrated, and applying a cold or warm compress. If headaches persist or are severe, please consult a healthcare professional.';
-    }
-
-    if (lowerQuery.includes('fever') || lowerQuery.includes('temperature')) {
-      return 'For fever, rest, drink plenty of fluids, and consider over-the-counter fever reducers if appropriate. Seek medical attention if fever is high (over 103°F/39.4°C) or persists for more than 3 days.';
-    }
-
-    if (lowerQuery.includes('cough') || lowerQuery.includes('sore throat')) {
-      return 'For cough or sore throat, try warm saltwater gargles, honey (for adults), staying hydrated, and using a humidifier. If symptoms worsen or persist beyond a week, consult a healthcare provider.';
-    }
-
-    if (lowerQuery.includes('stress') || lowerQuery.includes('anxiety')) {
-      return "For stress and anxiety, try deep breathing exercises, regular physical activity, adequate sleep, and mindfulness practices. If you're experiencing persistent anxiety, consider speaking with a mental health professional.";
-    }
-
-    if (lowerQuery.includes('sleep') || lowerQuery.includes('insomnia')) {
-      return 'For better sleep, maintain a regular sleep schedule, avoid screens before bedtime, keep your bedroom cool and dark, and limit caffeine late in the day. If sleep problems persist, consult a healthcare provider.';
-    }
-
-    if (lowerQuery.includes('exercise') || lowerQuery.includes('workout')) {
-      return 'Regular exercise is important for overall health. Aim for at least 150 minutes of moderate aerobic activity per week, plus strength training exercises. Start slowly and gradually increase intensity. Always consult your doctor before starting a new exercise program.';
-    }
-
-    if (
-      lowerQuery.includes('diet') ||
-      lowerQuery.includes('nutrition') ||
-      lowerQuery.includes('eating')
-    ) {
-      return 'A balanced diet includes plenty of fruits, vegetables, whole grains, lean proteins, and healthy fats. Stay hydrated, limit processed foods, and control portion sizes. Consider consulting a registered dietitian for personalized advice.';
-    }
-
-    if (lowerQuery.includes('water') || lowerQuery.includes('hydration')) {
-      return "Staying hydrated is essential for health. Aim for about 8 glasses (64 ounces) of water daily, more if you're active or in hot weather. Signs of good hydration include pale yellow urine and feeling energetic.";
-    }
-
-    // Default response
-    return 'Thank you for your health question. While I can provide general wellness information, I recommend consulting with a qualified healthcare professional for personalized medical advice. In the meantime, maintaining a healthy lifestyle with regular exercise, balanced nutrition, adequate sleep, and stress management is always beneficial.';
-  };
-
-  const sendQuery = async (query: string): Promise<string | null> => {
-    if (!query.trim()) return null;
-    setLoading(true);
-
-    try {
-      addUserMessage(query);
-
-      // Check if user is authenticated
-      const token = localStorage.getItem('token');
-      const userId = localStorage.getItem('userId');
-
-      if (token && userId) {
-        // Check if query is about health report/PDF data
-        const healthReportKeywords = [
-          'health report',
-          'my report',
-          'pdf',
-          'vitals',
-          'environmental metrics',
-          'activity metrics',
-          'recommendations',
-          'blood pressure',
-          'heart rate',
-          'temperature',
-          'humidity',
-          'air quality',
-        ];
-
-        const isHealthReportQuery = healthReportKeywords.some((keyword) =>
-          query.toLowerCase().includes(keyword)
-        );
-
-        if (isHealthReportQuery) {
-          try {
-            // Try RAG system first for health report queries
-            const ragResponse = await ragService.askQuestion({
-              user_id: userId,
-              question: query,
-              top_k: 3,
-            });
-
-            addAssistantMessage(ragResponse.answer);
-            return ragResponse.answer;
-          } catch (ragError) {
-            console.log('RAG query failed, falling back to regular API:', ragError);
-            // Fall through to regular API if RAG fails
-          }
-        }
-
-        // Try authenticated request for general health queries
-        try {
-          const result = await fetchWithAuth<QueryResponse>(API_ENDPOINTS.RAG_QUERY, {
-            method: 'POST',
-            body: JSON.stringify({ question: query, userId }),
-            headers: { Authorization: `Bearer ${token}` },
-          });
-
-          addAssistantMessage(result.response);
-          return result.response;
-        } catch (authError: unknown) {
-          const errorMessage = getErrorMessage(authError, 'Authentication failed');
-          console.log(
-            'Authenticated request failed, falling back to basic responses:',
-            errorMessage
-          );
-        }
+  // Check if user has RAG context (uploaded health report)
+  useEffect(() => {
+    const checkRagContext = async () => {
+      if (!userId) {
+        setHasRagContext(false);
+        return;
       }
 
-      // Provide basic health responses for unauthenticated users or when API fails
-      const basicResponse = getBasicHealthResponse(query);
+      try {
+        // Try a simple test query to see if user has context
+        const testResponse = await ragService.askQuestion({
+          user_id: userId,
+          question: 'Give me an overview of what you know about me?',
+          top_k: 1,
+        });
 
-      // Add a note about enhanced features for authenticated users
-      const enhancedResponse = token
-        ? basicResponse
-        : `${basicResponse}\n\n💡 **Tip**: Log in to access our advanced AI health assistant with personalized responses and comprehensive health analysis!`;
+        // If we get a "No relevant document chunks" response, then no context
+        setHasRagContext(!testResponse.answer.includes('No relevant document chunks found'));
+      } catch (error) {
+        console.error('Error checking RAG context:', error);
+        setHasRagContext(false);
+      }
+    };
 
-      addAssistantMessage(enhancedResponse);
-      return enhancedResponse;
-    } catch (error: unknown) {
-      handleError(error, 'Health assistant query', false);
+    checkRagContext();
+  }, [userId]);
 
-      const errorMessage =
-        "I'm currently experiencing some technical difficulties. Here are some general health tips: maintain a balanced diet, exercise regularly, get adequate sleep, stay hydrated, and consult healthcare professionals for any specific concerns.";
+  // Add a user message to the chat
+  const addUserMessage = useCallback((text: string) => {
+    // Use a combination of timestamp and counter for unique IDs
+    messageCounter++;
+    const newMessage: Message = {
+      id: `${Date.now().toString()}_${messageCounter}`,
+      type: 'user',
+      text,
+      timestamp: new Date().toISOString(),
+    };
 
-      addAssistantMessage(errorMessage, true);
-      return null;
-    } finally {
-      setLoading(false);
+    setMessages((prev) => [...prev, newMessage]);
+    return newMessage;
+  }, []);
+
+  // Add an assistant message to the chat
+  const addAssistantMessage = useCallback(
+    (text: string, isLoading = false, source: 'with-context' | 'no-context' = 'no-context') => {
+      messageCounter++;
+      const newMessage: Message = {
+        id: `${Date.now().toString()}_${messageCounter}`,
+        type: 'assistant',
+        text,
+        timestamp: new Date().toISOString(),
+        isLoading,
+        source,
+      };
+
+      setMessages((prev) => [...prev, newMessage]);
+      return newMessage;
+    },
+    []
+  );
+
+  // Update a message (used for loading states)
+  const updateMessage = useCallback((id: string, updates: Partial<Message>) => {
+    setMessages((prev) => prev.map((msg) => (msg.id === id ? { ...msg, ...updates } : msg)));
+  }, []);
+
+  // Handle normal query with fallback
+  const handleFallbackResponse = async (query: string) => {
+    const loadingMsgId = addAssistantMessage('Thinking...', true, 'no-context').id;
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_NODE_API_URL || ''}/api/health-assistant/query`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ query }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      updateMessage(loadingMsgId, {
+        text: data.response || "I couldn't generate a response. Please try again.",
+        isLoading: false,
+      });
+    } catch (error) {
+      console.error('Error in fallback response:', error);
+      updateMessage(loadingMsgId, {
+        text: "I'm having trouble connecting right now. Please try again in a moment.",
+        isLoading: false,
+      });
     }
   };
 
+  const cleanResponseText = (query: string, response: string): string => {
+    if (!response) return response;
+
+    const queryLower = query.trim().toLowerCase();
+    const responseLower = response.trim().toLowerCase();
+
+    if (responseLower.startsWith(queryLower)) {
+      const cleanedText = response.substring(query.length).trim();
+      // Remove any leading punctuation
+      return cleanedText.replace(/^[,.?!:;\s]+/, '');
+    }
+
+    // Check for common prefixes
+    const prefixes = [
+      'based on your health data',
+      'according to your health data',
+      'from your health data',
+      'your health data shows',
+      'according to the information provided',
+      'based on the information provided',
+    ];
+
+    for (const prefix of prefixes) {
+      if (responseLower.startsWith(prefix)) {
+        const cleanedText = response.substring(prefix.length).trim();
+        // Remove any leading punctuation
+        return cleanedText.replace(/^[,.?!:;\s]+/, '');
+      }
+    }
+
+    return response;
+  };
+
+  // Send a query to the assistant
+  const sendQuery = async (query: string) => {
+    if (!query.trim()) return;
+
+    addUserMessage(query);
+
+    // Cancel any previous request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    abortControllerRef.current = new AbortController();
+    setIsLoading(true);
+
+    try {
+      // If no userId or RAG context isn't available, use fallback
+      if (!userId || hasRagContext === false) {
+        await handleFallbackResponse(query);
+        return;
+      }
+
+      // Try RAG first if user has context
+      try {
+        const loadingMsgId = addAssistantMessage(
+          'Analyzing your health data...',
+          true,
+          'with-context'
+        ).id;
+
+        // Query the RAG system with user ID
+        const ragResponse = await ragService.askQuestion({
+          user_id: userId,
+          question: query,
+          top_k: 3,
+        });
+
+        // Check if we got a "no context" response from RAG
+        if (ragResponse.answer.includes('No relevant document chunks found')) {
+          // Update state for future queries
+          setHasRagContext(false);
+
+          // Update loading message to indicate fallback
+          updateMessage(loadingMsgId, {
+            text: "I don't have your health data yet. I'll answer with general information instead.",
+            isLoading: false,
+            source: 'no-context',
+          });
+
+          // Add a new loading message for the fallback response
+          setTimeout(() => {
+            handleFallbackResponse(query);
+          }, 1000);
+        } else {
+          // Process the response to remove any duplicated question or prefixes
+          const cleanedAnswer = cleanResponseText(query, ragResponse.answer);
+
+          // Update loading message with the processed RAG response
+          updateMessage(loadingMsgId, {
+            text: cleanedAnswer,
+            isLoading: false,
+            source: 'with-context',
+          });
+
+          // Update state for future queries
+          setHasRagContext(true);
+        }
+      } catch (error) {
+        console.error('RAG query error:', error);
+        // RAG failed, fall back to regular response
+        await handleFallbackResponse(query);
+      }
+    } finally {
+      setIsLoading(false);
+      abortControllerRef.current = null;
+    }
+  };
+
+  // Clear chat history
+  const clearHistory = useCallback(() => {
+    setMessages([]);
+    localStorage.removeItem('chatMessages');
+  }, []);
+
   return {
-    chatHistory,
-    loading,
+    messages,
+    isLoading,
+    hasRagContext,
     sendQuery,
     clearHistory,
     addUserMessage,
     addAssistantMessage,
+    updateMessage,
   };
-}
+};
+
+export default useChatHistory;

@@ -413,12 +413,8 @@ These endpoints are served from the Node-Server (hosted at `https://lifeguard-no
 
 | **Method** | **Endpoint**                    | **Description**                                      |
 |------------|---------------------------------|------------------------------------------------------|
-| POST       | `/api/rag/initialize`           | Initialize the RAG system (admin only)               |
-| POST       | `/api/rag/query`                | Query the RAG system (authenticated users)           |
-| POST       | `/api/rag/process/health`       | Process health data (authenticated users)            |
-| POST       | `/api/rag/process/environmental`| Process environmental data (authenticated users)     |
-| POST       | `/api/rag/process/medical`      | Process medical knowledge (admin only)               |
-| POST       | `/api/rag/process/profiles`     | Process user profiles (authenticated users)          |
+| POST       | `/api/upload`                   | Upload a PDF file for RAG processing                 |
+| POST       | `/api/ask`                      | Ask a question about the uploaded PDF documents      |
 
 ### User Notification Preferences Endpoints
 

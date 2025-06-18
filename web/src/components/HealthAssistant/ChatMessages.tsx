@@ -1,41 +1,62 @@
-import React, { useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import Message from './Message';
-import TypingIndicator from './TypingIndicator';
 import EmptyChatState from './EmptyChatState';
-
-interface ChatMessage {
-  type: 'user' | 'assistant';
-  content: string;
-  timestamp: Date | string;
-  isError?: boolean;
-}
+import TypingIndicator from './TypingIndicator';
 
 interface ChatMessagesProps {
-  chatHistory: ChatMessage[];
-  loading: boolean;
-  isDarkMode: boolean;
+  messages: {
+    id?: string;
+    type: 'user' | 'assistant' | 'system';
+    text: string;
+    timestamp: string;
+    isError?: boolean;
+    source?: 'with-context' | 'no-context';
+  }[];
+  isLoading: boolean;
+  isDarkMode?: boolean;
+  hasRagContext?: boolean | null;
   onExampleClick: (question: string) => void;
 }
 
-const ChatMessages = ({ chatHistory, loading, isDarkMode, onExampleClick }: ChatMessagesProps) => {
+const ChatMessages = ({
+  messages,
+  isLoading,
+  isDarkMode = false,
+  hasRagContext = null,
+  onExampleClick,
+}: ChatMessagesProps) => {
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
-  }, [chatHistory, loading]);
+  }, [messages, isLoading]);
 
   return (
     <div className="chat-body" ref={chatContainerRef}>
-      {chatHistory.length === 0 ? (
-        <EmptyChatState onExampleClick={onExampleClick} />
+      {messages.length === 0 ? (
+        <EmptyChatState
+          onExampleClick={onExampleClick}
+          isDarkMode={isDarkMode}
+          hasRagContext={hasRagContext}
+        />
       ) : (
         <div className="messages">
-          {chatHistory.map((message, index) => (
-            <Message key={index} message={message} isDarkMode={isDarkMode} />
-          ))}
-          {loading && <TypingIndicator />}
+          {messages.map((message, index) => {
+            // Get the previous message if it exists
+            const previousMessage = index > 0 ? messages[index - 1] : null;
+
+            return (
+              <Message
+                key={message.id || `msg-${index}`}
+                message={message}
+                previousMessage={previousMessage}
+                isDarkMode={isDarkMode}
+              />
+            );
+          })}
+          {isLoading && <TypingIndicator />}
         </div>
       )}
     </div>

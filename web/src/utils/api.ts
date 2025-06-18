@@ -60,13 +60,6 @@ export const API_ENDPOINTS = {
   REMOVE_FAVORITE: (userId: string, soundId: string): string =>
     `${NODE_API_URL}/api/favorite-sounds/${userId}/${soundId}`,
 
-  RAG_QUERY: `${NODE_API_URL}/api/rag/query`,
-  RAG_INITIALIZE: `${NODE_API_URL}/api/rag/initialize`,
-  RAG_PROCESS_HEALTH: `${NODE_API_URL}/api/rag/process/health`,
-  RAG_PROCESS_ENVIRONMENTAL: `${NODE_API_URL}/api/rag/process/environmental`,
-  RAG_PROCESS_MEDICAL: `${NODE_API_URL}/api/rag/process/medical`,
-  RAG_PROCESS_PROFILES: `${NODE_API_URL}/api/rag/process/profiles`,
-
   RAG_UPLOAD_PDF: `${RAG_BASE_URL}/api/upload`,
   RAG_ASK_QUESTION: `${RAG_BASE_URL}/api/ask`,
 
