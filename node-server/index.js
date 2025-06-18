@@ -15,15 +15,12 @@ const healthMetricsRoutes = require('./Routes/healthMetricsRoutes');
 const medicationRoutes = require('./Routes/medicationRoutes');
 const userPreferencesRoutes = require('./Routes/userPreferencesRoutes');
 
-const { connectToDatabase } = require('./config/mongodb');
 const nodemailer = require('nodemailer');
 const NotificationService = require('./services/NotificationService');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// Configure CORS more comprehensively
-// This middleware must be added before any routes
 const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = [
@@ -129,11 +126,6 @@ pool.connect((err, client, release) => {
         release();
     }
 });
-
-// Connect to MongoDB for RAG functionality
-connectToDatabase()
-    .then(() => console.log('Connected to MongoDB for RAG'))
-    .catch(err => console.error('Failed to connect to MongoDB:', err));
 
 app.use('/api/memos', memoRoutes(pool));
 app.use('/api/calories', bmrCalculatorRoutes(pool));
