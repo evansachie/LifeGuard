@@ -29,7 +29,7 @@ export const API_ENDPOINTS = {
   COMPLETE_PROFILE: '/Account/CompleteProfile',
 
   GOOGLE_LOGIN: '/Account/google-login',
-  GOOGLE_CALLBACK: '/signin-google',
+  GOOGLE_CALLBACK: '/Account/signin-google',
 
   GET_USER: (id: string): string => `/Account/${id}`,
   GET_PROFILE: (id: string): string => `/Account/GetProfile/${id}`,

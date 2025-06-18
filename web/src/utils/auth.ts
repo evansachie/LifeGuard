@@ -1,5 +1,4 @@
-import { API_BASE_URL, API_ENDPOINTS, fetchWithAuth, apiMethods } from './api';
-import { getErrorMessage } from './errorHandler';
+import { API_BASE_URL, FRONTEND_URL, API_ENDPOINTS, fetchWithAuth, apiMethods } from './api';
 import type { AuthResponse, RegistrationResponse, ApiResponse } from '../types/api.types';
 
 export const isAuthenticated = (): boolean => {
@@ -96,42 +95,65 @@ export async function getUserById(id: string): Promise<{ userName: string; email
 
 export const initiateGoogleLogin = async (): Promise<void> => {
   try {
-    const returnUrl = `${window.location.origin}/signin-google`;
-    const googleLoginUrl = `${API_BASE_URL}${API_ENDPOINTS.GOOGLE_LOGIN}?returnUrl=${encodeURIComponent(returnUrl)}`;
+    console.log('🔄 Initiating Google login with returnUrl:', FRONTEND_URL);
+
+    // Build the complete backend URL for Google login
+    const googleLoginUrl = `${API_BASE_URL}${API_ENDPOINTS.GOOGLE_LOGIN}?returnUrl=${encodeURIComponent(FRONTEND_URL)}`;
+
+    // This will create: https://lifeguard-hiij.onrender.com/api/Account/google-login?returnUrl=http://localhost:3000
+    console.log('🔗 Redirecting to backend Google login URL:', googleLoginUrl);
+
+    // Redirect to backend Google login endpoint with returnUrl
     window.location.href = googleLoginUrl;
-  } catch (error: unknown) {
-    const errorMessage = getErrorMessage(error, 'Failed to initiate Google login');
-    throw new Error(errorMessage);
+  } catch (error) {
+    console.error('❌ Error initiating Google login:', error);
+    throw error;
   }
 };
 
-interface GoogleCallbackData {
+export const handleGoogleCallback = async (): Promise<{
   token: string;
   userId: string;
   email: string;
   userName: string;
-}
-
-export const handleGoogleCallback = async (): Promise<GoogleCallbackData> => {
+}> => {
   try {
+    // Extract authentication data from URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
     const userId = urlParams.get('userId');
     const email = urlParams.get('email');
     const userName = urlParams.get('userName');
 
-    if (!token || !userId || !email) {
-      throw new Error('Invalid authentication data received');
+    if (!token || !userId || !email || !userName) {
+      throw new Error('Missing authentication data in callback URL');
     }
 
+    console.log('✅ Google callback data received:', {
+      userId,
+      email,
+      userName,
+      hasToken: !!token,
+    });
+
+    // Store authentication data in localStorage
     localStorage.setItem('token', token);
     localStorage.setItem('userId', userId);
-    localStorage.setItem('userName', userName || email);
     localStorage.setItem('email', email);
+    localStorage.setItem('userName', userName);
 
-    return { token, userId, email, userName: userName || email };
-  } catch (error: unknown) {
-    console.error('Google auth callback error:', error);
-    throw new Error('Failed to complete Google authentication');
+    // Clean up URL parameters
+    const cleanUrl = window.location.pathname;
+    window.history.replaceState({}, document.title, cleanUrl);
+
+    return {
+      token,
+      userId,
+      email,
+      userName,
+    };
+  } catch (error) {
+    console.error('❌ Error handling Google callback:', error);
+    throw error;
   }
 };
