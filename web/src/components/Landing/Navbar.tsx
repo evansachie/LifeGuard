@@ -98,7 +98,11 @@ const Navbar = ({ isDarkMode, toggleTheme, isAuthenticated }: NavbarProps) => {
       <Link to="/log-in" className="nav-button login" onClick={() => setIsMobileMenuOpen(false)}>
         Log In
       </Link>
-      <Link to="/sign-up" className="nav-button signup" onClick={() => setIsMobileMenuOpen(false)}>
+      <Link
+        to="/sign-up"
+        className="nav-button signup !bg-[#407CE2]"
+        onClick={() => setIsMobileMenuOpen(false)}
+      >
         Get Started
       </Link>
     </>
