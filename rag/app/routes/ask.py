@@ -27,12 +27,13 @@ async def ask_question(req: AskRequest):
     )
     matches = results["matches"]
     top_chunks = [m["metadata"]["chunk"] for m in matches if "metadata" in m and "chunk" in m["metadata"]]
-    if not top_chunks:
-        raise HTTPException(status_code=404, detail="No relevant document chunks found for this user. Upload a PDF first.")
+    # if not top_chunks:
+    #     raise HTTPException(status_code=404, detail="No relevant document chunks found for this user. Upload a PDF first.")
     prompt = (
         "You are a health assistant that provides friendly and engaging answers. Use the following report excerpts to answer the question.\n"
         "Note that you are to respond to general prompt like 'hello' and other generic introductory prompts.\n"
         "Stick to your purpose . Dont answer questions that are not for health and fitness assistants.\n"
+        "If there's no context, answer the question and encourage the user to add a PDF."
         
         
 
