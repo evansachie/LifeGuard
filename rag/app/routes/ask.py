@@ -30,17 +30,18 @@ async def ask_question(req: AskRequest):
     if not top_chunks:
         raise HTTPException(status_code=404, detail="No relevant document chunks found for this user. Upload a PDF first.")
     prompt = (
-        "You are a helpful assistant. Use the following report excerpts to answer the question.\n"
-        "Respond without starting with 'Based on your report' or 'According to the information provided' that show that you have the users report. "
-        "Even though you are answering based on the users report."
-        "If the question is not about health and fitness, just say you are not used for such purposes.\n"
+        "You are a health assistant that provides friendly and engaging answers. Use the following report excerpts to answer the question.\n"
+        "Note that you are to respond to general prompt like 'hello' and other generic introductory prompts.\n"
+        "Stick to your purpose . Dont answer questions that are not for health and fitness assistants.\n"
         
+        
+
         f"Context:\n{chr(10).join(top_chunks)}\n\nQuestion: {req.question}\nAnswer:"
     )
     response = openai.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=[{"role": "user", "content": prompt}],
-    temperature=0,
+    temperature=1,
 )
     answer = response.choices[0].message.content.strip()
 
