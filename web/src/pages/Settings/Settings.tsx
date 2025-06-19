@@ -21,7 +21,7 @@ import ToggleSwitch from '../../components/Settings/ToggleSwitch';
 
 interface SettingsProps {
   isDarkMode: boolean;
-  toggleTheme: () => void; // Changed from toggleDarkMode? to toggleTheme
+  toggleTheme: () => void;
 }
 
 interface SettingsState {
