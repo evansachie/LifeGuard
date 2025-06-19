@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import { cleanupFirebaseStructure } from './services/firebaseCleanup';
 
 import 'react-toastify/dist/ReactToastify.css';
 import 'intro.js/introjs.css';
@@ -22,13 +21,12 @@ const App = () => {
   const { isDarkMode, toggleTheme } = useTheme();
   const [commandPaletteOpen, setCommandPaletteOpen] = useState<boolean>(false);
 
+  // Apply dark mode class to body for global styling
   useEffect(() => {
-    const knownDeviceId = '8YwKdRqqkvbj5EAhQQiBjw==';
-
-    cleanupFirebaseStructure(knownDeviceId)
-      .then(() => console.log('Firebase cleanup completed on startup'))
-      .catch((err) => console.error('Firebase cleanup failed:', err));
-  }, []);
+    document.body.classList.toggle('dark-mode', isDarkMode);
+    document.documentElement.classList.toggle('dark-mode', isDarkMode);
+    document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+  }, [isDarkMode]);
 
   useEffect(() => {
     const down = (e: KeyboardEvent): void => {
