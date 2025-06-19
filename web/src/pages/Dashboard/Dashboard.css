@@ -514,6 +514,37 @@
     .dashboard-grid {
         grid-template-columns: 1fr;
     }
+
+    .device-status-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    margin-bottom: 0;
+  }
+  
+  .device-status {
+    min-width: 180px;
+    width: auto;
+  }
+
+  .connect-btn {
+    min-width: 180px;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+
+  .button-text {
+    font-size: 0.8rem;
+  }
+
+  .firebase-status-indicator {
+    font-size: 0.7rem;
+  }
+
+  .last-sync-time {
+    font-size: 0.65rem;
+  }
 }
 
 .reminders-list li.done {
@@ -914,15 +945,34 @@
 /* Mobile responsiveness */
 @media (max-width: 768px) {
   .device-status-container {
-    position: relative;
-    top: auto;
-    right: auto;
-    margin-bottom: 1rem;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    margin-bottom: 0;
   }
   
   .device-status {
-    min-width: auto;
-    width: 100%;
+    min-width: 180px;
+    width: auto;
+  }
+
+  .connect-btn {
+    min-width: 180px;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+
+  .button-text {
+    font-size: 0.8rem;
+  }
+
+  .firebase-status-indicator {
+    font-size: 0.7rem;
+  }
+
+  .last-sync-time {
+    font-size: 0.65rem;
   }
 }
 
