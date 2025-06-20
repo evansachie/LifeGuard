@@ -96,40 +96,6 @@ export const useChatHistory = (): ChatHistoryHook => {
     setMessages((prev) => prev.map((msg) => (msg.id === id ? { ...msg, ...updates } : msg)));
   }, []);
 
-  // Handle normal query with fallback
-  const handleFallbackResponse = async (query: string) => {
-    const loadingMsgId = addAssistantMessage('Thinking...', true, 'no-context').id;
-
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_NODE_API_URL || ''}/api/health-assistant/query`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ query }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      updateMessage(loadingMsgId, {
-        text: data.response || "I couldn't generate a response. Please try again.",
-        isLoading: false,
-      });
-    } catch (error) {
-      console.error('Error in fallback response:', error);
-      updateMessage(loadingMsgId, {
-        text: "I'm having trouble connecting right now. Please try again in a moment.",
-        isLoading: false,
-      });
-    }
-  };
-
   const cleanResponseText = (query: string, response: string): string => {
     if (!response) return response;
 
@@ -178,10 +144,9 @@ export const useChatHistory = (): ChatHistoryHook => {
     setIsLoading(true);
 
     try {
-      // If no userId or RAG context isn't available, use fallback
-      if (!userId || hasRagContext === false) {
-        await handleFallbackResponse(query);
-        return;
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        throw new Error('User ID not found');
       }
 
       // Try RAG first if user has context
@@ -206,15 +171,10 @@ export const useChatHistory = (): ChatHistoryHook => {
 
           // Update loading message to indicate fallback
           updateMessage(loadingMsgId, {
-            text: "I don't have your health data yet. I'll answer with general information instead.",
+            text: "You haven't uploaded any health reports yet. Please upload a PDF in the Health Report section to get personalized insights.",
             isLoading: false,
             source: 'no-context',
           });
-
-          // Add a new loading message for the fallback response
-          setTimeout(() => {
-            handleFallbackResponse(query);
-          }, 1000);
         } else {
           // Process the response to remove any duplicated question or prefixes
           const cleanedAnswer = cleanResponseText(query, ragResponse.answer);
@@ -231,9 +191,30 @@ export const useChatHistory = (): ChatHistoryHook => {
         }
       } catch (error) {
         console.error('RAG query error:', error);
-        // RAG failed, fall back to regular response
-        await handleFallbackResponse(query);
+        // RAG failed, we can inform the user
+        const loadingMsgId = addAssistantMessage(
+          "I'm sorry, I couldn't process your request at the moment. Please try again later.",
+          false,
+          'no-context'
+        ).id;
+        updateMessage(loadingMsgId, {
+          isLoading: false,
+          isError: true,
+        });
+        setHasRagContext(null);
       }
+    } catch (error) {
+      console.error('Chat query error:', error);
+      // Handle general errors
+      const loadingMsgId = addAssistantMessage(
+        "I'm sorry, I encountered an error while processing your request. Please try again later.",
+        false,
+        'no-context'
+      ).id;
+      updateMessage(loadingMsgId, {
+        isLoading: false,
+        isError: true,
+      });
     } finally {
       setIsLoading(false);
       abortControllerRef.current = null;

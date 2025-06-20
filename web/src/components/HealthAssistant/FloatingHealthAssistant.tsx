@@ -12,6 +12,7 @@ import ChatMessages from './ChatMessages';
 import ChatActions from './ChatActions';
 import ChatInputForm from './ChatInputForm';
 import EmptyChatState from './EmptyChatState';
+import HealthReportModal from '../HealthReportModal/HealthReportModal';
 
 interface FloatingHealthAssistantProps {
   isDarkMode: boolean;
@@ -22,6 +23,7 @@ const FloatingHealthAssistant = ({ isDarkMode }: FloatingHealthAssistantProps) =
   const [query, setQuery] = useState<string>('');
   const [showShortcuts, setShowShortcuts] = useState<boolean>(false);
   const [textToSpeechEnabled, setTextToSpeechEnabled] = useState<boolean>(false);
+  const [showHealthReportModal, setShowHealthReportModal] = useState<boolean>(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -129,6 +131,10 @@ const FloatingHealthAssistant = ({ isDarkMode }: FloatingHealthAssistantProps) =
     }
   };
 
+  const handleOpenHealthReport = (): void => {
+    setShowHealthReportModal(true);
+  };
+
   const handleSubmit = async (query?: string): Promise<void> => {
     if (!query || !query.trim()) return;
 
@@ -201,8 +207,7 @@ const FloatingHealthAssistant = ({ isDarkMode }: FloatingHealthAssistantProps) =
             <ChatActions
               messages={messages}
               onClearHistory={clearHistory}
-              onToggleSpeech={toggleTextToSpeech}
-              isSpeechEnabled={textToSpeechEnabled}
+              onOpenHealthReport={handleOpenHealthReport}
               isDarkMode={isDarkMode}
             />
 
@@ -218,6 +223,13 @@ const FloatingHealthAssistant = ({ isDarkMode }: FloatingHealthAssistantProps) =
           </motion.div>
         )}
       </AnimatePresence>
+
+      <HealthReportModal
+        isOpen={showHealthReportModal}
+        onClose={() => setShowHealthReportModal(false)}
+        userData={{}} // You can pass actual user data if available
+        isDarkMode={isDarkMode}
+      />
     </div>
   );
 };

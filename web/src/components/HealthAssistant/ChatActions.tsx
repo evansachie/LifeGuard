@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaRegTrashAlt, FaDownload, FaVolumeUp, FaVolumeMute } from 'react-icons/fa';
+import { FaRegTrashAlt, FaDownload, FaPaperclip } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import DeleteConfirmationModal from '../DeleteConfirmationModal/DeleteConfirmationModal';
 import { Message } from '../../types/chat.types';
@@ -7,16 +7,14 @@ import { Message } from '../../types/chat.types';
 interface ChatActionsProps {
   messages: Message[];
   onClearHistory: () => void;
-  onToggleSpeech: () => void;
-  isSpeechEnabled: boolean;
+  onOpenHealthReport: () => void;
   isDarkMode: boolean;
 }
 
 const ChatActions = ({
   messages,
   onClearHistory,
-  onToggleSpeech,
-  isSpeechEnabled,
+  onOpenHealthReport,
   isDarkMode,
 }: ChatActionsProps) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
@@ -75,10 +73,10 @@ const ChatActions = ({
         </button>
         <button
           className="action-button"
-          onClick={onToggleSpeech}
-          title={isSpeechEnabled ? 'Turn off text-to-speech' : 'Turn on text-to-speech'}
+          onClick={onOpenHealthReport}
+          title="Upload health report for personalized insights"
         >
-          {isSpeechEnabled ? <FaVolumeUp /> : <FaVolumeMute />}
+          <FaPaperclip />
         </button>
         <button className="action-button" onClick={handleExportHistory} title="Export conversation">
           <FaDownload />
