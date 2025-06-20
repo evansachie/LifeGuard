@@ -1,0 +1,15 @@
+# Exclude Edge Impulse generated library from language statistics
+firmware/lifeguard-ml-firmware/lib/LifeGuard_inferencing/** linguist-vendored
+firmware/lifeguard-ml-firmware/lib/LifeGuard_inferencing/** linguist-generated=true
+
+# Mark other generated/vendored code
+*.pb.cc linguist-generated=true
+*.pb.h linguist-generated=true
+**/edge-impulse-sdk/** linguist-vendored
+**/tensorflow/** linguist-vendored
+**/CMSIS/** linguist-vendored
+
+# Ensure main code languages are properly detected
+*.tsx linguist-language=TypeScript
+*.ts linguist-language=TypeScript
+*.dart linguist-language=Dart
