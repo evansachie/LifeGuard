@@ -4,18 +4,55 @@
   <img src="../docs/images/lifeguard-logo.png" alt="LifeGuard Logo" width="200"/>
 </p>
 
-A Flutter-based mobile application for the LifeGuard health and environmental monitoring system.
+A Flutter-based mobile application for the LifeGuard health and environmental monitoring system with **Bluetooth Low Energy (BLE) integration** for real-time wearable device connectivity.
 
 ## Features
 
-- Real-time health monitoring
-- Environmental data tracking
-- Emergency alerts and notifications
-- Health analytics dashboard
-- Emergency contact management
-- Dark/Light theme support
-- Location tracking
-- Cross-platform (iOS & Android)
+- **🔗 Real-time BLE device connectivity**
+  - Automatic device discovery and pairing
+  - Real-time sensor data streaming
+  - Fall detection with emergency alerts
+  - Environmental monitoring (temperature, humidity, air quality)
+- **📊 Real-time health monitoring**
+  - Activity recognition (walking, still, falling, unknown)
+  - Environmental data tracking
+  - Historical data visualization  
+- **⚠️ Emergency alerts and notifications**
+  - Automatic fall detection via ML inference
+  - Emergency contact notifications with location
+  - Customizable alert thresholds
+- **📱 Health analytics dashboard**
+  - Real-time sensor data visualization
+  - Activity pattern analysis
+  - Environmental exposure tracking
+- **👥 Emergency contact management**
+  - Quick emergency alert system
+  - Location sharing capabilities
+- **🎨 Modern UI/UX**
+  - Dark/Light theme support
+  - Material 3 design
+  - Responsive layouts
+- **📍 Location tracking**
+  - GPS integration for emergency services
+- **📱 Cross-platform (iOS & Android)**
+  - Native performance with Flutter
+
+## New BLE Features
+
+### 🔵 Bluetooth Low Energy Integration
+- **Device Discovery**: Automatic scanning for LifeGuard wearable devices
+- **Real-time Data Streaming**: Live sensor data from Arduino Nicla Sense ME
+- **Fall Detection**: ML-powered fall detection with 99.5% accuracy
+- **Environmental Monitoring**: Air quality, temperature, and humidity tracking
+- **Device Control**: RGB LED control for visual feedback
+- **Auto-reconnect**: Automatic device reconnection when in range
+
+### 📊 Supported Sensor Data
+- **Motion Sensors**: Accelerometer, Gyroscope, Quaternion data
+- **Environmental**: Temperature, Humidity, Barometric Pressure
+- **Air Quality**: VOCs, CO2 levels, Gas sensors
+- **Activity Recognition**: Walking, Still, Falling, Unknown states
+- **Health Metrics**: Real-time vitals and activity patterns
 
 ## Getting Started
 
@@ -25,6 +62,7 @@ A Flutter-based mobile application for the LifeGuard health and environmental mo
 - Android Studio / XCode
 - VS Code (recommended)
 - A physical device or emulator
+- **Arduino Nicla Sense ME device (for BLE features)**
 
 ### Installation
 
