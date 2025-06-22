@@ -219,7 +219,7 @@ const Dashboard = ({ isDarkMode }: DashboardProps) => {
       showCo2: visibleCards.co2,
       showPollutants: visibleCards.pollutants,
     };
-  }, [visibleCards, searchQuery]);
+  }, [visibleCards]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent): void => {

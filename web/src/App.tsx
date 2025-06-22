@@ -22,7 +22,6 @@ const App = () => {
   const { isDarkMode, toggleTheme } = useTheme();
   const [commandPaletteOpen, setCommandPaletteOpen] = useState<boolean>(false);
 
-  // Apply dark mode class to body for global styling
   useEffect(() => {
     document.body.classList.toggle('dark-mode', isDarkMode);
     document.documentElement.classList.toggle('dark-mode', isDarkMode);
