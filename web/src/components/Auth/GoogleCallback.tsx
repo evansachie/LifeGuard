@@ -9,10 +9,25 @@ const GoogleCallback = () => {
   useEffect(() => {
     const completeAuth = async (): Promise<void> => {
       try {
-        // Process the callback data from URL params
-        await handleGoogleCallback();
-        toast.success('Successfully logged in with Google!');
-        navigate('/dashboard');
+        // Check if we have the required URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const hasRequiredParams =
+          urlParams.get('token') &&
+          urlParams.get('userId') &&
+          urlParams.get('email') &&
+          urlParams.get('userName');
+
+        if (hasRequiredParams) {
+          // Process the callback data from URL params
+          await handleGoogleCallback();
+          toast.success('Successfully logged in with Google!');
+          navigate('/dashboard');
+        } else {
+          // Missing required parameters
+          console.error('Missing required Google callback parameters');
+          toast.error('Invalid Google login callback');
+          navigate('/log-in');
+        }
       } catch (error) {
         console.error('Google callback error:', error);
         toast.error('Failed to complete Google login');

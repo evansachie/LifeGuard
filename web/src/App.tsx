@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import { cleanupFirebaseStructure } from './services/firebaseCleanup';
 
 import 'react-toastify/dist/ReactToastify.css';
 import 'intro.js/introjs.css';
@@ -10,6 +9,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { BLEProvider } from './contexts/BLEContext';
 import { AudioContextProvider } from './contexts/AudioContext';
 import { AudioPlayerProvider } from './contexts/AudioPlayerContext';
+import { FirebaseProvider } from './contexts/FirebaseContext';
 
 import FloatingAudioPlayer from './components/Audio/FloatingAudioPlayer';
 import { CommandPalette } from './components/CommandPalette/CommandPalette';
@@ -23,12 +23,10 @@ const App = () => {
   const [commandPaletteOpen, setCommandPaletteOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    const knownDeviceId = '8YwKdRqqkvbj5EAhQQiBjw==';
-
-    cleanupFirebaseStructure(knownDeviceId)
-      .then(() => console.log('Firebase cleanup completed on startup'))
-      .catch((err) => console.error('Firebase cleanup failed:', err));
-  }, []);
+    document.body.classList.toggle('dark-mode', isDarkMode);
+    document.documentElement.classList.toggle('dark-mode', isDarkMode);
+    document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+  }, [isDarkMode]);
 
   useEffect(() => {
     const down = (e: KeyboardEvent): void => {
@@ -47,25 +45,27 @@ const App = () => {
 
   return (
     <Router>
-      <AudioPlayerProvider>
-        <AudioContextProvider>
-          <BLEProvider>
-            <AuthProvider>
-              <div className={isDarkMode ? 'dark-mode' : ''}>
-                <ToastContainer position="top-right" theme={isDarkMode ? 'dark' : 'light'} />
-                <AppRoutes isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
-                <FloatingAudioPlayer isDarkMode={isDarkMode} />
-                <CommandPalette
-                  isDarkMode={isDarkMode}
-                  toggleTheme={toggleTheme}
-                  open={commandPaletteOpen}
-                  setOpen={setCommandPaletteOpen}
-                />
-              </div>
-            </AuthProvider>
-          </BLEProvider>
-        </AudioContextProvider>
-      </AudioPlayerProvider>
+      <FirebaseProvider>
+        <AudioPlayerProvider>
+          <AudioContextProvider>
+            <BLEProvider>
+              <AuthProvider>
+                <div className={isDarkMode ? 'dark-mode' : ''}>
+                  <ToastContainer position="top-right" theme={isDarkMode ? 'dark' : 'light'} />
+                  <AppRoutes isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
+                  <FloatingAudioPlayer isDarkMode={isDarkMode} />
+                  <CommandPalette
+                    isDarkMode={isDarkMode}
+                    toggleTheme={toggleTheme}
+                    open={commandPaletteOpen}
+                    setOpen={setCommandPaletteOpen}
+                  />
+                </div>
+              </AuthProvider>
+            </BLEProvider>
+          </AudioContextProvider>
+        </AudioPlayerProvider>
+      </FirebaseProvider>
     </Router>
   );
 };

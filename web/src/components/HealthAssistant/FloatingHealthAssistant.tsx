@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './FloatingHealthAssistant.css';
 
@@ -12,6 +12,7 @@ import ChatMessages from './ChatMessages';
 import ChatActions from './ChatActions';
 import ChatInputForm from './ChatInputForm';
 import EmptyChatState from './EmptyChatState';
+import HealthReportModal from '../HealthReportModal/HealthReportModal';
 
 interface FloatingHealthAssistantProps {
   isDarkMode: boolean;
@@ -22,11 +23,12 @@ const FloatingHealthAssistant = ({ isDarkMode }: FloatingHealthAssistantProps) =
   const [query, setQuery] = useState<string>('');
   const [showShortcuts, setShowShortcuts] = useState<boolean>(false);
   const [textToSpeechEnabled, setTextToSpeechEnabled] = useState<boolean>(false);
+  const [showHealthReportModal, setShowHealthReportModal] = useState<boolean>(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { isListening, transcript, toggleListening } = useSpeechRecognition();
-  const { chatHistory, loading, sendQuery, clearHistory } = useChatHistory();
+  const { messages, isLoading, hasRagContext, sendQuery, clearHistory } = useChatHistory();
 
   useEffect(() => {
     if (transcript) {
@@ -40,14 +42,29 @@ const FloatingHealthAssistant = ({ isDarkMode }: FloatingHealthAssistantProps) =
     }
   }, [isOpen]);
 
+  const speakText = useCallback((text: string) => {
+    if (!text) return;
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+    utterance.volume = 1.0;
+
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  }, []);
+
   useEffect(() => {
-    if (textToSpeechEnabled && chatHistory.length > 0) {
-      const lastMessage = chatHistory[chatHistory.length - 1];
-      if (lastMessage.type === 'assistant' && !lastMessage.isError) {
-        speakText(lastMessage.content);
-      }
+    if (
+      textToSpeechEnabled &&
+      messages.length > 0 &&
+      messages[messages.length - 1].type === 'assistant' &&
+      !messages[messages.length - 1].isError
+    ) {
+      const lastMessage = messages[messages.length - 1].text;
+      speakText(lastMessage);
     }
-  }, [chatHistory, textToSpeechEnabled]);
+  }, [messages, textToSpeechEnabled, speakText]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -114,10 +131,18 @@ const FloatingHealthAssistant = ({ isDarkMode }: FloatingHealthAssistantProps) =
     }
   };
 
-  const handleSubmit = async (): Promise<void> => {
-    if (query.trim()) {
-      await sendQuery(query);
-      setQuery('');
+  const handleOpenHealthReport = (): void => {
+    setShowHealthReportModal(true);
+  };
+
+  const handleSubmit = async (query?: string): Promise<void> => {
+    if (!query || !query.trim()) return;
+
+    await sendQuery(query);
+    setQuery('');
+
+    if (inputRef.current) {
+      inputRef.current.focus();
     }
   };
 
@@ -126,31 +151,6 @@ const FloatingHealthAssistant = ({ isDarkMode }: FloatingHealthAssistantProps) =
     if (inputRef.current) {
       inputRef.current.focus();
     }
-  };
-
-  const speakText = (text: string): void => {
-    if (!('speechSynthesis' in window)) return;
-
-    window.speechSynthesis.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    const voices = window.speechSynthesis.getVoices();
-    const preferredVoice = voices.find(
-      (voice) =>
-        voice.name.includes('Google') ||
-        voice.name.includes('Natural') ||
-        voice.name.includes('Female')
-    );
-
-    if (preferredVoice) {
-      utterance.voice = preferredVoice;
-    }
-
-    utterance.pitch = 1;
-    utterance.rate = 1;
-    utterance.volume = 1;
-
-    window.speechSynthesis.speak(utterance);
   };
 
   const chatWindowVariants = {
@@ -191,21 +191,23 @@ const FloatingHealthAssistant = ({ isDarkMode }: FloatingHealthAssistantProps) =
             <ShortcutsPanel showShortcuts={showShortcuts} />
 
             <div className="chat-body">
-              {chatHistory.length === 0 && !loading ? (
+              {messages.length === 0 && !isLoading ? (
                 <EmptyChatState onExampleClick={handleExampleClick} isDarkMode={isDarkMode} />
               ) : (
                 <ChatMessages
-                  chatHistory={chatHistory}
-                  loading={loading}
+                  messages={messages}
+                  isLoading={isLoading}
                   isDarkMode={isDarkMode}
+                  hasRagContext={hasRagContext}
                   onExampleClick={handleExampleClick}
                 />
               )}
             </div>
 
             <ChatActions
-              chatHistory={chatHistory}
+              messages={messages}
               onClearHistory={clearHistory}
+              onOpenHealthReport={handleOpenHealthReport}
               isDarkMode={isDarkMode}
             />
 
@@ -213,7 +215,7 @@ const FloatingHealthAssistant = ({ isDarkMode }: FloatingHealthAssistantProps) =
               query={query}
               onQueryChange={setQuery}
               onSubmit={handleSubmit}
-              isLoading={loading}
+              isLoading={isLoading}
               isListening={isListening}
               toggleListening={toggleListening}
               inputRef={inputRef}
@@ -221,6 +223,13 @@ const FloatingHealthAssistant = ({ isDarkMode }: FloatingHealthAssistantProps) =
           </motion.div>
         )}
       </AnimatePresence>
+
+      <HealthReportModal
+        isOpen={showHealthReportModal}
+        onClose={() => setShowHealthReportModal(false)}
+        userData={{}} // You can pass actual user data if available
+        isDarkMode={isDarkMode}
+      />
     </div>
   );
 };

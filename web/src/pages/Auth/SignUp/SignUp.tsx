@@ -24,6 +24,7 @@ const useSignUp = (): SignUpFormHook => {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [retryCount, setRetryCount] = useState(0);
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -46,6 +47,8 @@ const useSignUp = (): SignUpFormHook => {
     }
 
     setIsLoading(true);
+    setRetryCount(0);
+
     try {
       const response = await registerUser(formData.name, formData.email, formData.password);
 
@@ -65,8 +68,17 @@ const useSignUp = (): SignUpFormHook => {
       }
     } catch (error: unknown) {
       const errorMessage = getErrorMessage(error, 'Registration failed');
-      toast.error(errorMessage);
-      setErrors((prev) => ({ ...prev, submit: errorMessage }));
+
+      // Handle timeout errors with retry suggestion
+      if (errorMessage.includes('timed out') || errorMessage.includes('starting up')) {
+        setRetryCount((prev) => prev + 1);
+        toast.error(`${errorMessage} ${retryCount > 0 ? `(Retry ${retryCount + 1})` : ''}`);
+        setErrors((prev) => ({ ...prev, submit: `${errorMessage} Please try again.` }));
+      } else {
+        toast.error(errorMessage);
+        setErrors((prev) => ({ ...prev, submit: errorMessage }));
+      }
+
       console.error('Registration error:', error);
     } finally {
       setIsLoading(false);
@@ -76,9 +88,17 @@ const useSignUp = (): SignUpFormHook => {
   const handleGoogleLogin = async (e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
     e.preventDefault();
     setIsLoading(true);
+
+    // Show helpful message for slow Google OAuth
+    const timeoutId = setTimeout(() => {
+      toast.info('Google signup may take a moment on free hosting. Please wait...');
+    }, 3000);
+
     try {
       await initiateGoogleLogin();
+      clearTimeout(timeoutId);
     } catch (error: unknown) {
+      clearTimeout(timeoutId);
       const errorMessage = getErrorMessage(error, 'Google login failed');
       toast.error(errorMessage);
       console.error('Google login error:', error);

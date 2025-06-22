@@ -54,7 +54,7 @@ const LoginForm = ({
           </Link>
         </div>
 
-        <Button text="Log in" isLoading={isLoading} />
+        <Button text={isLoading ? 'Signing in...' : 'Log in'} isLoading={isLoading} />
       </form>
 
       <div className="my-6 flex items-center">

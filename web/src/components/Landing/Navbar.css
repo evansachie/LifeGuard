@@ -110,9 +110,14 @@
     color: white;
 }
 
+.dark-mode .nav-button.login {
+    color: #e0e0e0;
+    border-color: #e0e0e0;
+}
+
 .nav-button.signup:hover {
     background: #2B5BBF;
-    color: #407CE2;
+    color: white;
     border: 2px solid #407CE2;
     transform: translateY(-2px);
 }

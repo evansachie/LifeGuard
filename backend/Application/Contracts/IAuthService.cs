@@ -25,7 +25,7 @@ namespace Application.Contracts
 
         Task<bool> DeleteUser(string id);
 
-        Task<Result<object>> HandleGoogleLoginAsync(ClaimsPrincipal externalPrincipal);
+        Task<Result<object>> HandleGoogleLoginAsync(ClaimsPrincipal externalPrincipal, string returnUrl);
 
     }
 }

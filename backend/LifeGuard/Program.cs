@@ -20,14 +20,13 @@ using Persistence;
 using Application.Contracts.Photos;
 using Infrastructure.Photos;
 using Microsoft.AspNetCore.HttpOverrides;
+using LifeGuard.Services;
 namespace LifeGuard
 {
     public class Program
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
-
             string env = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
             Console.WriteLine(Directory.GetCurrentDirectory());
             if (env == "Development")
@@ -38,6 +37,9 @@ namespace LifeGuard
             {
                 Env.Load("../.env.local");
             }
+            var builder = WebApplication.CreateBuilder(args);
+
+            
             //Add services to the container.
 
             var connectionStringAuth = Environment.GetEnvironmentVariable("CONNECTION_STRING_AUTH");
@@ -48,6 +50,7 @@ namespace LifeGuard
             var jwt_duration_in_minutes = Environment.GetEnvironmentVariable("JWT_DURATIONINMINUTES");
             var client_id = Environment.GetEnvironmentVariable("CLIENT_ID");
             var client_secret = Environment.GetEnvironmentVariable("CLIENT_SECRET");
+            var default_url = Environment.GetEnvironmentVariable("FRONTEND_URL");
             // Add services to the container.
               
             builder.Services.AddDbContext<LifeGuardIdentityDbContext>(options => 
@@ -71,6 +74,7 @@ namespace LifeGuard
             builder.Services.AddScoped<IPhotoAccessor, PhotoAccessor>();
             builder.Services.AddScoped<IUserPhotoService, UserPhotoService>();
 
+            builder.Services.AddScoped<IReturnUrlValidator, ReturnUrlValidator>();
 
             builder.Services.AddAuthentication(options =>
             {
@@ -102,7 +106,7 @@ namespace LifeGuard
                     options.ClientId = client_id;
                     options.ClientSecret = client_secret;
                     //options.CallbackPath = "/api/Account/signin-google";
-                    //options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     options.SaveTokens = true;
                     options.Scope.Add("email");
                 });
@@ -148,7 +152,7 @@ namespace LifeGuard
                 {
                     policy
                         .WithOrigins("https://lifeguard-vq69.onrender.com",
-                        "https://lifeguard-vert.vercel.app",
+                        "https://lifeguard-vert.vercel.app/",
                         "http://localhost:3000"
                         )   
                         .AllowAnyMethod()                                     

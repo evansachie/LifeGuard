@@ -72,8 +72,8 @@ Our solution stands out as a cost-effective and comprehensive alternative to pre
 
 - **📊 Comprehensive Health Monitoring**
   - Real-time vitals tracking
-  - Fall detection with 95% accuracy
-  - Activity recognition (walking, running, cycling)
+  - **AI-powered fall detection with 99.5% accuracy**
+  - **Activity recognition (walking, still, falling, unknown)**
   - Custom health thresholds
 
 - **🌡️ Environmental Sensing**
@@ -170,11 +170,46 @@ Our solution stands out as a cost-effective and comprehensive alternative to pre
 • TinyML Models<br>
 • Edge Inference<br>
 • Time-series Analysis<br>
-• Sensor Fusion
+• Sensor Fusion<br>
+• <a href="https://studio.edgeimpulse.com/public/657930/live">Edge Impulse Fall Detection</a>
 </td>
 </tr>
 </table>
 </div>
+
+## 🤖 Machine Learning & Activity Recognition
+
+### Edge Impulse Integration
+
+LifeGuard incorporates advanced machine learning capabilities through **Edge Impulse** for real-time activity classification and fall detection:
+
+🔗 **[View Edge Impulse Project](https://studio.edgeimpulse.com/public/657930/live)**
+
+#### Model Specifications:
+- **Model Type**: Accelerometer-based activity classification
+- **Target Device**: Arduino Nicla Vision (Cortex-M7 480MHz)
+- **Performance**: 99.5% test accuracy, 100% validation accuracy
+- **Latency**: 2ms (real-time capable)
+- **Memory Footprint**: 1.8K RAM, 17.0K Flash
+- **Optimization**: Quantized (int8) for embedded deployment
+
+#### Activity Classifications:
+- **🚶 Walking**: Normal walking activity detection
+- **🧍 Still**: Stationary/resting state recognition  
+- **⚠️ Falling**: Critical fall event detection with 99.5% accuracy
+- **❓ Unknown**: Unclassified movement patterns
+
+#### Technical Details:
+- **Input Data**: AccX, AccY, AccZ @ 10Hz sampling rate
+- **Sample Window**: 1-second data windows
+- **Dataset**: 284 samples across 18+ minutes of training data
+- **Sensors**: 3-axis accelerometer for motion analysis
+
+This ML model enables:
+- **Automatic fall detection** with emergency contact notifications
+- **Activity pattern analysis** for health insights
+- **Risk assessment** based on movement behaviors
+- **Real-time processing** on low-power hardware
 
 ## 🚀 Getting Started
 
@@ -413,12 +448,8 @@ These endpoints are served from the Node-Server (hosted at `https://lifeguard-no
 
 | **Method** | **Endpoint**                    | **Description**                                      |
 |------------|---------------------------------|------------------------------------------------------|
-| POST       | `/api/rag/initialize`           | Initialize the RAG system (admin only)               |
-| POST       | `/api/rag/query`                | Query the RAG system (authenticated users)           |
-| POST       | `/api/rag/process/health`       | Process health data (authenticated users)            |
-| POST       | `/api/rag/process/environmental`| Process environmental data (authenticated users)     |
-| POST       | `/api/rag/process/medical`      | Process medical knowledge (admin only)               |
-| POST       | `/api/rag/process/profiles`     | Process user profiles (authenticated users)          |
+| POST       | `/api/upload`                   | Upload a PDF file for RAG processing                 |
+| POST       | `/api/ask`                      | Ask a question about the uploaded PDF documents      |
 
 ### User Notification Preferences Endpoints
 
@@ -434,7 +465,7 @@ These endpoints are served from the Node-Server (hosted at `https://lifeguard-no
 
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/AWESOME04"><img src="https://github.com/AWESOME04.png" width="100px;" alt="Evans Acheampong"/><br /><sub><b>Evans Acheampong</b></sub></a><br />Frontend & Hardware</td>
+    <td align="center"><a href="https://github.com/AWESOME04"><img src="https://github.com/AWESOME04.png" width="100px;" alt="Evans Acheampong"/><br /><sub><b>Evans Acheampong</b></sub></a><br />Full Stack & Hardware</td>
     <td align="center"><a href="https://github.com/mikkayadu"><img src="https://github.com/mikkayadu.png" width="100px;" alt="Michael Adu-Gyamfi"/><br /><sub><b>Michael Adu-Gyamfi</b></sub></a><br />Backend & ML</td>
   </tr>
 </table>

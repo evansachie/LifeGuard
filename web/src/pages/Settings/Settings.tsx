@@ -21,7 +21,7 @@ import ToggleSwitch from '../../components/Settings/ToggleSwitch';
 
 interface SettingsProps {
   isDarkMode: boolean;
-  toggleDarkMode?: () => void;
+  toggleTheme: () => void;
 }
 
 interface SettingsState {
@@ -34,7 +34,7 @@ interface SettingsState {
   emergencyContacts: boolean;
 }
 
-const SettingsPage = ({ isDarkMode, toggleDarkMode }: SettingsProps) => {
+const SettingsPage = ({ isDarkMode, toggleTheme }: SettingsProps) => {
   const [settings, setSettings] = useState<SettingsState>({
     notifications: true,
     email: '',
@@ -79,11 +79,9 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }: SettingsProps) => {
   }, []);
 
   const handleThemeToggle = (): void => {
-    if (toggleDarkMode) {
-      toggleDarkMode();
-      localStorage.setItem('theme', !isDarkMode ? 'dark' : 'light');
-      toast.success(`Switched to ${!isDarkMode ? 'dark' : 'light'} mode`);
-    }
+    // Use the toggleTheme function from props
+    toggleTheme();
+    toast.success(`Switched to ${!isDarkMode ? 'dark' : 'light'} mode`);
   };
 
   const handleSettingChange = <K extends keyof SettingsState>(

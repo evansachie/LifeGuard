@@ -66,16 +66,24 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
               localStorage.removeItem('token');
               localStorage.removeItem('userId');
               localStorage.removeItem('userName');
+              localStorage.removeItem('email');
               setToken(null);
             }
           }
         }
 
-        // Handle Google OAuth callback
+        // Handle Google OAuth callback - check for query parameters
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('token') && window.location.pathname === '/signin-google') {
+        const hasGoogleCallbackParams =
+          urlParams.get('token') &&
+          urlParams.get('userId') &&
+          window.location.pathname === '/dashboard';
+
+        if (hasGoogleCallbackParams) {
           try {
+            console.log('🔄 Processing Google OAuth callback...');
             const googleData = await handleGoogleCallback();
+
             setToken(googleData.token);
             const userData: User = {
               id: googleData.userId,
@@ -86,12 +94,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             };
             setUser(userData);
 
-            // Redirect to dashboard after successful Google login
+            // Clean URL and show success message
             window.history.replaceState({}, document.title, '/dashboard');
             toast.success('Successfully logged in with Google!');
           } catch (error) {
             console.error('Google login callback error:', error);
             toast.error('Failed to complete Google login');
+            // Redirect to login page on failure
+            window.location.href = '/log-in';
           }
         }
       } catch (error) {
@@ -156,7 +166,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const logout = (): void => {
-    // Clear all auth data
+    // Clear all auth data including email
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     localStorage.removeItem('userName');

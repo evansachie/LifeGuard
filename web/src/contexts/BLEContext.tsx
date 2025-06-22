@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect, useRef, ReactNode } fro
 import { toast } from 'react-toastify';
 import { handleError, getErrorMessage } from '../utils/errorHandler';
 import { BLEContextType, BLEDevice, SensorData, emptySensorData } from '../types/ble.types';
-import { firebaseDataService } from '../services/firebaseDataService';
+import { useFirebase } from './FirebaseContext';
 
 const ARDUINO_SERVICE_UUID = import.meta.env.VITE_SERVICE;
 const ARDUINO_TEMPERATURE_UUID = import.meta.env.VITE_TEMPERATURE;
@@ -31,6 +31,9 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
   const gattServerRef = useRef<BluetoothRemoteGATTServer | null>(null);
   const characteristicsRef = useRef<Map<string, BluetoothRemoteGATTCharacteristic>>(new Map());
   const sensorIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Use Firebase context
+  const { pushSensorData } = useFirebase();
 
   const connect = async (): Promise<void> => {
     if (!navigator.bluetooth) {
@@ -105,7 +108,6 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
         lastSeen: new Date().toISOString(),
         deviceType: 'arduino-nicla',
       };
-
       setConnectedDevice(device);
       setDevices((prev) => {
         const existingIndex = prev.findIndex((d) => d.id === device.id);
@@ -115,13 +117,13 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
           return updated;
         }
         return [...prev, device];
-      }); // Start reading sensor data periodically
-      startSensorReading();
+      });
 
-      // Update device status in Firebase
-      firebaseDataService
-        .updateDeviceStatus(device.id, device.name, true)
-        .catch((error) => console.warn('Failed to update device status in Firebase:', error));
+      // Start reading sensor data periodically - pass device to ensure it's available
+      startSensorReading(device);
+
+      // Update device status in Firebase (simplified for now)
+      console.log(`Device ${device.name} connected`);
 
       toast.success(`Connected to ${device.name}!`);
     } catch (error) {
@@ -162,13 +164,11 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
       setDevices((prev) => prev.map((d) => (d.id === deviceId ? { ...d, connected: false } : d)));
       setLatestSensorData(emptySensorData);
 
-      // Update device status in Firebase
-      const device = devices.find((d) => d.id === deviceId);
-      if (device) {
-        firebaseDataService
-          .updateDeviceStatus(deviceId, device.name || 'Arduino Device', false)
-          .catch((error) => console.warn('Failed to update device status in Firebase:', error));
-      }
+      // Update device status in Firebase (commented for now)
+      // const device = devices.find((d) => d.id === deviceId);
+      // if (device) {
+      //   // Could add device status update here
+      // }
 
       toast.success('Disconnected from Arduino device');
     } catch (error: unknown) {
@@ -230,15 +230,13 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
 
         // Stream motion data to Firebase immediately
         if (connectedDevice) {
-          firebaseDataService
-            .pushSensorData(
-              connectedDevice.id,
-              connectedDevice.name || 'Arduino Nicla Sense ME',
-              updatedData
-            )
-            .catch((error) => {
-              console.warn('Failed to push motion data to Firebase:', error);
-            });
+          pushSensorData(
+            connectedDevice.id,
+            connectedDevice.name || 'Arduino Nicla Sense ME',
+            updatedData
+          ).catch((error: unknown) => {
+            console.warn('Failed to push motion data to Firebase:', error);
+          });
         }
 
         return updatedData;
@@ -293,25 +291,23 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
     const value = characteristic.value;
     if (value && value.byteLength >= 16) {
       // 4 floats * 4 bytes each
-      const dataView = new DataView(value.buffer);
-      const x = dataView.getFloat32(0, true);
-      const y = dataView.getFloat32(4, true);
-      const z = dataView.getFloat32(8, true);
-      const w = dataView.getFloat32(12, true);
-
+      // const dataView = new DataView(value.buffer);
+      // const x = dataView.getFloat32(0, true);
+      // const y = dataView.getFloat32(4, true);
+      // const z = dataView.getFloat32(8, true);
+      // const w = dataView.getFloat32(12, true);
       // Could use quaternion for orientation calculation
-      console.log('Quaternion data:', { x, y, z, w });
+      // console.log('Quaternion data:', { x, y, z, w });
     }
   };
-
-  const startSensorReading = (): void => {
+  const startSensorReading = (device: BLEDevice): void => {
     if (sensorIntervalRef.current) {
       clearInterval(sensorIntervalRef.current);
     }
 
-    console.log('🚀 Starting sensor reading interval for device:', connectedDevice?.name);
+    console.log('🚀 Starting sensor reading interval for device:', device.name);
 
-    // Read sensor data every 3 seconds
+    // Read sensor data every 5 seconds
     sensorIntervalRef.current = setInterval(async () => {
       if (!gattServerRef.current || !gattServerRef.current.connected) {
         console.log('⚠️ GATT server not connected, skipping sensor read');
@@ -479,28 +475,21 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
               timestamp: new Date().toISOString(),
             };
 
-            // Only push to Firebase if we have a connected device and new data
-            if (connectedDevice) {
-              console.log(
-                '🔥 Pushing sensor data to Firebase with temp:',
-                newSensorData.environmental?.temperature
-              );
+            // Only push to Firebase if we have the device and new data
+            console.log(
+              '🔥 Pushing sensor data to Firebase with temp:',
+              newSensorData.environmental?.temperature
+            );
 
-              setTimeout(() => {
-                firebaseDataService
-                  .pushSensorData(
-                    connectedDevice.id,
-                    connectedDevice.name || 'Arduino Nicla Sense ME',
-                    updatedSensorData
-                  )
-                  .then(() => {
-                    console.log('✅ Successfully pushed data to Firebase');
-                  })
-                  .catch((error) => {
-                    console.error('❌ Failed to push to Firebase:', error);
-                  });
-              }, 0);
-            }
+            setTimeout(() => {
+              pushSensorData(device.id, device.name || 'Arduino Nicla Sense ME', updatedSensorData)
+                .then(() => {
+                  console.log('✅ Successfully pushed data to Firebase');
+                })
+                .catch((error: unknown) => {
+                  console.error('❌ Failed to push to Firebase:', error);
+                });
+            }, 0);
 
             return updatedSensorData;
           });
@@ -559,8 +548,10 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
       if (gattServerRef.current && gattServerRef.current.connected) {
         gattServerRef.current.disconnect();
       }
-      // Cleanup Firebase listeners
-      firebaseDataService.unsubscribeAll();
+      // Cleanup Firebase listeners (commented for now)
+      // if (firebaseDataService && firebaseDataService.unsubscribeAll) {
+      //   firebaseDataService.unsubscribeAll();
+      // }
     };
   }, []);
 

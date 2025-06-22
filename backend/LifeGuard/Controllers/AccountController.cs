@@ -10,6 +10,8 @@ using Identity.Features.Profile.CompleteProfile;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using LifeGuard.Services;
+using Microsoft.AspNetCore.Identity;
 
 namespace LifeGuard_API.Controllers
 {
@@ -19,12 +21,15 @@ namespace LifeGuard_API.Controllers
     {
         private readonly IAuthService _authService;
         private readonly IMediator mediator;
-        public AccountController(IAuthService authService, IMediator mediator)
+        private readonly IReturnUrlValidator _returnUrlValidator;
+        public AccountController(IAuthService authService, IMediator mediator, IReturnUrlValidator returnUrlValidator)
         {
             _authService = authService;
             this.mediator = mediator;
+            _returnUrlValidator = returnUrlValidator;
 
         }
+
         [Route("/")]
         [HttpGet]
         public IActionResult BaseUrl()
@@ -179,9 +184,12 @@ namespace LifeGuard_API.Controllers
 
 
         [HttpGet("google-login")]
-        public IActionResult GoogleLogin()
+        public IActionResult GoogleLogin([FromQuery] string returnUrl)
         {
+            if (string.IsNullOrEmpty(returnUrl) || _returnUrlValidator.ValidUrl(returnUrl))
+                returnUrl = _returnUrlValidator.DefaultUrl;
             var properties = new AuthenticationProperties { RedirectUri = Url.Action(nameof(GoogleResponse),null, null, "https") };
+            properties.Items["returnUrl"] = returnUrl;
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
 
@@ -194,7 +202,8 @@ namespace LifeGuard_API.Controllers
             if (!authenticateResult.Succeeded)
                 return Unauthorized();
 
-            var result = await _authService.HandleGoogleLoginAsync(authenticateResult.Principal);
+            authenticateResult.Properties.Items.TryGetValue("returnUrl", out var returnUrl);
+            var result = await _authService.HandleGoogleLoginAsync(authenticateResult.Principal, returnUrl);
 
             if (!result.IsSuccess)
                 return StatusCode((int)result.StatusCode, result.Message);
