@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class FreesoundService {
-  static final String baseUrl = 'https://freesound.org/apiv2';
+  static const String baseUrl = 'https://freesound.org/apiv2';
   static final String apiKey = dotenv.env['FREESOUND_API_KEY'] ?? '';
 
   final Map<String, String> categories = {

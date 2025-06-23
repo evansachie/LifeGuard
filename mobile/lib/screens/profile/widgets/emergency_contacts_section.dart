@@ -163,7 +163,7 @@ class EmergencyContactsSection extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Icon(
+                      const Icon(
                         Icons.phone,
                         color: Colors.green,
                         size: 20,

@@ -162,7 +162,7 @@ class BleService {
       
       // Start scanning - remove service filter to find all devices
       await FlutterBluePlus.startScan(
-        timeout: Duration(seconds: Constants.bleScanTimeoutSeconds),
+        timeout: const Duration(seconds: Constants.bleScanTimeoutSeconds),
         // Remove withServices filter to scan for all devices
         // withServices: [Guid(Constants.bleServiceUuid)],
       );
@@ -170,7 +170,7 @@ class BleService {
       debugPrint("Scan started, waiting for results...");
       
       // Wait for scan to complete
-      await Future.delayed(Duration(seconds: Constants.bleScanTimeoutSeconds));
+      await Future.delayed(const Duration(seconds: Constants.bleScanTimeoutSeconds));
       
       await scanSubscription.cancel();
       await FlutterBluePlus.stopScan();
@@ -196,7 +196,7 @@ class BleService {
       
       // Connect to device
       await deviceModel.device.connect(
-        timeout: Duration(seconds: Constants.bleConnectionTimeoutSeconds),
+        timeout: const Duration(seconds: Constants.bleConnectionTimeoutSeconds),
         autoConnect: false,
       );
       

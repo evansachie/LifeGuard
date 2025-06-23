@@ -85,13 +85,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     children: [
                       TextFormField(
                         controller: _nameController,
-                        decoration: InputDecoration(labelText: 'Full Name'),
+                        decoration: const InputDecoration(labelText: 'Full Name'),
                         validator: validateName,
                       ),
                       const SizedBox(height: 16),
                       TextFormField(
                         controller: _emailController,
-                        decoration: InputDecoration(labelText: 'Email'),
+                        decoration: const InputDecoration(labelText: 'Email'),
                         validator: validateEmail,
                         keyboardType: TextInputType.emailAddress,
                       ),

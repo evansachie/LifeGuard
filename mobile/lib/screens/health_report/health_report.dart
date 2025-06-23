@@ -298,7 +298,7 @@ class HealthReport extends StatelessWidget {
       ),
 
       bottomNavigationBar: Padding(
-        padding: EdgeInsets.only(
+        padding: const EdgeInsets.only(
           left: 16,
           right: 16,
           bottom: 16,
@@ -308,7 +308,7 @@ class HealthReport extends StatelessWidget {
           onPressed: () {
             showDialog(
               context: context,
-              builder: (context) => HealthReportModal(
+              builder: (context) => const HealthReportModal(
                 userData: {'name': 'Evans Acheampongg'},
               ),
             );
