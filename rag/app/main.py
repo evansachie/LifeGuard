@@ -11,7 +11,7 @@ app = FastAPI(
 )
 app.add_middleware(
 CORSMiddleware,
-    allow_origins=["https://lifeguard-vq69.onrender.com", "http://localhost:80/docs", "http://localhost:3000"],  
+    allow_origins=["https://lifeguard-vq69.onrender.com", "http://localhost:80/docs", "http://localhost:3000", "https://lifeguard-vert.vercel.app"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
