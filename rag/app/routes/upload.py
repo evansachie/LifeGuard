@@ -1,5 +1,6 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
-from app.core import loader, embedder
+from app.core.UploadUserDocs import upload_user_docs
+from app.core.loader import loader
 from app.core.pinecone_client import index
 import uuid
 
@@ -9,29 +10,29 @@ router = APIRouter()
 async def upload_pdf(user_id: str, file: UploadFile = File(...)):
     if not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are supported.")
-    pdf_bytes = await file.read()
-    chunks = loader.pdf_to_chunks(pdf_bytes)
-    if not chunks:
+    
+    doc_splits = await loader(file)
+    if not doc_splits:
         raise HTTPException(status_code=400, detail="No text found in PDF.")
-    embeddings = embedder.embed_texts(chunks)
+    
 
-    old_results = index.query(
-        vector=embeddings[0],  
-        filter={"user_id": {"$eq": user_id}},
-        top_k=1000,  
-        include_metadata=False,
-    )
-    old_ids = [match["id"] for match in old_results.get("matches", [])]
-    if old_ids:
-        index.delete(ids=old_ids)
-  
-    vectors = []
-    for i, (chunk, emb) in enumerate(zip(chunks, embeddings)):
-        vector_id = str(uuid.uuid4())
-        vectors.append({
-            "id": vector_id,
-            "values": emb,
-            "metadata": {"user_id": user_id, "chunk_index": i, "chunk": chunk},
-        })
-    index.upsert(vectors=vectors)
-    return {"message": f"Uploaded and indexed {len(chunks)} chunks for user {user_id}."}
+    try:
+        dummy_embedding = [0.0] * 1536 
+        
+        old_results = index.query(
+            vector=dummy_embedding,  
+            filter={"user_id": {"$eq": user_id}},
+            top_k=10000,  
+            include_metadata=False,
+        )
+        
+        old_ids = [match["id"] for match in old_results.get("matches", [])]
+        if old_ids:
+            index.delete(ids=old_ids)
+    
+    except Exception as e:
+        print(f"Error deleting old vectors: {e}")
+
+    upload_user_docs(doc_splits, user_id)
+
+    return {"message": f"Uploaded and indexed {len(doc_splits)} chunks for user {user_id}."}

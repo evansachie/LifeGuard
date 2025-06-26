@@ -1,11 +1,18 @@
 import os
 from pinecone import Pinecone, ServerlessSpec
+from dotenv import load_dotenv
+load_dotenv("app/.env")
+
+# PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
+# PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME", "health-reports")
+# PINECONE_CLOUD = os.getenv("PINECONE_CLOUD", "aws")           
+# PINECONE_REGION = os.getenv("PINECONE_REGION", "us-west-2")   
+
 
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME", "health-reports")
 PINECONE_CLOUD = os.getenv("PINECONE_CLOUD", "aws")           
 PINECONE_REGION = os.getenv("PINECONE_REGION", "us-west-2")   
-
 
 pc = Pinecone(api_key=PINECONE_API_KEY)
 
