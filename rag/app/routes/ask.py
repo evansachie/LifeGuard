@@ -18,12 +18,12 @@ async def ask_question(req: AskRequest):
     }
 
 
-    for chunk in graph.stream(rag_input):
-       for node, update in chunk.items():
-            print(f"Update from node: {node}")
-            print(update["messages"][-1])
+    # for chunk in graph.stream(rag_input):
+    #    for node, update in chunk.items():
+    #         print(f"Update from node: {node}")
+    #         print(update["messages"][-1])
 
-    # graph_output = graph.invoke(rag_input)
-    # response = graph_output["messages"][-1].content.strip()
+    graph_output = graph.invoke(rag_input)
+    response = graph_output["messages"][-1].content.strip()
 
-    return AskResponse(answer="okay")
+    return AskResponse(answer=response)
