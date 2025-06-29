@@ -15,6 +15,6 @@ namespace Application.Contracts
 
         public bool ValidateOtp(byte[] secretKey, string providedOtp);
 
-        public  Task SendOtpEmailAsync(string email, byte[] secretKey);
+        public  Task SendOtpEmailAsync(string email, string secretKey);
     }
 }
