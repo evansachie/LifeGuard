@@ -11,6 +11,7 @@ namespace Infrastructure.OTPService
 {
     public class OTPService : IOTPService
     {
+        private readonly IEncryptionHelper _encryptionHelper;
         private readonly IEmailService _emailService;
         private const int TotpStep = 60;
         private static readonly VerificationWindow VerificationWindow = new VerificationWindow(previous: 1, future: 1);
@@ -25,21 +26,24 @@ namespace Infrastructure.OTPService
             return KeyGeneration.GenerateRandomKey(keySize);
         }
 
-        public string GenerateOtp(byte[] secretKey)
+        public string GenerateOtp(string encryptedSecretKey)
         {
+            var secretKey = _encryptionHelper.Decrypt(encryptedSecretKey);
             var totp = new Totp(secretKey, step: TotpStep);
             return totp.ComputeTotp(DateTime.UtcNow);
         }
 
-        public bool ValidateOtp(byte[] secretKey, string providedOtp)
+
+        public bool ValidateOtp(string encryptedSecretKey, string providedOtp)
         {
+            var secretKey = _encryptionHelper.Decrypt(encryptedSecretKey);
             var totp = new Totp(secretKey, step: TotpStep);
             return totp.VerifyTotp(providedOtp, out long timeStepMatched, VerificationWindow);
         }
 
-        public async Task SendOtpEmailAsync(string email, byte[] secretKey)
+        public async Task SendOtpEmailAsync(string email, string encryptedSecretKey)
         {
-            var otp = GenerateOtp(secretKey);
+            var otp = GenerateOtp(encryptedSecretKey);
             var appName = "LifeGuard";
             var expiryTime = $"{TotpStep} seconds";
             var subject = $"Your OTP for {appName}";
