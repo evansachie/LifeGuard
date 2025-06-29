@@ -122,6 +122,16 @@ namespace Identity.Services
         }
 
 
+        private byte[] GenerateSecretKey(int keySize)
+        {
+            var key = new byte[keySize];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(key);
+            }
+            return key;
+        }
+
         public async Task<Result> Register(RegistrationRequest request)
         {
             var existingUser = await _userManager.FindByEmailAsync(request.Email);
