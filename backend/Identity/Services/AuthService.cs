@@ -147,6 +147,7 @@ namespace Identity.Services
                 Name = request.Name,
                 UserName = request.Email,
                 EmailConfirmed = false,
+                SecretKey = _encryptionHelper.Encrypt(GenerateSecretKey(32));
                 
             };
 
