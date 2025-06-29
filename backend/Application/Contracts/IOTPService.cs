@@ -11,10 +11,10 @@ namespace Application.Contracts
     {
         public byte[] GenerateSecretKey(int keySize = 20);
 
-        public string GenerateOtp(byte[] secretKey);
+        public string GenerateOtp(string encryptedSecretKey);
 
-        public bool ValidateOtp(byte[] secretKey, string providedOtp);
+        public bool ValidateOtp(string encryptedSecretKey, string providedOtp);
 
-        public  Task SendOtpEmailAsync(string email, string secretKey);
+        public  Task SendOtpEmailAsync(string email, string encryptedSecretKey);
     }
 }
