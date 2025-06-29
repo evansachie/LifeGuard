@@ -31,9 +31,7 @@ namespace Identity.Services
         private readonly string _jwtDurationInMinutes;
         private readonly string _frontEndUrl;
 
-        
-
-        public AuthService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailService emailService, IOTPService oTPService)
+        public AuthService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailService emailService, IOTPService oTPService, IEncryptionHelper encryptionHelper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -148,7 +146,7 @@ namespace Identity.Services
                 UserName = request.Email,
                 EmailConfirmed = false,
                 SecretKey = _encryptionHelper.Encrypt(GenerateSecretKey(32));
-                
+
             };
 
             var existingEmail = await _userManager.FindByEmailAsync(request.Email);
