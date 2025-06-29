@@ -10,6 +10,7 @@ using Application.Models.ApiResult;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.WebUtilities;
+using System.Security.Cryptography;
 
 
 
@@ -23,6 +24,7 @@ namespace Identity.Services
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailService _emailService;
         private readonly IOTPService _oTPService;
+        private readonly IEncryptionHelper _encryptionHelper;
         private readonly string _jwtKey;
         private readonly string _jwtIssuer;
         private readonly string _jwtAudience;
@@ -37,6 +39,7 @@ namespace Identity.Services
             _signInManager = signInManager;
             _emailService = emailService;
             _oTPService = oTPService;
+            _encryptionHelper = encryptionHelper;
 
             Env.Load("../.env.local");
             _jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
@@ -44,7 +47,7 @@ namespace Identity.Services
             _jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
             _jwtDurationInMinutes = Environment.GetEnvironmentVariable("JWT_DURATIONINMINUTES");
             _frontEndUrl = Environment.GetEnvironmentVariable("FRONTEND_URL");
-
+            _encryptionHelper = encryptionHelper;
         }
 
         public async Task<Result> Login(AuthRequest request)
