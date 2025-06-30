@@ -533,3 +533,4 @@ FodyWeavers.xsd
 **/obj/
 .qodo
 /backend/.env.local.txt
+/rag/app/.env
