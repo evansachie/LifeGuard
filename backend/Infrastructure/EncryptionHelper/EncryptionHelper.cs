@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 namespace Infrastructure.EncryptionHelper
 {
     public class EncryptionHelper : IEncryptionHelper
-    {
+    {   
         private  readonly byte[] AesKey = Convert.FromBase64String(Environment.GetEnvironmentVariable("AES_SECRET_KEY"));
-
+          
         public string Encrypt(byte[] data)
         {
             using var aes = Aes.Create();

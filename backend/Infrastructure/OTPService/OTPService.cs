@@ -16,9 +16,10 @@ namespace Infrastructure.OTPService
         private const int TotpStep = 60;
         private static readonly VerificationWindow VerificationWindow = new VerificationWindow(previous: 1, future: 1);
 
-        public OTPService(IEmailService emailService)
+        public OTPService(IEmailService emailService, IEncryptionHelper encryptionHelper)
         {
             _emailService = emailService;
+            _encryptionHelper = encryptionHelper;
         }
 
         public byte[] GenerateSecretKey(int keySize = 20)
