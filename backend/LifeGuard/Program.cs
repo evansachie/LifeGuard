@@ -21,6 +21,7 @@ using Application.Contracts.Photos;
 using Infrastructure.Photos;
 using Microsoft.AspNetCore.HttpOverrides;
 using LifeGuard.Services;
+using Infrastructure.EncryptionHelper;
 namespace LifeGuard
 {
     public class Program
@@ -69,12 +70,14 @@ namespace LifeGuard
             builder.Services.AddTransient<IAuthService, AuthService>();
             builder.Services.AddTransient<IEmailService, EmailService>();
             builder.Services.AddTransient<IOTPService, OTPService>();
+            builder.Services.AddTransient<IEncryptionHelper, EncryptionHelper>();
             
 
             builder.Services.AddScoped<IPhotoAccessor, PhotoAccessor>();
             builder.Services.AddScoped<IUserPhotoService, UserPhotoService>();
 
             builder.Services.AddScoped<IReturnUrlValidator, ReturnUrlValidator>();
+            
 
             builder.Services.AddAuthentication(options =>
             {
