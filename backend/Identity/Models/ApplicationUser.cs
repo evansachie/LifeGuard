@@ -18,7 +18,7 @@ namespace Identity.Models
         public int? Weight { get; set; }
         public int? Height { get; set; }
         public string? Bio {  get; set; }   
-        public string SecretKey { get; set; }
+        public string? SecretKey { get; set; }
         public string? PhotoUrl { get; set; }
         public string? PhotoPublicId { get; set; }
         
