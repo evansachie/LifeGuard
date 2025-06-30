@@ -139,20 +139,19 @@ namespace Identity.Services
                 return new Result(false, ResultStatusCode.Conflict, $"Username {request.Name} already exists.");
             }
 
-            var user = new ApplicationUser
-            {
-                Email = request.Email,
-                Name = request.Name,
-                UserName = request.Email,
-                EmailConfirmed = false,
-                SecretKey = _encryptionHelper.Encrypt(GenerateSecretKey(32));
-
-            };
-
             var existingEmail = await _userManager.FindByEmailAsync(request.Email);
 
             if (existingEmail == null)
             {
+                var user = new ApplicationUser
+                {
+                    Email = request.Email,
+                    Name = request.Name,
+                    UserName = request.Email,
+                    EmailConfirmed = false,
+                    SecretKey = _encryptionHelper.Encrypt(GenerateSecretKey(32))
+
+                };
                 var result = await _userManager.CreateAsync(user, request.Password);
 
                 if (result.Succeeded)
@@ -166,7 +165,7 @@ namespace Identity.Services
                         return new Result<RegistrationResponse>(true, ResultStatusCode.Success, new RegistrationResponse 
                         { 
                             UserId = user.Id,
-                            EmailVerified = true,
+                            EmailVerified = false,
                             AccountCreated = true,
                             Message = "Registration successful! Please verify your email."
                         });
