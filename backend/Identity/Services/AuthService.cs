@@ -139,9 +139,7 @@ namespace Identity.Services
                 return new Result(false, ResultStatusCode.Conflict, $"Username {request.Name} already exists.");
             }
 
-            var existingEmail = await _userManager.FindByEmailAsync(request.Email);
-
-            if (existingEmail == null)
+            if (existingUser == null)
             {
                 var user = new ApplicationUser
                 {
@@ -172,6 +170,7 @@ namespace Identity.Services
                     }
                     catch (Exception ex)
                     {
+                        Console.WriteLine(ex.Message);
                         return new Result<RegistrationResponse>(true, ResultStatusCode.Success, new RegistrationResponse 
                         { 
                             UserId = user.Id,
