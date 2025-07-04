@@ -31,7 +31,8 @@ namespace Infrastructure.HealthReportService
 
             var readings = await _firebaseSensorService.GetReadingsFromDevice30DaysAsync(deviceId, startTimestamp, endTimestamp);
 
-            var dataPoints = readings.Select(r => r.Id).ToList();
+            var dataPoints = readings.ToList();
+           
 
             if (dataPoints.Count == 0)
                 return null;
@@ -45,7 +46,7 @@ namespace Infrastructure.HealthReportService
                 AvgDailySteps = (int)Math.Round(dataPoints.Average(r => r.motionData.stepCount)),
                 AvgAmbientTemp = dataPoints.Average(r => r.environmental.temperature),
                 AvgHumidity = Math.Round(dataPoints.Average(r => r.environmental.humidity), 2),
-                AvgAirQualityIndex = (int)Math.Round(dataPoints.Average(r => r.environmental.aqi)),
+                AvgAirQualityIndex = (int)Math.Round(dataPoints.Average(r => r.environmental.airQuality.aqi)),
                 DataPointCount = dataPoints.Count,
 
             };
