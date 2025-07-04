@@ -22,6 +22,8 @@ using Infrastructure.Photos;
 using Microsoft.AspNetCore.HttpOverrides;
 using LifeGuard.Services;
 using Infrastructure.EncryptionHelper;
+using Firebase.Database;
+using Google.Apis.Auth.OAuth2;
 namespace LifeGuard
 {
     public class Program
