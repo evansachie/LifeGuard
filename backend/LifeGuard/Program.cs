@@ -28,7 +28,7 @@ namespace LifeGuard
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             string env = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
             Console.WriteLine(Directory.GetCurrentDirectory());
@@ -115,6 +115,50 @@ namespace LifeGuard
                     options.SaveTokens = true;
                     options.Scope.Add("email");
                 });
+
+            var credential = GoogleCredential
+                .FromFile("../lifeguard-5ff94-firebase-adminsdk-fbsvc-6ca46138c6.json")
+                .CreateScoped("https://www.googleapis.com/auth/firebase.database");
+
+            var accessToken = await credential.UnderlyingCredential.GetAccessTokenForRequestAsync();
+
+            var firebaseClient = new FirebaseClient(
+                "https://lifeguard-5ff94-default-rtdb.firebaseio.com/",
+                new FirebaseOptions
+                {
+                    AuthTokenAsyncFactory = () => Task.FromResult(accessToken)
+                }
+            );
+
+            //var service = new FirebaseSensorService(firebaseClient);
+
+            //// Replace with a real deviceId from your database
+            //string deviceId = "PjOcorx9Tb+g5RLi1EXWtA==";
+
+            //var readings = await service.GetReadingsForDevice(deviceId);
+
+            //Console.WriteLine($"Found {readings.Count} readings for device {deviceId}");
+
+
+            //foreach (var reading in readings)
+            //{
+            //    // Print some fields as an example
+            //    Console.WriteLine($"Timestamp: {reading.timestamp}");
+            //    if (reading.environmental != null)
+            //    {
+            //        Console.WriteLine($"  Temp: {reading.environmental.temperature}");
+            //        Console.WriteLine($"  Humidity: {reading.environmental.humidity}");
+            //        Console.WriteLine($"  AQI: {reading.environmental.airQuality?.aqi}");
+            //    }
+            //    if (reading.motionData != null && reading.motionData.accelerometer != null)
+            //    {
+            //        Console.WriteLine($"  Accel X: {reading.motionData.accelerometer.x}, Y: {reading.motionData.accelerometer.y}, Z: {reading.motionData.accelerometer.z}");
+            //    }
+            //    Console.WriteLine("---");
+            //}
+
+            builder.Services.AddSingleton<FirebaseClient>(firebaseClient);
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
