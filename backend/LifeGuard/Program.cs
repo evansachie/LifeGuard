@@ -24,6 +24,10 @@ using LifeGuard.Services;
 using Infrastructure.EncryptionHelper;
 using Firebase.Database;
 using Google.Apis.Auth.OAuth2;
+using Domain.Interfaces.HealthReport;
+using Infrastructure.HealthReportService;
+using Domain.Contracts.Firebase;
+using Infrastructure.FirebaseService;
 namespace LifeGuard
 {
     public class Program
@@ -73,6 +77,7 @@ namespace LifeGuard
             builder.Services.AddTransient<IEmailService, EmailService>();
             builder.Services.AddTransient<IOTPService, OTPService>();
             builder.Services.AddTransient<IEncryptionHelper, EncryptionHelper>();
+            
             
 
             builder.Services.AddScoped<IPhotoAccessor, PhotoAccessor>();
@@ -130,10 +135,14 @@ namespace LifeGuard
                 }
             );
 
+            builder.Services.AddSingleton<FirebaseClient>(firebaseClient);
+            builder.Services.AddTransient<IHealthReportService, HealthReportService>();
+            builder.Services.AddTransient<IFirebaseSensorService, FirebaseSensorService>();
+
             //var service = new FirebaseSensorService(firebaseClient);
 
             //// Replace with a real deviceId from your database
-            //string deviceId = "PjOcorx9Tb+g5RLi1EXWtA==";
+            //string deviceId = "";
 
             //var readings = await service.GetReadingsForDevice(deviceId);
 
@@ -157,7 +166,6 @@ namespace LifeGuard
             //    Console.WriteLine("---");
             //}
 
-            builder.Services.AddSingleton<FirebaseClient>(firebaseClient);
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
