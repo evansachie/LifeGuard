@@ -11,8 +11,7 @@ namespace Domain
     public class SensorReading : BaseEntity
     {
         public EnvironmentalData environmental { get; set; }
-        public AirQuality  airQuality { get; set; }
-        public MotionData motionData { get; set; }
+        public MotionData motion { get; set; }
         public long timestamp { get; set; }
         
 
