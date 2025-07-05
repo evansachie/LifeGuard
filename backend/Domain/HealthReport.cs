@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Domain
 {
-    public class HealthReport : BaseEntity
+    public class HealthReport 
     {
         public string DeviceId { get; set; }
         public DateTime ReportDate { get; set; }
