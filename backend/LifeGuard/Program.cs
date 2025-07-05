@@ -28,6 +28,8 @@ using Domain.Interfaces.HealthReport;
 using Infrastructure.HealthReportService;
 using Domain.Contracts.Firebase;
 using Infrastructure.FirebaseService;
+using Domain.Contracts.PDFService;
+using Infrastructure.PDFService;
 namespace LifeGuard
 {
     public class Program
@@ -135,9 +137,13 @@ namespace LifeGuard
                 }
             );
 
+            QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+
+
             builder.Services.AddSingleton<FirebaseClient>(firebaseClient);
             builder.Services.AddTransient<IHealthReportService, HealthReportService>();
             builder.Services.AddTransient<IFirebaseSensorService, FirebaseSensorService>();
+            builder.Services.AddSingleton<IPDFGeneratorService, PDFGeneratorService>();
 
             //var service = new FirebaseSensorService(firebaseClient);
 
