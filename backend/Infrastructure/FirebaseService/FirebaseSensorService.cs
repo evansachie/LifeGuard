@@ -1,4 +1,5 @@
 ﻿using Domain;
+using Domain.Contracts.Firebase;
 using Firebase.Database;
 using Firebase.Database.Query;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.FirebaseService
 {
-    public class FirebaseSensorService
+    public class FirebaseSensorService : IFirebaseSensorService
     {
         private readonly FirebaseClient _client;
 
@@ -31,16 +32,20 @@ namespace Infrastructure.FirebaseService
         }
 
 
-        public async Task<List<SensorReading>> GetReadingsFromDevice30DaysAsync(string deviceId, long startTimestamp, long endTimestamp)
+        public async Task<List<SensorReading>> GetReadingsFromDeviceAsync(string deviceId, long startTimestamp, long endTimestamp)
         {
             var readings = await _client
-            .Child("devices").Child(deviceId).Child("sensorData")
-            .OrderByKey()
-            .StartAt(startTimestamp.ToString())
-            .EndAt(endTimestamp.ToString())
+            .Child("devices")
+            .Child(deviceId)
+            .Child("sensorData")
             .OnceAsync<SensorReading>();
 
-            return readings.Select(r => r.Object).ToList();
+            var dataPoints = readings
+            .Select(r => r.Object)
+            .Where(r => r.timestamp >= startTimestamp && r.timestamp <= endTimestamp)
+            .ToList();
+
+            return dataPoints;
         }
     }
 }
