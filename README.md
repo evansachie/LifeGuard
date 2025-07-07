@@ -465,7 +465,7 @@ These endpoints are served from the Node-Server (hosted at `https://lifeguard-no
 
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/AWESOME04"><img src="https://github.com/AWESOME04.png" width="100px;" alt="Evans Acheampong"/><br /><sub><b>Evans Acheampong</b></sub></a><br />Full Stack & Hardware</td>
+    <td align="center"><a href="https://github.com/evansachie"><img src="https://github.com/evansachie.png" width="100px;" alt="Evans Acheampong"/><br /><sub><b>Evans Acheampong</b></sub></a><br />Full Stack & Hardware</td>
     <td align="center"><a href="https://github.com/mikkayadu"><img src="https://github.com/mikkayadu.png" width="100px;" alt="Michael Adu-Gyamfi"/><br /><sub><b>Michael Adu-Gyamfi</b></sub></a><br />Backend & ML</td>
   </tr>
 </table>
