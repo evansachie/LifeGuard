@@ -32,6 +32,11 @@ WORKDIR /app
 # Copy the published application
 COPY --from=build-env /app/out .
 
+COPY lifeguard-5ff94-firebase-adminsdk-fbsvc-6ca46138c6.json ./firebase.json
+
+# Set environment variable for your app to locate Firebase credentials
+ENV FIREBASE_CREDENTIAL_PATH=/app/firebase.json
+
 # Ensure the PATH includes the directory where dotnet-ef is installed
 ENV PATH="$PATH:/root/.dotnet/tools"
 
