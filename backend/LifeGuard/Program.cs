@@ -123,12 +123,13 @@ namespace LifeGuard
                     options.Scope.Add("email");
                 });
 
-            var credential = GoogleCredential
-                .FromFile("../lifeguard-5ff94-firebase-adminsdk-fbsvc-6ca46138c6.json")
-                .CreateScoped("https://www.googleapis.com/auth/firebase.database");
+            var credentialPath = Environment.GetEnvironmentVariable("FIREBASE_CREDENTIAL_PATH")
+         ?? "../lifeguard-5ff94-firebase-adminsdk-fbsvc-6ca46138c6.json";
+
+            GoogleCredential credential = GoogleCredential.FromFile(credentialPath).CreateScoped("https://www.googleapis.com/auth/firebase.database");
 
             var accessToken = await credential.UnderlyingCredential.GetAccessTokenForRequestAsync();
-
+            
             var firebaseClient = new FirebaseClient(
                 "https://lifeguard-5ff94-default-rtdb.firebaseio.com/",
                 new FirebaseOptions
