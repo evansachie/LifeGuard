@@ -29,23 +29,23 @@ export async function resetUserPassword(
 
 export async function loginUser(email: string, password: string): Promise<AuthResponse> {
   try {
-    const response = await apiMethods.login({ email, password });
+  const response = await apiMethods.login({ email, password });
 
-    if (!response.isSuccess || !response.data) {
-      throw new Error(response.message || 'Login failed');
-    }
+  if (!response.isSuccess || !response.data) {
+    throw new Error(response.message || 'Login failed');
+  }
 
-    const { data } = response;
+  const { data } = response;
 
-    if (!data.token || !data.id || !data.userName) {
-      throw new Error('Invalid login response data');
-    }
+  if (!data.token || !data.id || !data.userName) {
+    throw new Error('Invalid login response data');
+  }
 
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('userId', data.id);
-    localStorage.setItem('userName', data.userName);
+  localStorage.setItem('token', data.token);
+  localStorage.setItem('userId', data.id);
+  localStorage.setItem('userName', data.userName);
 
-    return data;
+  return data;
   } catch (error) {
     console.error('Login error:', error);
 
@@ -54,7 +54,7 @@ export async function loginUser(email: string, password: string): Promise<AuthRe
       throw new Error(
         'Login is taking longer than usual. The server may be starting up, please try again.'
       );
-    }
+}
 
     throw error;
   }
@@ -169,6 +169,7 @@ export const handleGoogleCallback = async (): Promise<{
     // Store authentication data in localStorage
     localStorage.setItem('token', token);
     localStorage.setItem('userId', userId);
+    localStorage.setItem('userName', userName || email);
     localStorage.setItem('email', email);
     localStorage.setItem('userName', userName);
 

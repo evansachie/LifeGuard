@@ -158,6 +158,7 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
         clearInterval(sensorIntervalRef.current);
         sensorIntervalRef.current = null;
       }
+
       setConnectedDevice(null);
       setDevices((prev) => prev.map((d) => (d.id === deviceId ? { ...d, connected: false } : d)));
       setLatestSensorData(emptySensorData);
@@ -179,6 +180,7 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
   };
 
   const handleDeviceDisconnected = () => {
+    console.log('Arduino device disconnected');
     setConnectedDevice(null);
     setLatestSensorData(emptySensorData);
 
@@ -186,6 +188,8 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
       clearInterval(sensorIntervalRef.current);
       sensorIntervalRef.current = null;
     }
+
+    toast.warning('Arduino device disconnected');
   };
 
   // Handle accelerometer data
@@ -200,32 +204,32 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
       const z = dataView.getFloat32(8, true);
       setLatestSensorData((prev) => {
         const updatedData = {
-          ...prev,
-          motion: {
-            ...prev.motion,
-            accelerometer: { x, y, z },
-            gyroscope: prev.motion?.gyroscope || { x: 0, y: 0, z: 0 },
-            magnetometer: prev.motion?.magnetometer || { x: 0, y: 0, z: 0 },
-            activity: prev.motion?.activity || 'stationary',
-            stepCount: prev.motion?.stepCount || 0,
-            fallDetected: prev.motion?.fallDetected || false,
-            timestamp: new Date().toISOString(),
-          },
-          environmental: prev.environmental || {
-            temperature: 0,
-            humidity: 0,
-            pressure: 0,
-            airQuality: { aqi: 0, co2: 0, voc: 0, pm25: 0, pm10: 0 },
-            timestamp: new Date().toISOString(),
-          },
-          health: prev.health || {
-            heartRate: 0,
-            bloodPressure: { systolic: 0, diastolic: 0 },
-            oxygenSaturation: 0,
-            bodyTemperature: 0,
-            timestamp: new Date().toISOString(),
-          },
+        ...prev,
+        motion: {
+          ...prev.motion,
+          accelerometer: { x, y, z },
+          gyroscope: prev.motion?.gyroscope || { x: 0, y: 0, z: 0 },
+          magnetometer: prev.motion?.magnetometer || { x: 0, y: 0, z: 0 },
+          activity: prev.motion?.activity || 'stationary',
+          stepCount: prev.motion?.stepCount || 0,
+          fallDetected: prev.motion?.fallDetected || false,
           timestamp: new Date().toISOString(),
+        },
+        environmental: prev.environmental || {
+          temperature: 0,
+          humidity: 0,
+          pressure: 0,
+          airQuality: { aqi: 0, co2: 0, voc: 0, pm25: 0, pm10: 0 },
+          timestamp: new Date().toISOString(),
+        },
+        health: prev.health || {
+          heartRate: 0,
+          bloodPressure: { systolic: 0, diastolic: 0 },
+          oxygenSaturation: 0,
+          bodyTemperature: 0,
+          timestamp: new Date().toISOString(),
+        },
+        timestamp: new Date().toISOString(),
         };
 
         // Stream motion data to Firebase immediately
@@ -239,7 +243,7 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
             .catch((error) => {
               console.warn('Failed to push motion data to Firebase:', error);
             });
-        }
+    }
 
         return updatedData;
       });
@@ -321,6 +325,7 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
       try {
         console.log('📖 Reading sensor data from Arduino Nicla Sense ME...');
         const chars = characteristicsRef.current;
+        const newSensorData: Partial<SensorData> = {};
 
         // Initialize with proper types to avoid TypeScript errors
         const newSensorData: SensorData = {
@@ -355,68 +360,68 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
         const tempChar = chars.get('temperature');
         if (tempChar) {
           try {
-            const tempValue = await tempChar.readValue();
+          const tempValue = await tempChar.readValue();
             // Arduino sends temperature as float
-            const temperature = tempValue.getFloat32(0, true);
+          const temperature = tempValue.getFloat32(0, true);
             console.log('🌡️ Temperature read:', temperature, '°C');
 
             // Fix TypeScript error by ensuring newSensorData.environmental is defined
-            newSensorData.environmental!.temperature = temperature;
+          newSensorData.environmental!.temperature = temperature;
             hasNewData = true;
           } catch (tempError) {
             console.warn('⚠️ Failed to read temperature:', tempError);
-          }
+        }
         }
 
         // Read humidity (matches Arduino code - onHumidityCharacteristicRead)
         const humChar = chars.get('humidity');
         if (humChar) {
           try {
-            const humValue = await humChar.readValue();
+          const humValue = await humChar.readValue();
             // Arduino sends humidity as uint8 (truncated float)
             const humidity = humValue.getUint8(0);
             console.log('💧 Humidity read:', humidity, '%');
 
             // Fix TypeScript error by ensuring newSensorData.environmental is defined
-            newSensorData.environmental!.humidity = humidity;
+          newSensorData.environmental!.humidity = humidity;
             hasNewData = true;
           } catch (humError) {
             console.warn('⚠️ Failed to read humidity:', humError);
-          }
+        }
         }
 
         // Read pressure (matches Arduino code - onPressureCharacteristicRead)
         const pressureChar = chars.get('pressure');
         if (pressureChar) {
           try {
-            const pressureValue = await pressureChar.readValue();
+          const pressureValue = await pressureChar.readValue();
             // Arduino sends pressure as float
-            const pressure = pressureValue.getFloat32(0, true);
+          const pressure = pressureValue.getFloat32(0, true);
             console.log('📊 Pressure read:', pressure, 'hPa');
 
             // Fix TypeScript error by ensuring newSensorData.environmental is defined
-            newSensorData.environmental!.pressure = pressure;
+          newSensorData.environmental!.pressure = pressure;
             hasNewData = true;
           } catch (pressError) {
             console.warn('⚠️ Failed to read pressure:', pressError);
-          }
+        }
         }
 
         // Read CO2 (matches Arduino code - onCo2CharacteristicRead)
         const co2Char = chars.get('co2');
         if (co2Char) {
           try {
-            const co2Value = await co2Char.readValue();
+          const co2Value = await co2Char.readValue();
             // Arduino sends CO2 as uint32
-            const co2 = co2Value.getUint32(0, true);
+          const co2 = co2Value.getUint32(0, true);
             console.log('🌬️ CO2 read:', co2, 'ppm');
 
             // Fix TypeScript error by ensuring newSensorData.environmental and airQuality are defined
-            newSensorData.environmental!.airQuality!.co2 = co2;
+          newSensorData.environmental!.airQuality!.co2 = co2;
             hasNewData = true;
           } catch (co2Error) {
             console.warn('⚠️ Failed to read CO2:', co2Error);
-          }
+        }
         }
 
         // Read gas/AQI (matches Arduino code - onGasCharacteristicRead and onBsecCharacteristicRead)
@@ -431,8 +436,8 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
               aqi = bsecValue.getFloat32(0, true);
               console.log('🌿 BSEC IAQ read:', aqi);
             } else if (gasChar) {
-              const gasValue = await gasChar.readValue();
-              const gas = gasValue.getUint32(0, true);
+          const gasValue = await gasChar.readValue();
+          const gas = gasValue.getUint32(0, true);
               // Convert gas resistance to AQI approximation
               aqi = Math.max(0, Math.min(500, gas / 1000));
               console.log('💨 Gas read:', gas, '-> AQI approximation:', aqi);
@@ -452,21 +457,30 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
           // Update sensor data with new readings and keep motion data from notifications
           setLatestSensorData((prev) => {
             const updatedSensorData: SensorData = {
-              ...prev,
-              environmental: {
+          ...prev,
+          environmental: {
                 // Fix TypeScript errors by using non-null assertions or providing default values
                 temperature: newSensorData.environmental?.temperature ?? 0,
                 humidity: newSensorData.environmental?.humidity ?? 0,
                 pressure: newSensorData.environmental?.pressure ?? 0,
-                airQuality: {
+            airQuality: {
                   aqi: newSensorData.environmental?.airQuality?.aqi ?? 0,
                   co2: newSensorData.environmental?.airQuality?.co2 ?? 0,
-                  voc: prev.environmental?.airQuality?.voc || 0.1,
-                  pm25: prev.environmental?.airQuality?.pm25 || 10,
-                  pm10: prev.environmental?.airQuality?.pm10 || 15,
-                },
-                timestamp: new Date().toISOString(),
-              },
+              voc: prev.environmental?.airQuality?.voc || 0.1,
+              pm25: prev.environmental?.airQuality?.pm25 || 10,
+              pm10: prev.environmental?.airQuality?.pm10 || 15,
+            },
+            timestamp: new Date().toISOString(),
+          },
+          motion: {
+            accelerometer: prev.motion?.accelerometer || { x: 0, y: 0, z: 0 },
+            gyroscope: prev.motion?.gyroscope || { x: 0, y: 0, z: 0 },
+            magnetometer: prev.motion?.magnetometer || { x: 0, y: 0, z: 0 },
+            activity: determineActivity(prev.motion?.accelerometer),
+            stepCount: prev.motion?.stepCount || Math.floor(Math.random() * 1000),
+            fallDetected: false, // Disable fall detection during setup/connection
+            timestamp: new Date().toISOString(),
+          },
               motion: prev.motion || {
                 accelerometer: { x: 0, y: 0, z: 0 },
                 gyroscope: { x: 0, y: 0, z: 0 },
@@ -474,9 +488,9 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
                 activity: 'stationary',
                 stepCount: 0,
                 fallDetected: false,
-                timestamp: new Date().toISOString(),
-              },
-              timestamp: new Date().toISOString(),
+            timestamp: new Date().toISOString(),
+          },
+          timestamp: new Date().toISOString(),
             };
 
             // Only push to Firebase if we have a connected device and new data
@@ -549,7 +563,9 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
 
   const sendCommand = async (deviceId: string, command: string): Promise<void> => {
     console.log(`Sending command "${command}" to device ${deviceId}`);
+    // Could implement RGB LED control or other commands
   };
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {

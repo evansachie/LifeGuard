@@ -60,6 +60,13 @@ export const API_ENDPOINTS = {
   REMOVE_FAVORITE: (userId: string, soundId: string): string =>
     `${NODE_API_URL}/api/favorite-sounds/${userId}/${soundId}`,
 
+  RAG_QUERY: `${NODE_API_URL}/api/rag/query`,
+  RAG_INITIALIZE: `${NODE_API_URL}/api/rag/initialize`,
+  RAG_PROCESS_HEALTH: `${NODE_API_URL}/api/rag/process/health`,
+  RAG_PROCESS_ENVIRONMENTAL: `${NODE_API_URL}/api/rag/process/environmental`,
+  RAG_PROCESS_MEDICAL: `${NODE_API_URL}/api/rag/process/medical`,
+  RAG_PROCESS_PROFILES: `${NODE_API_URL}/api/rag/process/profiles`,
+
   RAG_UPLOAD_PDF: `${RAG_BASE_URL}/api/upload`,
   RAG_ASK_QUESTION: `${RAG_BASE_URL}/api/ask`,
 
@@ -206,7 +213,7 @@ export const fetchApi = async <T = any>(
     }
 
     throw error;
-  }
+    }
 };
 
 // Add retry wrapper for critical operations
@@ -242,8 +249,8 @@ export const fetchWithRetry = async <T = any>(
           error.message.includes('400') ||
           error.message.includes('404')
         ) {
-          throw error;
-        }
+    throw error;
+  }
       }
 
       if (attempt < maxRetries) {
@@ -334,8 +341,8 @@ export const apiMethods = {
     fetchWithRetry<ApiResponse<AuthResponse>>(
       API_ENDPOINTS.LOGIN,
       {
-        method: 'POST',
-        body: JSON.stringify(credentials),
+      method: 'POST',
+      body: JSON.stringify(credentials),
       },
       3,
       2000
@@ -345,8 +352,8 @@ export const apiMethods = {
     fetchWithRetry<ApiResponse<RegistrationResponse>>(
       API_ENDPOINTS.REGISTER,
       {
-        method: 'POST',
-        body: JSON.stringify(userData),
+      method: 'POST',
+      body: JSON.stringify(userData),
       },
       3,
       2000
@@ -357,8 +364,8 @@ export const apiMethods = {
     fetchWithRetry<ApiResponse<void>>(
       API_ENDPOINTS.VERIFY_OTP,
       {
-        method: 'POST',
-        body: JSON.stringify(data),
+      method: 'POST',
+      body: JSON.stringify(data),
       },
       2,
       1000
@@ -368,8 +375,8 @@ export const apiMethods = {
     fetchWithRetry<ApiResponse<void>>(
       API_ENDPOINTS.RESEND_OTP,
       {
-        method: 'POST',
-        body: JSON.stringify(data),
+      method: 'POST',
+      body: JSON.stringify(data),
       },
       2,
       1000

@@ -21,11 +21,20 @@ using Application.Contracts.Photos;
 using Infrastructure.Photos;
 using Microsoft.AspNetCore.HttpOverrides;
 using LifeGuard.Services;
+using Infrastructure.EncryptionHelper;
+using Firebase.Database;
+using Google.Apis.Auth.OAuth2;
+using Domain.Interfaces.HealthReport;
+using Infrastructure.HealthReportService;
+using Domain.Contracts.Firebase;
+using Infrastructure.FirebaseService;
+using Domain.Contracts.PDFService;
+using Infrastructure.PDFService;
 namespace LifeGuard
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             string env = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
             Console.WriteLine(Directory.GetCurrentDirectory());
@@ -69,12 +78,15 @@ namespace LifeGuard
             builder.Services.AddTransient<IAuthService, AuthService>();
             builder.Services.AddTransient<IEmailService, EmailService>();
             builder.Services.AddTransient<IOTPService, OTPService>();
+            builder.Services.AddTransient<IEncryptionHelper, EncryptionHelper>();
+            
             
 
             builder.Services.AddScoped<IPhotoAccessor, PhotoAccessor>();
             builder.Services.AddScoped<IUserPhotoService, UserPhotoService>();
 
             builder.Services.AddScoped<IReturnUrlValidator, ReturnUrlValidator>();
+            
 
             builder.Services.AddAuthentication(options =>
             {
@@ -110,6 +122,58 @@ namespace LifeGuard
                     options.SaveTokens = true;
                     options.Scope.Add("email");
                 });
+
+            var credentialPath = Environment.GetEnvironmentVariable("FIREBASE_CREDENTIAL_PATH")
+         ?? "../lifeguard-5ff94-firebase-adminsdk-fbsvc-6ca46138c6.json";
+
+            GoogleCredential credential = GoogleCredential.FromFile(credentialPath).CreateScoped("https://www.googleapis.com/auth/firebase.database");
+
+            var accessToken = await credential.UnderlyingCredential.GetAccessTokenForRequestAsync();
+            
+            var firebaseClient = new FirebaseClient(
+                "https://lifeguard-5ff94-default-rtdb.firebaseio.com/",
+                new FirebaseOptions
+                {
+                    AuthTokenAsyncFactory = () => Task.FromResult(accessToken)
+                }
+            );
+
+            QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+
+
+            builder.Services.AddSingleton<FirebaseClient>(firebaseClient);
+            builder.Services.AddTransient<IHealthReportService, HealthReportService>();
+            builder.Services.AddTransient<IFirebaseSensorService, FirebaseSensorService>();
+            builder.Services.AddSingleton<IPDFGeneratorService, PDFGeneratorService>();
+
+            //var service = new FirebaseSensorService(firebaseClient);
+
+            //// Replace with a real deviceId from your database
+            //string deviceId = "";
+
+            //var readings = await service.GetReadingsForDevice(deviceId);
+
+            //Console.WriteLine($"Found {readings.Count} readings for device {deviceId}");
+
+
+            //foreach (var reading in readings)
+            //{
+            //    // Print some fields as an example
+            //    Console.WriteLine($"Timestamp: {reading.timestamp}");
+            //    if (reading.environmental != null)
+            //    {
+            //        Console.WriteLine($"  Temp: {reading.environmental.temperature}");
+            //        Console.WriteLine($"  Humidity: {reading.environmental.humidity}");
+            //        Console.WriteLine($"  AQI: {reading.environmental.airQuality?.aqi}");
+            //    }
+            //    if (reading.motionData != null && reading.motionData.accelerometer != null)
+            //    {
+            //        Console.WriteLine($"  Accel X: {reading.motionData.accelerometer.x}, Y: {reading.motionData.accelerometer.y}, Z: {reading.motionData.accelerometer.z}");
+            //    }
+            //    Console.WriteLine("---");
+            //}
+
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
@@ -145,6 +209,15 @@ namespace LifeGuard
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "LifeGuard", Version = "1.0.0" });
             }
             );
+
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("EmailConfirmed", policy =>
+                policy.RequireAssertion(context =>
+                context.User.HasClaim(c => c.Type == "email_verified" && c.Value == "true")));
+            }
+            );
+                
 
             builder.Services.AddCors(options =>
             {

@@ -81,7 +81,8 @@ const SettingsPage = ({ isDarkMode, toggleTheme }: SettingsProps) => {
   const handleThemeToggle = (): void => {
     // Use the toggleTheme function from props
     toggleTheme();
-    toast.success(`Switched to ${!isDarkMode ? 'dark' : 'light'} mode`);
+      toast.success(`Switched to ${!isDarkMode ? 'dark' : 'light'} mode`);
+    }
   };
 
   const handleSettingChange = <K extends keyof SettingsState>(

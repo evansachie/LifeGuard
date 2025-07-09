@@ -67,6 +67,9 @@ export const useChatHistory = (): ChatHistoryHook => {
       text,
       timestamp: new Date().toISOString(),
     };
+    setChatHistory((prev) => [...prev, message]);
+    return message;
+  };
 
     setMessages((prev) => [...prev, newMessage]);
     return newMessage;
@@ -78,12 +81,15 @@ export const useChatHistory = (): ChatHistoryHook => {
       messageCounter++;
       const newMessage: Message = {
         id: `${Date.now().toString()}_${messageCounter}`,
-        type: 'assistant',
+      type: 'assistant',
         text,
-        timestamp: new Date().toISOString(),
+      timestamp: new Date().toISOString(),
         isLoading,
         source,
-      };
+    };
+    setChatHistory((prev) => [...prev, message]);
+    return message;
+  };
 
       setMessages((prev) => [...prev, newMessage]);
       return newMessage;
@@ -123,7 +129,10 @@ export const useChatHistory = (): ChatHistoryHook => {
         const cleanedText = response.substring(prefix.length).trim();
         // Remove any leading punctuation
         return cleanedText.replace(/^[,.?!:;\s]+/, '');
-      }
+    }
+
+    if (lowerQuery.includes('exercise') || lowerQuery.includes('workout')) {
+      return 'Regular exercise is important for overall health. Aim for at least 150 minutes of moderate aerobic activity per week, plus strength training exercises. Start slowly and gradually increase intensity. Always consult your doctor before starting a new exercise program.';
     }
 
     return response;
@@ -133,7 +142,8 @@ export const useChatHistory = (): ChatHistoryHook => {
   const sendQuery = async (query: string) => {
     if (!query.trim()) return;
 
-    addUserMessage(query);
+    try {
+      addUserMessage(query);
 
     // Cancel any previous request
     if (abortControllerRef.current) {
@@ -150,7 +160,7 @@ export const useChatHistory = (): ChatHistoryHook => {
       }
 
       // Try RAG first if user has context
-      try {
+          try {
         const loadingMsgId = addAssistantMessage(
           'Analyzing your health data...',
           true,
@@ -158,11 +168,11 @@ export const useChatHistory = (): ChatHistoryHook => {
         ).id;
 
         // Query the RAG system with user ID
-        const ragResponse = await ragService.askQuestion({
-          user_id: userId,
-          question: query,
-          top_k: 3,
-        });
+            const ragResponse = await ragService.askQuestion({
+              user_id: userId,
+              question: query,
+              top_k: 3,
+            });
 
         // Check if we got a "no context" response from RAG
         if (ragResponse.answer.includes('No relevant document chunks found')) {
@@ -237,6 +247,6 @@ export const useChatHistory = (): ChatHistoryHook => {
     addAssistantMessage,
     updateMessage,
   };
-};
+  };
 
 export default useChatHistory;

@@ -86,9 +86,8 @@ namespace Identity.Migrations
                     b.Property<string>("PhotoUrl")
                         .HasColumnType("text");
 
-                    b.Property<byte[]>("SecretKey")
-                        .IsRequired()
-                        .HasColumnType("bytea");
+                    b.Property<string>("SecretKey")
+                        .HasColumnType("text");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
@@ -119,17 +118,16 @@ namespace Identity.Migrations
                         {
                             Id = "88k76378-681a-4044-97ed-4ab612217206",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "32cd47f8-3e24-4e55-8a7f-c2def450e98f",
+                            ConcurrencyStamp = "9adee781-66d0-4243-a388-0a5351bbfa02",
                             Email = "smartshuttle4@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             Name = "System Admin",
                             NormalizedEmail = "SMARTSHUTTLE4@GMAIL.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEC+EOz1EWIcwMqC1A3IqVsi2VjtWXCAptODjy9lg1uRAePdO1amT3AFs7Zry8aTEvg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEhA1Q1BISVVRIzct5auzhiHGqzIEIYcScMic8D+259YtSASAi/dGmiHimqwJwlRlg==",
                             PhoneNumberConfirmed = false,
-                            SecretKey = new byte[] { 24, 73, 59, 51, 78, 168, 168, 15, 1, 176, 120, 129, 115, 55, 7, 107, 239, 203, 21, 69, 234, 77, 180, 42, 166, 182, 1, 162, 32, 42, 20, 122 },
-                            SecurityStamp = "063c348e-6400-4359-940b-324efd5bf88c",
+                            SecurityStamp = "b05be947-729c-4688-b9a4-8379b6b3c6c4",
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         },
@@ -137,17 +135,16 @@ namespace Identity.Migrations
                         {
                             Id = "7a223968-23b4-4652-z7b7-8574d048cdb9",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "0ca96550-113f-4946-b0c1-b0998632ff36",
+                            ConcurrencyStamp = "4aa1d8aa-08fe-4e00-a381-50e820cb4306",
                             Email = "madugyamfi76@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             Name = "Michael Adu-Gyamfi",
                             NormalizedEmail = "madugyamfi76@gmail.com",
                             NormalizedUserName = "madugyamfi76@gmail.com",
-                            PasswordHash = "AQAAAAIAAYagAAAAENnr/y+OXIRwhLBI4WUiJ8HW95QznZbajaocDT+YP+vSfz0/BZkVUVwOeg5jXcBHdw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEAF8b8T2ookega5sdPgofDZ9GJDjKq1k8VZbxhCJSw5QEAqgsDKUQYuKN4LVYQsrpQ==",
                             PhoneNumberConfirmed = false,
-                            SecretKey = new byte[] { 183, 31, 8, 255, 134, 185, 32, 173, 204, 200, 165, 26, 13, 91, 179, 159, 20, 98, 131, 8, 48, 232, 122, 188, 21, 245, 142, 61, 164, 246, 73, 75 },
-                            SecurityStamp = "198c6662-ce4a-427d-a1f4-6564e623a8cf",
+                            SecurityStamp = "dbb6519c-60a9-4f80-ac2e-b5fd6bd5c595",
                             TwoFactorEnabled = false,
                             UserName = "madugyamfi76@gmail.com"
                         });

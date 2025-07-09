@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Application.Contracts;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,26 +18,9 @@ namespace Identity.Models
         public int? Weight { get; set; }
         public int? Height { get; set; }
         public string? Bio {  get; set; }   
-
-
-        public byte[] SecretKey { get; private set; }
-
+        public string? SecretKey { get; set; }
         public string? PhotoUrl { get; set; }
         public string? PhotoPublicId { get; set; }
-
-        public ApplicationUser()
-        {
-            SecretKey = GenerateSecretKey(32);
-        }
-
-        private byte[] GenerateSecretKey(int keySize)
-        {
-            var key = new byte[keySize];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(key);
-            }
-            return key;
-        }
+        
     }
 }

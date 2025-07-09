@@ -84,14 +84,17 @@ const Message = ({ message, previousMessage, isDarkMode }: MessageProps) => {
             <div className="context-indicator">
               <small
                 className={`text-xs ${isDarkMode ? 'text-green-400' : 'text-green-600'} mt-1 block`}
-              >
+    >
                 Based on your health data
               </small>
             </div>
           )}
         </div>
       </div>
-    </div>
+      <div className="message-content">
+        {message.type === 'assistant' ? formatContent(message.content) : message.content}
+      </div>
+    </motion.div>
   );
 };
 

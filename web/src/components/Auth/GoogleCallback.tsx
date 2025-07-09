@@ -18,10 +18,10 @@ const GoogleCallback = () => {
           urlParams.get('userName');
 
         if (hasRequiredParams) {
-          // Process the callback data from URL params
-          await handleGoogleCallback();
-          toast.success('Successfully logged in with Google!');
-          navigate('/dashboard');
+        // Process the callback data from URL params
+        await handleGoogleCallback();
+        toast.success('Successfully logged in with Google!');
+        navigate('/dashboard');
         } else {
           // Missing required parameters
           console.error('Missing required Google callback parameters');

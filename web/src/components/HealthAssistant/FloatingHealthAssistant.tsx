@@ -63,7 +63,7 @@ const FloatingHealthAssistant = ({ isDarkMode }: FloatingHealthAssistantProps) =
     ) {
       const lastMessage = messages[messages.length - 1].text;
       speakText(lastMessage);
-    }
+      }
   }, [messages, textToSpeechEnabled, speakText]);
 
   useEffect(() => {
@@ -138,8 +138,8 @@ const FloatingHealthAssistant = ({ isDarkMode }: FloatingHealthAssistantProps) =
   const handleSubmit = async (query?: string): Promise<void> => {
     if (!query || !query.trim()) return;
 
-    await sendQuery(query);
-    setQuery('');
+      await sendQuery(query);
+      setQuery('');
 
     if (inputRef.current) {
       inputRef.current.focus();
@@ -151,6 +151,31 @@ const FloatingHealthAssistant = ({ isDarkMode }: FloatingHealthAssistantProps) =
     if (inputRef.current) {
       inputRef.current.focus();
     }
+  };
+
+  const speakText = (text: string): void => {
+    if (!('speechSynthesis' in window)) return;
+
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    const voices = window.speechSynthesis.getVoices();
+    const preferredVoice = voices.find(
+      (voice) =>
+        voice.name.includes('Google') ||
+        voice.name.includes('Natural') ||
+        voice.name.includes('Female')
+    );
+
+    if (preferredVoice) {
+      utterance.voice = preferredVoice;
+    }
+
+    utterance.pitch = 1;
+    utterance.rate = 1;
+    utterance.volume = 1;
+
+    window.speechSynthesis.speak(utterance);
   };
 
   const chatWindowVariants = {
