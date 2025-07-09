@@ -1,0 +1,431 @@
+.health-tip-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.health-tip-modal {
+    background-color: #fff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: slideUp 0.3s ease;
+    position: relative;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.dark-mode.health-tip-modal {
+    background-color: #2D2D2D;
+    color: #e2e8f0;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    position: sticky;
+    top: 0;
+    background: inherit;
+    z-index: 10;
+}
+
+.dark-mode .modal-header {
+    border-bottom-color: #4a5568;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2d3436;
+}
+
+.dark-mode .modal-header h2 {
+    color: #e2e8f0;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    color: #a0aec0;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    color: #a0aec0;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.close-button:hover {
+    background-color: #f7fafc;
+    color: #4a5568;
+}
+
+.dark-mode .close-button:hover {
+    background-color: #4a5568;
+    color: #e2e8f0;
+}
+
+.modal-content {
+    padding: 0 1.5rem 1.5rem;
+}
+
+.modal-image-container {
+    margin: 0 -1.5rem 1.5rem;
+}
+
+.modal-image {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+}
+
+.tip-category {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    text-transform: capitalize;
+}
+
+.tip-category.emergency { background-color: #FFE5E5; color: #E53E3E; }
+tip-category.fitness { background-color: #E5FFE5; color: #38A169; }
+.tip-category.nutrition { background-color: #FFE5FF; color: #D53F8C; }
+.tip-category.mental { background-color: #E5E5FF; color: #3182CE; }
+.tip-category.prevention { background-color: #FFFFE5; color: #D69E2E; }
+.tip-category.resources { background-color: #E5FFFF; color: #319795; }
+
+.dark-mode .tip-category {
+    opacity: 0.9;
+}
+
+.tip-description {
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    font-size: 1.05rem;
+    color: #4a5568;
+}
+
+.dark-mode .tip-description {
+    color: #e2e8f0;
+}
+
+.tip-bullet-points {
+    margin-top: 1.5rem;
+}
+
+.tip-bullet-points h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    color: #2d3436;
+}
+
+.dark-mode .tip-bullet-points h3 {
+    color: #e2e8f0;
+}
+
+.tip-bullet-points ul {
+    padding-left: 1.5rem;
+    margin: 0;
+}
+
+.tip-bullet-points li {
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+}
+
+.tip-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.dark-mode .tip-bullet-points h3 {
+    color: #e2e8f0;
+}
+
+.tip-bullet-points ul {
+    padding-left: 1.5rem;
+    margin: 0;
+}
+
+.tip-bullet-points li {
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+}
+
+.tip-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.dark-mode .tip-actions {
+    border-top-color: #4a5568;
+}
+
+.tip-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.learn-more-btn {
+    background-color: #4299e1;
+    color: white;
+    border: none;
+}
+
+.learn-more-btn:hover {
+    background-color: #3182ce;
+    transform: translateY(-2px);
+}
+
+.dark-mode .learn-more-btn:hover {
+    color: black;
+}
+
+.bookmark-btn {
+    background-color: transparent;
+    color: black;
+    border: 1px solid #cbd5e0;
+}
+
+.dark-mode .bookmark-btn {
+    color: white;
+}
+
+.dark-mode .modal-header h2 {
+    color: #e0e0e0;
+}
+
+.related-tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.related-tip {
+    padding: 1rem;
+    background-color: #f7fafc;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.dark-mode .related-tip {
+    background-color: #4a5568;
+}
+
+.related-tip:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .tip-date, 
+.dark-mode .tip-read-time {
+    color: #aaa;
+}
+
+.bookmark-btn:hover {
+    background-color: #f7fafc;
+    color: #2d3748;
+}
+
+.dark-mode .bookmark-btn:hover {
+    background-color: #4a5568;
+    color: #e2e8f0;
+}
+
+.share-btn {
+    background-color: transparent;
+    color: #4a5568;
+    border: 1px solid #cbd5e0;
+}
+
+.dark-mode .share-btn {
+    color: #e2e8f0;
+    border-color: #4a5568;
+}
+
+.share-btn:hover {
+    background-color: #f7fafc;
+    color: #2d3748;
+}
+
+.dark-mode .share-btn:hover {
+    background-color: #4a5568;
+    color: #e2e8f0;
+}
+
+.related-tips {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.dark-mode .related-tips {
+    border-top-color: #4a5568;
+}
+
+.related-tips h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: #2d3436;
+}
+
+.dark-mode .related-tips h3 {
+    color: #e2e8f0;
+}
+
+.related-tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.related-tip {
+    padding: 1rem;
+    background-color: #f7fafc;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.dark-mode .related-tip {
+    background-color: #4a5568;
+}
+
+.related-tip:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .related-tip:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.related-tip h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    color: #2d3436;
+}
+
+.dark-mode .related-tip h4 {
+    color: #e2e8f0;
+}
+
+.related-tip p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #4a5568;
+}
+
+.dark-mode .related-tip p {
+    color: #cbd5e0;
+}
+
+.dark-mode .secondary-action:hover {
+    background: #444;
+}
+
+/* Category-specific styles */
+.tip-category.emergency { background-color: #FFE5E5; color: #E53E3E; }
+.tip-category.fitness { background-color: #E5FFE5; color: #38A169; }
+.tip-category.nutrition { background-color: #FFE5FF; color: #D53F8C; }
+.tip-category.mental { background-color: #E5E5FF; color: #3182CE; }
+.tip-category.prevention { background-color: #FFFFE5; color: #D69E2E; }
+.tip-category.resources { background-color: #E5FFFF; color: #319795; }
+
+/* Responsive */
+@media (max-width: 640px) {
+    .modal-header {
+        padding: 1rem;
+    }
+    
+    .modal-header h2 {
+        font-size: 1.25rem;
+    }
+    
+    .modal-content {
+        padding: 0 1rem 1rem;
+    }
+    
+    .modal-image-container {
+        margin: 0 -1rem 1rem;
+    }
+    
+    .modal-image {
+        height: 200px;
+    }
+    
+    .tip-actions {
+        flex-direction: column;
+    }
+    
+    .tip-action-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .related-tips-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Focus state for accessibility */
+.close-button:focus,
+.tip-action-btn:focus {
+    outline: 2px solid #4299e1;
+    outline-offset: 2px;
+}
+
+.dark-mode .close-button:focus,
+.dark-mode .tip-action-btn:focus {
+    outline-color: #63b3ed;
+}
