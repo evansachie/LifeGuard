@@ -136,7 +136,6 @@ const Dashboard = ({ isDarkMode }: DashboardProps) => {
       await disconnectDevice(bleDevice.id);
     }
   };
-
   const { userData, isLoading: dataLoading } = useUserData();
   const { quote, isLoading: quotesLoading } = useQuoteData();
   const { memos: savedMemos, isLoading: memosLoading } = useMemoData();

@@ -60,7 +60,7 @@ const EmptyChatState = ({
           <FaFileUpload size={24} color="#4a90e2" />
           <p style={{ margin: 0, fontSize: '14px', textAlign: 'center' }}>
             Upload your health report to get personalized advice!
-      </p>
+          </p>
           <Link
             to="/health-report"
             style={{

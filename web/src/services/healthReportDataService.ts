@@ -3,8 +3,6 @@ import { fetchUserProfile } from './profileService';
 import exerciseService from './exerciseService';
 import { getFavorites } from './favoriteSoundsService';
 import { EnhancedHealthReportData } from '../utils/pdfGenerator';
-
-// Define proper types for the data structures
 interface UserData {
   userName?: string;
   email?: string;

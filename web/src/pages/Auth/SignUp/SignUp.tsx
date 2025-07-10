@@ -75,8 +75,8 @@ const useSignUp = (): SignUpFormHook => {
         toast.error(`${errorMessage} ${retryCount > 0 ? `(Retry ${retryCount + 1})` : ''}`);
         setErrors((prev) => ({ ...prev, submit: `${errorMessage} Please try again.` }));
       } else {
-      toast.error(errorMessage);
-      setErrors((prev) => ({ ...prev, submit: errorMessage }));
+        toast.error(errorMessage);
+        setErrors((prev) => ({ ...prev, submit: errorMessage }));
       }
 
       console.error('Registration error:', error);

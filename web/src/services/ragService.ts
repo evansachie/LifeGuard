@@ -21,8 +21,8 @@ class RagService {
   async uploadPDF(userId: string, pdfBlob: Blob, filename: string): Promise<{ message: string }> {
     try {
       // Create form data for the PDF upload
-    const formData = new FormData();
-    formData.append('file', pdfBlob, filename);
+      const formData = new FormData();
+      formData.append('file', pdfBlob, filename);
 
       // Make the upload request using the defined endpoint
       const response = await axios.post(
@@ -54,7 +54,7 @@ class RagService {
 
       throw error;
     }
-    }
+  }
 
   /**
    * Ask a question to the RAG system
@@ -68,11 +68,11 @@ class RagService {
           user_id: params.user_id,
           question: params.question,
           top_k: params.top_k || 3,
-  },
+        },
         {
-      headers: {
-        'Content-Type': 'application/json',
-      },
+          headers: {
+            'Content-Type': 'application/json',
+          },
           timeout: 30000, // 30 second timeout for questions (free tier can be slow)
         }
       );
@@ -98,7 +98,7 @@ class RagService {
       throw error;
     }
   }
-    }
+}
 
 export const ragService = new RagService();
 export default ragService;

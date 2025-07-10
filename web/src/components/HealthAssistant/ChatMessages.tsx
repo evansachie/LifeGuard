@@ -1,15 +1,7 @@
 import { useRef, useEffect } from 'react';
 import Message from './Message';
-import TypingIndicator from './TypingIndicator';
 import EmptyChatState from './EmptyChatState';
 import TypingIndicator from './TypingIndicator';
-
-interface ChatMessage {
-  type: 'user' | 'assistant';
-  content: string;
-  timestamp: Date | string;
-  isError?: boolean;
-}
 
 interface ChatMessagesProps {
   messages: {

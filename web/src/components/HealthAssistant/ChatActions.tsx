@@ -4,13 +4,6 @@ import { toast } from 'react-toastify';
 import DeleteConfirmationModal from '../DeleteConfirmationModal/DeleteConfirmationModal';
 import { Message } from '../../types/chat.types';
 
-interface ChatMessage {
-  type: 'user' | 'assistant';
-  content: string;
-  timestamp: Date | string;
-  isError?: boolean;
-}
-
 interface ChatActionsProps {
   messages: Message[];
   onClearHistory: () => void;

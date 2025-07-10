@@ -1,3 +1,6 @@
+import { ChangeEvent, FormEvent, RefObject } from 'react';
+import { IoMdSend } from 'react-icons/io';
+import { FaMicrophone, FaStop } from 'react-icons/fa';
 
 interface ChatInputFormProps {
   query: string;
@@ -24,15 +27,18 @@ const ChatInputForm = ({
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (query.trim() && !isLoading && !isListening) {
-      onSubmit(query);
-    }
+    onSubmit(query);
   };
 
   return (
+    <form
+      onSubmit={handleSubmit}
+      className="flex items-center p-2 md:p-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-b-xl relative"
+    >
       <input
-        ref={inputRef}
         type="text"
+        value={query}
+        onChange={handleChange}
         placeholder="Ask about your health..."
         disabled={isLoading || isListening}
         ref={inputRef}
@@ -41,27 +47,27 @@ const ChatInputForm = ({
       <div className="flex ml-2 gap-2">
         {!isLoading && (
           <>
-      <button
-        type="button"
-        onClick={toggleListening}
+            <button
+              type="button"
+              onClick={toggleListening}
               className={`flex items-center justify-center w-9 h-9 rounded-full transition-all ${
                 isListening
                   ? 'bg-red-500 hover:bg-red-600 animate-pulse'
                   : 'bg-indigo-500 hover:bg-indigo-600'
               } text-white disabled:opacity-50 disabled:cursor-not-allowed`}
               aria-label={isListening ? 'Stop listening' : 'Start voice input'}
-        disabled={isLoading}
-        className={`voice-button ${isListening ? 'listening' : ''}`}
-        aria-label={isListening ? 'Stop listening' : 'Start voice input'}
-        title={isListening ? 'Stop listening' : 'Start voice input'}
-      >
-      </button>
-      <button
-        type="submit"
-        aria-label="Send message"
-        title="Send message"
-      >
-      </button>
+              disabled={isLoading}
+            >
+              {isListening ? <FaStop size={14} /> : <FaMicrophone size={14} />}
+            </button>
+            <button
+              type="submit"
+              className="flex items-center justify-center w-9 h-9 rounded-full bg-blue-500 hover:bg-blue-600 text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={!query.trim() || isListening || isLoading}
+              aria-label="Send message"
+            >
+              <IoMdSend size={16} />
+            </button>
           </>
         )}
         {isLoading && (

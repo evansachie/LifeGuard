@@ -48,7 +48,7 @@ const useAuth = (): LoginFormHook => {
         setRetryCount((prev) => prev + 1);
         toast.error(`${errorMessage} ${retryCount > 0 ? `(Retry ${retryCount + 1})` : ''}`);
       } else {
-      toast.error(errorMessage);
+        toast.error(errorMessage);
       }
 
       console.error('Login error:', error);

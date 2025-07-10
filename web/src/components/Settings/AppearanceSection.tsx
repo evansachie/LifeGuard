@@ -10,28 +10,28 @@ interface AppearanceSectionProps {
 
 const AppearanceSection = ({ isDarkMode, handleThemeToggle }: AppearanceSectionProps) => {
   return (
-  <SettingSection title="Appearance" isDarkMode={isDarkMode}>
+    <SettingSection title="Appearance" isDarkMode={isDarkMode}>
       <div className="space-y-6">
-    <div className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-100/5 transition-colors">
-      <div className="flex items-center gap-4">
-        {isDarkMode ? (
+        <div className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-100/5 transition-colors">
+          <div className="flex items-center gap-4">
+            {isDarkMode ? (
               <FaMoon className="text-2xl text-blue-400" />
-        ) : (
-          <FaSun className="text-2xl text-yellow-500" />
-        )}
+            ) : (
+              <FaSun className="text-2xl text-yellow-500" />
+            )}
             <div className="flex flex-col">
-        <span className={`text-lg ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+              <span className={`text-lg ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
                 {isDarkMode ? 'Dark Mode' : 'Light Mode'}
               </span>
               <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                 {isDarkMode
                   ? 'Easier on the eyes in low light'
                   : 'Better visibility in bright light'}
-        </span>
-      </div>
+              </span>
+            </div>
           </div>
-      <ToggleSwitch enabled={isDarkMode} onChange={handleThemeToggle} isDarkMode={isDarkMode} />
-    </div>
+          <ToggleSwitch enabled={isDarkMode} onChange={handleThemeToggle} isDarkMode={isDarkMode} />
+        </div>
 
         {/* Color Scheme Option - Disabled for now */}
         <div className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-100/5 transition-colors opacity-50">
@@ -59,8 +59,8 @@ const AppearanceSection = ({ isDarkMode, handleThemeToggle }: AppearanceSectionP
           </select>
         </div>
       </div>
-  </SettingSection>
-);
+    </SettingSection>
+  );
 };
 
 export default AppearanceSection;
