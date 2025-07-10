@@ -9,6 +9,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { BLEProvider } from './contexts/BLEContext';
 import { AudioContextProvider } from './contexts/AudioContext';
 import { AudioPlayerProvider } from './contexts/AudioPlayerContext';
+import { FirebaseProvider } from './contexts/FirebaseContext';
 
 import FloatingAudioPlayer from './components/Audio/FloatingAudioPlayer';
 import { CommandPalette } from './components/CommandPalette/CommandPalette';
@@ -21,7 +22,6 @@ const App = () => {
   const { isDarkMode, toggleTheme } = useTheme();
   const [commandPaletteOpen, setCommandPaletteOpen] = useState<boolean>(false);
 
-  // Apply dark mode class to body for global styling
   useEffect(() => {
     document.body.classList.toggle('dark-mode', isDarkMode);
     document.documentElement.classList.toggle('dark-mode', isDarkMode);
@@ -45,25 +45,27 @@ const App = () => {
 
   return (
     <Router>
-      <AudioPlayerProvider>
-        <AudioContextProvider>
-          <BLEProvider>
-            <AuthProvider>
-              <div className={isDarkMode ? 'dark-mode' : ''}>
-                <ToastContainer position="top-right" theme={isDarkMode ? 'dark' : 'light'} />
-                <AppRoutes isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
-                <FloatingAudioPlayer isDarkMode={isDarkMode} />
-                <CommandPalette
-                  isDarkMode={isDarkMode}
-                  toggleTheme={toggleTheme}
-                  open={commandPaletteOpen}
-                  setOpen={setCommandPaletteOpen}
-                />
-              </div>
-            </AuthProvider>
-          </BLEProvider>
-        </AudioContextProvider>
-      </AudioPlayerProvider>
+      <FirebaseProvider>
+        <AudioPlayerProvider>
+          <AudioContextProvider>
+            <BLEProvider>
+              <AuthProvider>
+                <div className={isDarkMode ? 'dark-mode' : ''}>
+                  <ToastContainer position="top-right" theme={isDarkMode ? 'dark' : 'light'} />
+                  <AppRoutes isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
+                  <FloatingAudioPlayer isDarkMode={isDarkMode} />
+                  <CommandPalette
+                    isDarkMode={isDarkMode}
+                    toggleTheme={toggleTheme}
+                    open={commandPaletteOpen}
+                    setOpen={setCommandPaletteOpen}
+                  />
+                </div>
+              </AuthProvider>
+            </BLEProvider>
+          </AudioContextProvider>
+        </AudioPlayerProvider>
+      </FirebaseProvider>
     </Router>
   );
 };
