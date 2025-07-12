@@ -2,13 +2,19 @@ import React, { createContext, useContext, useEffect, useState, ReactNode } from
 import { database } from '../services/firebaseConfig';
 import { firebaseDataService, FirebaseSensorData } from '../services/firebaseDataService';
 import { SensorData } from '../types/ble.types';
+import { getCurrentPosition, isGeolocationAvailable } from '../utils/geolocationUtils';
 
 interface FirebaseContextType {
   isConnected: boolean;
   isInitialized: boolean;
   error: string | null;
   lastSync: number | null;
-  pushSensorData: (deviceId: string, deviceName: string, sensorData: SensorData) => Promise<void>;
+  pushSensorData: (
+    deviceId: string,
+    deviceName: string,
+    sensorData: SensorData,
+    userId?: string
+  ) => Promise<void>;
   subscribeToDevice: (deviceId: string, callback: (data: FirebaseSensorData) => void) => void;
   unsubscribeFromDevice: (deviceId: string) => void;
 }
@@ -48,10 +54,34 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
   const pushSensorData = async (
     deviceId: string,
     deviceName: string,
-    sensorData: SensorData
+    sensorData: SensorData,
+    userId?: string
   ): Promise<void> => {
     try {
-      await firebaseDataService.pushSensorData(deviceId, deviceName, sensorData);
+      // Try to get geolocation data if available
+      let geolocation = null;
+      if (isGeolocationAvailable()) {
+        try {
+          geolocation = await getCurrentPosition();
+          console.log('📍 Geolocation obtained:', geolocation);
+        } catch (geoError) {
+          console.warn('⚠️ Geolocation error:', geoError);
+          // Continue without geolocation
+        }
+      }
+
+      // Get user ID from localStorage if not provided
+      const currentUserId = userId || localStorage.getItem('userId') || undefined;
+
+      // Push sensor data with user ID and geolocation
+      await firebaseDataService.pushSensorData(
+        deviceId,
+        deviceName,
+        sensorData,
+        currentUserId,
+        geolocation || undefined
+      );
+
       setLastSync(Date.now());
       setError(null);
     } catch (err) {
