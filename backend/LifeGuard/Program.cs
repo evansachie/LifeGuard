@@ -37,7 +37,7 @@ namespace LifeGuard
         public static async Task Main(string[] args)
         {
             string env = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
-            Console.WriteLine(Directory.GetCurrentDirectory());
+
             if (env == "Development")
             {
                 Env.Load("../.env.local");
