@@ -41,14 +41,14 @@ const AirQualityCharts = ({
         className={`chart-container ${isDarkMode ? 'dark-mode-chart bg-gray-800' : 'light-mode-chart bg-white'} rounded-xl p-6 shadow-md h-[300px] overflow-hidden flex flex-col justify-between`}
       >
         <h3 className={`mb-4 text-xl ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
-          Gas Composition
+          VOC Levels
         </h3>
         <Line
           data={{
             labels: historicalData.timestamps,
             datasets: [
               {
-                label: 'Gas (ppb)',
+                label: 'VOC (ppb)',
                 data: historicalData.gas,
                 borderColor: '#D65DB1',
                 tension: 0.4,

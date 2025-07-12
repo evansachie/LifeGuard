@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useBLE } from '../../contexts/BLEContext';
 import { analyticsTabsData } from '../../utils/constants';
 import TabNavigation from '../../components/Analytics/TabNavigation';

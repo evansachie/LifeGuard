@@ -65,20 +65,26 @@ const useSensorHistory = (sensorData: BLESensorData | null, maxDataPoints = 30):
             );
           }
 
-          // Handle co2
+          // Handle co2 from airQuality
           if (
-            'co2' in sensorData.environmental &&
-            typeof sensorData.environmental.co2 === 'number'
+            sensorData.environmental.airQuality &&
+            'co2' in sensorData.environmental.airQuality &&
+            typeof sensorData.environmental.airQuality.co2 === 'number'
           ) {
-            updated.co2 = [...prev.co2, sensorData.environmental.co2].slice(-maxDataPoints);
+            updated.co2 = [...prev.co2, sensorData.environmental.airQuality.co2].slice(
+              -maxDataPoints
+            );
           }
 
-          // Handle gas
+          // Handle gas (VOC from airQuality)
           if (
-            'gas' in sensorData.environmental &&
-            typeof sensorData.environmental.gas === 'number'
+            sensorData.environmental.airQuality &&
+            'voc' in sensorData.environmental.airQuality &&
+            typeof sensorData.environmental.airQuality.voc === 'number'
           ) {
-            updated.gas = [...prev.gas, sensorData.environmental.gas].slice(-maxDataPoints);
+            updated.gas = [...prev.gas, sensorData.environmental.airQuality.voc].slice(
+              -maxDataPoints
+            );
           }
         }
 
