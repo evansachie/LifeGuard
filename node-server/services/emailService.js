@@ -13,6 +13,15 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Test the connection
+transporter.verify(function(error) {
+  if (error) {
+    console.error('Email service not properly configured:', error);
+  } else {
+    console.log('Email server connection verified and ready to send messages');
+  }
+});
+
 const readHTMLFile = (path) => {
   return new Promise((resolve, reject) => {
     fs.readFile(path, { encoding: 'utf-8' }, (err, html) => {
@@ -109,7 +118,14 @@ const sendEmergencyContactNotification = async (contactData, userData) => {
 
 const sendEmergencyAlert = async (contactData, userData, emergencyData) => {
   try {
-    const templatePath = path.join(__dirname, '../templates/emergency-alert.html');
+    // Choose template based on recipient type
+    let templatePath;
+    if (contactData.Id === 'ambulance-service') {
+      templatePath = path.join(__dirname, '../templates/ambulance-alert.html');
+    } else {
+      templatePath = path.join(__dirname, '../templates/emergency-alert.html');
+    }
+    
     const html = await readHTMLFile(templatePath);
     const template = handlebars.compile(html);
 
@@ -118,7 +134,43 @@ const sendEmergencyAlert = async (contactData, userData, emergencyData) => {
     
     // Simplified tracking link with just userId instead of a token
     const trackingLink = `${FRONTEND_URL}/emergency-tracking?userId=${profile.id}`;
-
+    
+    // Hardcoded test coordinates for testing if no real coordinates are present
+    // 6.6745, -1.5716 = Kumasi, Ghana (used as test coordinates)
+    const testCoordinates = {
+      latitude: "6.6745",
+      longitude: "-1.5716"
+    };
+    
+    // Parse location for coordinates
+    let coordinates = null;
+    if (emergencyData.location && typeof emergencyData.location === 'string') {
+      // Try to extract coordinates if they're in the location string (lat,lng format)
+      const coordMatch = emergencyData.location.match(/(-?\d+\.\d+),\s*(-?\d+\.\d+)/);
+      if (coordMatch) {
+        coordinates = {
+          latitude: coordMatch[1],
+          longitude: coordMatch[2]
+        };
+      } 
+      // For testing purposes, use test coordinates if none found
+      // In production, you'd remove this and only use real coordinates
+      else if (process.env.NODE_ENV !== 'production') {
+        coordinates = testCoordinates;
+      }
+    } 
+    // For testing purposes, use test coordinates if location is not available
+    // In production, you'd remove this and only use real coordinates
+    else if (process.env.NODE_ENV !== 'production') {
+      coordinates = testCoordinates;
+    }
+    
+    // Extract location address without coordinates for clarity
+    let locationAddress = null;
+    if (emergencyData.location && emergencyData.location.includes('(')) {
+      locationAddress = emergencyData.location.split('(')[0].trim();
+    }
+    
     const replacements = {
       contactName: contactData.Name,
       userName: profile.name || profile.userName || 'A LifeGuard user',
@@ -129,7 +181,9 @@ const sendEmergencyAlert = async (contactData, userData, emergencyData) => {
       height: profile.height != null ? profile.height : 'Not available',
       bio: profile.bio || 'Not available',
       emergencyMessage: emergencyData.message || 'Emergency alert triggered',
-      emergencyLocation: emergencyData.location || 'Unavailable',
+      emergencyLocation: emergencyData.location || 'Location currently unavailable',
+      locationAddress: locationAddress,
+      coordinates: coordinates,
       trackingLink: trackingLink,
       medicalInfo: profile.bio || 'No medical information provided',
       appLogo: 'https://github-production-user-asset-6210df.s3.amazonaws.com/102630199/418295595-9dbe93f6-9f68-41b5-9b9e-4312683f5b34.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250301%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250301T174742Z&X-Amz-Expires=300&X-Amz-Signature=b487a8f40e2dbddd3c608dd8832b02c042b270ecf5fb68a6c7c32041417f3f48&X-Amz-SignedHeaders=host',
@@ -145,9 +199,20 @@ const sendEmergencyAlert = async (contactData, userData, emergencyData) => {
       priority: 'high'
     };
 
-    const info = await transporter.sendMail(mailOptions);
-    console.log('Emergency email sent: ', info.messageId);
-    return { success: true, messageId: info.messageId };
+
+    if (contactData.Id === 'ambulance-service') {
+      console.log('*** Sending AMBULANCE SERVICE email ***');
+      console.log('Using template:', templatePath);
+    }
+    
+    try {
+      const info = await transporter.sendMail(mailOptions);
+      return { success: true, messageId: info.messageId };
+    } catch (emailError) {
+      console.error('ERROR SENDING EMAIL:', emailError.message);
+      console.error('Email failed to:', contactData.Email);
+      return { success: false, error: emailError.message };
+    }
   } catch (error) {
     console.error('Error sending emergency email:', error);
     return { success: false, error: error.message };

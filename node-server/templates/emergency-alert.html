@@ -110,7 +110,20 @@
             
             <div class="info-section">
                 <div class="info-title">Last Known Location:</div>
+                {{#if coordinates}}
+                <p>{{#if locationAddress}}{{locationAddress}}{{else}}Location available via coordinates{{/if}}</p>
+                <p>Coordinates: {{coordinates.latitude}}, {{coordinates.longitude}}</p>
+                <div style="text-align: center; margin-top: 10px;">
+                    <a href="https://www.google.com/maps?q={{coordinates.latitude}},{{coordinates.longitude}}" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       style="color: #0066cc; text-decoration: underline;">
+                        View on Google Maps
+                    </a>
+                </div>
+                {{else}}
                 <p>{{emergencyLocation}}</p>
+                {{/if}}
             </div>
             
             <div class="info-section">
