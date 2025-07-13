@@ -32,7 +32,7 @@ EMERGENCY ALERT:
 Name: ${userData.name}
 Location: ${userData.location}
 Phone: ${userData.phone}
-Medical Info: ${userData.medicalInfo.age} years old, ${userData.medicalInfo.gender}
+Medical Info: ${userData.medicalInfo ? `${userData.medicalInfo.age} years old, ${userData.medicalInfo.gender}` : 'Not available'}
 Time: ${userData.timestamp}
 `.trim();
 

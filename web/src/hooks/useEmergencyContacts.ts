@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { Contact, ContactFormData } from '../types/contact.types';
 import { fetchWithAuth, API_ENDPOINTS } from '../utils/api';
+import { useEmergencyPreference } from '../contexts/EmergencyPreferenceContext';
 
 export interface EmergencyContactsHookReturn {
   contacts: Contact[];
@@ -20,6 +21,7 @@ export const useEmergencyContacts = (): EmergencyContactsHookReturn => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const { preferences } = useEmergencyPreference();
 
   useEffect(() => {
     fetchContacts();
@@ -82,10 +84,37 @@ export const useEmergencyContacts = (): EmergencyContactsHookReturn => {
 
   const sendEmergencyAlert = async (): Promise<void> => {
     try {
+      // Create a list of recipients based on preferences
+      const recipients: string[] = [];
+      const emailAddresses: string[] = [];
+
+      // Add emergency contacts if selected
+      if (preferences.sendToEmergencyContacts && contacts.length > 0) {
+        contacts.forEach((contact) => {
+          recipients.push(contact.Name);
+          emailAddresses.push(contact.Email);
+        });
+      }
+
+      // Add ambulance service if selected
+      if (preferences.sendToAmbulanceService) {
+        recipients.push('Ambulance Service');
+        emailAddresses.push('navarahq@gmail.com'); // Ambulance service email
+      }
+
+      // Check if we have any recipients
+      if (emailAddresses.length === 0) {
+        toast.warning('No emergency recipients configured. Please update your preferences.');
+        return;
+      }
+
+      // Send the emergency alert with recipients
       await fetchWithAuth(API_ENDPOINTS.SEND_EMERGENCY_ALERT, {
         method: 'POST',
+        body: JSON.stringify({ emailAddresses }),
       });
-      toast.success('Emergency alert sent to all contacts');
+
+      toast.success(`Emergency alert sent to: ${recipients.join(', ')}`);
     } catch (error) {
       console.error('Failed to send emergency alert', error);
       toast.error('Failed to send emergency alert');

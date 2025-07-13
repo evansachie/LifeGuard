@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
@@ -13,6 +13,7 @@ import MedicalTab from '../../components/EmergencyTracking/MedicalTab';
 import ActionsTab from '../../components/EmergencyTracking/ActionsTab';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { getDatabase, ref, onValue, off } from 'firebase/database';
 
 interface EmergencyTrackingProps {
   isDarkMode: boolean;
@@ -25,12 +26,46 @@ const EmergencyTracking = ({ isDarkMode, toggleTheme }: EmergencyTrackingProps) 
   const [searchParams] = useSearchParams();
   const userId = searchParams.get('userId');
   const [activeTab, setActiveTab] = useState<TabType>('info');
+  const [userCoordinates, setUserCoordinates] = useState<[number, number] | null>(null);
+  const [locationDisplayName, setLocationDisplayName] = useState<string | null>(null);
 
   const { userData, isLoading } = useEmergencyData(userId || '');
   const actions = useEmergencyActions();
 
-  // Default coordinates for Accra, Ghana
-  const accraCoordinates = useMemo<[number, number]>(() => [-0.1869644, 5.6037168], []);
+  // Default coordinates for Kumasi, Ghana (only used as fallback)
+  const kumasiCoordinates = useMemo<[number, number]>(() => [-1.5716, 6.6745], []);
+
+  // Listen for real-time location updates from Firebase
+  useEffect(() => {
+    if (!userId) return;
+
+    const db = getDatabase();
+    const locationRef = ref(db, `users/${userId}/location`);
+
+    const locationListener = onValue(locationRef, (snapshot) => {
+      const locationData = snapshot.val();
+      if (locationData && locationData.latitude && locationData.longitude) {
+        // Convert to the format expected by Mapbox
+        setUserCoordinates([locationData.longitude, locationData.latitude]);
+
+        // If using test coordinates for Kumasi (approximately)
+        if (
+          Math.abs(locationData.latitude - 6.6745) < 0.01 &&
+          Math.abs(locationData.longitude - -1.5716) < 0.01
+        ) {
+          // Update the location name for display
+          setLocationDisplayName('Kumasi, Ghana');
+        } else {
+          setLocationDisplayName(null);
+        }
+      }
+    });
+
+    return () => {
+      // Clean up listener when component unmounts
+      off(locationRef, 'value', locationListener);
+    };
+  }, [userId]);
 
   return (
     <div
@@ -60,8 +95,9 @@ const EmergencyTracking = ({ isDarkMode, toggleTheme }: EmergencyTrackingProps) 
                   userData={userData}
                   isDarkMode={isDarkMode}
                   actions={actions}
-                  accraCoordinates={accraCoordinates}
+                  accraCoordinates={userCoordinates || kumasiCoordinates}
                   isLoading={isLoading}
+                  locationOverride={locationDisplayName}
                 />
               )}
 

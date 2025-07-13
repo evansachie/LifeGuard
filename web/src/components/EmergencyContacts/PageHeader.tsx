@@ -1,14 +1,20 @@
-import { FaUserPlus } from 'react-icons/fa';
+import { FaUserPlus, FaCog } from 'react-icons/fa';
 import { MdOutlineContactEmergency } from 'react-icons/md';
 import EmergencyButton from './EmergencyButton';
 
 interface PageHeaderProps {
   onAddClick: () => void;
   onEmergencyAlert: () => void;
+  onOpenPreferences: () => void; // Added this prop
   isDarkMode?: boolean;
 }
 
-const PageHeader = ({ onAddClick, onEmergencyAlert, isDarkMode = false }: PageHeaderProps) => {
+const PageHeader = ({
+  onAddClick,
+  onEmergencyAlert,
+  onOpenPreferences, // Added this prop
+  isDarkMode = false,
+}: PageHeaderProps) => {
   return (
     <>
       <div className="flex items-center justify-between mb-8">
@@ -20,7 +26,17 @@ const PageHeader = ({ onAddClick, onEmergencyAlert, isDarkMode = false }: PageHe
             Emergency Contacts
           </h1>
         </div>
-        <EmergencyButton onClick={onEmergencyAlert} isDarkMode={isDarkMode} />
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onOpenPreferences}
+            className={`p-2 rounded-full flex items-center justify-center
+              ${isDarkMode ? 'bg-gray-700 text-gray-200 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+            title="Emergency Alert Settings"
+          >
+            <FaCog />
+          </button>
+          <EmergencyButton onClick={onEmergencyAlert} isDarkMode={isDarkMode} />
+        </div>
       </div>
 
       <button
