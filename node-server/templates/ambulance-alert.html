@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EMERGENCY ALERT</title>
+    <title>AMBULANCE SERVICE EMERGENCY ALERT</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -78,18 +78,27 @@
             margin-bottom: 5px;
             color: #ff3b30;
         }
+        .map-container {
+            margin: 15px 0;
+            text-align: center;
+        }
+        .map-container img {
+            max-width: 100%;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <img src="https://res.cloudinary.com/dat7slh1u/image/upload/v1740908768/logo_moe3jm.png" alt="LifeGuard Logo" style="max-width: 200px; margin-bottom: 20px;">
-            <h1>⚠️ EMERGENCY ALERT ⚠️</h1>
+            <h1>⚠️ AMBULANCE SERVICE EMERGENCY ALERT ⚠️</h1>
         </div>
         <div class="content">
             <div class="emergency-box">
-                <p><strong>{{userName}}</strong> has triggered an emergency alert and needs assistance!</p>
-                <p>As their emergency contact, please respond immediately if possible.</p>
+                <p><strong>URGENT: Medical Emergency Response Needed</strong></p>
+                <p>A LifeGuard user, <strong>{{userName}}</strong>, has triggered an emergency alert and requires immediate medical assistance.</p>
             </div>
             
             <div class="info-section">
@@ -98,31 +107,33 @@
             </div>
             
             <div class="info-section">
-                <div class="info-title">Contact Information:</div>
+                <div class="info-title">Patient Information:</div>
                 <p>Name: {{userName}}</p>
                 <p>Phone: {{userPhone}}</p>
                 <p>Age: {{age}}</p>
                 <p>Gender: {{gender}}</p>
                 <p>Weight: {{weight}}</p>
                 <p>Height: {{height}}</p>
-                <p>Bio: {{bio}}</p>
             </div>
             
             <div class="info-section">
                 <div class="info-title">Last Known Location:</div>
+                <p>Address: {{emergencyLocation}}</p>
                 {{#if coordinates}}
-                <p>{{#if locationAddress}}{{locationAddress}}{{else}}Location available via coordinates{{/if}}</p>
-                <p>Coordinates: {{coordinates.latitude}}, {{coordinates.longitude}}</p>
+                <p>GPS Coordinates: {{coordinates.latitude}}, {{coordinates.longitude}}</p>
+                <div class="map-container">
+                    <img src="https://maps.googleapis.com/maps/api/staticmap?center={{coordinates.latitude}},{{coordinates.longitude}}&zoom=15&size=600x300&maptype=roadmap&markers=color:red%7C{{coordinates.latitude}},{{coordinates.longitude}}&key={{mapApiKey}}" alt="Emergency Location Map" />
+                </div>
                 <div style="text-align: center; margin-top: 10px;">
                     <a href="https://www.google.com/maps?q={{coordinates.latitude}},{{coordinates.longitude}}" 
                        target="_blank" 
                        rel="noopener noreferrer"
-                       style="color: #0066cc; text-decoration: underline;">
-                        View on Google Maps
+                       style="color: #0066cc; text-decoration: underline; font-weight: bold;">
+                        Open Location in Google Maps
                     </a>
                 </div>
                 {{else}}
-                <p>{{emergencyLocation}}</p>
+                <p>GPS Coordinates: Not available</p>
                 {{/if}}
             </div>
             
@@ -132,14 +143,14 @@
             </div>
             
             <div style="text-align: center;">
-                <a href="{{trackingLink}}" class="button">Track Location</a>
+                <a href="{{trackingLink}}" class="button">Track Patient's Real-Time Location</a>
             </div>
             
-            <p><strong>Important:</strong> If this appears to be a life-threatening emergency, please contact emergency services immediately.</p>
+            <p><strong>Important:</strong> This is a real emergency alert from the LifeGuard system. Please respond according to your emergency protocols.</p>
         </div>
         <div class="footer">
             <p>&copy; {{currentYear}} LifeGuard. All rights reserved.</p>
-            <p>This is an automated emergency alert. Please do not reply to this email.</p>
+            <p>This is an automated emergency alert. For any technical issues with this alert, please contact support@lifeguard.com.</p>
         </div>
     </div>
 </body>

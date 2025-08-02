@@ -226,7 +226,7 @@ module.exports = (pool) => {
             const decoded = jwt.decode(token);
             const userId = decoded.uid;
             
-            const { message, location, medicalInfo } = req.body;
+            const { message, location, medicalInfo, emailAddresses } = req.body;
             
             // Get user info from .NET backend instead of AspNetUsers
             try {
@@ -242,14 +242,32 @@ module.exports = (pool) => {
                         bio: response.data.bio || '',
                     };
                     
-                    // Get all verified emergency contacts
-                    const { rows: contacts } = await pool.query(
-                        'SELECT * FROM "EmergencyContacts" WHERE "UserId" = $1 AND "IsVerified" = true ORDER BY "Priority" ASC',
+                    // Get user emergency preferences
+                    const { rows: preferences } = await pool.query(
+                        'SELECT * FROM "EmergencyPreferences" WHERE "UserId" = $1',
                         [userId]
                     );
                     
+                    // Default preferences if none found
+                    const userPrefs = preferences[0] || {
+                        SendToEmergencyContacts: true,
+                        SendToAmbulanceService: false
+                    };
+                    
+                    let contacts = [];
+                    
+                    // Always get emergency contacts regardless of preference
+                    // This ensures emergency alerts are always sent to contacts
+                    const { rows: userContacts } = await pool.query(
+                        'SELECT * FROM "EmergencyContacts" WHERE "UserId" = $1 AND "IsVerified" = true ORDER BY "Priority" ASC',
+                        [userId]
+                    );
+                    contacts = [...userContacts];
+                    
                     if (contacts.length === 0) {
-                        return res.status(404).json({ error: 'No verified emergency contacts found' });
+                        console.log('WARNING: No verified emergency contacts found for user', userId);
+                    } else {
+                        console.log(`Found ${contacts.length} verified emergency contacts`);
                     }
                     
                     // Create emergency record
@@ -260,35 +278,101 @@ module.exports = (pool) => {
                     
                     const emergencyId = emergencyResult.rows[0].Id;
                     
-                    // Send alerts to all contacts
-                    const alertResults = await Promise.all(contacts.map(async (contact) => {
-                        // Prepare emergency data
-                        const emergencyData = {
-                            id: emergencyId,
-                            message: message || 'Emergency alert triggered',
-                            location: location || 'Location not available',
-                            medicalInfo: medicalInfo || 'No medical information provided'
+                    // Prepare emergency data with test coordinates for Kumasi if no location is provided
+                    // Format as "Address (lat, lng)" to ensure coordinates can be parsed by emailService
+                    let formattedLocation = location;
+                    if (!formattedLocation || formattedLocation === 'Location not available') {
+                        // Use Kumasi as test location with coordinates
+                        formattedLocation = "Kumasi, Ghana (6.6745, -1.5716)";
+                    } else if (!formattedLocation.includes(',')) {
+                        // If location doesn't have coordinates, add test ones for email template to parse
+                        formattedLocation += " (6.6745, -1.5716)";
+                    }
+                    
+                    const emergencyData = {
+                        id: emergencyId,
+                        message: message || 'Emergency alert triggered',
+                        location: formattedLocation,
+                        medicalInfo: medicalInfo || 'No medical information provided'
+                    };
+                    
+                    const alertResults = [];
+                    
+                    // 1. Process emergency contacts
+                    if (contacts.length > 0) {
+                        const contactAlerts = await Promise.all(contacts.map(async (contact) => {
+                            // Send email alert
+                            const emailResult = await sendEmergencyAlert(contact, userData, emergencyData);
+                            
+                            // Send SMS alert
+                            const smsResult = await sendEmergencyAlertSMS(contact, userData, emergencyData);
+                            
+                            // Record the alert
+                            await pool.query(
+                                'INSERT INTO "EmergencyContactAlerts" ("EmergencyId", "ContactId", "EmailSent", "SmsSent", "CreatedAt") VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)',
+                                [emergencyId, contact.Id, emailResult.success, smsResult.success]
+                            );
+                            
+                            alertResults.push({
+                                contactId: contact.Id,
+                                contactName: contact.Name,
+                                contactType: 'emergency-contact',
+                                emailSent: emailResult.success,
+                                smsSent: smsResult.success
+                            });
+                            
+                            return {success: emailResult.success || smsResult.success};
+                        }));
+                    }
+                    
+                    // 2. Process ambulance service - ALWAYS enabled
+                    console.log('SENDING TO AMBULANCE SERVICE: always enabled');
+                    try {
+                        // Create ambulance contact with hardcoded values for direct testing
+                        const ambulanceContact = {
+                            Id: 'ambulance-service',
+                            Name: 'Ambulance Service',
+                            Email: 'navarahq@gmail.com', // Hardcoded email for testing
+                            Phone: '112'
                         };
                         
-                        // Send email alert
-                        const emailResult = await sendEmergencyAlert(contact, userData, emergencyData);
+                        // Send email alert to ambulance with explicit error handling
+                        const emailResult = await sendEmergencyAlert(ambulanceContact, userData, emergencyData);
                         
-                        // Send SMS alert
-                        const smsResult = await sendEmergencyAlertSMS(contact, userData, emergencyData);
-                        
-                        // Record the alert
-                        await pool.query(
-                            'INSERT INTO "EmergencyContactAlerts" ("EmergencyId", "ContactId", "EmailSent", "SmsSent", "CreatedAt") VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)',
-                            [emergencyId, contact.Id, emailResult.success, smsResult.success]
-                        );
-                        
-                        return {
-                            contactId: contact.Id,
-                            contactName: contact.Name,
-                            emailSent: emailResult.success,
-                            smsSent: smsResult.success
-                        };
-                    }));
+                        alertResults.push({
+                            contactType: 'ambulance-service',
+                            emailSent: emailResult.success
+                        });
+                    } catch (ambulanceError) {
+                        console.error('ERROR SENDING AMBULANCE EMAIL:', ambulanceError);
+                        alertResults.push({
+                            contactType: 'ambulance-service',
+                            emailSent: false,
+                            error: ambulanceError.message
+                        });
+                    }
+                    
+                    // 4. If additional email addresses were provided in the request (from client)
+                    if (emailAddresses && Array.isArray(emailAddresses) && emailAddresses.length > 0) {
+                        for (const email of emailAddresses) {
+                            if (email && typeof email === 'string' && email.includes('@')) {
+                                const additionalContact = {
+                                    Id: 'additional-email',
+                                    Name: 'Additional Contact',
+                                    Email: email,
+                                    Phone: 'Not Available'
+                                };
+                                
+                                // Send email alert
+                                const emailResult = await sendEmergencyAlert(additionalContact, userData, emergencyData);
+                                
+                                alertResults.push({
+                                    contactType: 'additional-email',
+                                    emailSent: emailResult.success
+                                });
+                            }
+                        }
+                    }
                     
                     res.json({
                         success: true,
