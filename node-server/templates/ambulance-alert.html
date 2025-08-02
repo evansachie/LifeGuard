@@ -124,14 +124,6 @@
                 <div class="map-container">
                     <img src="https://maps.googleapis.com/maps/api/staticmap?center={{coordinates.latitude}},{{coordinates.longitude}}&zoom=15&size=600x300&maptype=roadmap&markers=color:red%7C{{coordinates.latitude}},{{coordinates.longitude}}&key={{mapApiKey}}" alt="Emergency Location Map" />
                 </div>
-                <div style="text-align: center; margin-top: 10px;">
-                    <a href="https://www.google.com/maps?q={{coordinates.latitude}},{{coordinates.longitude}}" 
-                       target="_blank" 
-                       rel="noopener noreferrer"
-                       style="color: #0066cc; text-decoration: underline; font-weight: bold;">
-                        Open Location in Google Maps
-                    </a>
-                </div>
                 {{else}}
                 <p>GPS Coordinates: Not available</p>
                 {{/if}}

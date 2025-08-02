@@ -278,15 +278,14 @@ module.exports = (pool) => {
                     
                     const emergencyId = emergencyResult.rows[0].Id;
                     
-                    // Prepare emergency data with test coordinates for Kumasi if no location is provided
-                    // Format as "Address (lat, lng)" to ensure coordinates can be parsed by emailService
+                    // Prepare emergency data with real location if provided, otherwise use fallback
                     let formattedLocation = location;
                     if (!formattedLocation || formattedLocation === 'Location not available') {
-                        // Use Kumasi as test location with coordinates
-                        formattedLocation = "Kumasi, Ghana (6.6745, -1.5716)";
-                    } else if (!formattedLocation.includes(',')) {
-                        // If location doesn't have coordinates, add test ones for email template to parse
-                        formattedLocation += " (6.6745, -1.5716)";
+                        // Use fallback location only if no real location is provided
+                        formattedLocation = "Location unavailable - emergency services notified";
+                        console.log('⚠️ No location data provided for emergency alert');
+                    } else {
+                        console.log('📍 Using provided location for emergency alert:', formattedLocation);
                     }
                     
                     const emergencyData = {
