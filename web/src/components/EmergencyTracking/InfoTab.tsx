@@ -143,7 +143,7 @@ const InfoTab = ({
           <div className="relative">
             <div
               ref={mapContainer}
-              className={`h-32 min-h-32 w-full rounded-lg overflow-hidden border-2 relative ${
+              className={`h-32 min-h-32 w-full rounded-lg overflow-hidden border-2 !relative ${
                 isDarkMode ? 'border-gray-600 bg-gray-800' : 'border-gray-300 bg-gray-200'
               } shadow-inner`}
             />
