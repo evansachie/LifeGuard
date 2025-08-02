@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Map, NavigationControl, Marker } from 'react-map-gl';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import { RiAlertLine } from 'react-icons/ri';
@@ -7,6 +7,7 @@ import PollutionInfo from '../../components/PollutionTracker/PollutionInfo';
 import PollutionZones from '../../components/PollutionTracker/PollutionZones';
 import { INITIAL_VIEW_STATE } from '../../data/initial-view-state';
 import { PollutionZone, MapViewState } from '../../types/pollutionTracker.types';
+import { getCurrentPosition, isGeolocationAvailable } from '../../utils/geolocationUtils';
 import './PollutionTracker.css';
 import '../../types/mapbox-gl.d.ts';
 
@@ -42,9 +43,9 @@ const PollutionTracker = ({ isDarkMode }: PollutionTrackerProps) => {
   }, []);
 
   useEffect(() => {
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
+    if (isGeolocationAvailable()) {
+      getCurrentPosition()
+        .then((position) => {
           const { latitude, longitude } = position.coords;
           setUserLocation({ latitude, longitude });
           setViewState((prev) => ({
@@ -52,12 +53,13 @@ const PollutionTracker = ({ isDarkMode }: PollutionTrackerProps) => {
             latitude,
             longitude,
           }));
-        },
-        (error) => {
+          console.log('📍 Real location obtained for pollution tracker:', { latitude, longitude });
+        })
+        .catch((error) => {
           console.error('Error getting user location:', error);
-        },
-        { enableHighAccuracy: true }
-      );
+        });
+    } else {
+      console.warn('Geolocation not available, using default location');
     }
   }, []);
 

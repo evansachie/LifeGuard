@@ -48,6 +48,8 @@ export const API_ENDPOINTS = {
   SEND_TEST_ALERT: (id: string): string =>
     `${NODE_API_URL}/api/emergency-contacts/test-alert/${id}`,
 
+  EMERGENCY_PREFERENCES: `${NODE_API_URL}/api/emergency-preferences`,
+
   EMERGENCY_TEST_ALERT: (id: string): string =>
     `${NODE_API_URL}/api/emergency-contacts/test-alert/${id}`,
   EMERGENCY_CONTACT_VERIFY: (token: string): string =>

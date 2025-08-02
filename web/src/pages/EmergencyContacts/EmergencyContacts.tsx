@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal/DeleteConfirmationModal';
 import { useEmergencyContacts } from '../../hooks/useEmergencyContacts';

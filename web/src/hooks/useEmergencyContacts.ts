@@ -108,10 +108,39 @@ export const useEmergencyContacts = (): EmergencyContactsHookReturn => {
         return;
       }
 
-      // Send the emergency alert with recipients
+      // Get current location for emergency alert
+      let location = 'Location not available';
+      try {
+        if (navigator.geolocation) {
+          const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(
+              (pos) => resolve(pos),
+              (error) => reject(error),
+              {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 60000,
+              }
+            );
+          });
+
+          const { latitude, longitude } = position.coords;
+          location = `Current Location (${latitude.toFixed(6)}, ${longitude.toFixed(6)})`;
+          console.log('📍 Real location obtained for emergency:', { latitude, longitude });
+        }
+      } catch (geoError) {
+        console.warn('⚠️ Could not get current location for emergency alert:', geoError);
+        // Continue with default location message
+      }
+
+      // Send the emergency alert with recipients and location
       await fetchWithAuth(API_ENDPOINTS.SEND_EMERGENCY_ALERT, {
         method: 'POST',
-        body: JSON.stringify({ emailAddresses }),
+        body: JSON.stringify({
+          emailAddresses,
+          location,
+          message: 'Emergency alert triggered - immediate assistance needed',
+        }),
       });
 
       toast.success(`Emergency alert sent to: ${recipients.join(', ')}`);
