@@ -121,9 +121,6 @@
                 <p>Address: {{emergencyLocation}}</p>
                 {{#if coordinates}}
                 <p>GPS Coordinates: {{coordinates.latitude}}, {{coordinates.longitude}}</p>
-                <div class="map-container">
-                    <img src="https://maps.googleapis.com/maps/api/staticmap?center={{coordinates.latitude}},{{coordinates.longitude}}&zoom=15&size=600x300&maptype=roadmap&markers=color:red%7C{{coordinates.latitude}},{{coordinates.longitude}}&key={{mapApiKey}}" alt="Emergency Location Map" />
-                </div>
                 {{else}}
                 <p>GPS Coordinates: Not available</p>
                 {{/if}}
