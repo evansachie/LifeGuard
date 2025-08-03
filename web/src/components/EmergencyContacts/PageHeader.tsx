@@ -7,6 +7,7 @@ interface PageHeaderProps {
   onEmergencyAlert: () => void;
   onOpenPreferences: () => void; // Added this prop
   isDarkMode?: boolean;
+  isEmergencyAlertSending?: boolean;
 }
 
 const PageHeader = ({
@@ -14,6 +15,7 @@ const PageHeader = ({
   onEmergencyAlert,
   onOpenPreferences, // Added this prop
   isDarkMode = false,
+  isEmergencyAlertSending = false,
 }: PageHeaderProps) => {
   return (
     <>
@@ -35,7 +37,11 @@ const PageHeader = ({
           >
             <FaCog />
           </button>
-          <EmergencyButton onClick={onEmergencyAlert} isDarkMode={isDarkMode} />
+          <EmergencyButton
+            onClick={onEmergencyAlert}
+            isDarkMode={isDarkMode}
+            isLoading={isEmergencyAlertSending}
+          />
         </div>
       </div>
 

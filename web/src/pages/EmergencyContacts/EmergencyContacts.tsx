@@ -24,6 +24,7 @@ const EmergencyContacts = ({ isDarkMode }: EmergencyContactsProps) => {
     isLoading,
     isSaving,
     isDeleting,
+    isEmergencyAlertSending,
     saveContact,
     deleteContact,
     sendEmergencyAlert,
@@ -82,6 +83,7 @@ const EmergencyContacts = ({ isDarkMode }: EmergencyContactsProps) => {
         onEmergencyAlert={sendEmergencyAlert}
         onOpenPreferences={handleOpenPreferences}
         isDarkMode={isDarkMode}
+        isEmergencyAlertSending={isEmergencyAlertSending}
       />
 
       <ContactList

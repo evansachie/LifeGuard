@@ -133,9 +133,6 @@ const InfoTab = ({
             </span>
             <span className="text-sm font-medium block">
               {accraCoordinates ? `${accraCoordinates[1]}, ${accraCoordinates[0]}` : 'Updating...'}
-              {accraCoordinates && accraCoordinates[1] === 6.6745 ? (
-                <span className="ml-2 text-xs text-yellow-500">(Test location: Kumasi)</span>
-              ) : null}
             </span>
           </div>
 

@@ -46,7 +46,7 @@ const PollutionTracker = ({ isDarkMode }: PollutionTrackerProps) => {
     if (isGeolocationAvailable()) {
       getCurrentPosition()
         .then((position) => {
-          const { latitude, longitude } = position.coords;
+          const { latitude, longitude } = position;
           setUserLocation({ latitude, longitude });
           setViewState((prev) => ({
             ...prev,

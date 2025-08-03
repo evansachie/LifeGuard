@@ -10,6 +10,7 @@ export interface EmergencyContactsHookReturn {
   isLoading: boolean;
   isSaving: boolean;
   isDeleting: boolean;
+  isEmergencyAlertSending: boolean;
   saveContact: (formData: ContactFormData, contactId?: string) => Promise<boolean>;
   deleteContact: (contactId: string) => Promise<boolean>;
   sendEmergencyAlert: () => Promise<void>;
@@ -21,6 +22,7 @@ export const useEmergencyContacts = (): EmergencyContactsHookReturn => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const [isEmergencyAlertSending, setIsEmergencyAlertSending] = useState<boolean>(false);
   const { preferences } = useEmergencyPreference();
 
   useEffect(() => {
@@ -83,6 +85,7 @@ export const useEmergencyContacts = (): EmergencyContactsHookReturn => {
   };
 
   const sendEmergencyAlert = async (): Promise<void> => {
+    setIsEmergencyAlertSending(true);
     try {
       // Create a list of recipients based on preferences
       const recipients: string[] = [];
@@ -147,9 +150,10 @@ export const useEmergencyContacts = (): EmergencyContactsHookReturn => {
     } catch (error) {
       console.error('Failed to send emergency alert', error);
       toast.error('Failed to send emergency alert');
+    } finally {
+      setIsEmergencyAlertSending(false);
     }
   };
-
   const sendTestAlert = async (contactId: string): Promise<void> => {
     try {
       await fetchWithAuth(API_ENDPOINTS.SEND_TEST_ALERT(contactId), {
@@ -168,6 +172,7 @@ export const useEmergencyContacts = (): EmergencyContactsHookReturn => {
     isLoading,
     isSaving,
     isDeleting,
+    isEmergencyAlertSending,
     saveContact,
     deleteContact,
     sendEmergencyAlert,
