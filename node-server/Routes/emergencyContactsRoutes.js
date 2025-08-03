@@ -297,8 +297,9 @@ module.exports = (pool) => {
                     
                     const alertResults = [];
                     
-                    // 1. Process emergency contacts
-                    if (contacts.length > 0) {
+                    // 1. Process emergency contacts if enabled
+                    if (userPrefs.SendToEmergencyContacts && contacts.length > 0) {
+                        console.log(`SENDING TO ${contacts.length} EMERGENCY CONTACTS: enabled by preferences`);
                         const contactAlerts = await Promise.all(contacts.map(async (contact) => {
                             // Send email alert
                             const emailResult = await sendEmergencyAlert(contact, userData, emergencyData);
@@ -322,33 +323,41 @@ module.exports = (pool) => {
                             
                             return {success: emailResult.success || smsResult.success};
                         }));
+                    } else if (!userPrefs.SendToEmergencyContacts) {
+                        console.log('SKIPPING EMERGENCY CONTACTS: disabled by user preferences');
+                    } else {
+                        console.log('SKIPPING EMERGENCY CONTACTS: no verified contacts found');
                     }
                     
-                    // 2. Process ambulance service - ALWAYS enabled
-                    console.log('SENDING TO AMBULANCE SERVICE: always enabled');
-                    try {
-                        // Create ambulance contact with hardcoded values for direct testing
-                        const ambulanceContact = {
-                            Id: 'ambulance-service',
-                            Name: 'Ambulance Service',
-                            Email: 'navarahq@gmail.com', // Hardcoded email for testing
-                            Phone: '112'
-                        };
-                        
-                        // Send email alert to ambulance with explicit error handling
-                        const emailResult = await sendEmergencyAlert(ambulanceContact, userData, emergencyData);
-                        
-                        alertResults.push({
-                            contactType: 'ambulance-service',
-                            emailSent: emailResult.success
-                        });
-                    } catch (ambulanceError) {
-                        console.error('ERROR SENDING AMBULANCE EMAIL:', ambulanceError);
-                        alertResults.push({
-                            contactType: 'ambulance-service',
-                            emailSent: false,
-                            error: ambulanceError.message
-                        });
+                    // 2. Process ambulance service - only if enabled in preferences
+                    if (userPrefs.SendToAmbulanceService) {
+                        console.log('SENDING TO AMBULANCE SERVICE: enabled by preferences');
+                        try {
+                            // Create ambulance contact with hardcoded values for direct testing
+                            const ambulanceContact = {
+                                Id: 'ambulance-service',
+                                Name: 'Ambulance Service',
+                                Email: 'navarahq@gmail.com', // Hardcoded email for testing
+                                Phone: '112'
+                            };
+                            
+                            // Send email alert to ambulance with explicit error handling
+                            const emailResult = await sendEmergencyAlert(ambulanceContact, userData, emergencyData);
+                            
+                            alertResults.push({
+                                contactType: 'ambulance-service',
+                                emailSent: emailResult.success
+                            });
+                        } catch (ambulanceError) {
+                            console.error('ERROR SENDING AMBULANCE EMAIL:', ambulanceError);
+                            alertResults.push({
+                                contactType: 'ambulance-service',
+                                emailSent: false,
+                                error: ambulanceError.message
+                            });
+                        }
+                    } else {
+                        console.log('SKIPPING AMBULANCE SERVICE: disabled by user preferences');
                     }
                     
                     // 4. If additional email addresses were provided in the request (from client)
