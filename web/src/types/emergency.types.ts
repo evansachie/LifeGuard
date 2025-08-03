@@ -26,8 +26,9 @@ export interface EmergencyUserData {
   email: string;
   location: string;
   timestamp: string;
-  medicalConditions?: string[];
-  medications?: string[];
+  medicalInfo: MedicalInfo;
+  mapUrl: string | null;
+  medications: Medication[];
   emergencyContacts?: EmergencyContact[];
 }
 

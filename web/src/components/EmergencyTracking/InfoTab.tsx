@@ -19,9 +19,17 @@ interface InfoTabProps {
   actions: EmergencyActions;
   accraCoordinates: [number, number];
   isLoading: boolean;
+  locationOverride?: string | null;
 }
 
-const InfoTab = ({ userData, isDarkMode, actions, accraCoordinates, isLoading }: InfoTabProps) => {
+const InfoTab = ({
+  userData,
+  isDarkMode,
+  actions,
+  accraCoordinates,
+  isLoading,
+  locationOverride,
+}: InfoTabProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const [, setMapError] = useState<boolean>(false);
 
@@ -116,20 +124,25 @@ const InfoTab = ({ userData, isDarkMode, actions, accraCoordinates, isLoading }:
             <span className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 block mb-1">
               Address
             </span>
-            <span className="text-sm font-medium block">{userData.location}</span>
+            <span className="text-sm font-medium block">
+              {locationOverride || userData.location || 'Updating location...'}
+            </span>
+
+            <span className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 block mt-2 mb-1">
+              Coordinates
+            </span>
+            <span className="text-sm font-medium block">
+              {accraCoordinates ? `${accraCoordinates[1]}, ${accraCoordinates[0]}` : 'Updating...'}
+            </span>
           </div>
 
           {/* Compact Map Container */}
           <div className="relative">
             <div
               ref={mapContainer}
-              className={`h-32 w-full rounded-lg overflow-hidden border-2 ${
+              className={`h-32 min-h-32 w-full rounded-lg overflow-hidden border-2 !relative ${
                 isDarkMode ? 'border-gray-600 bg-gray-800' : 'border-gray-300 bg-gray-200'
               } shadow-inner`}
-              style={{
-                minHeight: '128px',
-                position: 'relative',
-              }}
             />
 
             {/* Map overlay with loading state */}

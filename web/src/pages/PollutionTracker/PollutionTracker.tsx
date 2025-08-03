@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Map, NavigationControl, Marker } from 'react-map-gl';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import { RiAlertLine } from 'react-icons/ri';
@@ -7,6 +7,7 @@ import PollutionInfo from '../../components/PollutionTracker/PollutionInfo';
 import PollutionZones from '../../components/PollutionTracker/PollutionZones';
 import { INITIAL_VIEW_STATE } from '../../data/initial-view-state';
 import { PollutionZone, MapViewState } from '../../types/pollutionTracker.types';
+import { getCurrentPosition, isGeolocationAvailable } from '../../utils/geolocationUtils';
 import './PollutionTracker.css';
 import '../../types/mapbox-gl.d.ts';
 
@@ -42,22 +43,37 @@ const PollutionTracker = ({ isDarkMode }: PollutionTrackerProps) => {
   }, []);
 
   useEffect(() => {
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
+    if (isGeolocationAvailable()) {
+      getCurrentPosition()
+        .then((position) => {
+          const { latitude, longitude } = position;
           setUserLocation({ latitude, longitude });
           setViewState((prev) => ({
             ...prev,
             latitude,
             longitude,
           }));
-        },
-        (error) => {
+          console.log('📍 Real location obtained for pollution tracker:', { latitude, longitude });
+        })
+        .catch((error) => {
           console.error('Error getting user location:', error);
-        },
-        { enableHighAccuracy: true }
-      );
+          // Fallback to default location (Kumasi) if geolocation fails
+          const fallbackLocation = { latitude: 6.6885, longitude: -1.6244 };
+          setUserLocation(fallbackLocation);
+          setViewState((prev) => ({
+            ...prev,
+            ...fallbackLocation,
+          }));
+          console.warn('Using fallback location (Kumasi) due to geolocation error');
+        });
+    } else {
+      console.warn('Geolocation not available, using default location');
+      const defaultLocation = { latitude: 6.6885, longitude: -1.6244 };
+      setUserLocation(defaultLocation);
+      setViewState((prev) => ({
+        ...prev,
+        ...defaultLocation,
+      }));
     }
   }, []);
 

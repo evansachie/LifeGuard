@@ -48,6 +48,8 @@ export const API_ENDPOINTS = {
   SEND_TEST_ALERT: (id: string): string =>
     `${NODE_API_URL}/api/emergency-contacts/test-alert/${id}`,
 
+  EMERGENCY_PREFERENCES: `${NODE_API_URL}/api/emergency-preferences`,
+
   EMERGENCY_TEST_ALERT: (id: string): string =>
     `${NODE_API_URL}/api/emergency-contacts/test-alert/${id}`,
   EMERGENCY_CONTACT_VERIFY: (token: string): string =>
@@ -92,6 +94,12 @@ export const API_ENDPOINTS = {
   USER_PREFERENCES: {
     NOTIFICATIONS: `${NODE_API_URL}/api/user-preferences/notifications`,
     SEND_TEST_EMAIL: '/user-preferences/send-test-email',
+  },
+
+  HEALTH_TIPS: {
+    LIST: `${NODE_API_URL}/api/health-tips`,
+    TOPICS: `${NODE_API_URL}/api/health-tips/topics`,
+    TOPIC_DETAILS: (id: string): string => `${NODE_API_URL}/api/health-tips/topic/${id}`,
   },
 } as const;
 

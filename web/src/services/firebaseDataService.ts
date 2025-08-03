@@ -6,7 +6,13 @@ import { cleanupFirebaseStructure } from './firebaseCleanup';
 export interface FirebaseSensorData {
   deviceId: string;
   deviceName: string;
+  userId?: string;
   timestamp: number;
+  location?: {
+    latitude: number;
+    longitude: number;
+    accuracy?: number;
+  };
   environmental: {
     temperature: number;
     humidity: number;
@@ -43,7 +49,9 @@ class FirebaseDataService {
   async pushSensorData(
     deviceId: string,
     deviceName: string,
-    sensorData: SensorData
+    sensorData: SensorData,
+    userId?: string,
+    location?: { latitude: number; longitude: number; accuracy?: number }
   ): Promise<void> {
     try {
       const timestamp = Date.now();
@@ -51,6 +59,8 @@ class FirebaseDataService {
         deviceId,
         deviceName,
         timestamp,
+        userId: userId || 'anonymous',
+        hasLocation: !!location,
       });
 
       // First ensure test key is removed
@@ -61,7 +71,9 @@ class FirebaseDataService {
       const firebaseData: FirebaseSensorData = {
         deviceId,
         deviceName,
+        userId, // Include user ID if available
         timestamp, // Using current timestamp
+        location, // Include location if available
         environmental: {
           temperature: sensorData.environmental?.temperature || 0,
           humidity: sensorData.environmental?.humidity || 0,
@@ -89,8 +101,9 @@ class FirebaseDataService {
         },
       };
 
-      // Use a timestamp-based key format
-      const entryKey = `data_${timestamp}`;
+      // Use a new key format that includes user ID and timestamp
+      const userPart = userId ? `user_${userId}` : 'anonymous';
+      const entryKey = `${userPart}_${timestamp}`;
       const entryRef = ref(database, `devices/${deviceId}/sensorData/${entryKey}`);
 
       // Push to Firebase
@@ -139,10 +152,11 @@ class FirebaseDataService {
             if (keys.length > limit) {
               console.log(`🧹 Limiting historical data (${keys.length} entries > ${limit} limit)`);
 
-              // Sort keys by timestamp (assuming they're in the format data_timestamp)
+              // Sort keys by timestamp (handling both old format "data_timestamp" and new format "user_id_timestamp")
               const sortedKeys = keys.sort((a, b) => {
-                const timeA = parseInt(a.split('_')[1] || '0');
-                const timeB = parseInt(b.split('_')[1] || '0');
+                // Extract timestamp from key - it's always the last part after the last underscore
+                const timeA = parseInt(a.split('_').pop() || '0');
+                const timeB = parseInt(b.split('_').pop() || '0');
                 return timeA - timeB;
               });
 

@@ -1,3 +1,5 @@
+import { API_ENDPOINTS, fetchApi } from '../utils/api';
+
 interface Video {
   id: string;
   title: string;
@@ -32,126 +34,22 @@ interface HealthTipsData {
   videos: Video[];
 }
 
-// Multiple API sources for health content
-const API_SOURCES = {
-  // Free APIs for health content
-  newsApi: 'https://newsapi.org/v2/everything?q=health%20tips&apiKey=YOUR_NEWS_API_KEY',
-  mediumApi: 'https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/tag/health',
-  devToApi: 'https://dev.to/api/articles?tag=health',
-
-  healthlineRss:
-    'https://api.rss2json.com/v1/api.json?rss_url=https://www.healthline.com/rss/health-news',
-  mayoClinicRss:
-    'https://api.rss2json.com/v1/api.json?rss_url=https://www.mayoclinic.org/rss/all-health-news',
-};
-
 export const fetchHealthTips = async (): Promise<HealthTipsData> => {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10000);
-
   try {
-    // Try multiple sources in parallel
-    const apiPromises = [fetchFromMedium(), fetchFromHealthlineRSS(), fetchFromDevTo()];
+    // Use the backend endpoint which handles CORS and API calls
+    const data = await fetchApi<HealthTipsData>(API_ENDPOINTS.HEALTH_TIPS.LIST, {
+      method: 'GET',
+      timeout: 20000, // 20 second timeout for health tips
+    });
 
-    const results = await Promise.allSettled(apiPromises);
-    const successfulResults = results
-      .filter(
-        (result): result is PromiseFulfilledResult<HealthTip[]> => result.status === 'fulfilled'
-      )
-      .map((result) => result.value)
-      .flat();
-
-    if (successfulResults.length > 0) {
-      console.log(`✅ Fetched ${successfulResults.length} health tips from APIs`);
-
-      return {
-        featured: generateFeaturedTip(successfulResults[0] || getFallbackData().tips[0]),
-        tips: successfulResults.slice(0, 20), // Limit to 20 tips
-        videos: getHealthVideos(),
-      };
-    } else {
-      throw new Error('All API sources failed');
+    if (!data || !data.tips || data.tips.length === 0) {
+      throw new Error('No valid health tips received from backend');
     }
+    return data;
   } catch (error) {
-    console.warn('⚠️ API fetch failed, using fallback data:', error);
+    console.warn('⚠️ Backend API fetch failed, using fallback data:', error);
     return getFallbackData();
-  } finally {
-    clearTimeout(timeoutId);
   }
-};
-
-// Fetch from Medium RSS (no API key needed)
-const fetchFromMedium = async (): Promise<HealthTip[]> => {
-  const response = await fetch(API_SOURCES.mediumApi);
-  const data = await response.json();
-
-  if (data.status === 'ok' && data.items) {
-    return data.items.slice(0, 8).map((item: any, index: number) => ({
-      id: `medium-${index}`,
-      category: 'wellness',
-      title: item.title,
-      description: item.description.replace(/<[^>]*>/g, '').substring(0, 200) + '...',
-      type: 'article',
-      url: item.link,
-      imageUrl: item.thumbnail || `https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=800`,
-      date: new Date(item.pubDate).toISOString(),
-    }));
-  }
-  return [];
-};
-
-// Fetch from Healthline RSS
-const fetchFromHealthlineRSS = async (): Promise<HealthTip[]> => {
-  const response = await fetch(API_SOURCES.healthlineRss);
-  const data = await response.json();
-
-  if (data.status === 'ok' && data.items) {
-    return data.items.slice(0, 6).map((item: any, index: number) => ({
-      id: `healthline-${index}`,
-      category: 'prevention',
-      title: item.title,
-      description: item.description.replace(/<[^>]*>/g, '').substring(0, 200) + '...',
-      type: 'article',
-      url: item.link,
-      imageUrl:
-        item.enclosure?.link ||
-        `https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800`,
-      date: new Date(item.pubDate).toISOString(),
-    }));
-  }
-  return [];
-};
-
-// Fetch from Dev.to API (free, no key needed)
-const fetchFromDevTo = async (): Promise<HealthTip[]> => {
-  const response = await fetch(API_SOURCES.devToApi);
-  const data = await response.json();
-
-  if (Array.isArray(data)) {
-    return data.slice(0, 4).map((item: any) => ({
-      id: `devto-${item.id}`,
-      category: 'mental',
-      title: item.title,
-      description: item.description || 'Health and wellness tips from the developer community',
-      type: 'article',
-      url: item.url,
-      imageUrl:
-        item.cover_image || `https://images.unsplash.com/photo-1505751171710-1f6d0ace5a85?w=800`,
-      date: new Date(item.published_at).toISOString(),
-    }));
-  }
-  return [];
-};
-
-// Generate featured tip from API data
-const generateFeaturedTip = (tip: HealthTip): FeaturedTip => {
-  return {
-    title: "Today's Health Spotlight",
-    description: tip.description,
-    image: tip.imageUrl || 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800',
-    category: tip.category,
-    imageAlt: tip.title,
-  };
 };
 
 // Get curated health videos
@@ -184,7 +82,7 @@ const getHealthVideos = (): Video[] => {
   ];
 };
 
-// Enhanced fallback data
+// Enhanced fallback data with official health guidance
 const getFallbackData = (): HealthTipsData => {
   const fallbackImages = [
     'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800',
@@ -205,27 +103,30 @@ const getFallbackData = (): HealthTipsData => {
   const fallbackTips = [
     {
       id: '1',
-      category: 'fitness',
-      title: '10-Minute Morning Workout',
-      description: 'Start your day with energy using this quick and effective morning routine.',
+      category: 'prevention',
+      title: 'Get Recommended Health Screenings',
+      description:
+        'Regular health screenings can help find problems before they start or early when treatment works better.',
       type: 'article',
       imageUrl: fallbackImages[0],
       date: getRecentDate(),
     },
     {
       id: '2',
-      category: 'nutrition',
-      title: 'Hydration: The Foundation of Health',
-      description: 'Learn why proper hydration is crucial for optimal body function.',
+      category: 'fitness',
+      title: 'Get Moving with Physical Activity',
+      description:
+        'Adults need at least 150 minutes of moderate-intensity aerobic activity each week.',
       type: 'article',
       imageUrl: fallbackImages[1],
       date: getRecentDate(),
     },
     {
       id: '3',
-      category: 'mental',
-      title: 'Mindfulness in Daily Life',
-      description: 'Simple techniques to incorporate mindfulness into your busy schedule.',
+      category: 'nutrition',
+      title: 'Eat Healthy Foods',
+      description:
+        'A healthy eating plan emphasizes fruits, vegetables, whole grains, and fat-free or low-fat milk.',
       type: 'article',
       imageUrl: fallbackImages[2],
       date: getRecentDate(),
@@ -233,26 +134,28 @@ const getFallbackData = (): HealthTipsData => {
     {
       id: '4',
       category: 'prevention',
-      title: 'Understanding Blood Pressure',
-      description: 'What your blood pressure numbers mean and how to maintain healthy levels.',
+      title: 'Take Steps to Control Your Blood Pressure',
+      description:
+        'High blood pressure usually has no warning signs or symptoms, so monitoring is important.',
       type: 'article',
       imageUrl: fallbackImages[3],
       date: getRecentDate(),
     },
     {
       id: '5',
-      category: 'fitness',
-      title: 'Strength Training for Beginners',
-      description: 'Build muscle and improve fitness with bodyweight exercises.',
+      category: 'mental',
+      title: 'Manage Stress for Better Health',
+      description:
+        'Everyone feels stressed from time to time, but chronic stress can affect your health.',
       type: 'article',
       imageUrl: fallbackImages[4],
       date: getRecentDate(),
     },
     {
       id: '6',
-      category: 'nutrition',
-      title: 'Superfoods for Immune Health',
-      description: 'Boost your immune system naturally with these nutrient-rich foods.',
+      category: 'prevention',
+      title: 'Get Vaccinated to Protect Your Health',
+      description: 'Vaccines help protect you from serious diseases and their complications.',
       type: 'article',
       imageUrl: fallbackImages[5],
       date: getRecentDate(),
@@ -261,11 +164,12 @@ const getFallbackData = (): HealthTipsData => {
 
   return {
     featured: {
-      title: "Today's Health Focus",
-      description: 'Discover evidence-based health tips to improve your well-being',
+      title: 'Evidence-Based Health Guidance',
+      description:
+        'Get trusted health information and preventive care recommendations from government health experts',
       image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800',
       imageAlt: 'Health and wellness',
-      category: 'wellness',
+      category: 'prevention',
     },
     tips: fallbackTips,
     videos: getHealthVideos(),

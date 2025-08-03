@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal/DeleteConfirmationModal';
 import { useEmergencyContacts } from '../../hooks/useEmergencyContacts';
 import PageHeader from '../../components/EmergencyContacts/PageHeader';
 import ContactList from '../../components/EmergencyContacts/ContactList';
 import ContactForm from '../../components/EmergencyContacts/ContactForm';
+import EmergencyPreferenceModal from '../../components/EmergencyContacts/EmergencyPreferenceModal';
 import { Contact, ContactFormData } from '../../types/contact.types';
 
 interface EmergencyContactsProps {
@@ -16,17 +17,27 @@ const EmergencyContacts = ({ isDarkMode }: EmergencyContactsProps) => {
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
   const [deletingContact, setDeletingContact] = useState<Contact | null>(null);
+  const [preferencesModalOpen, setPreferencesModalOpen] = useState<boolean>(false);
 
   const {
     contacts,
     isLoading,
     isSaving,
     isDeleting,
+    isEmergencyAlertSending,
     saveContact,
     deleteContact,
     sendEmergencyAlert,
     sendTestAlert,
   } = useEmergencyContacts();
+
+  const handleOpenPreferences = () => {
+    setPreferencesModalOpen(true);
+  };
+
+  const handleClosePreferences = () => {
+    setPreferencesModalOpen(false);
+  };
 
   const handleOpenAddModal = () => {
     setIsModalOpen(true);
@@ -70,7 +81,9 @@ const EmergencyContacts = ({ isDarkMode }: EmergencyContactsProps) => {
       <PageHeader
         onAddClick={handleOpenAddModal}
         onEmergencyAlert={sendEmergencyAlert}
+        onOpenPreferences={handleOpenPreferences}
         isDarkMode={isDarkMode}
+        isEmergencyAlertSending={isEmergencyAlertSending}
       />
 
       <ContactList
@@ -106,6 +119,14 @@ const EmergencyContacts = ({ isDarkMode }: EmergencyContactsProps) => {
         isLoading={isDeleting}
         isDarkMode={isDarkMode}
       />
+
+      <AnimatePresence>
+        {preferencesModalOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <EmergencyPreferenceModal onClose={handleClosePreferences} isDarkMode={isDarkMode} />
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
