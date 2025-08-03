@@ -15,6 +15,7 @@ const exerciseRoutes = require('./Routes/exerciseRoutes');
 const healthMetricsRoutes = require('./Routes/healthMetricsRoutes');
 const medicationRoutes = require('./Routes/medicationRoutes');
 const userPreferencesRoutes = require('./Routes/userPreferencesRoutes');
+const healthTipsRoutes = require('./Routes/healthTipsRoutes');
 
 const nodemailer = require('nodemailer');
 const NotificationService = require('./services/NotificationService');
@@ -139,6 +140,7 @@ app.use('/api/exercise', exerciseRoutes(pool));
 app.use('/api/health-metrics', healthMetricsRoutes(pool));
 app.use('/api/medications', medicationRoutes(pool));
 app.use('/api/user-preferences', userPreferencesRoutes(pool));
+app.use('/api/health-tips', healthTipsRoutes);
 
 app.get('/', (req, res) => {
     res.send('LifeGuard API is running!');
