@@ -57,9 +57,23 @@ const PollutionTracker = ({ isDarkMode }: PollutionTrackerProps) => {
         })
         .catch((error) => {
           console.error('Error getting user location:', error);
+          // Fallback to default location (Kumasi) if geolocation fails
+          const fallbackLocation = { latitude: 6.6885, longitude: -1.6244 };
+          setUserLocation(fallbackLocation);
+          setViewState((prev) => ({
+            ...prev,
+            ...fallbackLocation,
+          }));
+          console.warn('Using fallback location (Kumasi) due to geolocation error');
         });
     } else {
       console.warn('Geolocation not available, using default location');
+      const defaultLocation = { latitude: 6.6885, longitude: -1.6244 };
+      setUserLocation(defaultLocation);
+      setViewState((prev) => ({
+        ...prev,
+        ...defaultLocation,
+      }));
     }
   }, []);
 

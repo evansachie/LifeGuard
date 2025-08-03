@@ -95,6 +95,12 @@ export const API_ENDPOINTS = {
     NOTIFICATIONS: `${NODE_API_URL}/api/user-preferences/notifications`,
     SEND_TEST_EMAIL: '/user-preferences/send-test-email',
   },
+
+  HEALTH_TIPS: {
+    LIST: `${NODE_API_URL}/api/health-tips`,
+    TOPICS: `${NODE_API_URL}/api/health-tips/topics`,
+    TOPIC_DETAILS: (id: string): string => `${NODE_API_URL}/api/health-tips/topic/${id}`,
+  },
 } as const;
 
 // Request options interface

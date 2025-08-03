@@ -28,9 +28,29 @@ export const getCurrentPosition = (): Promise<GeolocationPosition> => {
         });
       },
       (error) => {
-        reject(error);
+        // Provide more detailed error information
+        let errorMessage = 'Failed to get your location';
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = 'Location access denied by user';
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = 'Location information unavailable';
+            break;
+          case error.TIMEOUT:
+            errorMessage = 'Location request timed out';
+            break;
+          default:
+            errorMessage = 'Unknown geolocation error';
+        }
+        console.warn(`Geolocation error: ${errorMessage}`, error);
+        reject(new Error(errorMessage));
       },
-      { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 60000,
+      }
     );
   });
 };
