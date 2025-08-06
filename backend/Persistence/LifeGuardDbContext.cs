@@ -22,6 +22,7 @@ namespace Persistence
             modelBuilder.Ignore<ApplicationUser>();
 
             modelBuilder.ApplyConfiguration(new MemoConfiguration());
+            modelBuilder.ApplyConfiguration(new EmergencyContactConfiguration());
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
