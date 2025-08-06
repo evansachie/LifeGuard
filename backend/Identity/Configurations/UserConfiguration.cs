@@ -15,17 +15,6 @@ namespace Identity.Configurations
     {
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
-            var env = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
-
-            if (env == "Development")
-            {
-                Env.Load("../.env.local");
-            }
-            else
-            {
-                Env.Load("../.env");
-            }
-
             var admin_password = Environment.GetEnvironmentVariable("ADMIN_PASSWORD");
             var app_user_password = Environment.GetEnvironmentVariable("APP_USER_PASSWORD");
 
