@@ -13,11 +13,11 @@ import type {
 } from '../types/api.types';
 
 export const FRONTEND_URL = window.location.origin;
-export const BASE_URL = 'https://lifeguard-hiij.onrender.com';
-export const API_BASE_URL = `${BASE_URL}/api`;
-export const NODE_API_URL = 'https://lifeguard-node.onrender.com';
-export const QUOTE_API_URL = 'https://api.allorigins.win/raw?url=https://zenquotes.io/api/random';
-export const RAG_BASE_URL = 'https://lifeguard-rag.onrender.com';
+export const BASE_URL = import.meta.env.VITE_BASE_URL;
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+export const NODE_API_URL = import.meta.env.VITE_NODE_API_URL;
+export const QUOTE_API_URL = import.meta.env.VITE_QUOTE_API_URL;
+export const RAG_BASE_URL = import.meta.env.VITE_RAG_BASE_URL;
 
 export const API_ENDPOINTS = {
   LOGIN: '/Account/login',
