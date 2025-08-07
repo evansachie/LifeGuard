@@ -5,87 +5,321 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EMERGENCY ALERT</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        * {
             margin: 0;
             padding: 0;
-            background-color: #f9f9f9;
+            box-sizing: border-box;
         }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            margin: 0;
             padding: 20px;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
         }
+        
+        .container {
+            max-width: 650px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            position: relative;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #ff3b30, #ff6347, #ff8c00);
+            z-index: 10;
+        }
+        
         .header {
             text-align: center;
-            padding: 20px 0;
-            border-bottom: 1px solid #eee;
-            background-color: #ff3b30;
+            padding: 40px 30px;
+            background: linear-gradient(135deg, #ff3b30 0%, #e53e3e 100%);
             color: white;
-            border-radius: 8px 8px 0 0;
+            position: relative;
+            overflow: hidden;
         }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.1; }
+            50% { transform: scale(1.1); opacity: 0.2; }
+        }
+        
         .header img {
-            max-width: 150px;
+            max-width: 180px;
             height: auto;
-            background-color: white;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 10px;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            position: relative;
+            z-index: 1;
         }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+        
         .content {
-            padding: 20px 0;
+            padding: 40px 30px;
         }
-        .footer {
+        
+        .emergency-box {
+            background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+            border-left: 6px solid #ff3b30;
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(255, 59, 48, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .emergency-box::before {
+            content: '🚨';
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            opacity: 0.6;
+        }
+        
+        .emergency-box p {
+            font-size: 16px;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+        
+        .emergency-box p:last-child {
+            margin-bottom: 0;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+        
+        .info-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 15px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .info-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .info-title {
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #2d3748;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(135deg, #ff3b30, #e53e3e);
+            border-radius: 2px;
+        }
+        
+        .info-section p {
+            margin: 8px 0;
+            font-size: 15px;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+        
+        .info-section p strong {
+            color: #2d3748;
+            font-weight: 600;
+        }
+        
+        .button-container {
             text-align: center;
-            padding: 20px 0;
-            color: #888;
-            font-size: 12px;
-            border-top: 1px solid #eee;
+            margin: 40px 0;
         }
+        
         .button {
             display: inline-block;
-            padding: 12px 24px;
-            background-color: #ff3b30;
-            color: white;
+            padding: 18px 36px;
+            background: linear-gradient(135deg, #ff3b30 0%, #e53e3e 100%);
+            color: white !important;
             text-decoration: none;
-            border-radius: 4px;
-            font-weight: bold;
-            margin: 20px 0;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 8px 25px rgba(255, 59, 48, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
+        
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s ease;
+        }
+        
         .button:hover {
-            background-color: #d63128;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(255, 59, 48, 0.4);
+            background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
         }
-        .emergency-box {
-            background-color: #fff4f4;
-            border-left: 4px solid #ff3b30;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 4px;
+        
+        .button:hover::before {
+            left: 100%;
         }
-        .info-section {
-            background-color: #f8f9fa;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 4px;
+        
+        .button:active {
+            transform: translateY(-1px);
         }
-        .info-title {
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #ff3b30;
+        
+        .maps-link {
+            display: inline-block;
+            color: #3182ce;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #ebf8ff 0%, #bee3f8 100%);
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            margin-top: 15px;
+        }
+        
+        .maps-link:hover {
+            background: linear-gradient(135deg, #bee3f8 0%, #90cdf4 100%);
+            transform: translateY(-1px);
+        }
+        
+        .important-notice {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border: 2px solid #f59e0b;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 30px 0;
+            position: relative;
+        }
+        
+        .important-notice::before {
+            content: '⚠️';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 20px;
+        }
+        
+        .important-notice p {
+            margin-left: 35px;
+            font-weight: 600;
+            color: #92400e;
+            margin-bottom: 0;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #718096;
+            font-size: 13px;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .footer p {
+            margin: 5px 0;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                border-radius: 15px;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .info-section, .emergency-box {
+                padding: 20px;
+            }
+            
+            .button {
+                padding: 16px 28px;
+                font-size: 15px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <img src="https://res.cloudinary.com/dat7slh1u/image/upload/v1740908768/logo_moe3jm.png" alt="LifeGuard Logo" style="max-width: 200px; margin-bottom: 20px;">
-            <h1>⚠️ EMERGENCY ALERT ⚠️</h1>
+            <img src="https://res.cloudinary.com/dat7slh1u/image/upload/v1740908768/logo_moe3jm.png" alt="LifeGuard Logo">
+            <h1>🚨 EMERGENCY ALERT 🚨</h1>
+            <div class="subtitle">Immediate Response Required</div>
         </div>
+        
         <div class="content">
             <div class="emergency-box">
                 <p><strong>{{userName}}</strong> has triggered an emergency alert and needs assistance!</p>
@@ -93,32 +327,32 @@
             </div>
             
             <div class="info-section">
-                <div class="info-title">Emergency Message:</div>
+                <div class="info-title">💬 Emergency Message</div>
                 <p>{{emergencyMessage}}</p>
             </div>
             
             <div class="info-section">
-                <div class="info-title">Contact Information:</div>
-                <p>Name: {{userName}}</p>
-                <p>Phone: {{userPhone}}</p>
-                <p>Age: {{age}}</p>
-                <p>Gender: {{gender}}</p>
-                <p>Weight: {{weight}}</p>
-                <p>Height: {{height}}</p>
-                <p>Bio: {{bio}}</p>
+                <div class="info-title">👤 Contact Information</div>
+                <p><strong>Name:</strong> {{userName}}</p>
+                <p><strong>Phone:</strong> {{userPhone}}</p>
+                <p><strong>Age:</strong> {{age}}</p>
+                <p><strong>Gender:</strong> {{gender}}</p>
+                <p><strong>Weight:</strong> {{weight}}</p>
+                <p><strong>Height:</strong> {{height}}</p>
+                <p><strong>Bio:</strong> {{bio}}</p>
             </div>
             
             <div class="info-section">
-                <div class="info-title">Last Known Location:</div>
+                <div class="info-title">📍 Last Known Location</div>
                 {{#if coordinates}}
                 <p>{{#if locationAddress}}{{locationAddress}}{{else}}Location available via coordinates{{/if}}</p>
-                <p>Coordinates: {{coordinates.latitude}}, {{coordinates.longitude}}</p>
-                <div style="text-align: center; margin-top: 10px;">
+                <p><strong>Coordinates:</strong> {{coordinates.latitude}}, {{coordinates.longitude}}</p>
+                <div style="text-align: center;">
                     <a href="https://www.google.com/maps?q={{coordinates.latitude}},{{coordinates.longitude}}" 
                        target="_blank" 
                        rel="noopener noreferrer"
-                       style="color: #0066cc; text-decoration: underline;">
-                        View on Google Maps
+                       class="maps-link">
+                        🗺️ View on Google Maps
                     </a>
                 </div>
                 {{else}}
@@ -127,16 +361,19 @@
             </div>
             
             <div class="info-section">
-                <div class="info-title">Medical Information:</div>
+                <div class="info-title">🏥 Medical Information</div>
                 <p>{{medicalInfo}}</p>
             </div>
             
-            <div style="text-align: center;">
-                <a href="{{trackingLink}}" class="button">Track Location</a>
+            <div class="button-container">
+                <a href="{{trackingLink}}" class="button">📡 Track Live Location</a>
             </div>
             
-            <p><strong>Important:</strong> If this appears to be a life-threatening emergency, please contact emergency services immediately.</p>
+            <div class="important-notice">
+                <p>If this appears to be a life-threatening emergency, please contact emergency services immediately.</p>
+            </div>
         </div>
+        
         <div class="footer">
             <p>&copy; {{currentYear}} LifeGuard. All rights reserved.</p>
             <p>This is an automated emergency alert. Please do not reply to this email.</p>
