@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LifeGuard.Controllers
 {
+    [Route("api/[controller]")]
     public class PhotosController: Controller
     {
         private readonly IMediator _mediator;
