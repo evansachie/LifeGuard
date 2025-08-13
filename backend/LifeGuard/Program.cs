@@ -125,7 +125,7 @@ namespace LifeGuard
                     options.Scope.Add("email");
                 });
 
-            var credentialPath = Environment.GetEnvironmentVariable("FIREBASE_CREDENTIAL_PATH");
+            var credentialPath = Environment.GetEnvironmentVariable("FIREBASE_CREDENTIAL_PATH_LOCAL") ?? Environment.GetEnvironmentVariable("FIREBASE_CREDENTIAL_PATH");
 
             GoogleCredential credential = GoogleCredential.FromFile(credentialPath).CreateScoped("https://www.googleapis.com/auth/firebase.database");
 
