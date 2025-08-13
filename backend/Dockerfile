@@ -32,7 +32,7 @@ WORKDIR /app
 # Copy the published application
 COPY --from=build-env /app/out .
 
-COPY lifeguard-5ff94-firebase-adminsdk-fbsvc-6ca46138c6.json ./firebase.json
+COPY lifeguard-5ff94-firebase-adminsdk-fbsvc-cecaee9c14.json ./firebase.json
 
 # Set environment variable for your app to locate Firebase credentials
 ENV FIREBASE_CREDENTIAL_PATH=/app/firebase.json
