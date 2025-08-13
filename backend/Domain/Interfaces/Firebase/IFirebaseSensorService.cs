@@ -11,6 +11,6 @@ namespace Domain.Contracts.Firebase
     {
         Task<List<SensorReading>> GetReadingsFromDeviceAsync(string deviceId, long startTimestamp, long endTimestamp);
 
-
+        Task<Status> GetDeviceStatusAsync(string deviceId);
     }
 }
