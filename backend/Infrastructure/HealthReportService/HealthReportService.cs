@@ -31,6 +31,7 @@ namespace Infrastructure.HealthReportService
             long endTimestamp = new DateTimeOffset(endDate).ToUnixTimeMilliseconds();
 
             var readings = await _firebaseSensorService.GetReadingsFromDeviceAsync(deviceId, startTimestamp, endTimestamp);
+            var status = await _firebaseSensorService.GetDeviceStatusAsync(deviceId);
 
             var dataPoints = readings
                 .Where(r => r.motion != null
@@ -68,6 +69,7 @@ namespace Infrastructure.HealthReportService
             var report = new HealthReport
             {
                 DeviceId = deviceId,
+                UserId = status.LastDataKey[5..],
                 ReportDate = endDate,
                 ReportPeriod = $"{range}-Day Average",
                 TotalSteps = totalSteps,
@@ -76,6 +78,8 @@ namespace Infrastructure.HealthReportService
                 AvgHumidity = avgHumidity,
                 AvgAirQualityIndex = avgAirQualityIndex,
                 DataPointCount = dataPoints.Count,
+                LastUpdate = status.LastUpdate,
+
             };
 
             report.Status = DetermineHealthStatus(report);
