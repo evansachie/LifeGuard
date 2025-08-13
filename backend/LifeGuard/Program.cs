@@ -60,8 +60,10 @@ namespace LifeGuard
             var client_id = Environment.GetEnvironmentVariable("CLIENT_ID");
             var client_secret = Environment.GetEnvironmentVariable("CLIENT_SECRET");
             var default_url = Environment.GetEnvironmentVariable("FRONTEND_URL");
+            var firebase_db_url = Environment.GetEnvironmentVariable("FIREBASE_DB_URL");
+            var firebase_credential_path = Environment.GetEnvironmentVariable("FIREBASE_CREDENTIAL_PATH");
             // Add services to the container.
-              
+
             builder.Services.AddDbContext<LifeGuardIdentityDbContext>(options => 
             options.UseNpgsql(connectionStringAuth));
             builder.Services.AddDbContext<LifeGuardDbContext>(options =>
@@ -123,15 +125,14 @@ namespace LifeGuard
                     options.Scope.Add("email");
                 });
 
-            var credentialPath = Environment.GetEnvironmentVariable("FIREBASE_CREDENTIAL_PATH")
-         ?? "../lifeguard-5ff94-firebase-adminsdk-fbsvc-6ca46138c6.json";
+            var credentialPath = Environment.GetEnvironmentVariable("FIREBASE_CREDENTIAL_PATH");
 
             GoogleCredential credential = GoogleCredential.FromFile(credentialPath).CreateScoped("https://www.googleapis.com/auth/firebase.database");
 
             var accessToken = await credential.UnderlyingCredential.GetAccessTokenForRequestAsync();
             
             var firebaseClient = new FirebaseClient(
-                "https://lifeguard-5ff94-default-rtdb.firebaseio.com/",
+                firebase_db_url,
                 new FirebaseOptions
                 {
                     AuthTokenAsyncFactory = () => Task.FromResult(accessToken)
@@ -149,11 +150,12 @@ namespace LifeGuard
             //var service = new FirebaseSensorService(firebaseClient);
 
             //// Replace with a real deviceId from your database
-            //string deviceId = "";
+            //string deviceId = ";
 
             //var readings = await service.GetReadingsForDevice(deviceId);
-
+            //var status = await service.GetDeviceStatusAsync(deviceId);
             //Console.WriteLine($"Found {readings.Count} readings for device {deviceId}");
+            //Console.WriteLine($"{status.DeviceName}, {status.Connected}, LastDataKey, {status.LastDataKey}, Last Update: {status.LastUpdate} ");
 
 
             //foreach (var reading in readings)
@@ -166,9 +168,9 @@ namespace LifeGuard
             //        Console.WriteLine($"  Humidity: {reading.environmental.humidity}");
             //        Console.WriteLine($"  AQI: {reading.environmental.airQuality?.aqi}");
             //    }
-            //    if (reading.motionData != null && reading.motionData.accelerometer != null)
+            //    if (reading.motion != null && reading.motion.accelerometer != null)
             //    {
-            //        Console.WriteLine($"  Accel X: {reading.motionData.accelerometer.x}, Y: {reading.motionData.accelerometer.y}, Z: {reading.motionData.accelerometer.z}");
+            //        Console.WriteLine($"  Accel X: {reading.motion.accelerometer.x}, Y: {reading.motion.accelerometer.y}, Z: {reading.motion.accelerometer.z}");
             //    }
             //    Console.WriteLine("---");
             //}
