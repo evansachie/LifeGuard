@@ -47,5 +47,16 @@ namespace Infrastructure.FirebaseService
 
             return dataPoints;
         }
+
+
+        public async Task<Status> GetDeviceStatusAsync(string deviceId)
+        {
+            var status = await _client
+                .Child("devices")
+                .Child(deviceId)
+                .Child("status")
+                .OnceSingleAsync<Status>();
+            return status;
+        }
     }
 }
