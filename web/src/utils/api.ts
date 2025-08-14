@@ -34,9 +34,9 @@ export const API_ENDPOINTS = {
   GET_USER: (id: string): string => `/Account/${id}`,
   GET_PROFILE: (id: string): string => `/Account/GetProfile/${id}`,
 
-  GET_PHOTO: (id: string): string => `${BASE_URL}/${id}/photo`,
-  UPLOAD_PHOTO: (id: string): string => `${BASE_URL}/${id}/photo`,
-  DELETE_PHOTO: (id: string): string => `${BASE_URL}/${id}/photo`,
+  GET_PHOTO: (id: string): string => `${BASE_URL}/api/Photos/${id}/photo`,
+  UPLOAD_PHOTO: (id: string): string => `${BASE_URL}/api/Photos/${id}/photo`,
+  DELETE_PHOTO: (id: string): string => `${BASE_URL}/api/Photos/${id}/photo`,
 
   DELETE_USER: (id: string): string => `/Account/${id}`,
 
