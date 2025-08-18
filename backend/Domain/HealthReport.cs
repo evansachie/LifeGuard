@@ -18,10 +18,8 @@ namespace Domain
         public double AvgHumidity { get; set; }
         public int AvgAirQualityIndex { get; set; }
         public double AvgDailySteps { get; set; }
-
         public DateTime LastUpdate { get; set; }
         public string Status { get; set; }
-
         public int DataPointCount { get; set; }
     }
 }
