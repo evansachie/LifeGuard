@@ -1,9 +1,9 @@
-from app.core.VectorStore import vectorstore
+from app.core.VectorStore import vector_store_manager
 from langchain.tools.retriever import create_retriever_tool
 
 def get_user_retriever_tool(user_id):
    
-    user_retriever = vectorstore.as_retriever(
+    user_retriever = vector_store_manager.get_retriever(
         search_kwargs={"filter": {"user_id": {"$eq": user_id}}}
     )
 
