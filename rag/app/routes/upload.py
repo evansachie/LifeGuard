@@ -10,10 +10,8 @@ async def upload_pdf(
     user_id: str = Form(...)
 ):
     try:
-        # Process the uploaded document (parsing, splitting, etc.)
         doc_splits = await process_document(file)
-        
-        # Upload to vector store using centralized manager
+      
         vectorstore = vector_store_manager.upload_documents(doc_splits, user_id)
         
         return {
