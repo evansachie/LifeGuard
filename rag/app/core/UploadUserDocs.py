@@ -10,11 +10,9 @@ async def process_document(file):
         temp_file_path = temp_file.name
     
     try:
-        # Load and process document
         loader = PyPDFLoader(temp_file_path)
         documents = loader.load()
         
-        # Split documents into chunks
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=1000,
             chunk_overlap=200,
