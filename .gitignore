@@ -529,6 +529,8 @@ FodyWeavers.xsd
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,aspnetcore
 
 /backend/.env.local
+/backend/lifeguard-5ff94-firebase-adminsdk-fbsvc-cecaee9c14.json
+/rag/.env
 **/bin/
 **/obj/
 .qodo
