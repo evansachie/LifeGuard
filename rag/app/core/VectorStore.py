@@ -25,20 +25,16 @@ class VectorStoreManager:
         )
     
     def get_retriever(self, **kwargs):
-        """Get a retriever with optional parameters"""
         vectorstore = self.get_vectorstore()
         return vectorstore.as_retriever(**kwargs)
     
     def upload_documents(self, doc_splits, user_id):
-        """Upload documents to vector store"""
-        # Add metadata to documents
         for i, doc in enumerate(doc_splits):
             if not hasattr(doc, "metadata"):
                 doc.metadata = {}
             doc.metadata["user_id"] = user_id
             doc.metadata["chunk_index"] = i
         
-        # Create vector store and upload documents
         vectorstore = PineconeVectorStore.from_documents(
             documents=doc_splits,
             embedding=self._embedding,
@@ -49,15 +45,3 @@ class VectorStoreManager:
 
 vector_store_manager = VectorStoreManager()
 
-# embedding = HuggingFaceEndpointEmbeddings(
-#     huggingfacehub_api_token=hf_api_key,
-#     model="sentence-transformers/all-MiniLM-L6-v2"
-# )
-
-# vectorstore = PineconeVectorStore(
-#     index_name=os.getenv("PINECONE_INDEX_NAME"),
-#     embedding=embedding,
-# )
-
-
-# retriever = vectorstore.as_retriever()
