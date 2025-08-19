@@ -1,8 +1,11 @@
+from dotenv import load_dotenv
 from langgraph.graph import MessagesState
 from langchain.chat_models import init_chat_model
 from app.core.GetUserRetrieverTool import get_user_retriever_tool
+import os
 
-response_model = init_chat_model("openai:gpt-3.5-turbo-0125", temperature=0)
+load_dotenv()
+response_model = init_chat_model("groq:llama-3.1-8b-instant", temperature=0)
 
 
 def generate_query_or_respond(state: MessagesState):
