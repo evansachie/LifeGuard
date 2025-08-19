@@ -3,6 +3,7 @@ PyMuPDF==1.26.0
 langchain==0.3.27
 langchain_community==0.3.27
 langchain_core==0.3.74
+langchain-groq==0.3.7
 langchain_huggingface==0.3.1
 langchain_pinecone==0.2.11
 langchain_text_splitters==0.3.9
