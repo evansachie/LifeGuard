@@ -354,13 +354,13 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
             const tempValue = await tempChar.readValue();
             // Arduino sends temperature as float
             const temperature = tempValue.getFloat32(0, true);
-            console.log('🌡️ Temperature read:', temperature, '°C');
+            console.log('🌡️ [ARDUINO NICLA SENSE ME] Temperature read:', temperature, '°C');
 
             // Fix TypeScript error by ensuring newSensorData.environmental is defined
             newSensorData.environmental!.temperature = temperature;
             hasNewData = true;
           } catch (tempError) {
-            console.warn('⚠️ Failed to read temperature:', tempError);
+            console.warn('⚠️ Failed to read temperature from Arduino:', tempError);
           }
         }
 
@@ -371,13 +371,13 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
             const humValue = await humChar.readValue();
             // Arduino sends humidity as uint8 (truncated float)
             const humidity = humValue.getUint8(0);
-            console.log('💧 Humidity read:', humidity, '%');
+            console.log('💧 [ARDUINO NICLA SENSE ME] Humidity read:', humidity, '%');
 
             // Fix TypeScript error by ensuring newSensorData.environmental is defined
             newSensorData.environmental!.humidity = humidity;
             hasNewData = true;
           } catch (humError) {
-            console.warn('⚠️ Failed to read humidity:', humError);
+            console.warn('⚠️ Failed to read humidity from Arduino:', humError);
           }
         }
 
@@ -388,13 +388,13 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
             const pressureValue = await pressureChar.readValue();
             // Arduino sends pressure as float
             const pressure = pressureValue.getFloat32(0, true);
-            console.log('📊 Pressure read:', pressure, 'hPa');
+            console.log('📊 [ARDUINO NICLA SENSE ME] Pressure read:', pressure, 'hPa');
 
             // Fix TypeScript error by ensuring newSensorData.environmental is defined
             newSensorData.environmental!.pressure = pressure;
             hasNewData = true;
           } catch (pressError) {
-            console.warn('⚠️ Failed to read pressure:', pressError);
+            console.warn('⚠️ Failed to read pressure from Arduino:', pressError);
           }
         }
 
@@ -405,13 +405,13 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
             const co2Value = await co2Char.readValue();
             // Arduino sends CO2 as uint32
             const co2 = co2Value.getUint32(0, true);
-            console.log('🌬️ CO2 read:', co2, 'ppm');
+            console.log('🌬️ [ARDUINO NICLA SENSE ME] CO2 read:', co2, 'ppm');
 
             // Fix TypeScript error by ensuring newSensorData.environmental and airQuality are defined
             newSensorData.environmental!.airQuality!.co2 = co2;
             hasNewData = true;
           } catch (co2Error) {
-            console.warn('⚠️ Failed to read CO2:', co2Error);
+            console.warn('⚠️ Failed to read CO2 from Arduino:', co2Error);
           }
         }
 
@@ -425,20 +425,25 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
             if (bsecChar) {
               const bsecValue = await bsecChar.readValue();
               aqi = bsecValue.getFloat32(0, true);
-              console.log('🌿 BSEC IAQ read:', aqi);
+              console.log('🌿 [ARDUINO NICLA SENSE ME] BSEC IAQ read:', aqi);
             } else if (gasChar) {
               const gasValue = await gasChar.readValue();
               const gas = gasValue.getUint32(0, true);
               // Convert gas resistance to AQI approximation
               aqi = Math.max(0, Math.min(500, gas / 1000));
-              console.log('💨 Gas read:', gas, '-> AQI approximation:', aqi);
+              console.log(
+                '💨 [ARDUINO NICLA SENSE ME] Gas read:',
+                gas,
+                '-> AQI approximation:',
+                aqi
+              );
             }
 
             // Fix TypeScript error by ensuring newSensorData.environmental and airQuality are defined
             newSensorData.environmental!.airQuality!.aqi = aqi;
             hasNewData = true;
           } catch (gasError) {
-            console.warn('⚠️ Failed to read gas/AQI data:', gasError);
+            console.warn('⚠️ Failed to read gas/AQI data from Arduino:', gasError);
           }
         }
 
@@ -474,6 +479,59 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
               },
               timestamp: new Date().toISOString(),
             };
+
+            // Log data sources for pollution tracker analysis
+            console.log('🔍 POLLUTION TRACKER DATA SOURCES:');
+            console.log(
+              '   🌡️ Temperature:',
+              newSensorData.environmental?.temperature,
+              '°C [ARDUINO NICLA SENSE ME]'
+            );
+            console.log(
+              '   💧 Humidity:',
+              newSensorData.environmental?.humidity,
+              '% [ARDUINO NICLA SENSE ME]'
+            );
+            console.log(
+              '   📊 Pressure:',
+              newSensorData.environmental?.pressure,
+              'hPa [ARDUINO NICLA SENSE ME]'
+            );
+            console.log(
+              '   🌬️ CO2:',
+              newSensorData.environmental?.airQuality?.co2,
+              'ppm [ARDUINO NICLA SENSE ME]'
+            );
+            console.log(
+              '   🌿 AQI:',
+              newSensorData.environmental?.airQuality?.aqi,
+              '[ARDUINO NICLA SENSE ME]'
+            );
+            console.log(
+              '   🧪 VOC:',
+              updatedSensorData.environmental?.airQuality?.voc || 0.1,
+              '[HARDCODED FALLBACK]'
+            );
+            console.log(
+              '   🌫️ PM2.5:',
+              updatedSensorData.environmental?.airQuality?.pm25 || 10,
+              'µg/m³ [HARDCODED FALLBACK]'
+            );
+            console.log(
+              '   🌫️ PM10:',
+              updatedSensorData.environmental?.airQuality?.pm10 || 15,
+              'µg/m³ [HARDCODED FALLBACK]'
+            );
+            console.log(
+              '   📐 Accelerometer: [x,y,z]',
+              prev.motion?.accelerometer,
+              '[ARDUINO NICLA SENSE ME - Real-time]'
+            );
+            console.log(
+              '   🔄 Gyroscope: [x,y,z]',
+              prev.motion?.gyroscope,
+              '[ARDUINO NICLA SENSE ME - Real-time]'
+            );
 
             // Only push to Firebase if we have the device and new data
             console.log(
