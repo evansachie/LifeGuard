@@ -20,6 +20,7 @@ export interface PollutionZone {
   level: PollutionLevel;
   data: PollutionData;
   description?: string;
+  isRealTime?: boolean;
 }
 
 export interface LegendItem {

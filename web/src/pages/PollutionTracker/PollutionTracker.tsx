@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Map, NavigationControl, Marker } from 'react-map-gl';
 import { FaMapMarkerAlt } from 'react-icons/fa';
-import { RiAlertLine } from 'react-icons/ri';
+import { MdAir } from 'react-icons/md';
 import Legend from '../../components/PollutionTracker/Legend';
 import PollutionInfo from '../../components/PollutionTracker/PollutionInfo';
 import PollutionZones from '../../components/PollutionTracker/PollutionZones';
@@ -82,6 +82,15 @@ const PollutionTracker = ({ isDarkMode }: PollutionTrackerProps) => {
   };
 
   const handleZoneClick = (zone: PollutionZone): void => {
+    if (zone.isRealTime) {
+      console.log('� POLLUTION TRACKER: Real-time Firebase zone clicked');
+      console.log('   📍 Zone:', zone.name);
+      console.log('   📊 Data source: REAL FIREBASE DATA from Arduino Nicla Sense ME');
+    } else {
+      console.log('🗺️ POLLUTION TRACKER: Mock zone clicked');
+      console.log('   📍 Zone:', zone.name);
+      console.log('   📊 Data source: HARDCODED MOCK DATA (fallback)');
+    }
     setSelectedZone(zone);
   };
 
@@ -92,7 +101,7 @@ const PollutionTracker = ({ isDarkMode }: PollutionTrackerProps) => {
   return (
     <div className={`pollution-tracker ${isDarkMode ? 'dark-mode' : ''}`}>
       <div className="construction-banner">
-        <RiAlertLine size={16} /> Page Under Construction
+        <MdAir size={16} /> Polution Tracker
       </div>
       <div className="map-container">
         <Map
