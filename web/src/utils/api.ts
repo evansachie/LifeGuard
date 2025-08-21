@@ -101,6 +101,9 @@ export const API_ENDPOINTS = {
     TOPICS: `${NODE_API_URL}/api/health-tips/topics`,
     TOPIC_DETAILS: (id: string): string => `${NODE_API_URL}/api/health-tips/topic/${id}`,
   },
+
+  HEALTH_REPORT: (deviceId: string, range: string = '30') =>
+    `${BASE_URL}/api/HealthReport?deviceId=${deviceId}&range=${range}`,
 } as const;
 
 // Request options interface
@@ -414,4 +417,8 @@ export const apiMethods = {
       method: 'POST',
       body: JSON.stringify(metrics),
     }),
+
+  // Health Report
+  getHealthReport: (deviceId: string, range: string = '30'): Promise<ApiResponse<any>> =>
+    fetchWithAuth<ApiResponse<any>>(API_ENDPOINTS.HEALTH_REPORT(deviceId, range)),
 };
