@@ -34,23 +34,17 @@ const getStatsFromApiData = (apiData: any) => {
       value: '1013 hPa', // Not available in API, use default
       color: '#9B51E0',
     },
-    {
-      icon: FaWalking,
-      label: 'Steps',
-      value: apiData.totalSteps ? `${(apiData.totalSteps / 1000).toFixed(1)}K` : '1.2K',
-      color: '#F5A623',
-    },
+    // {
+    //   icon: FaWalking,
+    //   label: 'Steps',
+    //   value: apiData.totalSteps ? `${(apiData.totalSteps / 1000).toFixed(1)}K` : '1.2K',
+    //   color: '#F5A623',
+    // },
     {
       icon: MdAir,
       label: 'Air Quality',
       value: apiData.avgAirQualityIndex ? `${apiData.avgAirQualityIndex} AQI` : '75 AQI',
       color: '#2ECC71',
-    },
-    {
-      icon: FaChartLine,
-      label: 'Activity',
-      value: apiData.avgDailySteps ? `${(apiData.avgDailySteps / 1000).toFixed(1)}K avg` : '+15%',
-      color: '#1ABC9C',
     },
   ];
   console.log('📊 Generated stats:', stats);

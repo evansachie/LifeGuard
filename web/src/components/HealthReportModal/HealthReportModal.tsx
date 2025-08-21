@@ -549,11 +549,6 @@ const HealthReportModal = ({ isOpen, onClose, userData, isDarkMode }: HealthRepo
                           className={`text-xl ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}
                         />
                       </div>
-                      <span
-                        className={`text-sm font-medium ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}
-                      >
-                        From Arduino
-                      </span>
                     </div>
                     <h3
                       className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
@@ -584,11 +579,6 @@ const HealthReportModal = ({ isOpen, onClose, userData, isDarkMode }: HealthRepo
                           className={`text-xl ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}
                         />
                       </div>
-                      <span
-                        className={`text-sm font-medium ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}
-                      >
-                        From Arduino
-                      </span>
                     </div>
                     <h3
                       className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
@@ -619,11 +609,6 @@ const HealthReportModal = ({ isOpen, onClose, userData, isDarkMode }: HealthRepo
                           className={`text-xl ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}
                         />
                       </div>
-                      <span
-                        className={`text-sm font-medium ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}
-                      >
-                        From Arduino
-                      </span>
                     </div>
                     <h3
                       className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
@@ -655,11 +640,6 @@ const HealthReportModal = ({ isOpen, onClose, userData, isDarkMode }: HealthRepo
                             className={`text-xl ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`}
                           />
                         </div>
-                        <span
-                          className={`text-sm font-medium ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}
-                        >
-                          From Arduino
-                        </span>
                       </div>
                       <h3
                         className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
@@ -690,11 +670,6 @@ const HealthReportModal = ({ isOpen, onClose, userData, isDarkMode }: HealthRepo
                             className={`text-xl ${isDarkMode ? 'text-yellow-400' : 'text-yellow-600'}`}
                           />
                         </div>
-                        <span
-                          className={`text-sm font-medium ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}
-                        >
-                          From Arduino
-                        </span>
                       </div>
                       <h3
                         className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
