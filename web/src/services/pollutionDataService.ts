@@ -125,9 +125,18 @@ class PollutionDataService {
             aqi: Math.round(aqi),
             pm25: Math.round(data.environmental.airQuality.pm25 * 10) / 10,
             pm10: Math.round(data.environmental.airQuality.pm10 * 10) / 10,
+            co2: Math.round(data.environmental.airQuality.co2 * 10) / 10, // Include CO2 data
           },
           description: `Real-time data from Arduino Nicla Sense ME (Last updated: ${new Date(data.timestamp).toLocaleTimeString()})`,
           isRealTime: true,
+          realTimeData: {
+            temperature: data.environmental.temperature,
+            humidity: data.environmental.humidity,
+            pressure: data.environmental.pressure,
+            co2: data.environmental.airQuality.co2,
+            aqi: aqi,
+            timestamp: data.timestamp,
+          },
         };
 
         console.log(`🌿 Created pollution zone from Firebase data:`, {

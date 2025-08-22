@@ -1,5 +1,12 @@
 import { motion } from 'framer-motion';
-import { FaThermometerHalf, FaMask, FaWind } from 'react-icons/fa';
+import {
+  FaThermometerHalf,
+  FaMask,
+  FaWind,
+  FaSmog,
+  FaTint,
+  FaTemperatureHigh,
+} from 'react-icons/fa';
 import { getPollutionLevel } from '../../utils/getPollutionLevel';
 import { PollutionZone } from '../../types/pollutionTracker.types';
 
@@ -50,6 +57,39 @@ const PollutionInfo = ({ zone }: PollutionInfoProps) => {
             {zone.data.aqi}
           </span>
         </motion.div>
+
+        {zone.data.co2 && (
+          <motion.div className="info-item" whileHover={{ scale: 1.05 }}>
+            <FaSmog />
+            <span className="label">CO2</span>
+            <span
+              className={`value ${zone.data.co2 > 1000 ? 'high' : zone.data.co2 > 400 ? 'moderate' : 'normal'}`}
+            >
+              {zone.data.co2} ppm
+            </span>
+          </motion.div>
+        )}
+
+        {zone.realTimeData?.temperature && (
+          <motion.div className="info-item" whileHover={{ scale: 1.05 }}>
+            <FaTemperatureHigh />
+            <span className="label">Temp</span>
+            <span className={`value ${zone.realTimeData.temperature > 30 ? 'high' : 'normal'}`}>
+              {zone.realTimeData.temperature.toFixed(1)}°C
+            </span>
+          </motion.div>
+        )}
+
+        {zone.realTimeData?.humidity && (
+          <motion.div className="info-item" whileHover={{ scale: 1.05 }}>
+            <FaTint />
+            <span className="label">Humidity</span>
+            <span className={`value ${zone.realTimeData.humidity > 70 ? 'high' : 'normal'}`}>
+              {zone.realTimeData.humidity}%
+            </span>
+          </motion.div>
+        )}
+
         <motion.div className="info-item" whileHover={{ scale: 1.05 }}>
           <FaMask />
           <span className="label">PM2.5</span>

@@ -59,12 +59,34 @@ export interface EnhancedHealthReportData {
   recommendations: string[];
 }
 
-export const generateHealthReportPDF = (report: EnhancedHealthReportData): Promise<Blob> => {
+export interface MixedHealthReportData {
+  enhancedReport?: EnhancedHealthReportData;
+  healthReportData?: {
+    avgAmbientTemp?: number;
+    avgHumidity?: number;
+    totalSteps?: number;
+    avgDailySteps?: number;
+    avgAirQualityIndex?: number;
+  };
+}
+
+export const generateHealthReportPDF = (
+  report: EnhancedHealthReportData | MixedHealthReportData
+): Promise<Blob> => {
   return new Promise((resolve) => {
     const pdf = new jsPDF();
     const pageWidth = pdf.internal.pageSize.getWidth();
     const margin = 20;
     let yPosition = 30;
+
+    // Determine if we have mixed data or enhanced report
+    const isEnhancedReport = 'userInfo' in report;
+    const enhancedData = isEnhancedReport
+      ? (report as EnhancedHealthReportData)
+      : (report as MixedHealthReportData).enhancedReport;
+    const healthApiData = !isEnhancedReport
+      ? (report as MixedHealthReportData).healthReportData
+      : undefined;
 
     // Helper function to add new page if needed
     const checkPageBreak = (requiredSpace: number) => {
@@ -82,53 +104,110 @@ export const generateHealthReportPDF = (report: EnhancedHealthReportData): Promi
     yPosition += 15;
     pdf.setFontSize(12);
     pdf.setTextColor(100, 100, 100);
-    pdf.text(`Report ID: ${report.userInfo.reportId}`, margin, yPosition);
-    pdf.text(`Generated: ${report.userInfo.date}`, pageWidth - 80, yPosition);
 
-    // Patient Information Section
-    yPosition += 20;
-    pdf.setFontSize(16);
-    pdf.setTextColor(0, 0, 0);
-    pdf.text('Patient Information', margin, yPosition);
+    const reportId = enhancedData?.userInfo?.reportId || `LG-${Date.now()}`;
+    const reportDate = enhancedData?.userInfo?.date || new Date().toLocaleDateString();
 
-    yPosition += 10;
-    pdf.setFontSize(11);
-    pdf.text(`Name: ${report.userInfo.name}`, margin, yPosition);
-    if (report.userInfo.age) {
-      pdf.text(`Age: ${report.userInfo.age}`, margin + 80, yPosition);
-    }
-    if (report.userInfo.gender) {
-      pdf.text(`Gender: ${report.userInfo.gender}`, margin + 120, yPosition);
-    }
+    pdf.text(`Report ID: ${reportId}`, margin, yPosition);
+    pdf.text(`Generated: ${reportDate}`, pageWidth - 80, yPosition);
 
-    yPosition += 8;
-    if (report.userInfo.email) {
-      pdf.text(`Email: ${report.userInfo.email}`, margin, yPosition);
-    }
-    if (report.userInfo.phone) {
-      pdf.text(`Phone: ${report.userInfo.phone}`, margin + 80, yPosition);
-    }
+    // Patient Information Section (if available)
+    if (enhancedData?.userInfo) {
+      yPosition += 20;
+      pdf.setFontSize(16);
+      pdf.setTextColor(0, 0, 0);
+      pdf.text('Patient Information', margin, yPosition);
 
-    // Vital Statistics
-    checkPageBreak(60);
-    yPosition += 20;
-    pdf.setFontSize(16);
-    pdf.setTextColor(220, 38, 127);
-    pdf.text('Vital Statistics', margin, yPosition);
+      yPosition += 10;
+      pdf.setFontSize(11);
+      pdf.text(`Name: ${enhancedData.userInfo.name}`, margin, yPosition);
+      if (enhancedData.userInfo.age) {
+        pdf.text(`Age: ${enhancedData.userInfo.age}`, margin + 80, yPosition);
+      }
+      if (enhancedData.userInfo.gender) {
+        pdf.text(`Gender: ${enhancedData.userInfo.gender}`, margin + 120, yPosition);
+      }
 
-    yPosition += 15;
-    pdf.setFontSize(10);
-    pdf.setTextColor(0, 0, 0);
-
-    Object.entries(report.vitals).forEach(([key, value]) => {
-      const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase());
-      pdf.text(`${label}: ${value.average} (${value.status})`, margin, yPosition);
-      pdf.text(`Range: ${value.min} - ${value.max}`, margin + 100, yPosition);
       yPosition += 8;
-    });
+      if (enhancedData.userInfo.email) {
+        pdf.text(`Email: ${enhancedData.userInfo.email}`, margin, yPosition);
+      }
+      if (enhancedData.userInfo.phone) {
+        pdf.text(`Phone: ${enhancedData.userInfo.phone}`, margin + 80, yPosition);
+      }
+    }
+
+    // Real-Time Health Metrics from Arduino (if available)
+    if (healthApiData) {
+      checkPageBreak(60);
+      yPosition += 20;
+      pdf.setFontSize(16);
+      pdf.setTextColor(34, 197, 94);
+      pdf.text('Real-Time Health Metrics (Arduino Sensors)', margin, yPosition);
+
+      yPosition += 15;
+      pdf.setFontSize(11);
+
+      if (healthApiData.avgAmbientTemp) {
+        pdf.text(
+          `Average Temperature: ${healthApiData.avgAmbientTemp.toFixed(1)}°C`,
+          margin,
+          yPosition
+        );
+        yPosition += 8;
+      }
+
+      if (healthApiData.avgHumidity) {
+        pdf.text(`Average Humidity: ${healthApiData.avgHumidity.toFixed(1)}%`, margin, yPosition);
+        yPosition += 8;
+      }
+
+      if (healthApiData.totalSteps) {
+        pdf.text(`Total Steps: ${healthApiData.totalSteps.toLocaleString()}`, margin, yPosition);
+        yPosition += 8;
+      }
+
+      if (healthApiData.avgDailySteps) {
+        pdf.text(
+          `Daily Average Steps: ${healthApiData.avgDailySteps.toLocaleString()}`,
+          margin,
+          yPosition
+        );
+        yPosition += 8;
+      }
+
+      if (healthApiData.avgAirQualityIndex) {
+        pdf.text(
+          `Average Air Quality Index: ${healthApiData.avgAirQualityIndex.toFixed(0)} AQI`,
+          margin,
+          yPosition
+        );
+        yPosition += 8;
+      }
+    }
+
+    // Vital Statistics (if available)
+    if (enhancedData?.vitals) {
+      checkPageBreak(60);
+      yPosition += 20;
+      pdf.setFontSize(16);
+      pdf.setTextColor(220, 38, 127);
+      pdf.text('Vital Statistics', margin, yPosition);
+
+      yPosition += 15;
+      pdf.setFontSize(10);
+      pdf.setTextColor(0, 0, 0);
+
+      Object.entries(enhancedData.vitals).forEach(([key, value]) => {
+        const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase());
+        pdf.text(`${label}: ${value.average} (${value.status})`, margin, yPosition);
+        pdf.text(`Range: ${value.min} - ${value.max}`, margin + 100, yPosition);
+        yPosition += 8;
+      });
+    }
 
     // Health Metrics (if available)
-    if (report.healthMetrics) {
+    if (enhancedData?.healthMetrics) {
       checkPageBreak(50);
       yPosition += 15;
       pdf.setFontSize(16);
@@ -139,26 +218,26 @@ export const generateHealthReportPDF = (report: EnhancedHealthReportData): Promi
       pdf.setFontSize(10);
       pdf.setTextColor(0, 0, 0);
 
-      if (report.healthMetrics.bmr) {
-        pdf.text(`BMR: ${report.healthMetrics.bmr} calories/day`, margin, yPosition);
+      if (enhancedData.healthMetrics.bmr) {
+        pdf.text(`BMR: ${enhancedData.healthMetrics.bmr} calories/day`, margin, yPosition);
         yPosition += 8;
       }
-      if (report.healthMetrics.tdee) {
-        pdf.text(`TDEE: ${report.healthMetrics.tdee} calories/day`, margin, yPosition);
+      if (enhancedData.healthMetrics.tdee) {
+        pdf.text(`TDEE: ${enhancedData.healthMetrics.tdee} calories/day`, margin, yPosition);
         yPosition += 8;
       }
-      if (report.healthMetrics.bmi) {
-        pdf.text(`BMI: ${report.healthMetrics.bmi.toFixed(1)}`, margin, yPosition);
+      if (enhancedData.healthMetrics.bmi) {
+        pdf.text(`BMI: ${enhancedData.healthMetrics.bmi.toFixed(1)}`, margin, yPosition);
         yPosition += 8;
       }
-      if (report.healthMetrics.activityLevel) {
-        pdf.text(`Activity Level: ${report.healthMetrics.activityLevel}`, margin, yPosition);
+      if (enhancedData.healthMetrics.activityLevel) {
+        pdf.text(`Activity Level: ${enhancedData.healthMetrics.activityLevel}`, margin, yPosition);
         yPosition += 8;
       }
     }
 
     // Activity Metrics (if available)
-    if (report.activityMetrics) {
+    if (enhancedData?.activityMetrics) {
       checkPageBreak(50);
       yPosition += 15;
       pdf.setFontSize(16);
@@ -169,7 +248,7 @@ export const generateHealthReportPDF = (report: EnhancedHealthReportData): Promi
       pdf.setFontSize(10);
       pdf.setTextColor(0, 0, 0);
 
-      Object.entries(report.activityMetrics).forEach(([key, value]) => {
+      Object.entries(enhancedData.activityMetrics).forEach(([key, value]) => {
         const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase());
         pdf.text(`${label}: ${value.value} (${value.status})`, margin, yPosition);
         pdf.text(`Goal: ${value.goal}`, margin + 100, yPosition);
@@ -178,7 +257,7 @@ export const generateHealthReportPDF = (report: EnhancedHealthReportData): Promi
     }
 
     // Medications (if available)
-    if (report.medications && report.medications.length > 0) {
+    if (enhancedData?.medications && enhancedData.medications.length > 0) {
       checkPageBreak(60);
       yPosition += 15;
       pdf.setFontSize(16);
@@ -189,7 +268,7 @@ export const generateHealthReportPDF = (report: EnhancedHealthReportData): Promi
       pdf.setFontSize(10);
       pdf.setTextColor(0, 0, 0);
 
-      report.medications.forEach((med) => {
+      enhancedData.medications.forEach((med) => {
         pdf.text(`${med.name} - ${med.dosage}`, margin, yPosition);
         pdf.text(
           `${med.frequency} (${med.active ? 'Active' : 'Inactive'})`,
@@ -201,7 +280,7 @@ export const generateHealthReportPDF = (report: EnhancedHealthReportData): Promi
     }
 
     // Emergency Contacts (if available)
-    if (report.emergencyContacts && report.emergencyContacts.length > 0) {
+    if (enhancedData?.emergencyContacts && enhancedData.emergencyContacts.length > 0) {
       checkPageBreak(50);
       yPosition += 15;
       pdf.setFontSize(16);
@@ -212,32 +291,34 @@ export const generateHealthReportPDF = (report: EnhancedHealthReportData): Promi
       pdf.setFontSize(10);
       pdf.setTextColor(0, 0, 0);
 
-      report.emergencyContacts.forEach((contact) => {
+      enhancedData.emergencyContacts.forEach((contact) => {
         pdf.text(`${contact.name} (${contact.relationship})`, margin, yPosition);
         pdf.text(`${contact.phone}`, margin + 80, yPosition);
         yPosition += 8;
       });
     }
 
-    // Environmental Metrics
-    checkPageBreak(60);
-    yPosition += 15;
-    pdf.setFontSize(16);
-    pdf.setTextColor(59, 130, 246);
-    pdf.text('Environmental Metrics', margin, yPosition);
+    // Environmental Metrics (if available from enhanced data)
+    if (enhancedData?.environmentalMetrics) {
+      checkPageBreak(60);
+      yPosition += 15;
+      pdf.setFontSize(16);
+      pdf.setTextColor(59, 130, 246);
+      pdf.text('Environmental Metrics', margin, yPosition);
 
-    yPosition += 10;
-    pdf.setFontSize(10);
-    pdf.setTextColor(0, 0, 0);
+      yPosition += 10;
+      pdf.setFontSize(10);
+      pdf.setTextColor(0, 0, 0);
 
-    Object.entries(report.environmentalMetrics).forEach(([key, value]) => {
-      const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase());
-      pdf.text(`${label}: ${value.average} (${value.status})`, margin, yPosition);
-      yPosition += 8;
-    });
+      Object.entries(enhancedData.environmentalMetrics).forEach(([key, value]) => {
+        const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase());
+        pdf.text(`${label}: ${value.average} (${value.status})`, margin, yPosition);
+        yPosition += 8;
+      });
+    }
 
     // Recent Notes (if available)
-    if (report.recentNotes && report.recentNotes.length > 0) {
+    if (enhancedData?.recentNotes && enhancedData.recentNotes.length > 0) {
       checkPageBreak(50);
       yPosition += 15;
       pdf.setFontSize(16);
@@ -248,7 +329,7 @@ export const generateHealthReportPDF = (report: EnhancedHealthReportData): Promi
       pdf.setFontSize(10);
       pdf.setTextColor(0, 0, 0);
 
-      report.recentNotes.slice(0, 5).forEach((note) => {
+      enhancedData.recentNotes.slice(0, 5).forEach((note) => {
         const noteText =
           note.content.length > 60 ? note.content.substring(0, 60) + '...' : note.content;
         pdf.text(`• ${noteText}`, margin, yPosition);
@@ -261,26 +342,28 @@ export const generateHealthReportPDF = (report: EnhancedHealthReportData): Promi
       });
     }
 
-    // Recommendations
-    checkPageBreak(60);
-    yPosition += 15;
-    pdf.setFontSize(16);
-    pdf.setTextColor(147, 51, 234);
-    pdf.text('Health Recommendations', margin, yPosition);
+    // Recommendations (if available)
+    if (enhancedData?.recommendations && enhancedData.recommendations.length > 0) {
+      checkPageBreak(60);
+      yPosition += 15;
+      pdf.setFontSize(16);
+      pdf.setTextColor(147, 51, 234);
+      pdf.text('Health Recommendations', margin, yPosition);
 
-    yPosition += 10;
-    pdf.setFontSize(10);
-    pdf.setTextColor(0, 0, 0);
+      yPosition += 10;
+      pdf.setFontSize(10);
+      pdf.setTextColor(0, 0, 0);
 
-    report.recommendations.forEach((rec, index) => {
-      const lines = pdf.splitTextToSize(`${index + 1}. ${rec}`, pageWidth - 2 * margin);
+      enhancedData.recommendations.forEach((rec, index) => {
+        const lines = pdf.splitTextToSize(`${index + 1}. ${rec}`, pageWidth - 2 * margin);
 
-      // Check if we need a new page for this recommendation
-      checkPageBreak(lines.length * 5 + 5);
+        // Check if we need a new page for this recommendation
+        checkPageBreak(lines.length * 5 + 5);
 
-      pdf.text(lines, margin, yPosition);
-      yPosition += lines.length * 5 + 3;
-    });
+        pdf.text(lines, margin, yPosition);
+        yPosition += lines.length * 5 + 3;
+      });
+    }
 
     // Footer
     pdf.setFontSize(8);

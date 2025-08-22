@@ -31,7 +31,7 @@ const getStatsFromApiData = (apiData: any) => {
     {
       icon: WiBarometer,
       label: 'Pressure',
-      value: '1013 hPa', // Not available in API, use default
+      value: '1013 hPa',
       color: '#9B51E0',
     },
     // {
@@ -104,7 +104,7 @@ const HealthReport = ({ isDarkMode }: HealthReportProps) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
   const [dateRange, setDateRange] = useState<string>('30');
-  const [showLiveData, setShowLiveData] = useState<boolean>(false);
+  const [showLiveData] = useState<boolean>(false);
 
   // Get live Arduino sensor data
   const { latestSensorData, connectedDevice } = useBLE();
@@ -157,12 +157,7 @@ const HealthReport = ({ isDarkMode }: HealthReportProps) => {
           <div className="header-left">
             <RiHealthBookFill size={32} />
             <h1 className="page-title">Health Report</h1>
-            <p className="subtitle">
-              Track your health metrics and environmental conditions
-              {connectedDevice && (
-                <span className="arduino-status">• 🔴 Arduino Nicla Sense ME Connected</span>
-              )}
-            </p>
+            <p className="subtitle">Track your health metrics and environmental conditions</p>
           </div>
           <div className="header-right">
             <div className="date-picker">
@@ -180,15 +175,6 @@ const HealthReport = ({ isDarkMode }: HealthReportProps) => {
                 <option value="365">Last Year</option>
               </select>
             </div>
-            {connectedDevice && (
-              <button
-                className={`live-data-toggle ${showLiveData ? 'active' : ''}`}
-                onClick={() => setShowLiveData(!showLiveData)}
-                title="Toggle between historical and live Arduino data"
-              >
-                {showLiveData ? '📊 Historical' : '🔴 Live Arduino'}
-              </button>
-            )}
           </div>
         </div>
 

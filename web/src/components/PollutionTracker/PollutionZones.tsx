@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Source, Layer, useMap } from 'react-map-gl';
 import { pollutionZones } from '../../data/pollution-data';
 import { pollutionDataService } from '../../services/pollutionDataService';
@@ -7,9 +7,10 @@ import { PollutionZone } from '../../types/pollutionTracker.types';
 
 interface PollutionZonesProps {
   onZoneClick: (zone: PollutionZone) => void;
+  liveZones?: PollutionZone[];
 }
 
-const PollutionZones = ({ onZoneClick }: PollutionZonesProps) => {
+const PollutionZones = ({ onZoneClick, liveZones = [] }: PollutionZonesProps) => {
   const { current: map } = useMap();
   const [realTimeZones, setRealTimeZones] = useState<PollutionZone[]>([]);
   const [useRealData, setUseRealData] = useState<boolean>(true);
@@ -53,8 +54,17 @@ const PollutionZones = ({ onZoneClick }: PollutionZonesProps) => {
     };
   }, []);
 
-  // Use real-time data if available, otherwise fall back to mock data
-  const activeZones = useRealData && realTimeZones.length > 0 ? realTimeZones : pollutionZones;
+  // Combine live zones with Firebase zones and fallback to mock data
+  const activeZones = useMemo(() => {
+    const combinedZones = [...liveZones];
+
+    if (useRealData && realTimeZones.length > 0) {
+      combinedZones.push(...realTimeZones);
+    } else if (liveZones.length === 0) {
+      combinedZones.push(...pollutionZones);
+    }
+    return combinedZones;
+  }, [liveZones, realTimeZones, useRealData]);
 
   useEffect(() => {
     if (!map) return;
