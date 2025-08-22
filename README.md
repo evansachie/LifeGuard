@@ -435,6 +435,13 @@ These endpoints are served from the Node-Server (hosted at `https://lifeguard-no
 | GET        | `/api/medications/compliance`       | Get medication compliance rate                    |
 | GET        | `/api/medications/emergency/:userId`| Retrieve minimal medication data in emergencies (public access) |
 
+### Health Tips Endpoints
+
+| **Method** | **Endpoint**                        | **Description**                                      |
+|------------|-------------------------------------|------------------------------------------------------|
+| GET        | `/api/health-tips`                  | Get health tips from MyHealthfinder API             |
+| GET        | `/api/health-tips/topic/:id`        | Get detailed information for a specific health topic |
+
 ### Sound & Wellness Endpoints
 
 | **Method** | **Endpoint**                                  | **Description**                                |
