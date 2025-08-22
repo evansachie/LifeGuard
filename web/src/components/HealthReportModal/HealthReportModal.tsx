@@ -157,21 +157,34 @@ const HealthReportModal = ({ isOpen, onClose, userData, isDarkMode }: HealthRepo
   };
 
   const handlePdfDownload = async (): Promise<void> => {
-    if (!report) {
+    if (!report && !healthReportData) {
       toast.error('No report data available for download');
       return;
     }
 
     try {
-      // Use enhanced report for PDF generation if available, otherwise use fallback
-      const reportForPdf = enhancedReport || report;
-      const pdfBlob = await generateHealthReportPDF(reportForPdf);
+      let pdfData;
+
+      if (enhancedReport) {
+        pdfData = enhancedReport;
+      } else if (healthReportData) {
+        pdfData = {
+          enhancedReport: report,
+          healthReportData: healthReportData,
+        };
+      } else {
+        pdfData = report;
+      }
+
+      const pdfBlob = await generateHealthReportPDF(pdfData);
 
       // Create download link
       const url = URL.createObjectURL(pdfBlob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `lifeguard_health_report_${reportForPdf.userInfo?.reportId || 'basic'}.pdf`;
+      link.download = `lifeguard_health_report_${
+        enhancedReport?.userInfo?.reportId || report?.userInfo?.reportId || 'basic'
+      }.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
