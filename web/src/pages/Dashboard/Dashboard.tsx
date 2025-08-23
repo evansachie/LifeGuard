@@ -38,7 +38,6 @@ import StatsSummary from '../../components/Dashboard/StatsSummary';
 import DataCard from '../../components/Dashboard/DataCard';
 import QuoteCard from '../../components/Dashboard/QuoteCard';
 import RemindersCard from '../../components/Dashboard/RemindersCard';
-import PollutantsCard from '../../components/Dashboard/PollutantsCard';
 import AlertsSection from '../../components/Dashboard/AlertsSection';
 import { alerts, getAlertsByTimeframe } from '../../data/alerts';
 import ConnectivityButton from '../../components/Buttons/ConnectivityButton';
@@ -431,14 +430,6 @@ const Dashboard = ({ isDarkMode }: DashboardProps) => {
                           unit=" ppm"
                           className="pressure-card"
                         />
-                      </SortableCard>
-                    )
-                  );
-                case 'pollutants':
-                  return (
-                    filteredDashboard.showPollutants && (
-                      <SortableCard key={cardId} id={cardId}>
-                        <PollutantsCard pollutionData={pollutionData} formatValue={formatValue} />
                       </SortableCard>
                     )
                   );
