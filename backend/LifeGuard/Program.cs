@@ -236,8 +236,7 @@ namespace LifeGuard
                 });
             });
 
-   
-            
+
 
 
             var app = builder.Build();
@@ -259,12 +258,11 @@ namespace LifeGuard
                 ForwardLimit = null
             });
 
+            app.UseCors("Frontend");
+
             app.UseAuthentication();
 
             app.UseAuthorization();
-            
-            app.UseCors("Frontend");
-
 
             app.MapControllers();
 
