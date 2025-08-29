@@ -533,5 +533,5 @@ FodyWeavers.xsd
 **/obj/
 .qodo
 /backend/.env.local.txt
-/rag/app/.env
 /backend/lifeguard-5ff94-firebase-adminsdk-fbsvc-cecaee9c14.json
+/rag/.env
