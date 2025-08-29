@@ -66,6 +66,11 @@ namespace Infrastructure.HealthReportService
                 ? (int)Math.Round(aqiPoints.Average(r => r.environmental.airQuality.aqi))
                 : 0;
 
+            var pressurePoints = dataPoints.Where(r => r.environmental.pressure != null).ToList();
+            int avgPressure = pressurePoints.Any()
+                ? (int)Math.Round(pressurePoints.Average(r => r.environmental.pressure))
+                : 0;
+
             var report = new HealthReport
             {
                 DeviceId = deviceId,
@@ -77,6 +82,7 @@ namespace Infrastructure.HealthReportService
                 AvgAmbientTemp = avgAmbientTemp,
                 AvgHumidity = avgHumidity,
                 AvgAirQualityIndex = avgAirQualityIndex,
+                AvgPressure = avgPressure,
                 DataPointCount = dataPoints.Count,
                 LastUpdate = status.LastUpdate,
 
