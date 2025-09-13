@@ -66,6 +66,29 @@ namespace Infrastructure.HealthReportService
                 ? (int)Math.Round(aqiPoints.Average(r => r.environmental.airQuality.aqi))
                 : 0;
 
+            int minAqi = aqiPoints.Any() ? (int)aqiPoints.Min(r => r.environmental.airQuality.aqi) : 0;
+            var maxAqi = aqiPoints.Any() ? (int)aqiPoints.Max(r => r.environmental.airQuality.aqi) : 0;
+
+            var co2Points = dataPoints.Where(r => r.environmental.airQuality.co2 != null).ToList();
+            int avgco2= co2Points.Any()
+                ? (int)Math.Round(co2Points.Average(r => r.environmental.airQuality.co2))
+                : 0;
+
+            var vocPoints = dataPoints.Where(r => r.environmental.airQuality.voc != null).ToList();
+            int avgvoc = vocPoints.Any()
+                ? (int)Math.Round(vocPoints.Average(r => r.environmental.airQuality.voc))
+                : 0;
+
+            var pm25Points = dataPoints.Where(r => r.environmental.airQuality.pm25 != null).ToList();
+            int avgpm25 = pm25Points.Any()
+                ? (int)Math.Round(pm25Points.Average(r => r.environmental.airQuality.pm25))
+                : 0;
+
+            var pm10Points = dataPoints.Where(r => r.environmental.airQuality.pm10 != null).ToList();
+            int avgpm10 = pm10Points.Any()
+                ? (int)Math.Round(pm10Points.Average(r => r.environmental.airQuality.pm10))
+                : 0;
+
             var pressurePoints = dataPoints.Where(r => r.environmental.pressure != null).ToList();
             int avgPressure = pressurePoints.Any()
                 ? (int)Math.Round(pressurePoints.Average(r => r.environmental.pressure))
@@ -82,6 +105,12 @@ namespace Infrastructure.HealthReportService
                 AvgAmbientTemp = avgAmbientTemp,
                 AvgHumidity = avgHumidity,
                 AvgAirQualityIndex = avgAirQualityIndex,
+                Avgco2 = avgco2,
+                Avgvoc = avgvoc,
+                Avgpm25 = avgpm25,
+                Avgpm10 = avgpm10,
+                Minaqi = minAqi,
+                Maxaqi = maxAqi,
                 AvgPressure = avgPressure,
                 DataPointCount = dataPoints.Count,
                 LastUpdate = status.LastUpdate,
