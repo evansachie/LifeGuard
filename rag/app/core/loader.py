@@ -1,27 +1,38 @@
-import fitz
-import math
+from langchain_community.document_loaders import PyPDFLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_core.documents import Document
+from fastapi import UploadFile
+import fitz  
 
-def pdf_to_chunks(pdf_bytes: bytes, chunk_size: int = 1000, chunk_overlap: int = 200) -> list[str]:
 
-    doc = fitz.open(stream=pdf_bytes, filetype="pdf")
-    full_text = ""
-    for page in doc:
-        full_text += page.get_text()  
-    doc.close()
+async def loader(file: UploadFile):
 
-    full_text = full_text.strip().replace("\r", " ")
+    content = await file.read()
+    
 
-    if not full_text:
-        return []
-    chunks = []
-    start = 0
-    while start < len(full_text):
-        end = start + chunk_size
-        chunk = full_text[start:end]
+    pdf_document = fitz.open(stream=content, filetype="pdf")
 
-        chunks.append(chunk)
-        if end >= len(full_text):
-            break
+    documents = []
+    for page_num in range(pdf_document.page_count):
+        page = pdf_document[page_num]
+        text = page.get_text()
+        
+        
+        doc = Document(
+            page_content=text,
+            metadata={
+                "source": file.filename,
+                "page": page_num
+            }
+        )
+        documents.append(doc)
+    
+    pdf_document.close()
+    
+    text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+        chunk_size=100, chunk_overlap=50
+    )
+    doc_splits = text_splitter.split_documents(documents)
+    
+    return doc_splits
 
-        start = end - chunk_overlap
-    return chunks

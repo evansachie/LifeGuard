@@ -3,11 +3,11 @@
 <div align="center">
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://example.com/build-status)
-[![Version](https://img.shields.io/badge/version-2.3-blue.svg)](https://github.com/AWESOME04/LifeGuard/releases)
-[![Stars](https://img.shields.io/github/stars/AWESOME04/LifeGuard.svg)](https://github.com/AWESOME04/LifeGuard/stargazers)
-[![Forks](https://img.shields.io/github/forks/AWESOME04/LifeGuard?style=social)](https://github.com/AWESOME04/LifeGuard/network/members)
+[![Version](https://img.shields.io/badge/version-2.3-blue.svg)](https://github.com/evansachie/LifeGuard/releases)
+[![Stars](https://img.shields.io/github/stars/evansachie/LifeGuard.svg)](https://github.com/evansachie/LifeGuard/stargazers)
+[![Forks](https://img.shields.io/github/forks/evansachie/LifeGuard?style=social)](https://github.com/evansachie/LifeGuard/network/members)
 [![Code Coverage](https://img.shields.io/badge/coverage-87%25-green.svg)](https://example.com/coverage)
-[![Documentation](https://img.shields.io/badge/docs-up--to--date-blue.svg)](https://github.com/AWESOME04/LifeGuard/tree/main/docs)
+[![Documentation](https://img.shields.io/badge/docs-up--to--date-blue.svg)](https://github.com/evansachie/LifeGuard/tree/main/docs)
 [![DOI](https://img.shields.io/badge/DOI-10.5281/zenodo.1234567-blue.svg)](https://doi.org/10.5281/zenodo.1234567)
 
 <br />
@@ -23,9 +23,9 @@
 <p align="center">
   <a href="#demo">View Demo</a>
   ·
-  <a href="https://github.com/AWESOME04/LifeGuard/issues/new?template=bug_report.md">Report Bug</a>
+  <a href="https://github.com/evansachie/LifeGuard/issues/new?template=bug_report.md">Report Bug</a>
   ·
-  <a href="https://github.com/AWESOME04/LifeGuard/issues/new?template=feature_request.md">Request Feature</a>
+  <a href="https://github.com/evansachie/LifeGuard/issues/new?template=feature_request.md">Request Feature</a>
 </p>
 
 </div>
@@ -226,7 +226,7 @@ This ML model enables:
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/AWESOME04/LifeGuard.git
+git clone https://github.com/evansachie/LifeGuard.git
 cd LifeGuard
 ```
 
@@ -435,6 +435,13 @@ These endpoints are served from the Node-Server (hosted at `https://lifeguard-no
 | GET        | `/api/medications/compliance`       | Get medication compliance rate                    |
 | GET        | `/api/medications/emergency/:userId`| Retrieve minimal medication data in emergencies (public access) |
 
+### Health Tips Endpoints
+
+| **Method** | **Endpoint**                        | **Description**                                      |
+|------------|-------------------------------------|------------------------------------------------------|
+| GET        | `/api/health-tips`                  | Get health tips from MyHealthfinder API             |
+| GET        | `/api/health-tips/topic/:id`        | Get detailed information for a specific health topic |
+
 ### Sound & Wellness Endpoints
 
 | **Method** | **Endpoint**                                  | **Description**                                |
@@ -465,7 +472,7 @@ These endpoints are served from the Node-Server (hosted at `https://lifeguard-no
 
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/AWESOME04"><img src="https://github.com/AWESOME04.png" width="100px;" alt="Evans Acheampong"/><br /><sub><b>Evans Acheampong</b></sub></a><br />Full Stack & Hardware</td>
+    <td align="center"><a href="https://github.com/evansachie"><img src="https://github.com/evansachie.png" width="100px;" alt="Evans Acheampong"/><br /><sub><b>Evans Acheampong</b></sub></a><br />Full Stack & Hardware</td>
     <td align="center"><a href="https://github.com/mikkayadu"><img src="https://github.com/mikkayadu.png" width="100px;" alt="Michael Adu-Gyamfi"/><br /><sub><b>Michael Adu-Gyamfi</b></sub></a><br />Backend & ML</td>
   </tr>
 </table>

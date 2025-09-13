@@ -10,6 +10,7 @@ import { BLEProvider } from './contexts/BLEContext';
 import { AudioContextProvider } from './contexts/AudioContext';
 import { AudioPlayerProvider } from './contexts/AudioPlayerContext';
 import { FirebaseProvider } from './contexts/FirebaseContext';
+import { EmergencyPreferenceProvider } from './contexts/EmergencyPreferenceContext';
 
 import FloatingAudioPlayer from './components/Audio/FloatingAudioPlayer';
 import { CommandPalette } from './components/CommandPalette/CommandPalette';
@@ -50,17 +51,19 @@ const App = () => {
           <AudioContextProvider>
             <BLEProvider>
               <AuthProvider>
-                <div className={isDarkMode ? 'dark-mode' : ''}>
-                  <ToastContainer position="top-right" theme={isDarkMode ? 'dark' : 'light'} />
-                  <AppRoutes isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
-                  <FloatingAudioPlayer isDarkMode={isDarkMode} />
-                  <CommandPalette
-                    isDarkMode={isDarkMode}
-                    toggleTheme={toggleTheme}
-                    open={commandPaletteOpen}
-                    setOpen={setCommandPaletteOpen}
-                  />
-                </div>
+                <EmergencyPreferenceProvider>
+                  <div className={isDarkMode ? 'dark-mode' : ''}>
+                    <ToastContainer position="top-right" theme={isDarkMode ? 'dark' : 'light'} />
+                    <AppRoutes isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
+                    <FloatingAudioPlayer isDarkMode={isDarkMode} />
+                    <CommandPalette
+                      isDarkMode={isDarkMode}
+                      toggleTheme={toggleTheme}
+                      open={commandPaletteOpen}
+                      setOpen={setCommandPaletteOpen}
+                    />
+                  </div>
+                </EmergencyPreferenceProvider>
               </AuthProvider>
             </BLEProvider>
           </AudioContextProvider>

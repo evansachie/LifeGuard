@@ -13,11 +13,11 @@ import type {
 } from '../types/api.types';
 
 export const FRONTEND_URL = window.location.origin;
-export const BASE_URL = 'https://lifeguard-hiij.onrender.com';
-export const API_BASE_URL = `${BASE_URL}/api`;
-export const NODE_API_URL = 'https://lifeguard-node.onrender.com';
-export const QUOTE_API_URL = 'https://api.allorigins.win/raw?url=https://zenquotes.io/api/random';
-export const RAG_BASE_URL = 'https://lifeguard-rag.onrender.com';
+export const BASE_URL = import.meta.env.VITE_BASE_URL;
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+export const NODE_API_URL = import.meta.env.VITE_NODE_API_URL;
+export const QUOTE_API_URL = import.meta.env.VITE_QUOTE_API_URL;
+export const RAG_BASE_URL = import.meta.env.VITE_RAG_BASE_URL;
 
 export const API_ENDPOINTS = {
   LOGIN: '/Account/login',
@@ -34,9 +34,9 @@ export const API_ENDPOINTS = {
   GET_USER: (id: string): string => `/Account/${id}`,
   GET_PROFILE: (id: string): string => `/Account/GetProfile/${id}`,
 
-  GET_PHOTO: (id: string): string => `${BASE_URL}/${id}/photo`,
-  UPLOAD_PHOTO: (id: string): string => `${BASE_URL}/${id}/photo`,
-  DELETE_PHOTO: (id: string): string => `${BASE_URL}/${id}/photo`,
+  GET_PHOTO: (id: string): string => `${BASE_URL}/api/Photos/${id}/photo`,
+  UPLOAD_PHOTO: (id: string): string => `${BASE_URL}/api/Photos/${id}/photo`,
+  DELETE_PHOTO: (id: string): string => `${BASE_URL}/api/Photos/${id}/photo`,
 
   DELETE_USER: (id: string): string => `/Account/${id}`,
 
@@ -47,6 +47,8 @@ export const API_ENDPOINTS = {
   SEND_EMERGENCY_ALERT: `${NODE_API_URL}/api/emergency-contacts/alert`,
   SEND_TEST_ALERT: (id: string): string =>
     `${NODE_API_URL}/api/emergency-contacts/test-alert/${id}`,
+
+  EMERGENCY_PREFERENCES: `${NODE_API_URL}/api/emergency-preferences`,
 
   EMERGENCY_TEST_ALERT: (id: string): string =>
     `${NODE_API_URL}/api/emergency-contacts/test-alert/${id}`,
@@ -93,6 +95,15 @@ export const API_ENDPOINTS = {
     NOTIFICATIONS: `${NODE_API_URL}/api/user-preferences/notifications`,
     SEND_TEST_EMAIL: '/user-preferences/send-test-email',
   },
+
+  HEALTH_TIPS: {
+    LIST: `${NODE_API_URL}/api/health-tips`,
+    TOPICS: `${NODE_API_URL}/api/health-tips/topics`,
+    TOPIC_DETAILS: (id: string): string => `${NODE_API_URL}/api/health-tips/topic/${id}`,
+  },
+
+  HEALTH_REPORT: (deviceId: string, range: string = '30') =>
+    `${BASE_URL}/api/HealthReport?deviceId=${deviceId}&range=${range}`,
 } as const;
 
 // Request options interface
@@ -406,4 +417,8 @@ export const apiMethods = {
       method: 'POST',
       body: JSON.stringify(metrics),
     }),
+
+  // Health Report
+  getHealthReport: (deviceId: string, range: string = '30'): Promise<ApiResponse<any>> =>
+    fetchWithAuth<ApiResponse<any>>(API_ENDPOINTS.HEALTH_REPORT(deviceId, range)),
 };

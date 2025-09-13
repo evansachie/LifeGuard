@@ -8,12 +8,14 @@ const memoRoutes = require('./Routes/memoRoutes');
 const bmrCalculatorRoutes = require('./Routes/bmrCalculatorRoutes')
 const settingsRoutes = require('./Routes/bmrCalculatorRoutes');
 const emergencyContactsRoutes = require('./Routes/emergencyContactsRoutes');
+const emergencyPreferencesRoutes = require('./Routes/emergencyPreferencesRoutes');
 const freesoundRoutes = require('./Routes/freesoundRoutes');
 const favoriteSoundsRoutes = require('./Routes/favoriteSoundsRoutes');
 const exerciseRoutes = require('./Routes/exerciseRoutes');
 const healthMetricsRoutes = require('./Routes/healthMetricsRoutes');
 const medicationRoutes = require('./Routes/medicationRoutes');
 const userPreferencesRoutes = require('./Routes/userPreferencesRoutes');
+const healthTipsRoutes = require('./Routes/healthTipsRoutes');
 
 const nodemailer = require('nodemailer');
 const NotificationService = require('./services/NotificationService');
@@ -131,12 +133,14 @@ app.use('/api/memos', memoRoutes(pool));
 app.use('/api/calories', bmrCalculatorRoutes(pool));
 app.use('/api/settings', settingsRoutes(pool));
 app.use('/api/emergency-contacts', emergencyContactsRoutes(pool));
+app.use('/api/emergency-preferences', emergencyPreferencesRoutes(pool));
 app.use('/api/freesound', freesoundRoutes(pool));
 app.use('/api/favorite-sounds', favoriteSoundsRoutes(pool));
 app.use('/api/exercise', exerciseRoutes(pool));
 app.use('/api/health-metrics', healthMetricsRoutes(pool));
 app.use('/api/medications', medicationRoutes(pool));
 app.use('/api/user-preferences', userPreferencesRoutes(pool));
+app.use('/api/health-tips', healthTipsRoutes);
 
 app.get('/', (req, res) => {
     res.send('LifeGuard API is running!');

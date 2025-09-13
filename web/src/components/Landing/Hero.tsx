@@ -27,7 +27,7 @@ const Hero = () => {
               Get Started <FaArrowRight className="arrow-icon" />
             </Link>
             <a
-              href="https://github.com/AWESOME04/LifeGuard"
+              href="https://github.com/evansachie/LifeGuard"
               target="_blank"
               rel="noopener noreferrer"
               className="github-button"

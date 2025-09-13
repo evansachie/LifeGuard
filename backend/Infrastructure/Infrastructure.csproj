@@ -9,11 +9,14 @@
   <ItemGroup>
     <PackageReference Include="CloudinaryDotNet" Version="1.27.4" />
     <PackageReference Include="Otp.NET" Version="1.4.0" />
+	<PackageReference Include="FirebaseDatabase.net" Version="5.0.0" />
+	<PackageReference Include="QuestPDF" Version="2025.7.0" />
     <PackageReference Include="RestSharp" Version="112.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Application\Application.csproj" />
+	<ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
 </Project>

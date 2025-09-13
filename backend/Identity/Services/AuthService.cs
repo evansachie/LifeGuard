@@ -10,6 +10,7 @@ using Application.Models.ApiResult;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.WebUtilities;
+using System.Security.Cryptography;
 
 
 
@@ -23,20 +24,20 @@ namespace Identity.Services
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailService _emailService;
         private readonly IOTPService _oTPService;
+        private readonly IEncryptionHelper _encryptionHelper;
         private readonly string _jwtKey;
         private readonly string _jwtIssuer;
         private readonly string _jwtAudience;
         private readonly string _jwtDurationInMinutes;
         private readonly string _frontEndUrl;
 
-        
-
-        public AuthService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailService emailService, IOTPService oTPService)
+        public AuthService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailService emailService, IOTPService oTPService, IEncryptionHelper encryptionHelper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailService = emailService;
             _oTPService = oTPService;
+            _encryptionHelper = encryptionHelper;
 
             Env.Load("../.env.local");
             _jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
@@ -44,7 +45,7 @@ namespace Identity.Services
             _jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
             _jwtDurationInMinutes = Environment.GetEnvironmentVariable("JWT_DURATIONINMINUTES");
             _frontEndUrl = Environment.GetEnvironmentVariable("FRONTEND_URL");
-
+            _encryptionHelper = encryptionHelper;
         }
 
         public async Task<Result> Login(AuthRequest request)
@@ -94,6 +95,7 @@ namespace Identity.Services
                 new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim("email_verified", user.EmailConfirmed.ToString()),
                 new Claim("uid", user.Id)
 
             }
@@ -118,6 +120,16 @@ namespace Identity.Services
         }
 
 
+        private byte[] GenerateSecretKey(int keySize)
+        {
+            var key = new byte[keySize];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(key);
+            }
+            return key;
+        }
+
         public async Task<Result> Register(RegistrationRequest request)
         {
             var existingUser = await _userManager.FindByEmailAsync(request.Email);
@@ -127,20 +139,18 @@ namespace Identity.Services
                 return new Result(false, ResultStatusCode.Conflict, $"Username {request.Name} already exists.");
             }
 
-            var user = new ApplicationUser
+            if (existingUser == null)
             {
-                Email = request.Email,
-                Name = request.Name,
-                UserName = request.Email,
-                EmailConfirmed = false,
-                PasswordHash = new PasswordHasher<ApplicationUser>().HashPassword(null, request.Password)
-            };
+                var user = new ApplicationUser
+                {
+                    Email = request.Email,
+                    Name = request.Name,
+                    UserName = request.Email,
+                    EmailConfirmed = false,
+                    SecretKey = _encryptionHelper.Encrypt(GenerateSecretKey(32))
 
-            var existingEmail = await _userManager.FindByEmailAsync(request.Email);
-
-            if (existingEmail == null)
-            {
-                var result = await _userManager.CreateAsync(user);
+                };
+                var result = await _userManager.CreateAsync(user, request.Password);
 
                 if (result.Succeeded)
                 {
@@ -153,13 +163,14 @@ namespace Identity.Services
                         return new Result<RegistrationResponse>(true, ResultStatusCode.Success, new RegistrationResponse 
                         { 
                             UserId = user.Id,
-                            EmailVerified = true,
+                            EmailVerified = false,
                             AccountCreated = true,
                             Message = "Registration successful! Please verify your email."
                         });
                     }
                     catch (Exception ex)
                     {
+                        Console.WriteLine(ex.Message);
                         return new Result<RegistrationResponse>(true, ResultStatusCode.Success, new RegistrationResponse 
                         { 
                             UserId = user.Id,

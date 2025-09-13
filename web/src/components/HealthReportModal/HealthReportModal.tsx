@@ -7,6 +7,7 @@ import { UserData } from '../../types/common.types';
 import { generateEnhancedHealthReport } from '../../services/healthReportDataService';
 import { generateHealthReportPDF } from '../../utils/pdfGenerator';
 import { ragService } from '../../services/ragService';
+import { apiMethods } from '../../utils/api';
 import { toast } from 'react-toastify';
 import { useState, useEffect } from 'react';
 import { FaPills, FaPhoneAlt, FaStickyNote, FaMusic } from 'react-icons/fa';
@@ -47,6 +48,7 @@ const HealthReportModal = ({ isOpen, onClose, userData, isDarkMode }: HealthRepo
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [enhancedReport, setEnhancedReport] = useState<any>(null);
   const [fallbackReport, setFallbackReport] = useState<any>(null);
+  const [healthReportData, setHealthReportData] = useState<any>(null);
 
   // Generate enhanced report when modal opens
   useEffect(() => {
@@ -55,16 +57,71 @@ const HealthReportModal = ({ isOpen, onClose, userData, isDarkMode }: HealthRepo
         setIsGenerating(true);
         try {
           const userId = localStorage.getItem('userId');
+
+          // Try to fetch both enhanced report and health report API data
+          const promises = [];
+
           if (userId) {
-            const enhanced = await generateEnhancedHealthReport(userId);
+            promises.push(
+              generateEnhancedHealthReport(userId).catch((error) => {
+                console.warn('Enhanced report failed:', error);
+                return null;
+              })
+            );
+          }
+
+          // Always try to get health report API data
+          const deviceId = 'n0pTQbgNwb4mrDjVLs3Xzw=='; // Use same device ID as HealthReport page
+          promises.push(
+            apiMethods.getHealthReport(deviceId, '30').catch((error) => {
+              console.warn('Health report API failed:', error);
+              return null;
+            })
+          );
+
+          const [enhanced, healthApiResponse] = await Promise.all(promises);
+
+          if (enhanced) {
             setEnhancedReport(enhanced);
-          } else {
-            // Generate fallback report if no user ID
+          }
+
+          if (healthApiResponse) {
+            // Handle different response formats
+            let healthData = null;
+
+            // Check if it's an API response wrapper
+            if (typeof healthApiResponse === 'object' && 'isSuccess' in healthApiResponse) {
+              if (healthApiResponse.isSuccess && healthApiResponse.data) {
+                healthData = healthApiResponse.data;
+              }
+            } else {
+              // Direct response data
+              healthData = healthApiResponse;
+            }
+
+            if (healthData) {
+              console.log('📊 Health Report Modal - API data received:', healthData);
+              setHealthReportData(healthData);
+            }
+          }
+
+          // If we don't have enhanced report but have user ID, still try enhanced
+          if (!enhanced && userId) {
+            try {
+              const enhancedFallback = await generateEnhancedHealthReport(userId);
+              setEnhancedReport(enhancedFallback);
+            } catch (enhancedError) {
+              console.error('Enhanced report fallback failed:', enhancedError);
+            }
+          }
+
+          // Generate basic fallback report if no user ID or enhanced fails
+          if (!enhanced && !userId) {
             const fallback = await generateHealthReport(userData);
             setFallbackReport(fallback);
           }
         } catch (error) {
-          console.error('Error generating enhanced report:', error);
+          console.error('Error generating report:', error);
           // Generate fallback report on error
           try {
             const fallback = await generateHealthReport(userData);
@@ -82,6 +139,7 @@ const HealthReportModal = ({ isOpen, onClose, userData, isDarkMode }: HealthRepo
       // Reset state when modal closes
       setEnhancedReport(null);
       setFallbackReport(null);
+      setHealthReportData(null);
       setIsGenerating(false);
     }
   }, [isOpen, userData]);
@@ -99,21 +157,34 @@ const HealthReportModal = ({ isOpen, onClose, userData, isDarkMode }: HealthRepo
   };
 
   const handlePdfDownload = async (): Promise<void> => {
-    if (!report) {
+    if (!report && !healthReportData) {
       toast.error('No report data available for download');
       return;
     }
 
     try {
-      // Use enhanced report for PDF generation if available, otherwise use fallback
-      const reportForPdf = enhancedReport || report;
-      const pdfBlob = await generateHealthReportPDF(reportForPdf);
+      let pdfData;
+
+      if (enhancedReport) {
+        pdfData = enhancedReport;
+      } else if (healthReportData) {
+        pdfData = {
+          enhancedReport: report,
+          healthReportData: healthReportData,
+        };
+      } else {
+        pdfData = report;
+      }
+
+      const pdfBlob = await generateHealthReportPDF(pdfData);
 
       // Create download link
       const url = URL.createObjectURL(pdfBlob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `lifeguard_health_report_${reportForPdf.userInfo?.reportId || 'basic'}.pdf`;
+      link.download = `lifeguard_health_report_${
+        enhancedReport?.userInfo?.reportId || report?.userInfo?.reportId || 'basic'
+      }.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -451,6 +522,178 @@ const HealthReportModal = ({ isOpen, onClose, userData, isDarkMode }: HealthRepo
                         {enhancedReport.healthMetrics.activityLevel}
                       </p>
                       <p className="text-sm text-gray-500">Current level</p>
+                    </div>
+                  )}
+                </div>
+              </section>
+            )}
+
+            {/* Health Report API Data Section */}
+            {healthReportData && (
+              <section>
+                <div className="flex items-center space-x-3 mb-6">
+                  <div
+                    className={`p-2 rounded-lg ${isDarkMode ? 'bg-blue-500/20' : 'bg-blue-100'}`}
+                  >
+                    <FaChartLine
+                      className={`text-lg ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}
+                    />
+                  </div>
+                  <h2
+                    className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                  >
+                    Real-Time Health Metrics (Last 30 Days)
+                  </h2>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div
+                    className={`p-6 rounded-2xl border transition-all duration-300 hover:scale-105 ${
+                      isDarkMode
+                        ? 'bg-dark-bg border-gray-700 hover:border-gray-600'
+                        : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-lg'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <div
+                        className={`p-3 rounded-xl ${isDarkMode ? 'bg-red-500/20' : 'bg-red-100'}`}
+                      >
+                        <FaTemperatureHigh
+                          className={`text-xl ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}
+                        />
+                      </div>
+                    </div>
+                    <h3
+                      className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                    >
+                      Average Temperature
+                    </h3>
+                    <p
+                      className={`text-3xl font-bold ${isDarkMode ? 'text-red-400' : 'text-red-600'} mt-2`}
+                    >
+                      {healthReportData.avgAmbientTemp
+                        ? `${healthReportData.avgAmbientTemp.toFixed(1)}°C`
+                        : 'N/A'}
+                    </p>
+                  </div>
+
+                  <div
+                    className={`p-6 rounded-2xl border transition-all duration-300 hover:scale-105 ${
+                      isDarkMode
+                        ? 'bg-dark-bg border-gray-700 hover:border-gray-600'
+                        : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-lg'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <div
+                        className={`p-3 rounded-xl ${isDarkMode ? 'bg-blue-500/20' : 'bg-blue-100'}`}
+                      >
+                        <WiHumidity
+                          className={`text-xl ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}
+                        />
+                      </div>
+                    </div>
+                    <h3
+                      className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                    >
+                      Average Humidity
+                    </h3>
+                    <p
+                      className={`text-3xl font-bold ${isDarkMode ? 'text-blue-400' : 'text-blue-600'} mt-2`}
+                    >
+                      {healthReportData.avgHumidity
+                        ? `${healthReportData.avgHumidity.toFixed(1)}%`
+                        : 'N/A'}
+                    </p>
+                  </div>
+
+                  <div
+                    className={`p-6 rounded-2xl border transition-all duration-300 hover:scale-105 ${
+                      isDarkMode
+                        ? 'bg-dark-bg border-gray-700 hover:border-gray-600'
+                        : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-lg'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <div
+                        className={`p-3 rounded-xl ${isDarkMode ? 'bg-green-500/20' : 'bg-green-100'}`}
+                      >
+                        <FaWalking
+                          className={`text-xl ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}
+                        />
+                      </div>
+                    </div>
+                    <h3
+                      className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                    >
+                      Total Steps
+                    </h3>
+                    <p
+                      className={`text-3xl font-bold ${isDarkMode ? 'text-green-400' : 'text-green-600'} mt-2`}
+                    >
+                      {healthReportData.totalSteps
+                        ? healthReportData.totalSteps.toLocaleString()
+                        : 'N/A'}
+                    </p>
+                  </div>
+
+                  {healthReportData.avgAirQualityIndex && (
+                    <div
+                      className={`p-6 rounded-2xl border transition-all duration-300 hover:scale-105 ${
+                        isDarkMode
+                          ? 'bg-dark-bg border-gray-700 hover:border-gray-600'
+                          : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-lg'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <div
+                          className={`p-3 rounded-xl ${isDarkMode ? 'bg-purple-500/20' : 'bg-purple-100'}`}
+                        >
+                          <WiBarometer
+                            className={`text-xl ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`}
+                          />
+                        </div>
+                      </div>
+                      <h3
+                        className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                      >
+                        Air Quality Index
+                      </h3>
+                      <p
+                        className={`text-3xl font-bold ${isDarkMode ? 'text-purple-400' : 'text-purple-600'} mt-2`}
+                      >
+                        {healthReportData.avgAirQualityIndex.toFixed(0)} AQI
+                      </p>
+                    </div>
+                  )}
+
+                  {healthReportData.avgDailySteps && (
+                    <div
+                      className={`p-6 rounded-2xl border transition-all duration-300 hover:scale-105 ${
+                        isDarkMode
+                          ? 'bg-dark-bg border-gray-700 hover:border-gray-600'
+                          : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-lg'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <div
+                          className={`p-3 rounded-xl ${isDarkMode ? 'bg-yellow-500/20' : 'bg-yellow-100'}`}
+                        >
+                          <FaChartLine
+                            className={`text-xl ${isDarkMode ? 'text-yellow-400' : 'text-yellow-600'}`}
+                          />
+                        </div>
+                      </div>
+                      <h3
+                        className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                      >
+                        Daily Average Steps
+                      </h3>
+                      <p
+                        className={`text-3xl font-bold ${isDarkMode ? 'text-yellow-400' : 'text-yellow-600'} mt-2`}
+                      >
+                        {healthReportData.avgDailySteps.toLocaleString()}
+                      </p>
                     </div>
                   )}
                 </div>

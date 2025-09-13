@@ -43,16 +43,18 @@ const HealthTips = ({ isDarkMode }: HealthTipsProps) => {
         setIsRetrying(true);
         const data = await fetchHealthTips();
 
-        // Verify we have at least some tips before replacing local data
+        // Verify we have valid data before replacing local data
         if (data && data.tips && data.tips.length > 0) {
           setHealthData(data);
+          setIsApiLoaded(true);
+          setError(null);
+        } else {
+          throw new Error('No valid health tips received from API');
         }
-
-        setIsApiLoaded(true);
-        setError(null);
       } catch (err) {
-        console.error('Error loading health tips:', err);
-        setError('Failed to load additional health tips. Showing local content.');
+        console.error('❌ Error loading health tips:', err);
+        setError('Unable to load the latest health tips. Showing local content.');
+        // Keep local data as fallback
       } finally {
         setIsLoading(false);
         setIsRetrying(false);
@@ -111,17 +113,24 @@ const HealthTips = ({ isDarkMode }: HealthTipsProps) => {
   const handleRetry = (): void => {
     setIsLoading(true);
     setError(null);
+    setIsRetrying(true);
     fetchHealthTips()
       .then((data) => {
-        setHealthData(data);
-        setIsApiLoaded(true);
+        if (data && data.tips && data.tips.length > 0) {
+          setHealthData(data);
+          setIsApiLoaded(true);
+          setError(null);
+        } else {
+          throw new Error('No valid health tips received on retry');
+        }
       })
       .catch((err) => {
-        console.error('Error retrying health tips fetch:', err);
-        setError('Failed to load additional health tips. Showing local content.');
+        console.error('❌ Error retrying health tips fetch:', err);
+        setError('Still unable to load the latest health tips. Please try again later.');
       })
       .finally(() => {
         setIsLoading(false);
+        setIsRetrying(false);
       });
   };
 
@@ -147,7 +156,9 @@ const HealthTips = ({ isDarkMode }: HealthTipsProps) => {
       {error && (
         <div
           className={`mb-6 p-4 rounded-lg flex items-center gap-3 ${
-            isDarkMode ? 'bg-red-900/30 text-red-300' : 'bg-red-50 text-red-800'
+            isDarkMode
+              ? 'bg-yellow-900/30 text-yellow-300 border border-yellow-700'
+              : 'bg-yellow-50 text-yellow-800 border border-yellow-200'
           }`}
         >
           <FaExclamationTriangle className="flex-shrink-0 text-xl" />
@@ -156,8 +167,8 @@ const HealthTips = ({ isDarkMode }: HealthTipsProps) => {
             onClick={handleRetry}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-md ${
               isDarkMode
-                ? 'bg-red-800/50 hover:bg-red-700/50 text-white'
-                : 'bg-red-100 hover:bg-red-200 text-red-800'
+                ? 'bg-yellow-800/50 hover:bg-yellow-700/50 text-white'
+                : 'bg-yellow-100 hover:bg-yellow-200 text-yellow-800'
             } transition-colors`}
             disabled={isRetrying}
           >
@@ -167,7 +178,7 @@ const HealthTips = ({ isDarkMode }: HealthTipsProps) => {
               </>
             ) : (
               <>
-                <FaSync /> Retry
+                <FaSync /> Try Again
               </>
             )}
           </button>
@@ -243,11 +254,12 @@ const HealthTips = ({ isDarkMode }: HealthTipsProps) => {
 
       {isLoading && isApiLoaded && (
         <div
-          className={`py-3 text-center text-sm rounded-md mt-6 ${
+          className={`py-3 text-center text-sm rounded-md mt-6 flex items-center justify-center gap-2 ${
             isDarkMode ? 'bg-gray-800 text-blue-400' : 'bg-blue-50 text-blue-700'
           }`}
         >
-          <span className="inline-block animate-spin mr-2">⟳</span> Updating content...
+          <span className="inline-block animate-spin">⟳</span>
+          Updating content from MyHealthfinder...
         </div>
       )}
 

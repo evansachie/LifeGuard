@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AMBULANCE SERVICE EMERGENCY ALERT</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 650px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #dc2626, #ef4444, #f97316);
+            z-index: 10;
+            animation: emergencyPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes emergencyPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .header {
+            text-align: center;
+            padding: 40px 30px;
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 50%);
+            animation: urgentPulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes urgentPulse {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.1; }
+            50% { transform: scale(1.2) rotate(180deg); opacity: 0.3; }
+        }
+        
+        .header img {
+            max-width: 180px;
+            height: auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .header .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .emergency-box {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border: 3px solid #dc2626;
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .emergency-box::before {
+            content: '🚑';
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 32px;
+            opacity: 0.6;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        .emergency-box .urgent-label {
+            background: #dc2626;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        
+        .emergency-box p {
+            font-size: 16px;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+        
+        .emergency-box p:last-child {
+            margin-bottom: 0;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+        
+        .info-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            padding: 28px;
+            margin: 25px 0;
+            border-radius: 15px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .info-section:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+        }
+        
+        .info-section.priority {
+            border-left: 6px solid #f59e0b;
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+        }
+        
+        .info-title {
+            font-weight: 700;
+            margin-bottom: 18px;
+            color: #1e293b;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .info-title::before {
+            content: '';
+            width: 5px;
+            height: 24px;
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            border-radius: 3px;
+        }
+        
+        .info-section p {
+            margin: 10px 0;
+            font-size: 15px;
+            color: #475569;
+            line-height: 1.7;
+        }
+        
+        .info-section p strong {
+            color: #1e293b;
+            font-weight: 600;
+        }
+        
+        .patient-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .patient-detail {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 12px 16px;
+            border-radius: 10px;
+            border-left: 4px solid #dc2626;
+        }
+        
+        .button-container {
+            text-align: center;
+            margin: 45px 0;
+        }
+        
+        .button {
+            display: inline-block;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white !important;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 30px rgba(220, 38, 38, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid transparent;
+        }
+        
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .button:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 18px 40px rgba(220, 38, 38, 0.5);
+            background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+            border-color: #f59e0b;
+        }
+        
+        .button:hover::before {
+            left: 100%;
+        }
+        
+        .button:active {
+            transform: translateY(-2px) scale(1.01);
+        }
+        
+        .coordinates-display {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 2px solid #0ea5e9;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+        }
+        
+        .coordinates-display .coords {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0c4a6e;
+            margin-bottom: 10px;
+        }
+        
+        .important-notice {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border: 3px solid #3b82f6;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 35px 0;
+            position: relative;
+        }
+        
+        .important-notice::before {
+            content: '⚠️';
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            font-size: 24px;
+        }
+        
+        .important-notice p {
+            margin-left: 40px;
+            font-weight: 600;
+            color: #1e40af;
+            margin-bottom: 0;
+            font-size: 16px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 35px 30px;
+            color: #64748b;
+            font-size: 13px;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            border-top: 1px solid #cbd5e1;
+        }
+        
+        .footer p {
+            margin: 8px 0;
+        }
+        
+        .footer .support-contact {
+            color: #3b82f6;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        .footer .support-contact:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                border-radius: 15px;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .info-section, .emergency-box {
+                padding: 24px 20px;
+            }
+            
+            .button {
+                padding: 18px 32px;
+                font-size: 15px;
+            }
+            
+            .patient-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://res.cloudinary.com/dat7slh1u/image/upload/v1740908768/logo_moe3jm.png" alt="LifeGuard Logo">
+            <h1>🚨 AMBULANCE SERVICE EMERGENCY 🚨</h1>
+            <div class="subtitle">Medical Response Required</div>
+        </div>
+        
+        <div class="content">
+            <div class="emergency-box">
+                <div class="urgent-label">CRITICAL ALERT</div>
+                <p><strong>URGENT: Medical Emergency Response Needed</strong></p>
+                <p>A LifeGuard user, <strong>{{userName}}</strong>, has triggered an emergency alert and requires immediate medical assistance.</p>
+            </div>
+            
+            <div class="info-section priority">
+                <div class="info-title">💬 Emergency Message</div>
+                <p>{{emergencyMessage}}</p>
+            </div>
+            
+            <div class="info-section">
+                <div class="info-title">🏥 Patient Information</div>
+                <div class="patient-grid">
+                    <div class="patient-detail">
+                        <strong>Name:</strong> {{userName}}
+                    </div>
+                    <div class="patient-detail">
+                        <strong>Phone:</strong> {{userPhone}}
+                    </div>
+                    <div class="patient-detail">
+                        <strong>Age:</strong> {{age}}
+                    </div>
+                    <div class="patient-detail">
+                        <strong>Gender:</strong> {{gender}}
+                    </div>
+                    <div class="patient-detail">
+                        <strong>Weight:</strong> {{weight}}
+                    </div>
+                    <div class="patient-detail">
+                        <strong>Height:</strong> {{height}}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <div class="info-title">📍 Last Known Location</div>
+                <p><strong>Address:</strong> {{emergencyLocation}}</p>
+                {{#if coordinates}}
+                <div class="coordinates-display">
+                    <div class="coords">GPS: {{coordinates.latitude}}, {{coordinates.longitude}}</div>
+                    <small>Real-time coordinates available</small>
+                </div>
+                {{else}}
+                <div class="coordinates-display">
+                    <div class="coords" style="color: #dc2626;">GPS Coordinates: Not Available</div>
+                    <small>Location based on address only</small>
+                </div>
+                {{/if}}
+            </div>
+            
+            <div class="info-section priority">
+                <div class="info-title">🩺 Medical Information</div>
+                <p>{{medicalInfo}}</p>
+            </div>
+            
+            <div class="button-container">
+                <a href="{{trackingLink}}" class="button">🚑 Track Patient Live Location</a>
+            </div>
+            
+            <div class="important-notice">
+                <p>This is a real emergency alert from the LifeGuard system. Please respond according to your emergency protocols and dispatch procedures.</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>&copy; {{currentYear}} LifeGuard. All rights reserved.</p>
+            <p>This is an automated emergency alert. For technical issues with this alert, contact <a href="mailto:support@lifeguard.com" class="support-contact">support@lifeguard.com</a>.</p>
+        </div>
+    </div>
+</body>
+</html>
