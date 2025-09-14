@@ -15,7 +15,7 @@ GRADE_PROMPT = (
 
 
 
-grader_model = init_chat_model("openai:gpt-3.5-turbo-0125", temperature=0)
+grader_model = init_chat_model("groq:llama-3.1-8b-instant", temperature=0)
 
 
 def grade_documents(

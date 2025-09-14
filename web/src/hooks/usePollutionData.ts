@@ -7,7 +7,7 @@ const initialPollutionData: PollutionData = {
   temperature: 28.5,
   humidity: 52,
   pressure: 1013,
-  steps: 8500,
+  steps: 850,
   aqi: 75,
   pm25: 15.2,
   pm10: 45.8,

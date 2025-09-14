@@ -132,4 +132,33 @@ class Constants {
   // Debug flags
   static const bool enableLogging = true;
   static const bool enableCrashReporting = true;
+  
+  // BLE Constants
+  static const String bleDevicePrefix = 'NiclaSenseME-';
+  static const String bleServiceUuid = '19b10000-0000-537e-4f6c-d104768a1214';
+  
+  // BLE Characteristic UUIDs (matching firmware)
+  static const String temperatureCharacteristicUuid = '19b10000-2001-537e-4f6c-d104768a1214';
+  static const String humidityCharacteristicUuid = '19b10000-3001-537e-4f6c-d104768a1214';
+  static const String pressureCharacteristicUuid = '19b10000-4001-537e-4f6c-d104768a1214';
+  static const String accelerometerCharacteristicUuid = '19b10000-5001-537e-4f6c-d104768a1214';
+  static const String gyroscopeCharacteristicUuid = '19b10000-6001-537e-4f6c-d104768a1214';
+  static const String quaternionCharacteristicUuid = '19b10000-7001-537e-4f6c-d104768a1214';
+  static const String rgbLedCharacteristicUuid = '19b10000-8001-537e-4f6c-d104768a1214';
+  static const String bsecCharacteristicUuid = '19b10000-9001-537e-4f6c-d104768a1214';
+  static const String co2CharacteristicUuid = '19b10000-9002-537e-4f6c-d104768a1214';
+  static const String gasCharacteristicUuid = '19b10000-9003-537e-4f6c-d104768a1214';
+  static const String inferenceCharacteristicUuid = '19b10000-8005-537e-4f6c-d104768a1214';
+  
+  // BLE Configuration
+  static const int bleScanTimeoutSeconds = 10;
+  static const int bleConnectionTimeoutSeconds = 15;
+  static const int bleDataUpdateIntervalMs = 1000;
+  
+  // Device thresholds for health monitoring
+  static const double fallDetectionThreshold = 0.7;
+  static const double temperatureAlertMin = 35.0; // °C
+  static const double temperatureAlertMax = 39.0; // °C
+  static const double humidityAlertMax = 80.0; // %
+  static const double airQualityAlertMax = 150.0; // IAQ
 }

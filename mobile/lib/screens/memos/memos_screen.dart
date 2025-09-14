@@ -41,7 +41,7 @@ class _MemosScreenState extends State<MemosScreen> {
       ),
       body: Column(
         children: [
-          MemoFilters(),
+          const MemoFilters(),
           Expanded(
             child: memoProvider.isLoading
                 ? const Center(child: CircularProgressIndicator())

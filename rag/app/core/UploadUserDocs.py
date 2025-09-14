@@ -1,21 +1,28 @@
-import os, dotenv
-from langchain_openai import OpenAIEmbeddings
-from langchain_pinecone import PineconeVectorStore
-dotenv.load_dotenv(".env")
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.document_loaders import PyPDFLoader
+import tempfile
+import os
 
-def upload_user_docs(doc_splits, user_id):
-   
-    for i, doc in enumerate(doc_splits):
-        if not hasattr(doc, "metadata"):
-            doc.metadata = {}
-        doc.metadata["user_id"] = user_id
-        doc.metadata["chunk_index"] = i 
+async def process_document(file):
 
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
+        temp_file.write(await file.read())
+        temp_file_path = temp_file.name
     
-    vectorstore = PineconeVectorStore.from_documents(
-        documents=doc_splits,
-        embedding=OpenAIEmbeddings(),
-        index_name=os.getenv("PINECONE_INDEX_NAME"),
-    )
-
+    try:
+        loader = PyPDFLoader(temp_file_path)
+        documents = loader.load()
+        
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=1000,
+            chunk_overlap=200,
+            length_function=len,
+        )
+        
+        doc_splits = text_splitter.split_documents(documents)
+        
+        return doc_splits
+    
+    finally:
+        os.unlink(temp_file_path)
 

@@ -36,14 +36,14 @@ class DeleteAccountSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
               Icon(
                 Icons.warning,
                 color: Colors.red,
                 size: 24,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 'Danger Zone',
                 style: TextStyle(

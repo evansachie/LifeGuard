@@ -45,5 +45,12 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- BLE Usage Description -->
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>LifeGuard needs Bluetooth access to connect to your wearable device for health monitoring.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>LifeGuard needs Bluetooth access to connect to your wearable device for health monitoring.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>LifeGuard needs location access for Bluetooth device scanning.</string>
 </dict>
 </plist>

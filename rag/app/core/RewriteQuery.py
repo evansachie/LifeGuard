@@ -1,7 +1,7 @@
 from langgraph.graph import MessagesState
 from langchain.chat_models import init_chat_model
 
-response_model = init_chat_model("openai:gpt-3.5-turbo-0125", temperature=0)
+response_model = init_chat_model("groq:llama-3.1-8b-instant", temperature=0)
 
 REWRITE_PROMPT = (
     "Look at the input and try to reason about the underlying semantic intent / meaning.\n"

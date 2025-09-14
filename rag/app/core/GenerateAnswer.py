@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 load_dotenv("app/.env")
 
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-response_model = init_chat_model("openai:gpt-4-0613", temperature=1)
+client = OpenAI(api_key=os.getenv("GROQ_API_KEY"))
+response_model = init_chat_model("groq:llama-3.1-8b-instant", temperature=1)
 
 GENERATE_PROMPT = (
     "You are a health assistant that provides friendly,detailed and engaging answers. Use the following report excerpts to answer the question."
