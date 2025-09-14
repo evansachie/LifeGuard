@@ -251,8 +251,8 @@ class PrivacyScreen extends StatelessWidget {
                     width: 4,
                     height: 4,
                     margin: const EdgeInsets.only(top: 8, right: 8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF4285F4),
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF4285F4),
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -276,9 +276,9 @@ class PrivacyScreen extends StatelessWidget {
               padding: const EdgeInsets.only(left: 16, top: 4),
               child: Text(
                 email,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
-                  color: const Color(0xFF4285F4),
+                  color: Color(0xFF4285F4),
                   decoration: TextDecoration.underline,
                 ),
               ),

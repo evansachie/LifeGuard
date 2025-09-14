@@ -9,15 +9,36 @@ class MemoCard extends StatelessWidget {
 
   const MemoCard({super.key, required this.memo});
 
+  // Helper method to strip HTML tags from text
+  String _stripHtmlTags(String htmlString) {
+    if (htmlString.isEmpty) return '';
+
+    // Remove HTML tags
+    String text = htmlString.replaceAll(RegExp(r'<[^>]*>'), '');
+
+    // Decode common HTML entities
+    text = text
+        .replaceAll('&amp;', '&')
+        .replaceAll('&lt;', '<')
+        .replaceAll('&gt;', '>')
+        .replaceAll('&quot;', '"')
+        .replaceAll('&#39;', "'")
+        .replaceAll('&nbsp;', ' ');
+
+    return text.trim();
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     // Ensure all fields are strings and have default values
-    final id = memo['_id']?.toString() ?? memo['Id']?.toString() ?? '';
+    final id = memo['Id']?.toString() ?? memo['_id']?.toString() ?? '';
     final text = memo['Text']?.toString() ?? memo['memo']?.toString() ?? '';
     final isDone = memo['Done'] ?? memo['done'] ?? false;
-    final createdAtStr = memo['CreatedAt']?.toString() ?? memo['createdAt']?.toString() ?? DateTime.now().toIso8601String();
+    final createdAtStr = memo['CreatedAt']?.toString() ??
+        memo['createdAt']?.toString() ??
+        DateTime.now().toIso8601String();
     final DateTime createdAt = DateTime.parse(createdAtStr);
     final formattedDate = DateFormat('MMM d, y').format(createdAt);
 
@@ -85,14 +106,17 @@ class MemoCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        text,
+                        _stripHtmlTags(text),
                         style: TextStyle(
                           fontSize: 16,
-                          decoration: isDone ? TextDecoration.lineThrough : null,
+                          decoration:
+                              isDone ? TextDecoration.lineThrough : null,
                           color: isDone
-                              ? (isDark ? Colors.white38 : Colors.grey)
+                              ? (isDark ? Colors.white54 : Colors.grey[600])
                               : (isDark ? Colors.white : Colors.black87),
                         ),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     Checkbox(

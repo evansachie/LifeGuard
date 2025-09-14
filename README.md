@@ -30,20 +30,20 @@
 
 </div>
 
-## 📋 Table of Contents
+## Table of Contents
 
-- [🌟 Overview](#-overview)
-- [✨ Key Features](#-key-features)
-- [🛠️ Technical Specifications](#%EF%B8%8F-technical-specifications)
-- [🚀 Getting Started](#-getting-started)
-- [🏗️ Project Structure](#%EF%B8%8F-project-structure)
-- [🧩 System Architecture](#-system-architecture)
-- [📚 API Documentation](#-api-documentation)
-- [👥 Team](#-team)
-- [📷 Screenshots](#-screenshots)
-- [💬 Support & Contact](#-support--contact)
+- [Overview](#-overview)
+- [Key Features](#-key-features)
+- [Technical Specifications](#%EF%B8%8F-technical-specifications)
+- [Getting Started](#-getting-started)
+- [Project Structure](#%EF%B8%8F-project-structure)
+- [System Architecture](#-system-architecture)
+- [API Documentation](#-api-documentation)
+- [Team](#-team)
+- [Screenshots](#-screenshots)
+- [Support & Contact](#-support--contact)
 
-## 🌟 Overview
+## Overview
 
 LifeGuard is an innovative wearable system that bridges critical gaps in personal safety, accessibility, and preventive healthcare. By integrating advanced sensors with machine learning algorithms, it delivers real-time insights on health metrics and environmental parameters, making safety monitoring accessible and affordable for all.
 
@@ -68,33 +68,33 @@ Our solution stands out as a cost-effective and comprehensive alternative to pre
 </table>
 </div>
 
-## ✨ Key Features
+## Key Features
 
-- **📊 Comprehensive Health Monitoring**
+- **Comprehensive Health Monitoring**
   - Real-time vitals tracking
   - **AI-powered fall detection with 99.5% accuracy**
   - **Activity recognition (walking, still, falling, unknown)**
   - Custom health thresholds
 
-- **🌡️ Environmental Sensing**
+- **Environmental Sensing**
   - Air quality analysis (VOCs, CO2)
   - Temperature and humidity monitoring
   - Barometric pressure tracking
   - Pollution mapping with MapBox integration
 
-- **⚠️ Smart Alert System**
+- ** Smart Alert System**
   - Emergency contact notifications
   - Geolocation sharing
   - Customizable thresholds
   - Automated emergency response
 
-- **💼 Multi-Platform Support**
+- **Multi-Platform Support**
   - Web dashboard with real-time analytics
   - Mobile app (iOS/Android) with dark/light themes
   - Data synchronization across devices
   - Offline functionality
 
-## 🛠️ Technical Specifications
+## Technical Specifications
 
 ### Hardware Components
 
@@ -177,13 +177,13 @@ Our solution stands out as a cost-effective and comprehensive alternative to pre
 </table>
 </div>
 
-## 🤖 Machine Learning & Activity Recognition
+## Machine Learning & Activity Recognition
 
 ### Edge Impulse Integration
 
 LifeGuard incorporates advanced machine learning capabilities through **Edge Impulse** for real-time activity classification and fall detection:
 
-🔗 **[View Edge Impulse Project](https://studio.edgeimpulse.com/public/657930/live)**
+ **[View Edge Impulse Project](https://studio.edgeimpulse.com/public/657930/live)**
 
 #### Model Specifications:
 - **Model Type**: Accelerometer-based activity classification
@@ -194,10 +194,10 @@ LifeGuard incorporates advanced machine learning capabilities through **Edge Imp
 - **Optimization**: Quantized (int8) for embedded deployment
 
 #### Activity Classifications:
-- **🚶 Walking**: Normal walking activity detection
-- **🧍 Still**: Stationary/resting state recognition  
-- **⚠️ Falling**: Critical fall event detection with 99.5% accuracy
-- **❓ Unknown**: Unclassified movement patterns
+- **Walking**: Normal walking activity detection
+- **Still**: Stationary/resting state recognition  
+- **Falling**: Critical fall event detection with 99.5% accuracy
+- **Unknown**: Unclassified movement patterns
 
 #### Technical Details:
 - **Input Data**: AccX, AccY, AccZ @ 10Hz sampling rate
@@ -211,7 +211,7 @@ This ML model enables:
 - **Risk assessment** based on movement behaviors
 - **Real-time processing** on low-power hardware
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -271,7 +271,7 @@ docker-compose up -d
 
 This will start the web dashboard, API, and database services in containers.
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 lifeguard/
@@ -311,7 +311,7 @@ lifeguard/
 └── .devcontainer/              # Development container config
 ```
 
-## 🧩 System Architecture
+## System Architecture
 
 <div align="center">
   <img src="docs/images/system-architecture.PNG" alt="System Architecture" width="800"/>
@@ -343,9 +343,9 @@ lifeguard/
    - Real-time dashboard visualization
    - Mobile alerts and insights
 
-## 📚 API Documentation
+## API Documentation
 
-📖 **[View Complete API Documentation on Postman](https://documenter.getpostman.com/view/28591712/2sB2qak2v6)**
+**[View Complete API Documentation on Postman](https://documenter.getpostman.com/view/28591712/2sB2qak2v6)**
 
 *This interactive documentation includes request/response examples, authentication details, and testing capabilities for all endpoints.*
 
@@ -574,7 +574,7 @@ These endpoints are served from the Node-Server (hosted at `https://lifeguard-no
 </div>
 
 
-## 💬 Support & Contact
+## Support & Contact
 
 <table>
   <tr>
