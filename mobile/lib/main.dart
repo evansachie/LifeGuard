@@ -84,7 +84,8 @@ class MyApp extends StatelessWidget {
           title: 'LifeGuard',
           themeMode: themeProvider.themeMode,
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF4285F4)),
+            colorScheme:
+                ColorScheme.fromSeed(seedColor: const Color(0xFF4285F4)),
             useMaterial3: true,
           ),
           darkTheme: ThemeData(
@@ -106,7 +107,8 @@ class MyApp extends StatelessWidget {
             '/welcome': (context) => const SplashScreen(),
             '/memos': (context) => const MemosScreen(),
             '/verify-otp': (context) {
-              final email = ModalRoute.of(context)?.settings.arguments as String?;
+              final email =
+                  ModalRoute.of(context)?.settings.arguments as String?;
               return OTPVerificationScreen(email: email);
             },
             '/emergency-contacts': (context) => const EmergencyContactsScreen(),

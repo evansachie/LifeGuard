@@ -110,8 +110,9 @@ class _HealthTipsState extends State<HealthTips> {
       final data = await _healthTipsService.fetchHealthTips();
       if (mounted) {
         setState(() {
-          featuredTip = data['featured'];
-          tips = (data['tips'] as List).cast<HealthTip>();
+          featuredTip =
+              data['featured'] ?? featuredTip; // Keep existing if null
+          tips = (data['tips'] as List?)?.cast<HealthTip>() ?? tips;
           isLoading = false;
         });
       }
@@ -223,27 +224,32 @@ class _HealthTipsState extends State<HealthTips> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           featuredTip?['title'] ?? '',
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 24,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 8),
                         Text(
                           featuredTip?['description'] ?? '',
                           style: const TextStyle(
                             color: Colors.white70,
-                            fontSize: 16,
+                            fontSize: 14,
                           ),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        const Spacer(),
+                        const SizedBox(height: 12),
                         ElevatedButton(
                           onPressed: () {},
                           style: ElevatedButton.styleFrom(

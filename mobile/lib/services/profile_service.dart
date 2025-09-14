@@ -20,7 +20,8 @@ class ProfileService {
     return prefs.getString('userId');
   }
 
-  static Future<Map<String, String>> _getHeaders({bool includeAuth = true}) async {
+  static Future<Map<String, String>> _getHeaders(
+      {bool includeAuth = true}) async {
     final headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
@@ -64,10 +65,11 @@ class ProfileService {
 
       if (profileResponse.statusCode == 200) {
         final profileResponseData = json.decode(profileResponse.body);
-        
+
         if (profileResponseData['data'] != null) {
           profileData = profileResponseData['data'];
-        } else if (profileResponseData['isSuccess'] == true && profileResponseData['data'] != null) {
+        } else if (profileResponseData['isSuccess'] == true &&
+            profileResponseData['data'] != null) {
           profileData = profileResponseData['data'];
         } else {
           // Sometimes the profile data is in the root
@@ -79,7 +81,7 @@ class ProfileService {
       String? photoUrl;
       try {
         final photoResponse = await http.get(
-          Uri.parse('$_baseUrl/$userId/photo'),
+          Uri.parse('$_baseUrl/api/Photos/$userId/photo'),
           headers: headers,
         );
 
@@ -144,7 +146,7 @@ class ProfileService {
 
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('$_baseUrl/$userId/photo'),
+        Uri.parse('$_baseUrl/api/Photos/$userId/photo'),
       );
 
       request.headers['Authorization'] = 'Bearer $token';
@@ -176,7 +178,7 @@ class ProfileService {
       final headers = await _getHeaders();
 
       final response = await http.delete(
-        Uri.parse('$_baseUrl/$userId/photo'),
+        Uri.parse('$_baseUrl/api/Photos/$userId/photo'),
         headers: headers,
       );
 
@@ -199,7 +201,9 @@ class ProfileService {
 
       if (response.statusCode == 200) {
         final List<dynamic> contactsJson = json.decode(response.body);
-        return contactsJson.map((json) => EmergencyContact.fromJson(json)).toList();
+        return contactsJson
+            .map((json) => EmergencyContact.fromJson(json))
+            .toList();
       }
 
       return [];

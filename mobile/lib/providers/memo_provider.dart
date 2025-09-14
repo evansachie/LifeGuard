@@ -50,15 +50,16 @@ class MemoProvider extends ChangeNotifier {
       if (token == null) throw Exception('No authentication token');
 
       final newMemo = await _memoService.createMemo(token, memo.trim());
-      
+
       // Ensure the memo is properly formatted before adding to list
       final formattedMemo = {
         '_id': newMemo['_id']?.toString() ?? '',
         'Text': newMemo['Text']?.toString() ?? memo.trim(),
         'Done': newMemo['Done'] ?? false,
-        'CreatedAt': newMemo['CreatedAt']?.toString() ?? DateTime.now().toIso8601String(),
+        'CreatedAt': newMemo['CreatedAt']?.toString() ??
+            DateTime.now().toIso8601String(),
       };
-      
+
       _memos.insert(0, formattedMemo);
       notifyListeners();
     } catch (e) {
@@ -78,7 +79,8 @@ class MemoProvider extends ChangeNotifier {
       if (token == null) throw Exception('No authentication token');
 
       await _memoService.deleteMemo(token, id);
-      _memos.removeWhere((memo) => memo['_id'] == id);
+      _memos.removeWhere((memo) =>
+          memo['Id']?.toString() == id || memo['_id']?.toString() == id);
       notifyListeners();
     } catch (e) {
       print('Delete memo error: $e');
@@ -126,7 +128,7 @@ class MemoProvider extends ChangeNotifier {
 
       // Call API in background
       final success = await _memoService.toggleMemo(token, id, isDone);
-      
+
       // Revert on failure
       if (!success && index != -1) {
         _memos[index] = {..._memos[index], 'Done': !isDone};

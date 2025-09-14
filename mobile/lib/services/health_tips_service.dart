@@ -34,36 +34,67 @@ class HealthTip {
 }
 
 class HealthTipsService {
-  static const String _corsProxy = 'https://api.allorigins.win/raw?url=';
-  static const String _healthApiBase =
-      'https://health.gov/myhealthfinder/api/v3/topicsearch.json?lang=en';
+  static const String _nodeBaseUrl = 'https://lifeguard-node.onrender.com';
 
   Future<Map<String, dynamic>> fetchHealthTips() async {
     try {
       final response = await http.get(
-        Uri.parse('$_corsProxy${Uri.encodeComponent(_healthApiBase)}'),
+        Uri.parse('$_nodeBaseUrl/api/health-tips'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
       );
 
       if (response.statusCode == 200) {
         final healthData = json.decode(response.body);
-        final resources = healthData['Result']?['Resources']?['Resource'] ?? [];
 
-        // Format and sort tips by date/relevance
-        final formattedTips = _formatHealthTips(resources);
+        // Handle the response structure from the Node.js API
+        List<dynamic> tips = [];
+        Map<String, dynamic>? featured;
+
+        if (healthData is List) {
+          tips = healthData;
+        } else if (healthData is Map<String, dynamic>) {
+          tips = healthData['tips'] ?? healthData['data'] ?? [];
+          featured = healthData['featured'];
+        }
+
+        // Format tips to match our HealthTip model
+        final formattedTips = tips
+            .map((tip) {
+              if (tip is Map<String, dynamic>) {
+                return HealthTip(
+                  id: tip['id']?.toString() ??
+                      DateTime.now().millisecondsSinceEpoch.toString(),
+                  category: tip['category'] ?? 'resources',
+                  title: tip['title'] ?? tip['name'] ?? '',
+                  description: tip['description'] ?? tip['summary'] ?? '',
+                  type: tip['type'] ?? 'article',
+                  imageUrl: tip['imageUrl'] ?? tip['image'],
+                  url: tip['url'] ?? tip['link'],
+                );
+              }
+              return null;
+            })
+            .where((tip) => tip != null)
+            .cast<HealthTip>()
+            .toList();
 
         return {
-          'featured': {
-            'title': "Today's Health Highlight",
-            'description':
-                "Learn about health and wellness tips for better living",
-            'image':
-                'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800',
-            'category': "prevention"
-          },
+          'featured': featured ??
+              {
+                'title': "Today's Health Highlight",
+                'description':
+                    "Learn about health and wellness tips for better living",
+                'image':
+                    'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800',
+                'category': "prevention"
+              },
           'tips': formattedTips,
         };
       } else {
-        throw Exception('Failed to fetch health tips');
+        throw Exception('Failed to fetch health tips: ${response.statusCode}');
       }
     } catch (e) {
       print('Error fetching health tips: $e');
@@ -128,6 +159,38 @@ class HealthTipsService {
           title: 'Recognizing Heart Attack Symptoms',
           description:
               'Learn the early warning signs of a heart attack and when to seek immediate medical attention.',
+          type: 'article',
+        ),
+        HealthTip(
+          id: '2',
+          category: 'fitness',
+          title: 'Daily Exercise Routine',
+          description:
+              'Simple exercises you can do at home to maintain your physical health.',
+          type: 'article',
+        ),
+        HealthTip(
+          id: '3',
+          category: 'nutrition',
+          title: 'Healthy Eating Habits',
+          description:
+              'Tips for maintaining a balanced diet and proper nutrition.',
+          type: 'article',
+        ),
+        HealthTip(
+          id: '4',
+          category: 'mental',
+          title: 'Stress Management Techniques',
+          description:
+              'Effective ways to manage stress and maintain mental well-being.',
+          type: 'article',
+        ),
+        HealthTip(
+          id: '5',
+          category: 'prevention',
+          title: 'Regular Health Checkups',
+          description:
+              'The importance of regular health screenings and preventive care.',
           type: 'article',
         ),
       ],
