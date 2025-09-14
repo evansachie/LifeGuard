@@ -102,47 +102,6 @@ class HealthTipsService {
     }
   }
 
-  List<HealthTip> _formatHealthTips(List<dynamic> resources) {
-    return resources.map((resource) {
-      final title = resource['Title'] ?? '';
-      final description = resource['Categories'] ?? '';
-
-      return HealthTip(
-        id: resource['Id']?.toString() ??
-            DateTime.now().millisecondsSinceEpoch.toString(),
-        category: _getCategoryFromTitle(title, description),
-        title: title,
-        description: description,
-        type: 'article',
-        imageUrl: resource['ImageUrl'] ??
-            'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800',
-        url: resource['AccessibleVersion'],
-      );
-    }).toList();
-  }
-
-  String _getCategoryFromTitle(String title, String description) {
-    final lowerTitle = title.toLowerCase();
-    final lowerDescription = description.toLowerCase();
-
-    final categoryRules = {
-      'emergency': ['emergency', 'urgent', 'critical', 'immediate', 'crisis'],
-      'fitness': ['exercise', 'fitness', 'workout', 'physical activity'],
-      'nutrition': ['diet', 'nutrition', 'food', 'eating', 'meal'],
-      'mental': ['mental', 'stress', 'anxiety', 'depression'],
-      'prevention': ['prevent', 'avoid', 'protect', 'risk', 'safety'],
-    };
-
-    for (var entry in categoryRules.entries) {
-      if (entry.value.any((keyword) =>
-          lowerTitle.contains(keyword) || lowerDescription.contains(keyword))) {
-        return entry.key;
-      }
-    }
-
-    return 'resources';
-  }
-
   Map<String, dynamic> getFallbackData() {
     return {
       'featured': {

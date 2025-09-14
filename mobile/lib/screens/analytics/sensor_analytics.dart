@@ -15,7 +15,6 @@ class _SensorAnalyticsState extends State<SensorAnalytics>
     with TickerProviderStateMixin {
   late TabController _tabController;
   String _selectedTimeframe = '24h';
-  final bool _isConnected = false;
 
   final List<String> _timeframes = ['1h', '24h', '7d', '30d'];
 
