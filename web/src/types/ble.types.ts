@@ -44,7 +44,7 @@ export interface MotionData {
     y: number;
     z: number;
   };
-  activity: 'stationary' | 'walking' | 'running' | 'cycling' | 'still' | 'unknown';
+  activity: 'still' | 'walking' | 'running' | 'cycling' | 'stationary' | 'unknown';
   stepCount: number;
   steps?: number;
   activityStatus?: string;
