@@ -203,10 +203,14 @@ void loop(){
       uint32_t currentStepCount = stepCounter.value();
       stepCountCharacteristic.writeValue(currentStepCount);
       
-      Serial.print("Activity: ");
+      Serial.print("Activity: \"");
       Serial.print(currentActivity);
-      Serial.print(" | Steps: ");
+      Serial.print("\" | Steps: ");
       Serial.println(currentStepCount);
+      
+      // Debug: Also print the raw activity value
+      Serial.print("Raw activity length: ");
+      Serial.println(currentActivity.length());
     }
   }
 }
