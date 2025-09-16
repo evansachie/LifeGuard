@@ -46,8 +46,8 @@ export interface MotionData {
   };
   activity: 'stationary' | 'walking' | 'running' | 'cycling' | 'still' | 'unknown';
   stepCount: number;
-  steps?: number; // Alternative property name for steps
-  activityStatus?: string; // Human readable activity status
+  steps?: number;
+  activityStatus?: string;
   fallDetected: boolean;
   timestamp: string;
 }

@@ -13,6 +13,9 @@ const ARDUINO_GAS_UUID = import.meta.env.VITE_GAS;
 const ARDUINO_ACCELEROMETER_UUID = import.meta.env.VITE_ACCELEROMETER;
 const ARDUINO_GYROSCOPE_UUID = import.meta.env.VITE_GYROSCOPE;
 const ARDUINO_QUATERNION_UUID = import.meta.env.VITE_QUATERNION;
+const ARDUINO_ACTIVITY_UUID = '19b10000-a001-537e-4f6c-d104768a1214'; // Activity recognition
+const ARDUINO_STEP_COUNT_UUID = '19b10000-a002-537e-4f6c-d104768a1214'; // Step counter
+const ARDUINO_STEP_DETECTOR_UUID = '19b10000-a003-537e-4f6c-d104768a1214'; // Step detector
 
 const BLEContext = createContext<BLEContextType | null>(null);
 
@@ -69,6 +72,9 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
         service.getCharacteristic(ARDUINO_ACCELEROMETER_UUID).catch(() => null),
         service.getCharacteristic(ARDUINO_GYROSCOPE_UUID).catch(() => null),
         service.getCharacteristic(ARDUINO_QUATERNION_UUID).catch(() => null),
+        service.getCharacteristic(ARDUINO_ACTIVITY_UUID).catch(() => null),
+        service.getCharacteristic(ARDUINO_STEP_COUNT_UUID).catch(() => null),
+        service.getCharacteristic(ARDUINO_STEP_DETECTOR_UUID).catch(() => null),
       ]);
 
       // Store characteristics
@@ -81,6 +87,9 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
       if (characteristics[5]) charMap.set('accelerometer', characteristics[5]);
       if (characteristics[6]) charMap.set('gyroscope', characteristics[6]);
       if (characteristics[7]) charMap.set('quaternion', characteristics[7]);
+      if (characteristics[8]) charMap.set('activity', characteristics[8]);
+      if (characteristics[9]) charMap.set('stepCount', characteristics[9]);
+      if (characteristics[10]) charMap.set('stepDetector', characteristics[10]);
 
       characteristicsRef.current = charMap;
 
@@ -98,6 +107,12 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
       if (characteristics[7] && characteristics[7].properties.notify) {
         await characteristics[7].startNotifications();
         characteristics[7].addEventListener('characteristicvaluechanged', handleQuaternionData);
+      }
+
+      // Subscribe to step detector for real-time step notifications
+      if (characteristics[10] && characteristics[10].properties.notify) {
+        await characteristics[10].startNotifications();
+        characteristics[10].addEventListener('characteristicvaluechanged', handleStepDetectorData);
       }
 
       const device: BLEDevice = {
@@ -300,6 +315,35 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
       // console.log('Quaternion data:', { x, y, z, w });
     }
   };
+
+  // Handle step detector notifications
+  const handleStepDetectorData = (event: Event) => {
+    const characteristic = event.target as BluetoothRemoteGATTCharacteristic;
+    const value = characteristic.value;
+    if (value && value.byteLength >= 1) {
+      const dataView = new DataView(value.buffer);
+      const stepDetected = dataView.getUint8(0) === 1;
+
+      if (stepDetected) {
+        console.log('👟 Step detected!');
+        // Update sensor data with step detection
+        setLatestSensorData((prev) => ({
+          ...prev,
+          motion: {
+            ...prev.motion,
+            accelerometer: prev.motion?.accelerometer || { x: 0, y: 0, z: 0 },
+            gyroscope: prev.motion?.gyroscope || { x: 0, y: 0, z: 0 },
+            magnetometer: prev.motion?.magnetometer || { x: 0, y: 0, z: 0 },
+            activity: prev.motion?.activity || 'walking',
+            stepCount: (prev.motion?.stepCount || 0) + 1,
+            fallDetected: prev.motion?.fallDetected || false,
+            timestamp: new Date().toISOString(),
+          },
+          timestamp: new Date().toISOString(),
+        }));
+      }
+    }
+  };
   const startSensorReading = (device: BLEDevice): void => {
     if (sensorIntervalRef.current) {
       clearInterval(sensorIntervalRef.current);
@@ -444,6 +488,68 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
             hasNewData = true;
           } catch (gasError) {
             console.warn('⚠️ Failed to read gas/AQI data from Arduino:', gasError);
+          }
+        }
+
+        // Read activity data (matches Arduino code - onActivityCharacteristicRead)
+        const activityChar = chars.get('activity');
+        if (activityChar) {
+          try {
+            const activityValue = await activityChar.readValue();
+            const decoder = new TextDecoder();
+            const activityString = decoder.decode(activityValue).trim();
+            console.log('🏃 [ARDUINO NICLA SENSE ME] Activity read:', `"${activityString}"`);
+
+            // Import the activity mapping function
+            const { mapArduinoActivity } = await import('../utils/activityMapping');
+            const activityInfo = mapArduinoActivity(activityString);
+
+            console.log(
+              `🔍 Activity mapping: "${activityString}" -> "${activityInfo.displayName}" (${activityInfo.type})`
+            );
+
+            // Update motion data with activity
+            newSensorData.motion = {
+              accelerometer: newSensorData.motion?.accelerometer || { x: 0, y: 0, z: 0 },
+              gyroscope: newSensorData.motion?.gyroscope || { x: 0, y: 0, z: 0 },
+              magnetometer: newSensorData.motion?.magnetometer || { x: 0, y: 0, z: 0 },
+              activity: activityInfo.type,
+              activityStatus: activityString,
+              stepCount: newSensorData.motion?.stepCount || 0,
+              fallDetected: newSensorData.motion?.fallDetected || false,
+              timestamp: new Date().toISOString(),
+            };
+            hasNewData = true;
+          } catch (activityError) {
+            console.warn('⚠️ Failed to read activity from Arduino:', activityError);
+          }
+        }
+
+        // Read step count data (matches Arduino code - onStepCountCharacteristicRead)
+        const stepCountChar = chars.get('stepCount');
+        if (stepCountChar) {
+          try {
+            const stepCountValue = await stepCountChar.readValue();
+            const stepCount = stepCountValue.getUint32(0, true);
+            console.log('👟 [ARDUINO NICLA SENSE ME] Step count read:', stepCount);
+
+            // Update motion data with step count
+            if (!newSensorData.motion) {
+              newSensorData.motion = {
+                accelerometer: { x: 0, y: 0, z: 0 },
+                gyroscope: { x: 0, y: 0, z: 0 },
+                magnetometer: { x: 0, y: 0, z: 0 },
+                activity: 'stationary',
+                stepCount: stepCount,
+                fallDetected: false,
+                timestamp: new Date().toISOString(),
+              };
+            } else {
+              newSensorData.motion.stepCount = stepCount;
+            }
+            hasNewData = true;
+          } catch (stepError) {
+            console.warn('⚠️ Failed to read step count from Arduino:', stepError);
           }
         }
 
