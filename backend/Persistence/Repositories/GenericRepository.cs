@@ -1,4 +1,4 @@
-﻿using Application.Contracts;
+﻿using Application.Contracts.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
