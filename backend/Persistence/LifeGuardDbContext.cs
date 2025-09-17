@@ -43,5 +43,6 @@ namespace Persistence
 
         public DbSet<Memos> Memos { get; set; }
         public DbSet<EmergencyContacts> EmergencyContacts { get; set; }
-    }   
+        public DbSet<HealthReport> HealthReports { get; set; }
+        }   
 }
