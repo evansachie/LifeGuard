@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 
 namespace Domain
 {
-    public class HealthReport 
+    public class HealthReport : BaseEntity
     {
         public string DeviceId { get; set; }
-        public string UserId { get; set; }
         public DateTime ReportDate { get; set; }
         public string ReportPeriod { get; set; }
         public int TotalSteps { get; set; }
