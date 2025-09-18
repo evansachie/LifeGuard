@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, Form
+from fastapi import APIRouter, UploadFile, Form, HTTPException
 from app.core.VectorStore import vector_store_manager
 from app.core.UploadUserDocs import process_document 
 
@@ -20,5 +20,6 @@ async def upload_pdf(
             "chunks": len(doc_splits)
         }
     
+    
     except Exception as e:
-        return {"error": str(e)}, 500
+        raise HTTPException(status_code=500, detail=str(e))  #
