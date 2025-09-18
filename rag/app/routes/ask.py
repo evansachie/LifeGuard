@@ -17,12 +17,6 @@ async def ask_question(req: AskRequest):
         "user_id": req.user_id, 
     }
 
-
-    # for chunk in graph.stream(rag_input):
-    #    for node, update in chunk.items():
-    #         print(f"Update from node: {node}")
-    #         print(update["messages"][-1])
-
     graph_output = graph.invoke(rag_input)
     response = graph_output["messages"][-1].content.strip()
 
