@@ -1,5 +1,6 @@
-﻿using Domain;
-using Application.Contracts.Persistence;
+﻿using Application.Contracts.Persistence;
+using Domain;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,12 +17,11 @@ namespace Persistence.Repositories.HealthReportRespository
             _dbContext = dbContext;
         }
 
-        public async Task<IReadOnlyList<HealthReport>> GetReportByUserIdAsync(string userId)
+        public async Task<IReadOnlyList<HealthReport>> GetReportsByUserIdAsync(string userId)
         {
-            var reports =   _dbContext.HealthReports.
-                Where(r => r.UserId == userId);
-
-            return new List<HealthReport>(reports);
+            return await _dbContext.HealthReports
+                .Where(r => r.UserId == userId)
+                .ToListAsync();
         }
 
 
