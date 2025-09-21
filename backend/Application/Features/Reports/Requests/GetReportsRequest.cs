@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Reports.Requests
 {
-    public class GetReportRequest  : IRequest<Result>
+    public class GetReportsRequest  : IRequest<Result>
     {
         public string UserId { get; set; }
     }
