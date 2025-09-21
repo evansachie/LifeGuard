@@ -102,6 +102,12 @@ export const API_ENDPOINTS = {
     TOPIC_DETAILS: (id: string): string => `${NODE_API_URL}/api/health-tips/topic/${id}`,
   },
 
+  VOICE_COMMANDS: {
+    PROCESS: `${NODE_API_URL}/api/voice-commands/process`,
+    EMERGENCY: `${NODE_API_URL}/api/voice-commands/emergency`,
+    COMMANDS: `${NODE_API_URL}/api/voice-commands/commands`,
+  },
+
   HEALTH_REPORT: (deviceId: string, range: string = '30') =>
     `${BASE_URL}/api/HealthReport?deviceId=${deviceId}&range=${range}`,
 } as const;
