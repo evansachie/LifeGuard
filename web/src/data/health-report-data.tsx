@@ -1,4 +1,4 @@
-import { FaTemperatureHigh, FaTint, FaWalking, FaChartLine } from 'react-icons/fa';
+import { FaTemperatureHigh, FaTint, FaWalking } from 'react-icons/fa';
 import { WiBarometer } from 'react-icons/wi';
 import { MdAir } from 'react-icons/md';
 import { IconType } from 'react-icons';
@@ -94,7 +94,6 @@ export const healthData: HealthData = {
     { icon: WiBarometer, label: 'Pressure', value: '1013 hPa', color: '#9B51E0' },
     { icon: FaWalking, label: 'Steps', value: '1.2K', color: '#F5A623' },
     { icon: MdAir, label: 'Air Quality', value: '75 AQI', color: '#2ECC71' },
-    { icon: FaChartLine, label: 'Activity', value: '+15%', color: '#1ABC9C' },
   ],
   reports: [
     { id: 1, date: 'Jul 10, 2023', type: 'General Health Report', status: 'Normal' },

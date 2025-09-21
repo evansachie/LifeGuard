@@ -29,7 +29,6 @@ async def loader(file: UploadFile):
     
     pdf_document.close()
     
-    # Split documents
     text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
         chunk_size=100, chunk_overlap=50
     )

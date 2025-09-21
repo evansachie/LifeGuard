@@ -30,15 +30,26 @@ class EmergencyContactProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> sendEmergencyAlert({bool isTest = false, String? contactId}) async {
+  Future<void> sendEmergencyAlert({
+    bool isTest = false,
+    String? contactId,
+    String? customMessage,
+    Map<String, dynamic>? location,
+  }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
 
       if (token == null) throw Exception('No authentication token');
 
-      // Pass the contactId for test alerts
-      await _service.sendEmergencyAlert(token, isTest: isTest, contactId: contactId);
+      // Send emergency alert with custom message and location support
+      await _service.sendEmergencyAlert(
+        token,
+        isTest: isTest,
+        contactId: contactId,
+        customMessage: customMessage,
+        location: location,
+      );
     } catch (e) {
       rethrow;
     }

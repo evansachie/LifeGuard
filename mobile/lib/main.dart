@@ -26,6 +26,8 @@ import 'screens/settings/help_support_screen.dart';
 import 'screens/settings/about_screen.dart';
 import 'screens/notifications/notifications_screen.dart';
 import 'screens/medication/medication_tracker_screen.dart';
+import 'providers/ble_provider.dart';
+import 'screens/device/device_scanner_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -69,13 +71,21 @@ class MyApp extends StatelessWidget {
             return medicationProvider;
           },
         ),
+        ChangeNotifierProxyProvider<EmergencyContactProvider, BleProvider>(
+          create: (_) => BleProvider(),
+          update: (_, emergencyProvider, bleProvider) {
+            bleProvider!.setEmergencyContactProvider(emergencyProvider);
+            return bleProvider;
+          },
+        ),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) => MaterialApp(
           title: 'LifeGuard',
           themeMode: themeProvider.themeMode,
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF4285F4)),
+            colorScheme:
+                ColorScheme.fromSeed(seedColor: const Color(0xFF4285F4)),
             useMaterial3: true,
           ),
           darkTheme: ThemeData(
@@ -97,7 +107,8 @@ class MyApp extends StatelessWidget {
             '/welcome': (context) => const SplashScreen(),
             '/memos': (context) => const MemosScreen(),
             '/verify-otp': (context) {
-              final email = ModalRoute.of(context)?.settings.arguments as String?;
+              final email =
+                  ModalRoute.of(context)?.settings.arguments as String?;
               return OTPVerificationScreen(email: email);
             },
             '/emergency-contacts': (context) => const EmergencyContactsScreen(),
@@ -106,6 +117,7 @@ class MyApp extends StatelessWidget {
             '/about': (context) => const AboutScreen(),
             '/notifications': (context) => const NotificationsScreen(),
             '/medication-tracker': (context) => const MedicationTrackerScreen(),
+            '/device-scanner': (context) => const DeviceScannerScreen(),
           },
         ),
       ),

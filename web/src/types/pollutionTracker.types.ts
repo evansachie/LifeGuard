@@ -20,6 +20,15 @@ export interface PollutionZone {
   level: PollutionLevel;
   data: PollutionData;
   description?: string;
+  isRealTime?: boolean;
+  realTimeData?: {
+    temperature: number;
+    humidity: number;
+    pressure: number;
+    co2: number;
+    aqi: number;
+    timestamp: number;
+  };
 }
 
 export interface LegendItem {

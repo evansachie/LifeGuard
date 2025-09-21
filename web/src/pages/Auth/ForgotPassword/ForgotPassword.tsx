@@ -1,4 +1,4 @@
-import React from 'react';
+import { FormEvent, useState } from 'react';
 import { toast } from 'react-toastify';
 import forgotPasswordIllustration from '../../../assets/auth/forgot-password.svg';
 import ThemeToggle from '../../../contexts/ThemeToggle';
@@ -11,10 +11,10 @@ import { AuthPageProps } from '../../../types/common.types';
 
 // Custom hook to manage form state and submission
 const usePasswordResetForm = () => {
-  const [email, setEmail] = React.useState<string>('');
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [email, setEmail] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 

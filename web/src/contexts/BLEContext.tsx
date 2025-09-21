@@ -13,6 +13,9 @@ const ARDUINO_GAS_UUID = import.meta.env.VITE_GAS;
 const ARDUINO_ACCELEROMETER_UUID = import.meta.env.VITE_ACCELEROMETER;
 const ARDUINO_GYROSCOPE_UUID = import.meta.env.VITE_GYROSCOPE;
 const ARDUINO_QUATERNION_UUID = import.meta.env.VITE_QUATERNION;
+const ARDUINO_ACTIVITY_UUID = '19b10000-a001-537e-4f6c-d104768a1214'; // Activity recognition
+const ARDUINO_STEP_COUNT_UUID = '19b10000-a002-537e-4f6c-d104768a1214'; // Step counter
+const ARDUINO_STEP_DETECTOR_UUID = '19b10000-a003-537e-4f6c-d104768a1214'; // Step detector
 
 const BLEContext = createContext<BLEContextType | null>(null);
 
@@ -69,6 +72,9 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
         service.getCharacteristic(ARDUINO_ACCELEROMETER_UUID).catch(() => null),
         service.getCharacteristic(ARDUINO_GYROSCOPE_UUID).catch(() => null),
         service.getCharacteristic(ARDUINO_QUATERNION_UUID).catch(() => null),
+        service.getCharacteristic(ARDUINO_ACTIVITY_UUID).catch(() => null),
+        service.getCharacteristic(ARDUINO_STEP_COUNT_UUID).catch(() => null),
+        service.getCharacteristic(ARDUINO_STEP_DETECTOR_UUID).catch(() => null),
       ]);
 
       // Store characteristics
@@ -81,6 +87,9 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
       if (characteristics[5]) charMap.set('accelerometer', characteristics[5]);
       if (characteristics[6]) charMap.set('gyroscope', characteristics[6]);
       if (characteristics[7]) charMap.set('quaternion', characteristics[7]);
+      if (characteristics[8]) charMap.set('activity', characteristics[8]);
+      if (characteristics[9]) charMap.set('stepCount', characteristics[9]);
+      if (characteristics[10]) charMap.set('stepDetector', characteristics[10]);
 
       characteristicsRef.current = charMap;
 
@@ -98,6 +107,12 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
       if (characteristics[7] && characteristics[7].properties.notify) {
         await characteristics[7].startNotifications();
         characteristics[7].addEventListener('characteristicvaluechanged', handleQuaternionData);
+      }
+
+      // Subscribe to step detector for real-time step notifications
+      if (characteristics[10] && characteristics[10].properties.notify) {
+        await characteristics[10].startNotifications();
+        characteristics[10].addEventListener('characteristicvaluechanged', handleStepDetectorData);
       }
 
       const device: BLEDevice = {
@@ -206,7 +221,7 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
             accelerometer: { x, y, z },
             gyroscope: prev.motion?.gyroscope || { x: 0, y: 0, z: 0 },
             magnetometer: prev.motion?.magnetometer || { x: 0, y: 0, z: 0 },
-            activity: prev.motion?.activity || 'stationary',
+            activity: prev.motion?.activity || 'still',
             stepCount: prev.motion?.stepCount || 0,
             fallDetected: prev.motion?.fallDetected || false,
             timestamp: new Date().toISOString(),
@@ -300,6 +315,35 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
       // console.log('Quaternion data:', { x, y, z, w });
     }
   };
+
+  // Handle step detector notifications
+  const handleStepDetectorData = (event: Event) => {
+    const characteristic = event.target as BluetoothRemoteGATTCharacteristic;
+    const value = characteristic.value;
+    if (value && value.byteLength >= 1) {
+      const dataView = new DataView(value.buffer);
+      const stepDetected = dataView.getUint8(0) === 1;
+
+      if (stepDetected) {
+        console.log('👟 Step detected!');
+        // Update sensor data with step detection
+        setLatestSensorData((prev) => ({
+          ...prev,
+          motion: {
+            ...prev.motion,
+            accelerometer: prev.motion?.accelerometer || { x: 0, y: 0, z: 0 },
+            gyroscope: prev.motion?.gyroscope || { x: 0, y: 0, z: 0 },
+            magnetometer: prev.motion?.magnetometer || { x: 0, y: 0, z: 0 },
+            activity: prev.motion?.activity || 'walking',
+            stepCount: (prev.motion?.stepCount || 0) + 1,
+            fallDetected: prev.motion?.fallDetected || false,
+            timestamp: new Date().toISOString(),
+          },
+          timestamp: new Date().toISOString(),
+        }));
+      }
+    }
+  };
   const startSensorReading = (device: BLEDevice): void => {
     if (sensorIntervalRef.current) {
       clearInterval(sensorIntervalRef.current);
@@ -337,7 +381,7 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
             accelerometer: { x: 0, y: 0, z: 0 },
             gyroscope: { x: 0, y: 0, z: 0 },
             magnetometer: { x: 0, y: 0, z: 0 },
-            activity: 'stationary',
+            activity: 'still',
             stepCount: 0,
             fallDetected: false,
             timestamp: new Date().toISOString(),
@@ -354,13 +398,13 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
             const tempValue = await tempChar.readValue();
             // Arduino sends temperature as float
             const temperature = tempValue.getFloat32(0, true);
-            console.log('🌡️ Temperature read:', temperature, '°C');
+            console.log('🌡️ [ARDUINO NICLA SENSE ME] Temperature read:', temperature, '°C');
 
             // Fix TypeScript error by ensuring newSensorData.environmental is defined
             newSensorData.environmental!.temperature = temperature;
             hasNewData = true;
           } catch (tempError) {
-            console.warn('⚠️ Failed to read temperature:', tempError);
+            console.warn('⚠️ Failed to read temperature from Arduino:', tempError);
           }
         }
 
@@ -371,13 +415,13 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
             const humValue = await humChar.readValue();
             // Arduino sends humidity as uint8 (truncated float)
             const humidity = humValue.getUint8(0);
-            console.log('💧 Humidity read:', humidity, '%');
+            console.log('💧 [ARDUINO NICLA SENSE ME] Humidity read:', humidity, '%');
 
             // Fix TypeScript error by ensuring newSensorData.environmental is defined
             newSensorData.environmental!.humidity = humidity;
             hasNewData = true;
           } catch (humError) {
-            console.warn('⚠️ Failed to read humidity:', humError);
+            console.warn('⚠️ Failed to read humidity from Arduino:', humError);
           }
         }
 
@@ -388,13 +432,13 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
             const pressureValue = await pressureChar.readValue();
             // Arduino sends pressure as float
             const pressure = pressureValue.getFloat32(0, true);
-            console.log('📊 Pressure read:', pressure, 'hPa');
+            console.log('📊 [ARDUINO NICLA SENSE ME] Pressure read:', pressure, 'hPa');
 
             // Fix TypeScript error by ensuring newSensorData.environmental is defined
             newSensorData.environmental!.pressure = pressure;
             hasNewData = true;
           } catch (pressError) {
-            console.warn('⚠️ Failed to read pressure:', pressError);
+            console.warn('⚠️ Failed to read pressure from Arduino:', pressError);
           }
         }
 
@@ -405,13 +449,13 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
             const co2Value = await co2Char.readValue();
             // Arduino sends CO2 as uint32
             const co2 = co2Value.getUint32(0, true);
-            console.log('🌬️ CO2 read:', co2, 'ppm');
+            console.log('🌬️ [ARDUINO NICLA SENSE ME] CO2 read:', co2, 'ppm');
 
             // Fix TypeScript error by ensuring newSensorData.environmental and airQuality are defined
             newSensorData.environmental!.airQuality!.co2 = co2;
             hasNewData = true;
           } catch (co2Error) {
-            console.warn('⚠️ Failed to read CO2:', co2Error);
+            console.warn('⚠️ Failed to read CO2 from Arduino:', co2Error);
           }
         }
 
@@ -425,20 +469,87 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
             if (bsecChar) {
               const bsecValue = await bsecChar.readValue();
               aqi = bsecValue.getFloat32(0, true);
-              console.log('🌿 BSEC IAQ read:', aqi);
+              console.log('🌿 [ARDUINO NICLA SENSE ME] BSEC IAQ read:', aqi);
             } else if (gasChar) {
               const gasValue = await gasChar.readValue();
               const gas = gasValue.getUint32(0, true);
               // Convert gas resistance to AQI approximation
               aqi = Math.max(0, Math.min(500, gas / 1000));
-              console.log('💨 Gas read:', gas, '-> AQI approximation:', aqi);
+              console.log(
+                '💨 [ARDUINO NICLA SENSE ME] Gas read:',
+                gas,
+                '-> AQI approximation:',
+                aqi
+              );
             }
 
             // Fix TypeScript error by ensuring newSensorData.environmental and airQuality are defined
             newSensorData.environmental!.airQuality!.aqi = aqi;
             hasNewData = true;
           } catch (gasError) {
-            console.warn('⚠️ Failed to read gas/AQI data:', gasError);
+            console.warn('⚠️ Failed to read gas/AQI data from Arduino:', gasError);
+          }
+        }
+
+        // Read activity data (matches Arduino code - onActivityCharacteristicRead)
+        const activityChar = chars.get('activity');
+        if (activityChar) {
+          try {
+            const activityValue = await activityChar.readValue();
+            const decoder = new TextDecoder();
+            const activityString = decoder.decode(activityValue).trim();
+            console.log('🏃 [ARDUINO NICLA SENSE ME] Activity read:', `"${activityString}"`);
+
+            // Import the activity mapping function
+            const { mapArduinoActivity } = await import('../utils/activityMapping');
+            const activityInfo = mapArduinoActivity(activityString);
+
+            console.log(
+              `🔍 Activity mapping: "${activityString}" -> "${activityInfo.displayName}" (${activityInfo.type})`
+            );
+
+            // Update motion data with activity
+            newSensorData.motion = {
+              accelerometer: newSensorData.motion?.accelerometer || { x: 0, y: 0, z: 0 },
+              gyroscope: newSensorData.motion?.gyroscope || { x: 0, y: 0, z: 0 },
+              magnetometer: newSensorData.motion?.magnetometer || { x: 0, y: 0, z: 0 },
+              activity: activityInfo.type,
+              activityStatus: activityString,
+              stepCount: newSensorData.motion?.stepCount || 0,
+              fallDetected: newSensorData.motion?.fallDetected || false,
+              timestamp: new Date().toISOString(),
+            };
+            hasNewData = true;
+          } catch (activityError) {
+            console.warn('⚠️ Failed to read activity from Arduino:', activityError);
+          }
+        }
+
+        // Read step count data (matches Arduino code - onStepCountCharacteristicRead)
+        const stepCountChar = chars.get('stepCount');
+        if (stepCountChar) {
+          try {
+            const stepCountValue = await stepCountChar.readValue();
+            const stepCount = stepCountValue.getUint32(0, true);
+            console.log('👟 [ARDUINO NICLA SENSE ME] Step count read:', stepCount);
+
+            // Update motion data with step count
+            if (!newSensorData.motion) {
+              newSensorData.motion = {
+                accelerometer: { x: 0, y: 0, z: 0 },
+                gyroscope: { x: 0, y: 0, z: 0 },
+                magnetometer: { x: 0, y: 0, z: 0 },
+                activity: 'still',
+                stepCount: stepCount,
+                fallDetected: false,
+                timestamp: new Date().toISOString(),
+              };
+            } else {
+              newSensorData.motion.stepCount = stepCount;
+            }
+            hasNewData = true;
+          } catch (stepError) {
+            console.warn('⚠️ Failed to read step count from Arduino:', stepError);
           }
         }
 
@@ -463,17 +574,71 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
                 },
                 timestamp: new Date().toISOString(),
               },
-              motion: prev.motion || {
-                accelerometer: { x: 0, y: 0, z: 0 },
-                gyroscope: { x: 0, y: 0, z: 0 },
-                magnetometer: { x: 0, y: 0, z: 0 },
-                activity: 'stationary',
-                stepCount: 0,
-                fallDetected: false,
-                timestamp: new Date().toISOString(),
-              },
+              motion: newSensorData.motion ||
+                prev.motion || {
+                  accelerometer: { x: 0, y: 0, z: 0 },
+                  gyroscope: { x: 0, y: 0, z: 0 },
+                  magnetometer: { x: 0, y: 0, z: 0 },
+                  activity: 'still',
+                  stepCount: 0,
+                  fallDetected: false,
+                  timestamp: new Date().toISOString(),
+                },
               timestamp: new Date().toISOString(),
             };
+
+            // Log data sources for pollution tracker analysis
+            console.log('🔍 POLLUTION TRACKER DATA SOURCES:');
+            console.log(
+              '   🌡️ Temperature:',
+              newSensorData.environmental?.temperature,
+              '°C [ARDUINO NICLA SENSE ME]'
+            );
+            console.log(
+              '   💧 Humidity:',
+              newSensorData.environmental?.humidity,
+              '% [ARDUINO NICLA SENSE ME]'
+            );
+            console.log(
+              '   📊 Pressure:',
+              newSensorData.environmental?.pressure,
+              'hPa [ARDUINO NICLA SENSE ME]'
+            );
+            console.log(
+              '   🌬️ CO2:',
+              newSensorData.environmental?.airQuality?.co2,
+              'ppm [ARDUINO NICLA SENSE ME]'
+            );
+            console.log(
+              '   🌿 AQI:',
+              newSensorData.environmental?.airQuality?.aqi,
+              '[ARDUINO NICLA SENSE ME]'
+            );
+            console.log(
+              '   🧪 VOC:',
+              updatedSensorData.environmental?.airQuality?.voc || 0.1,
+              '[HARDCODED FALLBACK]'
+            );
+            console.log(
+              '   🌫️ PM2.5:',
+              updatedSensorData.environmental?.airQuality?.pm25 || 10,
+              'µg/m³ [HARDCODED FALLBACK]'
+            );
+            console.log(
+              '   🌫️ PM10:',
+              updatedSensorData.environmental?.airQuality?.pm10 || 15,
+              'µg/m³ [HARDCODED FALLBACK]'
+            );
+            console.log(
+              '   📐 Accelerometer: [x,y,z]',
+              prev.motion?.accelerometer,
+              '[ARDUINO NICLA SENSE ME - Real-time]'
+            );
+            console.log(
+              '   🔄 Gyroscope: [x,y,z]',
+              prev.motion?.gyroscope,
+              '[ARDUINO NICLA SENSE ME - Real-time]'
+            );
 
             // Only push to Firebase if we have the device and new data
             console.log(

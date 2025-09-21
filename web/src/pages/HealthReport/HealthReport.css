@@ -287,3 +287,114 @@
         width: 100%;
     }
 }
+
+/* Date Range Select */
+.date-range-select {
+    background: transparent;
+    border: none;
+    color: inherit;
+    font-size: inherit;
+    cursor: pointer;
+    outline: none;
+}
+
+.date-range-select option {
+    background: white;
+    color: #2d3436;
+}
+
+.dark-mode .date-range-select option {
+    background: #2d3748;
+    color: #e2e8f0;
+}
+
+/* Loading and Error States */
+.loading-container, .error-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    margin: 2rem 0;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode .loading-container, 
+.dark-mode .error-container {
+    background: #2d3748;
+    color: #e2e8f0;
+}
+
+.error-container {
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.error-message {
+    color: #e74c3c;
+    margin: 0;
+}
+
+.dark-mode .error-message {
+    color: #fc8181;
+}
+
+/* Live Data Toggle */
+.live-data-toggle {
+    margin-left: 1rem;
+    padding: 0.75rem 1rem;
+    background: #e2e8f0;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    color: #4a5568;
+}
+
+.live-data-toggle:hover {
+    background: #cbd5e0;
+    transform: translateY(-1px);
+}
+
+.live-data-toggle.active {
+    background: #48bb78;
+    color: white;
+}
+
+.live-data-toggle.active:hover {
+    background: #38a169;
+}
+
+.dark-mode .live-data-toggle {
+    background: #4a5568;
+    color: #e2e8f0;
+}
+
+.dark-mode .live-data-toggle:hover {
+    background: #2d3748;
+}
+
+.dark-mode .live-data-toggle.active {
+    background: #48bb78;
+    color: white;
+}
+
+/* Arduino Status Indicator */
+.arduino-status {
+    display: inline-block;
+    margin-left: 1rem;
+    padding: 0.25rem 0.5rem;
+    background: rgba(72, 187, 120, 0.1);
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #48bb78;
+    font-weight: 500;
+}
+
+.dark-mode .arduino-status {
+    background: rgba(72, 187, 120, 0.2);
+    color: #68d391;
+}

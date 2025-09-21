@@ -94,11 +94,35 @@ class EmergencyContactService {
     }
   }
 
-  Future<bool> sendEmergencyAlert(String token, {bool isTest = false, String? contactId}) async {
+  Future<bool> sendEmergencyAlert(
+    String token, {
+    bool isTest = false, 
+    String? contactId,
+    String? customMessage,
+    Map<String, dynamic>? location,
+  }) async {
     try {
       final endpoint = isTest 
           ? '$baseUrl/api/emergency-contacts/test-alert/$contactId'
           : '$baseUrl/api/emergency-contacts/alert';
+
+      final Map<String, dynamic> requestBody = {};
+      
+      // Add custom message for fall detection or other emergency types
+      if (customMessage != null) {
+        requestBody['message'] = customMessage;
+      }
+      
+      // Add location data if available
+      if (location != null) {
+        requestBody['location'] = location;
+      }
+      
+      // Add emergency type for fall detection
+      if (customMessage?.toLowerCase().contains('fall') == true) {
+        requestBody['emergencyType'] = 'fall_detection';
+        requestBody['priority'] = 'critical';
+      }
 
       final response = await http.post(
         Uri.parse(endpoint),
@@ -106,6 +130,7 @@ class EmergencyContactService {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
+        body: requestBody.isNotEmpty ? json.encode(requestBody) : null,
       );
 
       if (response.statusCode == 200) {

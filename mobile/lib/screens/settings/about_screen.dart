@@ -104,12 +104,12 @@ class _AboutScreenState extends State<AboutScreen> {
                   const SizedBox(height: 16),
                   
                   // Tagline
-                  Text(
+                  const Text(
                     'Your Personal Health & Safety Companion',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: const Color(0xFF4285F4),
+                      color: Color(0xFF4285F4),
                     ),
                     textAlign: TextAlign.center,
                   ),
