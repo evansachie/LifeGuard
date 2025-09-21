@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Persistence;
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(LifeGuardDbContext))]
-    partial class LifeGuardDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250921153957_Reports")]
+    partial class Reports
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,12 +66,12 @@ namespace Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 9, 21, 16, 8, 55, 34, DateTimeKind.Utc).AddTicks(4918),
+                            CreatedAt = new DateTime(2025, 9, 21, 15, 39, 57, 452, DateTimeKind.Utc).AddTicks(8083),
                             Email = "info@moh.gov.gh",
                             Name = "Ambulance Service",
                             Phone = "0505982870",
-                            UpDatedAt = new DateTime(2025, 9, 21, 16, 8, 55, 34, DateTimeKind.Utc).AddTicks(4918),
-                            UserId = "03f9a363-b1bb-4273-9b86-25772c96131f"
+                            UpDatedAt = new DateTime(2025, 9, 21, 15, 39, 57, 452, DateTimeKind.Utc).AddTicks(8083),
+                            UserId = "e52c4b58-24d6-4f5d-a634-ecb37d956f8d"
                         });
                 });
 
@@ -152,6 +155,8 @@ namespace Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("HealthReports");
                 });
 
@@ -188,12 +193,101 @@ namespace Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 9, 21, 16, 8, 55, 34, DateTimeKind.Utc).AddTicks(4732),
+                            CreatedAt = new DateTime(2025, 9, 21, 15, 39, 57, 452, DateTimeKind.Utc).AddTicks(7929),
                             Done = false,
                             Text = "Hi, This is my first Memo",
-                            UpDatedAt = new DateTime(2025, 9, 21, 16, 8, 55, 34, DateTimeKind.Utc).AddTicks(4734),
+                            UpDatedAt = new DateTime(2025, 9, 21, 15, 39, 57, 452, DateTimeKind.Utc).AddTicks(7932),
                             UserId = "7a223968-23b4-4652-z7b7-8574d048cdb9"
                         });
+                });
+
+            modelBuilder.Entity("Identity.Models.ApplicationUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Age")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Bio")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Gender")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("Height")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasColumnType("text");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("PhotoPublicId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhotoUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SecretKey")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("Weight")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ApplicationUser");
+                });
+
+            modelBuilder.Entity("Domain.HealthReport", b =>
+                {
+                    b.HasOne("Identity.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
