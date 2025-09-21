@@ -1,7 +1,10 @@
-﻿using Domain;
+﻿using Application.Features.Reports.Requests;
+using Application.Models.ApiResult;
+using Domain;
 using Domain.Contracts.Firebase;
 using Domain.Contracts.PDFService;
 using Domain.Interfaces.HealthReport;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LifeGuard.Controllers
@@ -11,14 +14,14 @@ namespace LifeGuard.Controllers
     public class HealthReportController :ControllerBase
     {
         private readonly IHealthReportService _healthReportService;
-        private readonly IPDFGeneratorService _pdfGeneratorService;
-        public HealthReportController(IHealthReportService healthReportService, IPDFGeneratorService pdfGeneratorService)
+        private readonly IMediator _mediator;
+        public HealthReportController(IHealthReportService healthReportService, IMediator mediator)
         { 
             this._healthReportService = healthReportService;
-            _pdfGeneratorService = pdfGeneratorService;
+            _mediator = mediator;
         }
 
-        [HttpGet]
+        [HttpGet("generate")]
         public async Task<ActionResult<HealthReport>> GenerateHealthReport(string deviceId, int range)
         {
             var report = await _healthReportService.GenerateHealthReportAsync(deviceId, range);
@@ -41,5 +44,37 @@ namespace LifeGuard.Controllers
         //    return File(pdfBytes, "application/pdf", filename);
         //}
 
+        [HttpPost]
+        public async Task<ActionResult<Result>> AddReport([FromBody] HealthReport report)
+        {
+            var result = await _mediator.Send(new AddReportRequest { HealthReport = report });
+            if (!result.IsSuccess) return BadRequest(result);
+
+        
+            
+            return Ok(result);
+        }
+
+
+        [HttpGet("user/{userid}")]
+        public async Task<ActionResult<Result>> GetReports(string  userid)
+        {
+            var request = new GetReportsRequest { UserId = userid };
+            var result = await _mediator.Send(request);
+            return Ok(result);
+        }
+
+
+        [HttpDelete]
+        public async Task<ActionResult> DeleteReport(HealthReport report)
+        {
+
+            var result = await _mediator.Send(new DeleteReportRequest { HealthReport = report });
+            if (!result.IsSuccess) return BadRequest(result);
+
+
+
+            return Ok(result);
+        }
     }
 }
