@@ -1,5 +1,4 @@
-﻿using Identity.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
@@ -15,8 +14,6 @@ namespace Domain.Common
         public int Id { get; set; }
         
         public string UserId { get; set; }
-        public ApplicationUser User { get; set; }
-
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpDatedAt { get; set; } = DateTime.UtcNow;
     }
