@@ -11,16 +11,16 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Reports.Handlers
 {
-    public class GetReportHandler : IRequestHandler<GetReportRequest, Result>
+    public class GetReportsHandler : IRequestHandler<GetReportsRequest, Result>
     {
         private readonly IHealthReportRepository _healthReportRepository;
-        public GetReportHandler(IHealthReportRepository healthReportRepository) {
+        public GetReportsHandler(IHealthReportRepository healthReportRepository) {
             _healthReportRepository = healthReportRepository;   
         }
 
-        public async Task<Result> Handle(GetReportRequest request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(GetReportsRequest request, CancellationToken cancellationToken)
         {
-            var reports = await _healthReportRepository.GetReportByUserIdAsync(request.UserId);
+            var reports = await _healthReportRepository.GetReportsByUserIdAsync(request.UserId);
 
             if (reports.Count == 0)
             {
