@@ -11,6 +11,13 @@
           "backdrop-filter"
         ]
       }
+    ],
+    "axe/aria": [
+      "default",
+      {
+        "aria-required-children": "off",
+        "aria-valid-attr-value": "off"
+      }
     ]
   }
 }

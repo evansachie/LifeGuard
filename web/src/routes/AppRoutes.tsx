@@ -108,7 +108,7 @@ const AppRoutes = ({ isDarkMode, toggleTheme }: AppRoutesProps) => {
         <Route path="/help" element={<Help isDarkMode={isDarkMode} />} />
         <Route path="/terms-of-use" element={<TermsOfUse isDarkMode={isDarkMode} />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy isDarkMode={isDarkMode} />} />
-        <Route path="/medication-tracker" element={<MedicationTracker isDarkMode={isDarkMode} />} />
+        <Route path="/medications" element={<MedicationTracker isDarkMode={isDarkMode} />} />
 
         <Route
           path="/analytics"
