@@ -24,8 +24,9 @@ namespace Application.Features.Reports.Handlers
         {
             await _healthReportRepository.Delete(request.HealthReport);
 
-            return new Result(true, ResultStatusCode.Success, "Report Added Successfully");
-
+            return new Result(true, ResultStatusCode.Success, "Report deleted successfully.");
         }
+
     }
+    
 }
