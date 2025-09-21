@@ -9,7 +9,7 @@ namespace Application.Contracts.Persistence
 {
     public interface IHealthReportRepository : IGenericRepository<HealthReport>
     {
-        Task<IReadOnlyList<HealthReport>> GetReportByUserIdAsync(string userId);
+        Task<IReadOnlyList<HealthReport>> GetReportsByUserIdAsync(string userId);
 
     }
 }
