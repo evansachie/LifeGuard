@@ -1,35 +1,38 @@
 using Application.Contracts;
+using Application.Contracts.Persistence;
+using Application.Contracts.Photos;
+using Application.Features.Reports.Requests;
+using Domain.Contracts.Firebase;
+using Domain.Contracts.PDFService;
+using Domain.Interfaces.HealthReport;
 using DotNetEnv;
+using Firebase.Database;
+using Google.Apis.Auth.OAuth2;
 using Identity;
 using Identity.Features.ResendOTP;
 using Identity.Features.VerifyOTP;
 using Identity.Models;
-using Infrastructure.EmailService;
-using Infrastructure.OTPService;
 using Identity.Services;
+using Infrastructure.EmailService;
+using Infrastructure.EncryptionHelper;
+using Infrastructure.FirebaseService;
+using Infrastructure.HealthReportService;
+using Infrastructure.OTPService;
+using Infrastructure.PDFService;
+using Infrastructure.Photos;
+using LifeGuard.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Reflection;
-using System.Text;
 using Microsoft.OpenApi.Models;
 using Persistence;
-using Application.Contracts.Photos;
-using Infrastructure.Photos;
-using Microsoft.AspNetCore.HttpOverrides;
-using LifeGuard.Services;
-using Infrastructure.EncryptionHelper;
-using Firebase.Database;
-using Google.Apis.Auth.OAuth2;
-using Domain.Interfaces.HealthReport;
-using Infrastructure.HealthReportService;
-using Domain.Contracts.Firebase;
-using Infrastructure.FirebaseService;
-using Domain.Contracts.PDFService;
-using Infrastructure.PDFService;
+using Persistence.Repositories.HealthReportRespository;
+using System.Reflection;
+using System.Text;
 namespace LifeGuard
 {
     public class Program
@@ -76,6 +79,9 @@ namespace LifeGuard
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(VerifyOTPCommand).Assembly));
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(ResendOTPCommand).Assembly));
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(AddReportRequest).Assembly));
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(DeleteReportRequest).Assembly));
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(GetReportsRequest).Assembly));
 
             builder.Services.AddTransient<IAuthService, AuthService>();
             builder.Services.AddTransient<IEmailService, EmailService>();
@@ -144,6 +150,7 @@ namespace LifeGuard
 
             builder.Services.AddSingleton<FirebaseClient>(firebaseClient);
             builder.Services.AddTransient<IHealthReportService, HealthReportService>();
+            builder.Services.AddScoped<IHealthReportRepository, HealthReportRepository>();
             builder.Services.AddTransient<IFirebaseSensorService, FirebaseSensorService>();
             builder.Services.AddSingleton<IPDFGeneratorService, PDFGeneratorService>();
 
