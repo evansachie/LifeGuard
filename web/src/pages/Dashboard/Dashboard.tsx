@@ -7,6 +7,7 @@ import { MdCo2, MdAir } from 'react-icons/md';
 import { WiBarometer, WiHumidity } from 'react-icons/wi';
 import { formatValue, getAQIColor } from '../../utils/dataUtils';
 import { matchesShortcut, KEYBOARD_SHORTCUTS } from '../../utils/keyboardShortcuts';
+import { mapArduinoActivity, formatStepCount } from '../../utils/activityMapping';
 import KeyboardShortcutsHelp from '../../components/Dashboard/KeyboardShortcutsHelp';
 import {
   DndContext,
@@ -38,7 +39,6 @@ import StatsSummary from '../../components/Dashboard/StatsSummary';
 import DataCard from '../../components/Dashboard/DataCard';
 import QuoteCard from '../../components/Dashboard/QuoteCard';
 import RemindersCard from '../../components/Dashboard/RemindersCard';
-import PollutantsCard from '../../components/Dashboard/PollutantsCard';
 import AlertsSection from '../../components/Dashboard/AlertsSection';
 import { alerts, getAlertsByTimeframe } from '../../data/alerts';
 import ConnectivityButton from '../../components/Buttons/ConnectivityButton';
@@ -303,7 +303,7 @@ const Dashboard = ({ isDarkMode }: DashboardProps) => {
       ref={dashboardRef}
       className={`dashboard ${isDarkMode ? 'dark-mode' : ''} ${viewMode}-view`}
     >
-      <DashboardHeader userData={userData} dataLoading={dataLoading} />{' '}
+      <DashboardHeader userData={userData} dataLoading={dataLoading} />
       <div className="dropdown-container-layer" style={{ position: 'relative', zIndex: 50 }}>
         <DashboardControls
           ref={controlsRef}
@@ -376,10 +376,27 @@ const Dashboard = ({ isDarkMode }: DashboardProps) => {
                     filteredDashboard.showActivities && (
                       <SortableCard key={cardId} id={cardId}>
                         <DataCard
-                          title="Activities"
+                          title={(() => {
+                            if (sensorData?.motion?.activityStatus) {
+                              const mapped = mapArduinoActivity(sensorData.motion.activityStatus);
+                              return `Activities - ${mapped.displayName}`;
+                            } else if (sensorData?.motion?.activity) {
+                              const mapped = mapArduinoActivity(sensorData.motion.activity);
+                              return `Activities - ${mapped.displayName}`;
+                            }
+                            return 'Activities';
+                          })()}
                           icon={IoFootstepsOutline}
-                          value={formatValue(pollutionData.steps)}
-                          unit=" K steps"
+                          value={
+                            sensorData?.motion?.stepCount
+                              ? formatStepCount(sensorData.motion.stepCount)
+                              : formatValue(pollutionData.steps)
+                          }
+                          unit={
+                            sensorData?.motion?.stepCount && sensorData.motion.stepCount < 1000
+                              ? ' steps'
+                              : ' K steps'
+                          }
                           className="wind-card"
                         />
                       </SortableCard>
@@ -431,14 +448,6 @@ const Dashboard = ({ isDarkMode }: DashboardProps) => {
                           unit=" ppm"
                           className="pressure-card"
                         />
-                      </SortableCard>
-                    )
-                  );
-                case 'pollutants':
-                  return (
-                    filteredDashboard.showPollutants && (
-                      <SortableCard key={cardId} id={cardId}>
-                        <PollutantsCard pollutionData={pollutionData} formatValue={formatValue} />
                       </SortableCard>
                     )
                   );

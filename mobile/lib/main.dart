@@ -17,6 +17,7 @@ import 'package:lifeguard/screens/splash/splash_screen.dart';
 import 'package:lifeguard/providers/quote_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:lifeguard/providers/audio_provider.dart';
+import 'package:lifeguard/providers/voice_commands_provider.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'providers/profile_provider.dart';
 import 'providers/medication_provider.dart';
@@ -28,6 +29,7 @@ import 'screens/notifications/notifications_screen.dart';
 import 'screens/medication/medication_tracker_screen.dart';
 import 'providers/ble_provider.dart';
 import 'screens/device/device_scanner_screen.dart';
+import 'screens/wellness_hub/wellness_hub.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -63,6 +65,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => EmergencyContactProvider()),
         ChangeNotifierProvider(create: (_) => SoundProvider()),
         ChangeNotifierProvider(create: (_) => AudioProvider()),
+        ChangeNotifierProvider(create: (_) => VoiceCommandsProvider()),
         ChangeNotifierProvider(create: (_) => ProfileProvider()),
         ChangeNotifierProxyProvider<AuthProvider, MedicationProvider>(
           create: (_) => MedicationProvider(),
@@ -118,6 +121,7 @@ class MyApp extends StatelessWidget {
             '/notifications': (context) => const NotificationsScreen(),
             '/medication-tracker': (context) => const MedicationTrackerScreen(),
             '/device-scanner': (context) => const DeviceScannerScreen(),
+            '/wellness-hub': (context) => const WellnessHub(),
           },
         ),
       ),

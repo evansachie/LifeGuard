@@ -16,6 +16,7 @@ const healthMetricsRoutes = require('./Routes/healthMetricsRoutes');
 const medicationRoutes = require('./Routes/medicationRoutes');
 const userPreferencesRoutes = require('./Routes/userPreferencesRoutes');
 const healthTipsRoutes = require('./Routes/healthTipsRoutes');
+const voiceCommandsRoutes = require('./Routes/voiceCommandsRoutes');
 
 const nodemailer = require('nodemailer');
 const NotificationService = require('./services/NotificationService');
@@ -47,23 +48,17 @@ const corsOptions = {
   optionsSuccessStatus: 204
 };
 
-// Apply CORS middleware first
 app.use(cors(corsOptions));
-
-// Handle preflight OPTIONS requests explicitly
 app.options('*', cors(corsOptions));
 
-// Add CORS headers directly to all responses as a fallback
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
   res.header('Access-Control-Allow-Credentials', 'true');
-  
-  // Log request details for debugging
+
   console.log(`${req.method} ${req.originalUrl} - Origin: ${req.headers.origin || 'none'}`);
-  
-  // Handle OPTIONS requests
+
   if (req.method === 'OPTIONS') {
     return res.status(204).end();
   }
@@ -73,7 +68,6 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-// PostgreSQL pool configuration
 const pool = new Pool({
     connectionString: process.env.CONNECTION_STRING,
     ssl: {
@@ -84,7 +78,6 @@ const pool = new Pool({
     connectionTimeoutMillis: 10000,
 });
 
-// Initialize notification service with email transport
 const notificationService = new NotificationService(pool, nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -93,7 +86,6 @@ const notificationService = new NotificationService(pool, nodemailer.createTrans
     }
 }));
 
-// Enhanced notification scheduling
 const scheduleNotifications = () => {
     try {
         notificationService.scheduleRemindersForDay();
@@ -118,7 +110,6 @@ const scheduleNotifications = () => {
     }
 };
 
-// Test db connection and initialize services
 pool.connect((err, client, release) => {
     if (err) {
         console.error('Error connecting to the database:', err.stack);
@@ -141,12 +132,12 @@ app.use('/api/health-metrics', healthMetricsRoutes(pool));
 app.use('/api/medications', medicationRoutes(pool));
 app.use('/api/user-preferences', userPreferencesRoutes(pool));
 app.use('/api/health-tips', healthTipsRoutes);
+app.use('/api/voice-commands', voiceCommandsRoutes(pool));
 
 app.get('/', (req, res) => {
     res.send('LifeGuard API is running!');
 });
 
-// Health check endpoint for notification service
 app.get('/api/notifications/health', (req, res) => {
     res.json({ 
         status: 'healthy',
@@ -154,7 +145,6 @@ app.get('/api/notifications/health', (req, res) => {
     });
 });
 
-// Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ error: 'Something broke!' });

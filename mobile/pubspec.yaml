@@ -33,6 +33,8 @@ dependencies:
   flutter_blue_plus: ^1.14.6
   permission_handler: ^11.0.1
   flutter_markdown: ^0.6.18+2
+  speech_to_text: ^6.6.0
+  flutter_tts: ^3.8.5
 
 dev_dependencies:
   flutter_test:

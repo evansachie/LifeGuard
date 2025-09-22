@@ -3,6 +3,9 @@ import 'package:lifeguard/screens/home/tabs/dashboard_tab.dart';
 import 'package:lifeguard/screens/pollution_tracker/pollution_tracker.dart';
 import 'package:lifeguard/screens/health_report/health_report.dart';
 import 'package:lifeguard/screens/settings/settings_tab.dart';
+import 'package:lifeguard/widgets/voice_commands_widget.dart';
+import 'package:provider/provider.dart';
+import 'package:lifeguard/providers/voice_commands_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,11 +25,50 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final voiceProvider = context.read<VoiceCommandsProvider>();
+      voiceProvider.initialize();
+      voiceProvider.setNavigationCallback(_handleNavigation);
+    });
+  }
+
+  void _handleNavigation(String route) {
+    switch (route) {
+      case '/health_report':
+        setState(() => _currentIndex = 2);
+        break;
+      case '/medications':
+        Navigator.pushNamed(context, '/medication-tracker');
+        break;
+      case '/emergency_contacts':
+        Navigator.pushNamed(context, '/emergency-contacts');
+        break;
+      case '/wellness_hub':
+        Navigator.pushNamed(context, '/wellness-hub');
+        break;
+      default:
+        try {
+          Navigator.pushNamed(context, route);
+        } catch (e) {
+          debugPrint('Navigation failed for route: $route');
+        }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       body: _tabs[_currentIndex],
+      floatingActionButton: VoiceCommandsWidget(
+        isDarkMode: isDark,
+        onCommandExecuted: () {
+        },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
