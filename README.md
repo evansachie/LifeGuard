@@ -458,6 +458,14 @@ These endpoints are served from the Node-Server (hosted at `https://lifeguard-no
 | POST       | `/api/upload`                   | Upload a PDF file for RAG processing                 |
 | POST       | `/api/ask`                      | Ask a question about the uploaded PDF documents      |
 
+### Voice Commands Endpoints
+
+| **Method** | **Endpoint**                    | **Description**                                      |
+|------------|---------------------------------|------------------------------------------------------|
+| POST       | `/api/voice-commands/process`   | Process a voice command with NLP and execute actions |
+| POST       | `/api/voice-commands/emergency` | Process emergency voice command with high priority   |
+| GET        | `/api/voice-commands/commands`  | Get list of available voice commands and syntax      |
+
 ### User Notification Preferences Endpoints
 
 | **Method** | **Endpoint**                           | **Description**                                 |
