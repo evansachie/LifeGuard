@@ -89,7 +89,7 @@ class FirebaseDataService {
         motion: {
           accelerometer: sensorData.motion?.accelerometer || { x: 0, y: 0, z: 0 },
           gyroscope: sensorData.motion?.gyroscope || { x: 0, y: 0, z: 0 },
-          activity: sensorData.motion?.activity || 'stationary',
+          activity: sensorData.motion?.activity || 'still',
           stepCount: sensorData.motion?.stepCount || 0,
           fallDetected: sensorData.motion?.fallDetected || false,
         },

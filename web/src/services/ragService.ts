@@ -5,7 +5,6 @@ import { API_ENDPOINTS } from '../utils/api';
 interface AskQuestionParams {
   user_id: string;
   question: string;
-  top_k?: number;
 }
 
 // Type for askQuestion response
@@ -18,23 +17,24 @@ class RagService {
   /**
    * Upload a PDF file to the RAG system
    */
-  async uploadPDF(userId: string, pdfBlob: Blob, filename: string): Promise<{ message: string }> {
+  async uploadPDF(
+    userId: string,
+    pdfBlob: Blob,
+    filename: string
+  ): Promise<{ message: string; user_id: string; chunks: number }> {
     try {
       // Create form data for the PDF upload
       const formData = new FormData();
       formData.append('file', pdfBlob, filename);
+      formData.append('user_id', userId);
 
       // Make the upload request using the defined endpoint
-      const response = await axios.post(
-        `${API_ENDPOINTS.RAG_UPLOAD_PDF}?user_id=${encodeURIComponent(userId)}`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-          timeout: 60000, // 60 second timeout for uploads (free tier can be slow)
-        }
-      );
+      const response = await axios.post(API_ENDPOINTS.RAG_UPLOAD_PDF, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        timeout: 60000,
+      });
 
       return response.data;
     } catch (error) {
@@ -43,6 +43,13 @@ class RagService {
       // Handle 404 errors (likely the service is still starting up)
       if (axios.isAxiosError(error) && error.response?.status === 404) {
         throw new Error('RAG service is currently unavailable. Please try again in a few moments.');
+      }
+
+      // Handle 422 errors (validation errors)
+      if (axios.isAxiosError(error) && error.response?.status === 422) {
+        throw new Error(
+          'Invalid file format or missing data. Please ensure you upload a valid PDF file.'
+        );
       }
 
       // Handle timeout errors (free tier can be slow to start)
@@ -67,7 +74,6 @@ class RagService {
         {
           user_id: params.user_id,
           question: params.question,
-          top_k: params.top_k || 3,
         },
         {
           headers: {

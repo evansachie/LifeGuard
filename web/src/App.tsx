@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -14,10 +14,12 @@ import { EmergencyPreferenceProvider } from './contexts/EmergencyPreferenceConte
 
 import FloatingAudioPlayer from './components/Audio/FloatingAudioPlayer';
 import { CommandPalette } from './components/CommandPalette/CommandPalette';
+import VoiceCommandsButton from './components/VoiceCommands/VoiceCommandsButton';
 import AppRoutes from './routes/AppRoutes';
 import { useTheme } from './hooks/useTheme';
 
 import './App.css';
+import { isAuthenticated } from './utils/auth';
 
 const App = () => {
   const { isDarkMode, toggleTheme } = useTheme();
@@ -44,6 +46,16 @@ const App = () => {
     return () => document.removeEventListener('keydown', down);
   }, [commandPaletteOpen]);
 
+  const VoiceCommandsWrapper = ({ isDarkMode }: { isDarkMode: boolean }) => {
+    const location = useLocation();
+    if (location.pathname === '/' || !isAuthenticated()) {
+      return null;
+    }
+    return (
+      <VoiceCommandsButton isDarkMode={isDarkMode} className="!fixed !top-16 !right-4 !z-50" />
+    );
+  };
+
   return (
     <Router>
       <FirebaseProvider>
@@ -56,6 +68,7 @@ const App = () => {
                     <ToastContainer position="top-right" theme={isDarkMode ? 'dark' : 'light'} />
                     <AppRoutes isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
                     <FloatingAudioPlayer isDarkMode={isDarkMode} />
+                    <VoiceCommandsWrapper isDarkMode={isDarkMode} />
                     <CommandPalette
                       isDarkMode={isDarkMode}
                       toggleTheme={toggleTheme}

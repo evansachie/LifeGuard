@@ -15,7 +15,7 @@ class FloatingHealthAssistant extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      bottom: 20,
+      bottom: 15,
       right: 20,
       child: GestureDetector(
         onTap: () => _openHealthAssistant(context),

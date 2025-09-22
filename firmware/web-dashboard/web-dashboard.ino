@@ -1,13 +1,8 @@
 /*
 Arduino Nicla Sense ME WEB Bluetooth® Low Energy Sense dashboard demo
 Hardware required: https://store.arduino.cc/nicla-sense-me
-1) Upload this sketch to the Arduino Nano Bluetooth® Low Energy sense board
-2) Open the following web page in the Chrome browser:
-https://arduino.github.io/ArduinoAI/NiclaSenseME-dashboard/
-3) Click on the green button in the web page to connect the browser to the board over Bluetooth® Low Energy
 Web dashboard by D. Pajak
 Device sketch based on example by Sandeep Mistry and Massimo Banzi
-Sketch and web dashboard copy-fixed to be used with the Nicla Sense ME by Pablo Marquínez
 */
 
 #include "Nicla_System.h"
@@ -25,17 +20,21 @@ BLEFloatCharacteristic temperatureCharacteristic(BLE_SENSE_UUID("2001"), BLERead
 BLEUnsignedIntCharacteristic humidityCharacteristic(BLE_SENSE_UUID("3001"), BLERead);
 BLEFloatCharacteristic pressureCharacteristic(BLE_SENSE_UUID("4001"), BLERead);
 
-BLECharacteristic accelerometerCharacteristic(BLE_SENSE_UUID("5001"), BLERead | BLENotify, 3 * sizeof(float));  // Array of 3x 2 Bytes, XY
-BLECharacteristic gyroscopeCharacteristic(BLE_SENSE_UUID("6001"), BLERead | BLENotify, 3 * sizeof(float));    // Array of 3x 2 Bytes, XYZ
-BLECharacteristic quaternionCharacteristic(BLE_SENSE_UUID("7001"), BLERead | BLENotify, 4 * sizeof(float));     // Array of 4x 2 Bytes, XYZW
+BLECharacteristic accelerometerCharacteristic(BLE_SENSE_UUID("5001"), BLERead | BLENotify, 3 * sizeof(float));
+BLECharacteristic gyroscopeCharacteristic(BLE_SENSE_UUID("6001"), BLERead | BLENotify, 3 * sizeof(float));
+BLECharacteristic quaternionCharacteristic(BLE_SENSE_UUID("7001"), BLERead | BLENotify, 4 * sizeof(float));
 
-BLECharacteristic rgbLedCharacteristic(BLE_SENSE_UUID("8001"), BLERead | BLEWrite, 3 * sizeof(byte)); // Array of 3 bytes, RGB
+BLECharacteristic rgbLedCharacteristic(BLE_SENSE_UUID("8001"), BLERead | BLEWrite, 3 * sizeof(byte));
 
 BLEFloatCharacteristic bsecCharacteristic(BLE_SENSE_UUID("9001"), BLERead);
 BLEIntCharacteristic  co2Characteristic(BLE_SENSE_UUID("9002"), BLERead);
 BLEUnsignedIntCharacteristic gasCharacteristic(BLE_SENSE_UUID("9003"), BLERead);
 
-// String to calculate the local and device name
+// Activity and Step Tracking Characteristics
+BLEStringCharacteristic activityCharacteristic(BLE_SENSE_UUID("A001"), BLERead, 50);
+BLEUnsignedLongCharacteristic stepCountCharacteristic(BLE_SENSE_UUID("A002"), BLERead);
+BLECharacteristic stepDetectorCharacteristic(BLE_SENSE_UUID("A003"), BLERead | BLENotify, sizeof(uint8_t));
+
 String name;
 
 Sensor temperature(SENSOR_ID_TEMP);
@@ -47,16 +46,27 @@ SensorXYZ accelerometer(SENSOR_ID_ACC);
 SensorQuaternion quaternion(SENSOR_ID_RV);
 SensorBSEC bsec(SENSOR_ID_BSEC);
 
+// Activity and Step Tracking Sensors
+SensorActivity activity(SENSOR_ID_AR);
+Sensor stepCounter(SENSOR_ID_STC);
+Sensor stepDetector(SENSOR_ID_STD);
+
+// Timing variables for step detection
+unsigned long lastStepTime = 0;
+const unsigned long stepDebounceTime = 1000; // Increased debounce time to 1 second
+unsigned long lastActivityUpdate = 0;
+const unsigned long activityUpdateInterval = 2000; // Update activity every 2 seconds
+unsigned long lastStepCount = 0;
+unsigned long stepCountIncrement = 0;
+
 void setup(){
   Serial.begin(115200);
-
   Serial.println("Start");
 
   nicla::begin();
   nicla::leds.begin();
   nicla::leds.setColor(green);
 
-  //Sensors initialization
   BHY2.begin(NICLA_STANDALONE);
   temperature.begin();
   humidity.begin();
@@ -66,16 +76,17 @@ void setup(){
   quaternion.begin();
   bsec.begin();
   gas.begin();
+  
+  activity.begin();
+  stepCounter.begin();
+  stepDetector.begin();
 
   if (!BLE.begin()){
     Serial.println("Failed to initialized BLE!");
-
-    while (1)
-      ;
+    while (1);
   }
 
   String address = BLE.address();
-
   Serial.print("address = ");
   Serial.println(address);
 
@@ -94,7 +105,6 @@ void setup(){
   BLE.setDeviceName(name.c_str());
   BLE.setAdvertisedService(service);
 
-  // Add all the previously defined Characteristics
   service.addCharacteristic(temperatureCharacteristic);
   service.addCharacteristic(humidityCharacteristic);
   service.addCharacteristic(pressureCharacteristic);
@@ -106,18 +116,21 @@ void setup(){
   service.addCharacteristic(co2Characteristic);
   service.addCharacteristic(gasCharacteristic);
   service.addCharacteristic(rgbLedCharacteristic);
+  service.addCharacteristic(activityCharacteristic);
+  service.addCharacteristic(stepCountCharacteristic);
+  service.addCharacteristic(stepDetectorCharacteristic);
 
-  // Disconnect event handler
   BLE.setEventHandler(BLEDisconnected, blePeripheralDisconnectHandler);
 
-  // Sensors event handlers
   temperatureCharacteristic.setEventHandler(BLERead, onTemperatureCharacteristicRead);
   humidityCharacteristic.setEventHandler(BLERead, onHumidityCharacteristicRead);
   pressureCharacteristic.setEventHandler(BLERead, onPressureCharacteristicRead);
   bsecCharacteristic.setEventHandler(BLERead, onBsecCharacteristicRead);
   co2Characteristic.setEventHandler(BLERead, onCo2CharacteristicRead);
   gasCharacteristic.setEventHandler(BLERead, onGasCharacteristicRead);
-
+  activityCharacteristic.setEventHandler(BLERead, onActivityCharacteristicRead);
+  stepCountCharacteristic.setEventHandler(BLERead, onStepCountCharacteristicRead);
+  stepDetectorCharacteristic.setEventHandler(BLERead, onStepDetectorCharacteristicRead);
   rgbLedCharacteristic.setEventHandler(BLEWritten, onRgbLedCharacteristicWrite);
 
   versionCharacteristic.setValue(VERSION);
@@ -129,16 +142,16 @@ void setup(){
 void loop(){
   while (BLE.connected()){
     BHY2.update();
+    
+    // Get current time once for the entire loop iteration
+    unsigned long currentTime = millis();
 
     if (gyroscopeCharacteristic.subscribed()){
       float x, y, z;
-
       x = gyroscope.x();
       y = gyroscope.y();
       z = gyroscope.z();
-
       float gyroscopeValues[3] = {x, y, z};
-
       gyroscopeCharacteristic.writeValue(gyroscopeValues, sizeof(gyroscopeValues));
     }
 
@@ -147,7 +160,6 @@ void loop(){
       x = accelerometer.x();
       y = accelerometer.y();
       z = accelerometer.z();
-
       float accelerometerValues[] = {x, y, z};
       accelerometerCharacteristic.writeValue(accelerometerValues, sizeof(accelerometerValues));
     }
@@ -158,11 +170,48 @@ void loop(){
       y = quaternion.y();
       z = quaternion.z();
       w = quaternion.w();
-
       float quaternionValues[] = {x,y,z,w};
       quaternionCharacteristic.writeValue(quaternionValues, sizeof(quaternionValues));
     }
 
+    // Handle step detection with improved debouncing
+    if (stepDetectorCharacteristic.subscribed()){
+      // Check if step detector sensor has new data
+      if (stepDetector.value() > 0) {
+        // Only process if enough time has passed since last step
+        if (currentTime - lastStepTime >= stepDebounceTime) {
+          lastStepTime = currentTime;
+          stepCountIncrement++;
+          
+          uint8_t stepDetected = 1;
+          stepDetectorCharacteristic.writeValue(stepDetected);
+          Serial.print("Valid step detected! Total steps: ");
+          Serial.println(stepCounter.value());
+        }
+      }
+    }
+    
+    // Update activity status periodically
+    if (currentTime - lastActivityUpdate >= activityUpdateInterval) {
+      lastActivityUpdate = currentTime;
+      
+      // Update activity characteristic with current activity
+      String currentActivity = activity.getActivity();
+      activityCharacteristic.writeValue(currentActivity);
+      
+      // Update step count characteristic
+      uint32_t currentStepCount = stepCounter.value();
+      stepCountCharacteristic.writeValue(currentStepCount);
+      
+      Serial.print("Activity: \"");
+      Serial.print(currentActivity);
+      Serial.print("\" | Steps: ");
+      Serial.println(currentStepCount);
+      
+      // Debug: Also print the raw activity value
+      Serial.print("Raw activity length: ");
+      Serial.println(currentActivity.length());
+    }
   }
 }
 
@@ -176,7 +225,7 @@ void onTemperatureCharacteristicRead(BLEDevice central, BLECharacteristic charac
 }
 
 void onHumidityCharacteristicRead(BLEDevice central, BLECharacteristic characteristic){
-  uint8_t humidityValue = humidity.value() + 0.5f;  //since we are truncating the float type to a uint8_t, we want to round it
+  uint8_t humidityValue = humidity.value() + 0.5f;
   humidityCharacteristic.writeValue(humidityValue);
 }
 
@@ -204,6 +253,36 @@ void onRgbLedCharacteristicWrite(BLEDevice central, BLECharacteristic characteri
   byte r = rgbLedCharacteristic[0];
   byte g = rgbLedCharacteristic[1];
   byte b = rgbLedCharacteristic[2];
-
   nicla::leds.setColor(r, g, b);
+}
+
+void onActivityCharacteristicRead(BLEDevice central, BLECharacteristic characteristic){
+  String currentActivity = activity.getActivity();
+  activityCharacteristic.writeValue(currentActivity);
+  Serial.print("Activity info: ");
+  Serial.println(currentActivity);
+}
+
+void onStepCountCharacteristicRead(BLEDevice central, BLECharacteristic characteristic){
+  uint32_t steps = stepCounter.value();
+  stepCountCharacteristic.writeValue(steps);
+  Serial.print("Step count: ");
+  Serial.println(steps);
+}
+
+void onStepDetectorCharacteristicRead(BLEDevice central, BLECharacteristic characteristic){
+  uint8_t stepDetected = 0;
+  unsigned long currentTime = millis();
+  
+  // Check if step detector sensor has new data and enough time has passed
+  if (stepDetector.value() > 0 && currentTime - lastStepTime >= stepDebounceTime) {
+    lastStepTime = currentTime;
+    stepDetected = 1;
+    stepCountIncrement++;
+    
+    Serial.print("Valid step detected via read! Total steps: ");
+    Serial.println(stepCounter.value());
+  }
+  
+  stepDetectorCharacteristic.writeValue(stepDetected);
 }

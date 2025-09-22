@@ -29,12 +29,20 @@ class HealthAssistantService {
 
   static Future<String> askQuestion(String question) async {
     try {
-      final headers = await _getHeaders();
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getString('userId');
+      
+      if (userId == null) {
+        return 'Please login to use the health assistant.';
+      }
+
+      final headers = await _getHeaders(includeAuth: false);
 
       final response = await http.post(
         Uri.parse('$_ragBaseUrl/api/ask'),
         headers: headers,
         body: json.encode({
+          'user_id': userId,
           'question': question,
         }),
       );
@@ -42,12 +50,15 @@ class HealthAssistantService {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         return data['answer'] ??
-            data['response'] ??
             'Sorry, I could not process your question.';
+      } else if (response.statusCode == 404) {
+        return 'No relevant document chunks found. Please upload a PDF document first to get personalized health insights.';
       } else {
+        print('Error response: ${response.statusCode} - ${response.body}');
         return 'Sorry, I encountered an error while processing your question.';
       }
     } catch (e) {
+      print('Error in askQuestion: $e');
       return 'Sorry, I could not connect to the health assistant service.';
     }
   }
@@ -55,15 +66,20 @@ class HealthAssistantService {
   static Future<bool> uploadDocument(
       List<int> pdfBytes, String fileName) async {
     try {
-      final token = await _getToken();
-      if (token == null) return false;
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getString('userId');
+      
+      if (userId == null) return false;
 
       final request = http.MultipartRequest(
         'POST',
         Uri.parse('$_ragBaseUrl/api/upload'),
       );
 
-      request.headers['Authorization'] = 'Bearer $token';
+      // Add the user_id as a field in the form data
+      request.fields['user_id'] = userId;
+      
+      // Add the PDF file
       request.files.add(
         http.MultipartFile.fromBytes(
           'file',
@@ -75,8 +91,15 @@ class HealthAssistantService {
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
 
-      return response.statusCode == 200;
+      if (response.statusCode == 200) {
+        print('Upload successful: ${response.body}');
+        return true;
+      } else {
+        print('Upload failed: ${response.statusCode} - ${response.body}');
+        return false;
+      }
     } catch (e) {
+      print('Error in uploadDocument: $e');
       return false;
     }
   }

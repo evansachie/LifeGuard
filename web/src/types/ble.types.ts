@@ -12,6 +12,8 @@ export interface EnvironmentalData {
   temperature: number;
   humidity: number;
   pressure: number;
+  co2?: number;
+  gas?: number;
   airQuality?: {
     aqi: number;
     co2: number;
@@ -42,8 +44,10 @@ export interface MotionData {
     y: number;
     z: number;
   };
-  activity: 'stationary' | 'walking' | 'running' | 'cycling';
+  activity: 'still' | 'walking' | 'running' | 'cycling' | 'stationary' | 'unknown';
   stepCount: number;
+  steps?: number;
+  activityStatus?: string;
   fallDetected: boolean;
   timestamp: string;
 }
