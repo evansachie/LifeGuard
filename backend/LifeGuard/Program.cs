@@ -157,7 +157,7 @@ namespace LifeGuard
             //var service = new FirebaseSensorService(firebaseClient);
 
             //// Replace with a real deviceId from your database
-            //string deviceId = ";
+            //string deviceId = "wr6PpfGWwGBS5FpKfju4yw==";
 
             //var readings = await service.GetReadingsForDevice(deviceId);
             //var status = await service.GetDeviceStatusAsync(deviceId);
@@ -168,7 +168,7 @@ namespace LifeGuard
             //foreach (var reading in readings)
             //{
             //    // Print some fields as an example
-            //    Console.WriteLine($"Timestamp: {reading.timestamp}");
+            //    Console.WriteLine($"HeartRange: {reading.health.bodyTemperature}");
             //    if (reading.environmental != null)
             //    {
             //        Console.WriteLine($"  Temp: {reading.environmental.temperature}");
