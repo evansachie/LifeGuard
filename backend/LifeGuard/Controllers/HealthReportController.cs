@@ -25,6 +25,11 @@ namespace LifeGuard.Controllers
         public async Task<ActionResult<HealthReport>> GenerateHealthReport(string deviceId, int range)
         {
             var report = await _healthReportService.GenerateHealthReportAsync(deviceId, range);
+
+            if (report == null)
+            {
+                return BadRequest("Device did not measure vital data needed");
+            }
             
             return Ok(report);
         }
