@@ -3,6 +3,7 @@ using Domain.Contracts.Firebase;
 using Domain.Interfaces.HealthReport;
 using Firebase.Database;
 using Infrastructure.FirebaseService;
+using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,7 @@ namespace Infrastructure.HealthReportService
             var dataPoints = readings
                 .Where(r => r.motion != null
                          && r.environmental != null
-                         && r.environmental.airQuality != null)
+                         && r.health != null)
                 .ToList();
 
             
@@ -53,12 +54,12 @@ namespace Infrastructure.HealthReportService
 
             var tempPoints = dataPoints.Where(r => r.environmental.temperature != null).ToList();
             double avgAmbientTemp = tempPoints.Any()
-                ? tempPoints.Average(r => r.environmental.temperature)
+                ? Math.Round(tempPoints.Average(r => r.environmental.temperature), 1)
                 : 0;
 
             var humidityPoints = dataPoints.Where(r => r.environmental.humidity != null).ToList();
             double avgHumidity = humidityPoints.Any()
-                ? Math.Round(humidityPoints.Average(r => r.environmental.humidity), 2)
+                ? Math.Round(humidityPoints.Average(r => r.environmental.humidity), 1)
                 : 0;
 
             var aqiPoints = dataPoints.Where(r => r.environmental.airQuality.aqi != null).ToList();
@@ -67,32 +68,61 @@ namespace Infrastructure.HealthReportService
                 : 0;
 
             int minAqi = aqiPoints.Any() ? (int)aqiPoints.Min(r => r.environmental.airQuality.aqi) : 0;
-            var maxAqi = aqiPoints.Any() ? (int)aqiPoints.Max(r => r.environmental.airQuality.aqi) : 0;
+            int maxAqi = aqiPoints.Any() ? (int)aqiPoints.Max(r => r.environmental.airQuality.aqi) : 0;
 
             var co2Points = dataPoints.Where(r => r.environmental.airQuality.co2 != null).ToList();
-            int avgco2= co2Points.Any()
-                ? (int)Math.Round(co2Points.Average(r => r.environmental.airQuality.co2))
+            double avgco2= co2Points.Any()
+                ? Math.Round(co2Points.Average(r => r.environmental.airQuality.co2), 2)
                 : 0;
 
             var vocPoints = dataPoints.Where(r => r.environmental.airQuality.voc != null).ToList();
-            int avgvoc = vocPoints.Any()
-                ? (int)Math.Round(vocPoints.Average(r => r.environmental.airQuality.voc))
+            double avgvoc = vocPoints.Any()
+                ? Math.Round(vocPoints.Average(r => r.environmental.airQuality.voc),2)
                 : 0;
 
             var pm25Points = dataPoints.Where(r => r.environmental.airQuality.pm25 != null).ToList();
-            int avgpm25 = pm25Points.Any()
-                ? (int)Math.Round(pm25Points.Average(r => r.environmental.airQuality.pm25))
+            double avgpm25 = pm25Points.Any()
+                ?Math.Round(pm25Points.Average(r => r.environmental.airQuality.pm25), 2)
                 : 0;
 
             var pm10Points = dataPoints.Where(r => r.environmental.airQuality.pm10 != null).ToList();
-            int avgpm10 = pm10Points.Any()
-                ? (int)Math.Round(pm10Points.Average(r => r.environmental.airQuality.pm10))
+            double avgpm10 = pm10Points.Any()
+                ? Math.Round(pm10Points.Average(r => r.environmental.airQuality.pm10), 2)
                 : 0;
 
             var pressurePoints = dataPoints.Where(r => r.environmental.pressure != null).ToList();
-            int avgPressure = pressurePoints.Any()
-                ? (int)Math.Round(pressurePoints.Average(r => r.environmental.pressure))
+            double avgPressure = pressurePoints.Any()
+                ? Math.Round(pressurePoints.Average(r => r.environmental.pressure), 2)
                 : 0;
+
+            var bloodPressureSystolicPoints = dataPoints.Where(r => r.health.bloodPressure.systolic != null).ToList();
+            double avgbloodPressureSystolic = bloodPressureSystolicPoints.Any()
+                                            ? Math.Round(bloodPressureSystolicPoints.Average(r => r.health.bloodPressure.systolic), 2) :
+                                            0;
+
+            var bloodPressureDiastolicPoints = dataPoints.Where(r => r.health.bloodPressure.diastolic != null).ToList();
+            double avgbloodPressureDiastolic = bloodPressureDiastolicPoints.Any()
+                                            ? Math.Round(bloodPressureDiastolicPoints.Average(r => r.health.bloodPressure.diastolic), 2) :
+                                            0;
+
+            var bodyTemperaturePoints = dataPoints.Where(r => r.health.bodyTemperature != null).ToList();
+            double avgBodyTemperature = bodyTemperaturePoints.Any()
+                                        ? Math.Round(bodyTemperaturePoints.Average(r => r.health.bodyTemperature), 2)
+                                        : 0;
+
+            var heartRatePoints = dataPoints.Where(r => r.health.heartRate != null).ToList();
+            double avgHeartRate = heartRatePoints.Any()
+                               ? Math.Round(heartRatePoints.Average(r => r.health.heartRate), 2)
+                               : 0;
+
+            var oxygenSaturationPoints = dataPoints.Where(r => r.health.oxygenSaturation != null).ToList();
+            int avgOxygenSaturation = oxygenSaturationPoints.Any()
+                                      ? (int)Math.Round(oxygenSaturationPoints.Average(r => r.health.oxygenSaturation), 2)
+                                      : 0;
+
+            int fallCount = dataPoints.Count(r => r.motion.fallDetected);
+
+
 
             var report = new HealthReport
             {
@@ -112,6 +142,12 @@ namespace Infrastructure.HealthReportService
                 Minaqi = minAqi,
                 Maxaqi = maxAqi,
                 AvgPressure = avgPressure,
+                AvgbloodPressureSystolic = avgbloodPressureSystolic,
+                AvgbloodPressureDiastolic = avgbloodPressureDiastolic,
+                AvgBodyTemperature = avgBodyTemperature,
+                AvgHeartRate = avgHeartRate,
+                AvgOxygenSaturation = avgOxygenSaturation,
+                FallCount = fallCount,
                 DataPointCount = dataPoints.Count,
                 LastUpdate = status.LastUpdate,
 
