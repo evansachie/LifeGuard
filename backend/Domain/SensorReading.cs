@@ -10,9 +10,12 @@ namespace Domain
 {
     public class SensorReading : BaseEntity
     {
+        public string deviceId { get; set; }
         public EnvironmentalData environmental { get; set; }
+        public HealthData health { get; set; }
         public MotionData motion { get; set; }
         public long timestamp { get; set; }
+
         
 
     }
