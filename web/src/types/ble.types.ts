@@ -76,11 +76,18 @@ export interface SensorReading {
   health?: SensorData['health'];
 }
 
+export interface FallAlert {
+  detected: boolean;
+  timestamp: Date | null;
+  activityInference: string;
+}
+
 export interface BLEContextType {
   devices: BLEDevice[];
   isScanning: boolean;
   connectedDevice: BLEDevice | null;
   latestSensorData: SensorData;
+  fallAlert: FallAlert;
   connect: () => Promise<void>;
   disconnect: (deviceId: string) => Promise<void>;
   startScanning: () => Promise<void>;
