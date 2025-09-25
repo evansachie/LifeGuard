@@ -1,6 +1,7 @@
 import { FaTemperatureHigh, FaWalking, FaTimes, FaHeart, FaLungs } from 'react-icons/fa';
 import { WiHumidity, WiBarometer } from 'react-icons/wi';
 import { FaDownload, FaChartLine, FaShieldAlt } from 'react-icons/fa';
+import { MdCo2, MdAir } from 'react-icons/md';
 import { generateHealthReport } from '../../data/health-report-data';
 import Modal from '../Modal/Modal';
 import { UserData } from '../../types/common.types';
@@ -99,7 +100,6 @@ const HealthReportModal = ({ isOpen, onClose, userData, isDarkMode }: HealthRepo
             }
 
             if (healthData) {
-              console.log('📊 Health Report Modal - API data received:', healthData);
               setHealthReportData(healthData);
             }
           }
@@ -666,6 +666,107 @@ const HealthReportModal = ({ isOpen, onClose, userData, isDarkMode }: HealthRepo
                     </div>
                   )}
 
+                  {/* Heart Rate */}
+                  {healthReportData.avgHeartRate && (
+                    <div
+                      className={`p-6 rounded-2xl border transition-all duration-300 hover:scale-105 ${
+                        isDarkMode
+                          ? 'bg-dark-bg border-gray-700 hover:border-gray-600'
+                          : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-lg'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <div
+                          className={`p-3 rounded-xl ${isDarkMode ? 'bg-red-500/20' : 'bg-red-100'}`}
+                        >
+                          <FaHeart
+                            className={`text-xl ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}
+                          />
+                        </div>
+                      </div>
+                      <h3
+                        className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                      >
+                        Average Heart Rate
+                      </h3>
+                      <p
+                        className={`text-3xl font-bold ${isDarkMode ? 'text-red-400' : 'text-red-600'} mt-2`}
+                      >
+                        {healthReportData.avgHeartRate.toFixed(0)} bpm
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Blood Pressure */}
+                  {(healthReportData.avgbloodPressureSystolic ||
+                    healthReportData.avgbloodPressureDiastolic) && (
+                    <div
+                      className={`p-6 rounded-2xl border transition-all duration-300 hover:scale-105 ${
+                        isDarkMode
+                          ? 'bg-dark-bg border-gray-700 hover:border-gray-600'
+                          : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-lg'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <div
+                          className={`p-3 rounded-xl ${isDarkMode ? 'bg-purple-500/20' : 'bg-purple-100'}`}
+                        >
+                          <FaHeart
+                            className={`text-xl ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`}
+                          />
+                        </div>
+                      </div>
+                      <h3
+                        className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                      >
+                        Blood Pressure
+                      </h3>
+                      <p
+                        className={`text-3xl font-bold ${isDarkMode ? 'text-purple-400' : 'text-purple-600'} mt-2`}
+                      >
+                        {healthReportData.avgbloodPressureSystolic
+                          ? Math.round(healthReportData.avgbloodPressureSystolic)
+                          : 'N/A'}
+                        /
+                        {healthReportData.avgbloodPressureDiastolic
+                          ? Math.round(healthReportData.avgbloodPressureDiastolic)
+                          : 'N/A'}{' '}
+                        mmHg
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Oxygen Saturation */}
+                  {healthReportData.avgOxygenSaturation && (
+                    <div
+                      className={`p-6 rounded-2xl border transition-all duration-300 hover:scale-105 ${
+                        isDarkMode
+                          ? 'bg-dark-bg border-gray-700 hover:border-gray-600'
+                          : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-lg'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <div
+                          className={`p-3 rounded-xl ${isDarkMode ? 'bg-cyan-500/20' : 'bg-cyan-100'}`}
+                        >
+                          <FaLungs
+                            className={`text-xl ${isDarkMode ? 'text-cyan-400' : 'text-cyan-600'}`}
+                          />
+                        </div>
+                      </div>
+                      <h3
+                        className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                      >
+                        Oxygen Saturation
+                      </h3>
+                      <p
+                        className={`text-3xl font-bold ${isDarkMode ? 'text-cyan-400' : 'text-cyan-600'} mt-2`}
+                      >
+                        {healthReportData.avgOxygenSaturation.toFixed(1)}%
+                      </p>
+                    </div>
+                  )}
+
                   {healthReportData.avgDailySteps && (
                     <div
                       className={`p-6 rounded-2xl border transition-all duration-300 hover:scale-105 ${
@@ -695,6 +796,239 @@ const HealthReportModal = ({ isOpen, onClose, userData, isDarkMode }: HealthRepo
                       </p>
                     </div>
                   )}
+
+                  {/* Average CO2 */}
+                  {healthReportData.avgco2 && (
+                    <div
+                      className={`p-6 rounded-2xl border transition-all duration-300 hover:scale-105 ${
+                        isDarkMode
+                          ? 'bg-dark-bg border-gray-700 hover:border-gray-600'
+                          : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-lg'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <div
+                          className={`p-3 rounded-xl ${isDarkMode ? 'bg-orange-500/20' : 'bg-orange-100'}`}
+                        >
+                          <MdCo2
+                            className={`text-xl ${isDarkMode ? 'text-orange-400' : 'text-orange-600'}`}
+                          />
+                        </div>
+                      </div>
+                      <h3
+                        className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                      >
+                        Average CO2
+                      </h3>
+                      <p
+                        className={`text-3xl font-bold ${isDarkMode ? 'text-orange-400' : 'text-orange-600'} mt-2`}
+                      >
+                        {healthReportData.avgco2.toFixed(1)} ppm
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Average Pressure */}
+                  {healthReportData.avgPressure && (
+                    <div
+                      className={`p-6 rounded-2xl border transition-all duration-300 hover:scale-105 ${
+                        isDarkMode
+                          ? 'bg-dark-bg border-gray-700 hover:border-gray-600'
+                          : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-lg'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <div
+                          className={`p-3 rounded-xl ${isDarkMode ? 'bg-indigo-500/20' : 'bg-indigo-100'}`}
+                        >
+                          <WiBarometer
+                            className={`text-xl ${isDarkMode ? 'text-indigo-400' : 'text-indigo-600'}`}
+                          />
+                        </div>
+                      </div>
+                      <h3
+                        className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                      >
+                        Atmospheric Pressure
+                      </h3>
+                      <p
+                        className={`text-3xl font-bold ${isDarkMode ? 'text-indigo-400' : 'text-indigo-600'} mt-2`}
+                      >
+                        {healthReportData.avgPressure.toFixed(1)} hPa
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Average Body Temperature */}
+                  {healthReportData.avgBodyTemperature && (
+                    <div
+                      className={`p-6 rounded-2xl border transition-all duration-300 hover:scale-105 ${
+                        isDarkMode
+                          ? 'bg-dark-bg border-gray-700 hover:border-gray-600'
+                          : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-lg'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <div
+                          className={`p-3 rounded-xl ${isDarkMode ? 'bg-pink-500/20' : 'bg-pink-100'}`}
+                        >
+                          <FaTemperatureHigh
+                            className={`text-xl ${isDarkMode ? 'text-pink-400' : 'text-pink-600'}`}
+                          />
+                        </div>
+                      </div>
+                      <h3
+                        className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                      >
+                        Body Temperature
+                      </h3>
+                      <p
+                        className={`text-3xl font-bold ${isDarkMode ? 'text-pink-400' : 'text-pink-600'} mt-2`}
+                      >
+                        {healthReportData.avgBodyTemperature.toFixed(1)}°C
+                      </p>
+                    </div>
+                  )}
+
+                  {/* PM2.5 */}
+                  {healthReportData.avgpm25 && (
+                    <div
+                      className={`p-6 rounded-2xl border transition-all duration-300 hover:scale-105 ${
+                        isDarkMode
+                          ? 'bg-dark-bg border-gray-700 hover:border-gray-600'
+                          : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-lg'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <div
+                          className={`p-3 rounded-xl ${isDarkMode ? 'bg-red-500/20' : 'bg-red-100'}`}
+                        >
+                          <MdAir
+                            className={`text-xl ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}
+                          />
+                        </div>
+                      </div>
+                      <h3
+                        className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                      >
+                        PM2.5 Pollution
+                      </h3>
+                      <p
+                        className={`text-3xl font-bold ${isDarkMode ? 'text-red-400' : 'text-red-600'} mt-2`}
+                      >
+                        {healthReportData.avgpm25} µg/m³
+                      </p>
+                    </div>
+                  )}
+
+                  {/* PM10 */}
+                  {healthReportData.avgpm10 && (
+                    <div
+                      className={`p-6 rounded-2xl border transition-all duration-300 hover:scale-105 ${
+                        isDarkMode
+                          ? 'bg-dark-bg border-gray-700 hover:border-gray-600'
+                          : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-lg'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <div
+                          className={`p-3 rounded-xl ${isDarkMode ? 'bg-gray-500/20' : 'bg-gray-100'}`}
+                        >
+                          <MdAir
+                            className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                          />
+                        </div>
+                      </div>
+                      <h3
+                        className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                      >
+                        PM10 Pollution
+                      </h3>
+                      <p
+                        className={`text-3xl font-bold ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mt-2`}
+                      >
+                        {healthReportData.avgpm10} µg/m³
+                      </p>
+                    </div>
+                  )}
+
+                  {/* VOC */}
+                  {healthReportData.avgvoc && (
+                    <div
+                      className={`p-6 rounded-2xl border transition-all duration-300 hover:scale-105 ${
+                        isDarkMode
+                          ? 'bg-dark-bg border-gray-700 hover:border-gray-600'
+                          : 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-lg'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <div
+                          className={`p-3 rounded-xl ${isDarkMode ? 'bg-teal-500/20' : 'bg-teal-100'}`}
+                        >
+                          <MdAir
+                            className={`text-xl ${isDarkMode ? 'text-teal-400' : 'text-teal-600'}`}
+                          />
+                        </div>
+                      </div>
+                      <h3
+                        className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                      >
+                        VOC (Volatile Organic Compounds)
+                      </h3>
+                      <p
+                        className={`text-3xl font-bold ${isDarkMode ? 'text-teal-400' : 'text-teal-600'} mt-2`}
+                      >
+                        {healthReportData.avgvoc}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Report Summary */}
+                  <div className="col-span-full mt-6">
+                    <div
+                      className={`p-6 rounded-2xl border ${
+                        isDarkMode ? 'bg-dark-bg border-gray-700' : 'bg-gray-50 border-gray-200'
+                      }`}
+                    >
+                      <h3
+                        className={`text-lg font-semibold mb-4 ${
+                          isDarkMode ? 'text-white' : 'text-gray-900'
+                        }`}
+                      >
+                        Report Summary
+                      </h3>
+                      <div className="grid grid-cols-2 gap-4">
+                        {healthReportData.dataPointCount && (
+                          <div>
+                            <p
+                              className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                            >
+                              Data Points
+                            </p>
+                            <p
+                              className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                            >
+                              {healthReportData.dataPointCount.toLocaleString()}
+                            </p>
+                          </div>
+                        )}
+                        {healthReportData.reportPeriod && (
+                          <div>
+                            <p
+                              className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                            >
+                              Report Period
+                            </p>
+                            <p
+                              className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+                            >
+                              {healthReportData.reportPeriod}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </section>
             )}
