@@ -386,8 +386,8 @@ class _HealthReportState extends State<HealthReport> {
                                       ),
                                       Text(
                                         index == 0
-                                            ? 'Jul 10, 2023'
-                                            : 'Jul 5, 2023',
+                                            ? 'Jul 10, 2025'
+                                            : 'Jul 5, 2025',
                                         style: TextStyle(
                                           fontSize: 12,
                                           color: isDark

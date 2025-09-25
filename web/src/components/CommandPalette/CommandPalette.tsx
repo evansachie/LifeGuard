@@ -79,7 +79,7 @@ export const CommandPalette = ({ isDarkMode, toggleTheme, open, setOpen }: Comma
             id: 'medication',
             name: 'Medication Tracker',
             icon: FiClock,
-            action: () => navigate('/medication-tracker'),
+            action: () => navigate('/medications'),
           },
           {
             id: 'health-report',
