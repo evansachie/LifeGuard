@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { fetchWithAuth, API_ENDPOINTS } from '../../utils/api';
 import { withErrorHandling } from '../../utils/errorHandler';
 import { toast } from 'react-toastify';

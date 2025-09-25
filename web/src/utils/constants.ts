@@ -8,7 +8,6 @@ export interface Tab {
   icon: React.ReactNode;
 }
 
-// Use React.createElement to properly create React elements
 export const analyticsTabsData: Tab[] = [
   {
     id: 'environment',

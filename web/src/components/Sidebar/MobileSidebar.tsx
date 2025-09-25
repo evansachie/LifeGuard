@@ -1,4 +1,4 @@
-import React, { RefObject } from 'react';
+import { RefObject } from 'react';
 import UserProfileSection from './UserProfileSection';
 import ThemeToggle from '../../contexts/ThemeToggle';
 import NavigationLinks from './NavigationLinks';

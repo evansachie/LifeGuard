@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { FaExternalLinkAlt, FaShareAlt, FaBookmark } from 'react-icons/fa';
 import { HealthTip, RelatedTip } from '../../types/healthTips.types';
 import Modal from '../Modal/Modal';

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import SectionNavigation from '../../components/WellnessHub/SectionNavigation';
 import MiniPlayer from '../../components/WellnessHub/MiniPlayer';

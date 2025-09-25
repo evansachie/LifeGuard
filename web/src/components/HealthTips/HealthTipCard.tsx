@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import { memo, useState } from 'react';
 import './HealthTipCard.css';
 import Spinner from '../Spinner/Spinner';
 import { HealthTip } from '../../types/healthTips.types';

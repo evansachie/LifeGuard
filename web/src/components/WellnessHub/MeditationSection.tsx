@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaPlay, FaPause, FaRedo } from 'react-icons/fa';
 import { meditationPresets } from '../../data/meditationPresets';
