@@ -109,7 +109,7 @@ export const API_ENDPOINTS = {
   },
 
   HEALTH_REPORT: (deviceId: string, range: string = '30') =>
-    `${BASE_URL}/api/HealthReport?deviceId=${deviceId}&range=${range}`,
+    `${BASE_URL}/api/HealthReport/generate?deviceId=${deviceId}&range=${range}`,
 } as const;
 
 // Request options interface

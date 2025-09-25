@@ -7,15 +7,15 @@ import {
   MdMedication,
 } from 'react-icons/md';
 import { FaMap } from 'react-icons/fa';
-import { NavigationItem } from '../types/common.types';
+import { NavItem } from '../types/common.types';
 
-export const navItems: NavigationItem[] = [
+export const navItems: NavItem[] = [
   { path: '/dashboard', icon: <FaHome />, label: 'Dashboard' },
   { path: '/analytics', icon: <MdOutlineAnalytics />, label: 'Analytics' },
   { path: '/sticky-notes', icon: <FaStickyNote />, label: 'Sticky Notes' },
   { path: '/health-report', icon: <TbReportAnalytics />, label: 'Health Report' },
   { path: '/pollution-tracker', icon: <FaMap />, label: 'Pollution Tracker' },
-  { path: '/medication-tracker', icon: <MdMedication />, label: 'Medication Tracker' },
+  { path: '/medications', icon: <MdMedication />, label: 'Medication Tracker' },
   { path: '/health-tips', icon: <MdHealthAndSafety />, label: 'Health Tips' },
   { path: '/emergency-contacts', icon: <MdContactEmergency />, label: 'Emergency Contacts' },
   { path: '/settings', icon: <FaCog />, label: 'Settings' },

@@ -70,8 +70,7 @@ const HealthReportModal = ({ isOpen, onClose, userData, isDarkMode }: HealthRepo
             );
           }
 
-          // Always try to get health report API data
-          const deviceId = 'n0pTQbgNwb4mrDjVLs3Xzw=='; // Use same device ID as HealthReport page
+          const deviceId = 'wr6PpfGWwGBS5FpKfju4yw==';
           promises.push(
             apiMethods.getHealthReport(deviceId, '30').catch((error) => {
               console.warn('Health report API failed:', error);
