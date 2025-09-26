@@ -13,7 +13,6 @@ export interface EnhancedHealthReportData {
   };
   vitals: {
     heartRate: { average: string; min: string; max: string; status: string };
-    bloodPressure: { average: string; min: string; max: string; status: string };
     bodyTemperature: { average: string; min: string; max: string; status: string };
     oxygenSaturation: { average: string; min: string; max: string; status: string };
   };
@@ -67,6 +66,19 @@ export interface MixedHealthReportData {
     totalSteps?: number;
     avgDailySteps?: number;
     avgAirQualityIndex?: number;
+    avgHeartRate?: number;
+    avgbloodPressureSystolic?: number;
+    avgbloodPressureDiastolic?: number;
+    avgOxygenSaturation?: number;
+    avgBodyTemperature?: number;
+    fallCount?: number;
+    avgco2?: number;
+    avgvoc?: number;
+    avgpm25?: number;
+    avgpm10?: number;
+    avgPressure?: number;
+    dataPointCount?: number;
+    reportPeriod?: string;
   };
 }
 
@@ -139,7 +151,7 @@ export const generateHealthReportPDF = (
 
     // Real-Time Health Metrics from Arduino (if available)
     if (healthApiData) {
-      checkPageBreak(60);
+      checkPageBreak(120);
       yPosition += 20;
       pdf.setFontSize(16);
       pdf.setTextColor(34, 197, 94);
@@ -148,9 +160,30 @@ export const generateHealthReportPDF = (
       yPosition += 15;
       pdf.setFontSize(11);
 
+      // Vital Signs
+      if (healthApiData.avgHeartRate) {
+        pdf.text(`Heart Rate: ${healthApiData.avgHeartRate.toFixed(0)} bpm`, margin, yPosition);
+        yPosition += 8;
+      }
+
+      if (healthApiData.avgOxygenSaturation) {
+        pdf.text(
+          `Oxygen Saturation: ${healthApiData.avgOxygenSaturation.toFixed(1)}%`,
+          margin,
+          yPosition
+        );
+        yPosition += 8;
+      }
+
+      if (typeof healthApiData.fallCount !== 'undefined') {
+        pdf.text(`Fall Incidents: ${healthApiData.fallCount}`, margin, yPosition);
+        yPosition += 8;
+      }
+
+      // Environmental Metrics
       if (healthApiData.avgAmbientTemp) {
         pdf.text(
-          `Average Temperature: ${healthApiData.avgAmbientTemp.toFixed(1)}°C`,
+          `Ambient Temperature: ${healthApiData.avgAmbientTemp.toFixed(1)}°C`,
           margin,
           yPosition
         );
@@ -158,10 +191,50 @@ export const generateHealthReportPDF = (
       }
 
       if (healthApiData.avgHumidity) {
-        pdf.text(`Average Humidity: ${healthApiData.avgHumidity.toFixed(1)}%`, margin, yPosition);
+        pdf.text(`Humidity: ${healthApiData.avgHumidity.toFixed(1)}%`, margin, yPosition);
         yPosition += 8;
       }
 
+      if (healthApiData.avgPressure) {
+        pdf.text(
+          `Atmospheric Pressure: ${healthApiData.avgPressure.toFixed(1)} hPa`,
+          margin,
+          yPosition
+        );
+        yPosition += 8;
+      }
+
+      if (healthApiData.avgAirQualityIndex) {
+        pdf.text(
+          `Air Quality Index: ${healthApiData.avgAirQualityIndex.toFixed(0)} AQI`,
+          margin,
+          yPosition
+        );
+        yPosition += 8;
+      }
+
+      // Air Quality Components
+      if (healthApiData.avgco2) {
+        pdf.text(`CO2 Level: ${healthApiData.avgco2.toFixed(1)} ppm`, margin, yPosition);
+        yPosition += 8;
+      }
+
+      if (healthApiData.avgpm25) {
+        pdf.text(`PM2.5: ${healthApiData.avgpm25} µg/m³`, margin, yPosition);
+        yPosition += 8;
+      }
+
+      if (healthApiData.avgpm10) {
+        pdf.text(`PM10: ${healthApiData.avgpm10} µg/m³`, margin, yPosition);
+        yPosition += 8;
+      }
+
+      if (healthApiData.avgvoc) {
+        pdf.text(`VOC: ${healthApiData.avgvoc}`, margin, yPosition);
+        yPosition += 8;
+      }
+
+      // Activity Metrics
       if (healthApiData.totalSteps) {
         pdf.text(`Total Steps: ${healthApiData.totalSteps.toLocaleString()}`, margin, yPosition);
         yPosition += 8;
@@ -176,18 +249,65 @@ export const generateHealthReportPDF = (
         yPosition += 8;
       }
 
-      if (healthApiData.avgAirQualityIndex) {
+      // Report Summary
+      if (healthApiData.dataPointCount) {
+        yPosition += 5;
+        pdf.setFontSize(10);
+        pdf.setTextColor(100, 100, 100);
         pdf.text(
-          `Average Air Quality Index: ${healthApiData.avgAirQualityIndex.toFixed(0)} AQI`,
+          `Data Points Analyzed: ${healthApiData.dataPointCount.toLocaleString()}`,
+          margin,
+          yPosition
+        );
+        yPosition += 6;
+      }
+
+      if (healthApiData.reportPeriod) {
+        pdf.text(`Report Period: ${healthApiData.reportPeriod}`, margin, yPosition);
+        yPosition += 6;
+      }
+    }
+
+    // Vital Statistics (prioritize API data over enhanced report)
+    if (
+      healthApiData &&
+      (healthApiData.avgHeartRate ||
+        healthApiData.avgOxygenSaturation ||
+        healthApiData.avgBodyTemperature)
+    ) {
+      checkPageBreak(60);
+      yPosition += 20;
+      pdf.setFontSize(16);
+      pdf.setTextColor(220, 38, 127);
+      pdf.text('Vital Statistics (Real-time)', margin, yPosition);
+
+      yPosition += 15;
+      pdf.setFontSize(10);
+      pdf.setTextColor(0, 0, 0);
+
+      if (healthApiData.avgHeartRate) {
+        pdf.text(`Heart Rate: ${healthApiData.avgHeartRate.toFixed(0)} bpm`, margin, yPosition);
+        yPosition += 8;
+      }
+
+      if (healthApiData.avgOxygenSaturation) {
+        pdf.text(
+          `Oxygen Saturation: ${healthApiData.avgOxygenSaturation.toFixed(1)}%`,
           margin,
           yPosition
         );
         yPosition += 8;
       }
-    }
 
-    // Vital Statistics (if available)
-    if (enhancedData?.vitals) {
+      if (healthApiData.avgBodyTemperature) {
+        pdf.text(
+          `Body Temperature: ${healthApiData.avgBodyTemperature.toFixed(1)}°C`,
+          margin,
+          yPosition
+        );
+        yPosition += 8;
+      }
+    } else if (enhancedData?.vitals) {
       checkPageBreak(60);
       yPosition += 20;
       pdf.setFontSize(16);
@@ -298,8 +418,45 @@ export const generateHealthReportPDF = (
       });
     }
 
-    // Environmental Metrics (if available from enhanced data)
-    if (enhancedData?.environmentalMetrics) {
+    // Environmental Metrics (prioritize API data over enhanced data)
+    if (
+      healthApiData &&
+      (healthApiData.avgAmbientTemp ||
+        healthApiData.avgHumidity ||
+        healthApiData.avgPressure ||
+        healthApiData.avgAirQualityIndex)
+    ) {
+      checkPageBreak(60);
+      yPosition += 15;
+      pdf.setFontSize(16);
+      pdf.setTextColor(59, 130, 246);
+      pdf.text('Environmental Metrics (Real-time)', margin, yPosition);
+
+      yPosition += 10;
+      pdf.setFontSize(10);
+      pdf.setTextColor(0, 0, 0);
+
+      if (healthApiData.avgAmbientTemp) {
+        pdf.text(`Temperature: ${healthApiData.avgAmbientTemp.toFixed(1)}°C`, margin, yPosition);
+        yPosition += 8;
+      }
+      if (healthApiData.avgHumidity) {
+        pdf.text(`Humidity: ${healthApiData.avgHumidity.toFixed(1)}%`, margin, yPosition);
+        yPosition += 8;
+      }
+      if (healthApiData.avgPressure) {
+        pdf.text(`Pressure: ${healthApiData.avgPressure.toFixed(1)} hPa`, margin, yPosition);
+        yPosition += 8;
+      }
+      if (healthApiData.avgAirQualityIndex) {
+        pdf.text(
+          `Air Quality: ${healthApiData.avgAirQualityIndex.toFixed(0)} AQI`,
+          margin,
+          yPosition
+        );
+        yPosition += 8;
+      }
+    } else if (enhancedData?.environmentalMetrics) {
       checkPageBreak(60);
       yPosition += 15;
       pdf.setFontSize(16);

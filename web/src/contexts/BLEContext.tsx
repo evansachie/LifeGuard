@@ -13,9 +13,11 @@ const ARDUINO_GAS_UUID = import.meta.env.VITE_GAS;
 const ARDUINO_ACCELEROMETER_UUID = import.meta.env.VITE_ACCELEROMETER;
 const ARDUINO_GYROSCOPE_UUID = import.meta.env.VITE_GYROSCOPE;
 const ARDUINO_QUATERNION_UUID = import.meta.env.VITE_QUATERNION;
-const ARDUINO_ACTIVITY_UUID = '19b10000-a001-537e-4f6c-d104768a1214'; // Activity recognition
-const ARDUINO_STEP_COUNT_UUID = '19b10000-a002-537e-4f6c-d104768a1214'; // Step counter
-const ARDUINO_STEP_DETECTOR_UUID = '19b10000-a003-537e-4f6c-d104768a1214'; // Step detector
+const ARDUINO_ACTIVITY_UUID = '19b10000-a001-537e-4f6c-d104768a1214';
+const ARDUINO_STEP_COUNT_UUID = '19b10000-a002-537e-4f6c-d104768a1214';
+const ARDUINO_STEP_DETECTOR_UUID = '19b10000-a003-537e-4f6c-d104768a1214';
+const ARDUINO_FALL_DETECTION_UUID = '19b10000-8006-537e-4f6c-d104768a1214';
+const ARDUINO_ACTIVITY_INFERENCE_UUID = '19b10000-8007-537e-4f6c-d104768a1214';
 
 const BLEContext = createContext<BLEContextType | null>(null);
 
@@ -30,12 +32,17 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
   const [connectedDevice, setConnectedDevice] = useState<BLEDevice | null>(null);
   const [latestSensorData, setLatestSensorData] = useState<SensorData>(emptySensorData);
 
+  const [fallAlert, setFallAlert] = useState<{
+    detected: boolean;
+    timestamp: Date | null;
+    activityInference: string;
+  }>({ detected: false, timestamp: null, activityInference: 'still' });
+
   const bluetoothDeviceRef = useRef<BluetoothDevice | null>(null);
   const gattServerRef = useRef<BluetoothRemoteGATTServer | null>(null);
   const characteristicsRef = useRef<Map<string, BluetoothRemoteGATTCharacteristic>>(new Map());
   const sensorIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Use Firebase context
   const { pushSensorData } = useFirebase();
 
   const connect = async (): Promise<void> => {
@@ -51,18 +58,11 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
       });
 
       bluetoothDeviceRef.current = bluetoothDevice;
-
-      // Add disconnect handler
       bluetoothDevice.addEventListener('gattserverdisconnected', handleDeviceDisconnected);
-
-      // Connect to GATT server
       const server = await bluetoothDevice.gatt!.connect();
       gattServerRef.current = server;
-
-      // Get the Arduino service
       const service = await server.getPrimaryService(ARDUINO_SERVICE_UUID);
 
-      // Get all characteristics
       const characteristics = await Promise.all([
         service.getCharacteristic(ARDUINO_TEMPERATURE_UUID).catch(() => null),
         service.getCharacteristic(ARDUINO_HUMIDITY_UUID).catch(() => null),
@@ -75,6 +75,8 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
         service.getCharacteristic(ARDUINO_ACTIVITY_UUID).catch(() => null),
         service.getCharacteristic(ARDUINO_STEP_COUNT_UUID).catch(() => null),
         service.getCharacteristic(ARDUINO_STEP_DETECTOR_UUID).catch(() => null),
+        service.getCharacteristic(ARDUINO_FALL_DETECTION_UUID).catch(() => null),
+        service.getCharacteristic(ARDUINO_ACTIVITY_INFERENCE_UUID).catch(() => null),
       ]);
 
       // Store characteristics
@@ -90,6 +92,8 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
       if (characteristics[8]) charMap.set('activity', characteristics[8]);
       if (characteristics[9]) charMap.set('stepCount', characteristics[9]);
       if (characteristics[10]) charMap.set('stepDetector', characteristics[10]);
+      if (characteristics[11]) charMap.set('fallDetection', characteristics[11]);
+      if (characteristics[12]) charMap.set('activityInference', characteristics[12]);
 
       characteristicsRef.current = charMap;
 
@@ -115,11 +119,26 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
         characteristics[10].addEventListener('characteristicvaluechanged', handleStepDetectorData);
       }
 
+      // Subscribe to fall detection for real-time fall alerts
+      if (characteristics[11] && characteristics[11].properties.notify) {
+        await characteristics[11].startNotifications();
+        characteristics[11].addEventListener('characteristicvaluechanged', handleFallDetectionData);
+      }
+
+      // Subscribe to activity inference for enhanced activity recognition
+      if (characteristics[12] && characteristics[12].properties.notify) {
+        await characteristics[12].startNotifications();
+        characteristics[12].addEventListener(
+          'characteristicvaluechanged',
+          handleActivityInferenceData
+        );
+      }
+
       const device: BLEDevice = {
         id: bluetoothDevice.id || `arduino-${Date.now()}`,
         name: bluetoothDevice.name || 'Arduino Nicla Sense ME',
         connected: true,
-        batteryLevel: 85, // Could be read from actual battery service
+        batteryLevel: 85,
         lastSeen: new Date().toISOString(),
         deviceType: 'arduino-nicla',
       };
@@ -134,12 +153,8 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
         return [...prev, device];
       });
 
-      // Start reading sensor data periodically - pass device to ensure it's available
       startSensorReading(device);
-
-      // Update device status in Firebase (simplified for now)
       console.log(`Device ${device.name} connected`);
-
       toast.success(`Connected to ${device.name}!`);
     } catch (error) {
       console.error('Error connecting to Arduino device:', error);
@@ -179,12 +194,6 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
       setDevices((prev) => prev.map((d) => (d.id === deviceId ? { ...d, connected: false } : d)));
       setLatestSensorData(emptySensorData);
 
-      // Update device status in Firebase (commented for now)
-      // const device = devices.find((d) => d.id === deviceId);
-      // if (device) {
-      //   // Could add device status update here
-      // }
-
       toast.success('Disconnected from Arduino device');
     } catch (error: unknown) {
       const errorMessage = getErrorMessage(error, 'Failed to disconnect from device');
@@ -210,7 +219,7 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
     if (value && value.byteLength >= 12) {
       // 3 floats * 4 bytes each
       const dataView = new DataView(value.buffer);
-      const x = dataView.getFloat32(0, true); // little endian
+      const x = dataView.getFloat32(0, true);
       const y = dataView.getFloat32(4, true);
       const z = dataView.getFloat32(8, true);
       setLatestSensorData((prev) => {
@@ -344,6 +353,103 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
       }
     }
   };
+
+  // Handle fall detection notifications
+  const handleFallDetectionData = (event: Event) => {
+    const characteristic = event.target as BluetoothRemoteGATTCharacteristic;
+    const value = characteristic.value;
+    if (value && value.byteLength >= 1) {
+      const dataView = new DataView(value.buffer);
+      const fallDetected = dataView.getUint8(0) === 1;
+
+      console.log('🚨 Fall detection event:', fallDetected);
+
+      setFallAlert({
+        detected: fallDetected,
+        timestamp: fallDetected ? new Date() : null,
+        activityInference: fallDetected ? 'FALL_DETECTED' : 'normal',
+      });
+
+      // Update sensor data with fall detection status
+      setLatestSensorData((prev) => ({
+        ...prev,
+        motion: {
+          ...prev.motion,
+          accelerometer: prev.motion?.accelerometer || { x: 0, y: 0, z: 0 },
+          gyroscope: prev.motion?.gyroscope || { x: 0, y: 0, z: 0 },
+          magnetometer: prev.motion?.magnetometer || { x: 0, y: 0, z: 0 },
+          activity: prev.motion?.activity || 'still',
+          stepCount: prev.motion?.stepCount || 0,
+          fallDetected: fallDetected,
+          timestamp: new Date().toISOString(),
+        },
+        timestamp: new Date().toISOString(),
+      }));
+
+      if (fallDetected) {
+        // Trigger emergency protocol
+        handleFallEmergency();
+      }
+    }
+  };
+
+  // Handle activity inference notifications
+  const handleActivityInferenceData = (event: Event) => {
+    const characteristic = event.target as BluetoothRemoteGATTCharacteristic;
+    const value = characteristic.value;
+    if (value && value.byteLength > 0) {
+      const decoder = new TextDecoder();
+      const activityInference = decoder.decode(value).trim();
+
+      console.log('🏃 Activity inference:', activityInference);
+
+      setFallAlert((prev) => ({
+        ...prev,
+        activityInference: activityInference,
+      }));
+
+      // Update motion activity
+      setLatestSensorData((prev) => ({
+        ...prev,
+        motion: {
+          ...prev.motion,
+          accelerometer: prev.motion?.accelerometer || { x: 0, y: 0, z: 0 },
+          gyroscope: prev.motion?.gyroscope || { x: 0, y: 0, z: 0 },
+          magnetometer: prev.motion?.magnetometer || { x: 0, y: 0, z: 0 },
+          activity: activityInference.includes('FALL')
+            ? 'unknown'
+            : prev.motion?.activity || 'still',
+          stepCount: prev.motion?.stepCount || 0,
+          fallDetected: activityInference.includes('FALL'),
+          timestamp: new Date().toISOString(),
+        },
+        timestamp: new Date().toISOString(),
+      }));
+    }
+  };
+
+  // Emergency response for fall detection
+  const handleFallEmergency = () => {
+    console.log('🚨 FALL DETECTED - Initiating emergency protocol');
+
+    // Show browser notification
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification('🚨 Fall Detected!', {
+        body: 'A fall has been detected. Emergency contacts will be notified.',
+        icon: '/favicon.ico',
+        requireInteraction: true,
+      });
+    } else if ('Notification' in window && Notification.permission !== 'denied') {
+      Notification.requestPermission().then((permission) => {
+        if (permission === 'granted') {
+          new Notification('🚨 Fall Detected!', {
+            body: 'A fall has been detected. Emergency contacts will be notified.',
+            icon: '/favicon.ico',
+          });
+        }
+      });
+    }
+  };
   const startSensorReading = (device: BLEDevice): void => {
     if (sensorIntervalRef.current) {
       clearInterval(sensorIntervalRef.current);
@@ -391,16 +497,12 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
 
         let hasNewData = false;
 
-        // Read temperature (matches Arduino code - onTemperatureCharacteristicRead)
         const tempChar = chars.get('temperature');
         if (tempChar) {
           try {
             const tempValue = await tempChar.readValue();
-            // Arduino sends temperature as float
             const temperature = tempValue.getFloat32(0, true);
             console.log('🌡️ [ARDUINO NICLA SENSE ME] Temperature read:', temperature, '°C');
-
-            // Fix TypeScript error by ensuring newSensorData.environmental is defined
             newSensorData.environmental!.temperature = temperature;
             hasNewData = true;
           } catch (tempError) {
@@ -417,7 +519,6 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
             const humidity = humValue.getUint8(0);
             console.log('💧 [ARDUINO NICLA SENSE ME] Humidity read:', humidity, '%');
 
-            // Fix TypeScript error by ensuring newSensorData.environmental is defined
             newSensorData.environmental!.humidity = humidity;
             hasNewData = true;
           } catch (humError) {
@@ -425,7 +526,6 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
           }
         }
 
-        // Read pressure (matches Arduino code - onPressureCharacteristicRead)
         const pressureChar = chars.get('pressure');
         if (pressureChar) {
           try {
@@ -433,8 +533,6 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
             // Arduino sends pressure as float
             const pressure = pressureValue.getFloat32(0, true);
             console.log('📊 [ARDUINO NICLA SENSE ME] Pressure read:', pressure, 'hPa');
-
-            // Fix TypeScript error by ensuring newSensorData.environmental is defined
             newSensorData.environmental!.pressure = pressure;
             hasNewData = true;
           } catch (pressError) {
@@ -442,16 +540,13 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
           }
         }
 
-        // Read CO2 (matches Arduino code - onCo2CharacteristicRead)
         const co2Char = chars.get('co2');
         if (co2Char) {
           try {
             const co2Value = await co2Char.readValue();
-            // Arduino sends CO2 as uint32
             const co2 = co2Value.getUint32(0, true);
             console.log('🌬️ [ARDUINO NICLA SENSE ME] CO2 read:', co2, 'ppm');
 
-            // Fix TypeScript error by ensuring newSensorData.environmental and airQuality are defined
             newSensorData.environmental!.airQuality!.co2 = co2;
             hasNewData = true;
           } catch (co2Error) {
@@ -459,7 +554,6 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
           }
         }
 
-        // Read gas/AQI (matches Arduino code - onGasCharacteristicRead and onBsecCharacteristicRead)
         const gasChar = chars.get('gas');
         const bsecChar = chars.get('bsec');
         if (gasChar || bsecChar) {
@@ -483,7 +577,6 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
               );
             }
 
-            // Fix TypeScript error by ensuring newSensorData.environmental and airQuality are defined
             newSensorData.environmental!.airQuality!.aqi = aqi;
             hasNewData = true;
           } catch (gasError) {
@@ -491,7 +584,6 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
           }
         }
 
-        // Read activity data (matches Arduino code - onActivityCharacteristicRead)
         const activityChar = chars.get('activity');
         if (activityChar) {
           try {
@@ -500,7 +592,6 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
             const activityString = decoder.decode(activityValue).trim();
             console.log('🏃 [ARDUINO NICLA SENSE ME] Activity read:', `"${activityString}"`);
 
-            // Import the activity mapping function
             const { mapArduinoActivity } = await import('../utils/activityMapping');
             const activityInfo = mapArduinoActivity(activityString);
 
@@ -508,7 +599,6 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
               `🔍 Activity mapping: "${activityString}" -> "${activityInfo.displayName}" (${activityInfo.type})`
             );
 
-            // Update motion data with activity
             newSensorData.motion = {
               accelerometer: newSensorData.motion?.accelerometer || { x: 0, y: 0, z: 0 },
               gyroscope: newSensorData.motion?.gyroscope || { x: 0, y: 0, z: 0 },
@@ -525,7 +615,6 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
           }
         }
 
-        // Read step count data (matches Arduino code - onStepCountCharacteristicRead)
         const stepCountChar = chars.get('stepCount');
         if (stepCountChar) {
           try {
@@ -555,13 +644,10 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
 
         if (hasNewData) {
           console.log('📊 New sensor data collected from Arduino Nicla Sense ME');
-
-          // Update sensor data with new readings and keep motion data from notifications
           setLatestSensorData((prev) => {
             const updatedSensorData: SensorData = {
               ...prev,
               environmental: {
-                // Fix TypeScript errors by using non-null assertions or providing default values
                 temperature: newSensorData.environmental?.temperature ?? 0,
                 humidity: newSensorData.environmental?.humidity ?? 0,
                 pressure: newSensorData.environmental?.pressure ?? 0,
@@ -574,77 +660,17 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
                 },
                 timestamp: new Date().toISOString(),
               },
-              motion: newSensorData.motion ||
-                prev.motion || {
-                  accelerometer: { x: 0, y: 0, z: 0 },
-                  gyroscope: { x: 0, y: 0, z: 0 },
-                  magnetometer: { x: 0, y: 0, z: 0 },
-                  activity: 'still',
-                  stepCount: 0,
-                  fallDetected: false,
-                  timestamp: new Date().toISOString(),
-                },
+              motion: {
+                accelerometer: prev.motion?.accelerometer || { x: 0, y: 0, z: 0 },
+                gyroscope: prev.motion?.gyroscope || { x: 0, y: 0, z: 0 },
+                magnetometer: prev.motion?.magnetometer || { x: 0, y: 0, z: 0 },
+                activity: prev.motion?.activity || 'still',
+                stepCount: newSensorData.motion?.stepCount ?? prev.motion?.stepCount ?? 0,
+                fallDetected: prev.motion?.fallDetected || false,
+                timestamp: new Date().toISOString(),
+              },
               timestamp: new Date().toISOString(),
             };
-
-            // Log data sources for pollution tracker analysis
-            console.log('🔍 POLLUTION TRACKER DATA SOURCES:');
-            console.log(
-              '   🌡️ Temperature:',
-              newSensorData.environmental?.temperature,
-              '°C [ARDUINO NICLA SENSE ME]'
-            );
-            console.log(
-              '   💧 Humidity:',
-              newSensorData.environmental?.humidity,
-              '% [ARDUINO NICLA SENSE ME]'
-            );
-            console.log(
-              '   📊 Pressure:',
-              newSensorData.environmental?.pressure,
-              'hPa [ARDUINO NICLA SENSE ME]'
-            );
-            console.log(
-              '   🌬️ CO2:',
-              newSensorData.environmental?.airQuality?.co2,
-              'ppm [ARDUINO NICLA SENSE ME]'
-            );
-            console.log(
-              '   🌿 AQI:',
-              newSensorData.environmental?.airQuality?.aqi,
-              '[ARDUINO NICLA SENSE ME]'
-            );
-            console.log(
-              '   🧪 VOC:',
-              updatedSensorData.environmental?.airQuality?.voc || 0.1,
-              '[HARDCODED FALLBACK]'
-            );
-            console.log(
-              '   🌫️ PM2.5:',
-              updatedSensorData.environmental?.airQuality?.pm25 || 10,
-              'µg/m³ [HARDCODED FALLBACK]'
-            );
-            console.log(
-              '   🌫️ PM10:',
-              updatedSensorData.environmental?.airQuality?.pm10 || 15,
-              'µg/m³ [HARDCODED FALLBACK]'
-            );
-            console.log(
-              '   📐 Accelerometer: [x,y,z]',
-              prev.motion?.accelerometer,
-              '[ARDUINO NICLA SENSE ME - Real-time]'
-            );
-            console.log(
-              '   🔄 Gyroscope: [x,y,z]',
-              prev.motion?.gyroscope,
-              '[ARDUINO NICLA SENSE ME - Real-time]'
-            );
-
-            // Only push to Firebase if we have the device and new data
-            console.log(
-              '🔥 Pushing sensor data to Firebase with temp:',
-              newSensorData.environmental?.temperature
-            );
 
             setTimeout(() => {
               pushSensorData(device.id, device.name || 'Arduino Nicla Sense ME', updatedSensorData)
@@ -713,10 +739,6 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
       if (gattServerRef.current && gattServerRef.current.connected) {
         gattServerRef.current.disconnect();
       }
-      // Cleanup Firebase listeners (commented for now)
-      // if (firebaseDataService && firebaseDataService.unsubscribeAll) {
-      //   firebaseDataService.unsubscribeAll();
-      // }
     };
   }, []);
 
@@ -725,6 +747,7 @@ export const BLEProvider = ({ children }: BLEProviderProps) => {
     isScanning,
     connectedDevice,
     latestSensorData,
+    fallAlert,
     connect,
     disconnect,
     startScanning,

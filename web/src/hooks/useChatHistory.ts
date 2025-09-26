@@ -43,7 +43,6 @@ export const useChatHistory = (): ChatHistoryHook => {
         const testResponse = await ragService.askQuestion({
           user_id: userId,
           question: 'Give me an overview of what you know about me?',
-          top_k: 1,
         });
 
         // If we get a "No relevant document chunks" response, then no context
@@ -161,7 +160,6 @@ export const useChatHistory = (): ChatHistoryHook => {
         const ragResponse = await ragService.askQuestion({
           user_id: userId,
           question: query,
-          top_k: 3,
         });
 
         // Check if we got a "no context" response from RAG

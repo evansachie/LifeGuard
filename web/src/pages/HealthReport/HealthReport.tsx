@@ -109,7 +109,8 @@ const HealthReport = ({ isDarkMode }: HealthReportProps) => {
   // Get live Arduino sensor data
   const { latestSensorData, connectedDevice } = useBLE();
 
-  const deviceId = 'n0pTQbgNwb4mrDjVLs3Xzw==';
+  // Use the working deviceId from the API, or fall back to connected device ID
+  const deviceId = connectedDevice?.id || 'wr6PpfGWwGBS5FpKfju4yw==';
 
   // Fetch health report data
   useEffect(() => {
@@ -142,7 +143,7 @@ const HealthReport = ({ isDarkMode }: HealthReportProps) => {
     };
 
     fetchHealthReport();
-  }, [dateRange]);
+  }, [dateRange, deviceId]);
 
   // Handle date range change
   const handleDateRangeChange = (range: string) => {

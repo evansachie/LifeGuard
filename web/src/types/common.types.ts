@@ -223,6 +223,7 @@ export interface VisibleCards {
   humidity: boolean;
   pressure: boolean;
   activities: boolean;
+  fallDetection: boolean;
   quote: boolean;
   reminders: boolean;
   aqi: boolean;
@@ -314,7 +315,8 @@ export type CardId =
   | 'reminders'
   | 'aqi'
   | 'co2'
-  | 'pollutants';
+  | 'pollutants'
+  | 'fallDetection';
 
 // Keyboard Shortcuts Types
 export interface KeyboardShortcut {

@@ -30,6 +30,10 @@ BLEFloatCharacteristic bsecCharacteristic(BLE_SENSE_UUID("9001"), BLERead);
 BLEIntCharacteristic  co2Characteristic(BLE_SENSE_UUID("9002"), BLERead);
 BLEUnsignedIntCharacteristic gasCharacteristic(BLE_SENSE_UUID("9003"), BLERead);
 
+// Fall Detection Characteristics
+BLECharacteristic fallDetectionCharacteristic(BLE_SENSE_UUID("8006"), BLERead | BLENotify, sizeof(uint8_t));
+BLEStringCharacteristic activityInferenceCharacteristic(BLE_SENSE_UUID("8007"), BLERead | BLENotify, 20);
+
 // Activity and Step Tracking Characteristics
 BLEStringCharacteristic activityCharacteristic(BLE_SENSE_UUID("A001"), BLERead, 50);
 BLEUnsignedLongCharacteristic stepCountCharacteristic(BLE_SENSE_UUID("A002"), BLERead);
@@ -58,6 +62,15 @@ unsigned long lastActivityUpdate = 0;
 const unsigned long activityUpdateInterval = 2000; // Update activity every 2 seconds
 unsigned long lastStepCount = 0;
 unsigned long stepCountIncrement = 0;
+
+// Fall Detection Variables
+bool fallDetected = false;
+unsigned long lastFallTime = 0;
+const unsigned long fallCooldownTime = 5000; // 5 second cooldown between fall alerts
+float fallAccelThreshold = 2.5; // G-force threshold for potential fall
+float fallGyroThreshold = 250.0; // Angular velocity threshold (deg/s)
+String lastActivityInference = "still";
+float accelMagnitude = 0.0;
 
 void setup(){
   Serial.begin(115200);
@@ -119,6 +132,8 @@ void setup(){
   service.addCharacteristic(activityCharacteristic);
   service.addCharacteristic(stepCountCharacteristic);
   service.addCharacteristic(stepDetectorCharacteristic);
+  service.addCharacteristic(fallDetectionCharacteristic);
+  service.addCharacteristic(activityInferenceCharacteristic);
 
   BLE.setEventHandler(BLEDisconnected, blePeripheralDisconnectHandler);
 
@@ -132,6 +147,8 @@ void setup(){
   stepCountCharacteristic.setEventHandler(BLERead, onStepCountCharacteristicRead);
   stepDetectorCharacteristic.setEventHandler(BLERead, onStepDetectorCharacteristicRead);
   rgbLedCharacteristic.setEventHandler(BLEWritten, onRgbLedCharacteristicWrite);
+  fallDetectionCharacteristic.setEventHandler(BLERead, onFallDetectionCharacteristicRead);
+  activityInferenceCharacteristic.setEventHandler(BLERead, onActivityInferenceCharacteristicRead);
 
   versionCharacteristic.setValue(VERSION);
 
@@ -191,26 +208,109 @@ void loop(){
       }
     }
     
+    // FALL DETECTION LOGIC
+    // Calculate accelerometer magnitude
+    float ax = accelerometer.x();
+    float ay = accelerometer.y(); 
+    float az = accelerometer.z();
+    accelMagnitude = sqrt(ax*ax + ay*ay + az*az);
+    
+    // Calculate gyroscope magnitude  
+    float gx = gyroscope.x();
+    float gy = gyroscope.y();
+    float gz = gyroscope.z();
+    float gyroMagnitude = sqrt(gx*gx + gy*gy + gz*gz);
+    
+    // Get current activity
+    String currentActivity = activity.getActivity();
+    
+    // Fall Detection Algorithm
+    bool potentialFall = false;
+    
+    // Check for sudden acceleration change (free fall or impact)
+    if (accelMagnitude < 0.5 || accelMagnitude > fallAccelThreshold) {
+      potentialFall = true;
+    }
+    
+    // Check for rapid rotation (tumbling)
+    if (gyroMagnitude > fallGyroThreshold) {
+      potentialFall = true;
+    }
+    
+    // Enhanced detection: check activity inference
+    if (currentActivity.indexOf("fall") >= 0 || currentActivity.indexOf("Fall") >= 0) {
+      potentialFall = true;
+    }
+    
+    // Trigger fall detection with cooldown
+    if (potentialFall && !fallDetected && (currentTime - lastFallTime > fallCooldownTime)) {
+      fallDetected = true;
+      lastFallTime = currentTime;
+      
+      // Set LED to red for fall alert
+      nicla::leds.setColor(red);
+      
+      // Send immediate fall notification
+      if (fallDetectionCharacteristic.subscribed()) {
+        uint8_t fallAlert = 1;
+        fallDetectionCharacteristic.writeValue(fallAlert);
+      }
+      
+      // Update activity inference
+      lastActivityInference = "FALL_DETECTED";
+      if (activityInferenceCharacteristic.subscribed()) {
+        activityInferenceCharacteristic.writeValue(lastActivityInference);
+      }
+      
+      Serial.println("🚨 FALL DETECTED!");
+      Serial.print("Accel Magnitude: "); Serial.print(accelMagnitude);
+      Serial.print(" | Gyro Magnitude: "); Serial.print(gyroMagnitude);
+      Serial.print(" | Activity: "); Serial.println(currentActivity);
+    }
+    
+    // Reset fall detection after alert period
+    if (fallDetected && (currentTime - lastFallTime > 3000)) { // 3 second alert
+      fallDetected = false;
+      nicla::leds.setColor(green); // Back to normal
+      
+      if (fallDetectionCharacteristic.subscribed()) {
+        uint8_t fallAlert = 0;
+        fallDetectionCharacteristic.writeValue(fallAlert);
+      }
+      
+      lastActivityInference = currentActivity;
+      if (activityInferenceCharacteristic.subscribed()) {
+        activityInferenceCharacteristic.writeValue(lastActivityInference);
+      }
+    }
+
     // Update activity status periodically
     if (currentTime - lastActivityUpdate >= activityUpdateInterval) {
       lastActivityUpdate = currentTime;
       
       // Update activity characteristic with current activity
-      String currentActivity = activity.getActivity();
       activityCharacteristic.writeValue(currentActivity);
       
       // Update step count characteristic
       uint32_t currentStepCount = stepCounter.value();
       stepCountCharacteristic.writeValue(currentStepCount);
       
+      // Update activity inference if not in fall state
+      if (!fallDetected) {
+        lastActivityInference = currentActivity;
+        if (activityInferenceCharacteristic.subscribed()) {
+          activityInferenceCharacteristic.writeValue(lastActivityInference);
+        }
+      }
+      
       Serial.print("Activity: \"");
       Serial.print(currentActivity);
       Serial.print("\" | Steps: ");
-      Serial.println(currentStepCount);
-      
-      // Debug: Also print the raw activity value
-      Serial.print("Raw activity length: ");
-      Serial.println(currentActivity.length());
+      Serial.print(currentStepCount);
+      Serial.print(" | Accel: ");
+      Serial.print(accelMagnitude, 2);
+      Serial.print("g | Fall: ");
+      Serial.println(fallDetected ? "YES" : "NO");
     }
   }
 }
@@ -285,4 +385,17 @@ void onStepDetectorCharacteristicRead(BLEDevice central, BLECharacteristic chara
   }
   
   stepDetectorCharacteristic.writeValue(stepDetected);
+}
+
+void onFallDetectionCharacteristicRead(BLEDevice central, BLECharacteristic characteristic){
+  uint8_t fallStatus = fallDetected ? 1 : 0;
+  fallDetectionCharacteristic.writeValue(fallStatus);
+  Serial.print("Fall detection status read: ");
+  Serial.println(fallDetected ? "FALL DETECTED" : "Normal");
+}
+
+void onActivityInferenceCharacteristicRead(BLEDevice central, BLECharacteristic characteristic){
+  activityInferenceCharacteristic.writeValue(lastActivityInference);
+  Serial.print("Activity inference read: ");
+  Serial.println(lastActivityInference);
 }

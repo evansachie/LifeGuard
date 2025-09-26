@@ -48,7 +48,11 @@ const App = () => {
 
   const VoiceCommandsWrapper = ({ isDarkMode }: { isDarkMode: boolean }) => {
     const location = useLocation();
-    if (location.pathname === '/' || !isAuthenticated()) {
+    if (
+      location.pathname === '/' ||
+      !isAuthenticated() ||
+      location.pathname === '/emergency-tracking'
+    ) {
       return null;
     }
     return (

@@ -54,13 +54,6 @@ export const generateHealthReport = async (userData: any): Promise<HealthReportD
       },
       vitals: {
         heartRate: { average: '72 BPM', min: '65 BPM', max: '85 BPM', status: 'Normal' },
-        bloodPressure: {
-          average: '120/80 mmHg',
-          min: '110/70 mmHg',
-          max: '130/85 mmHg',
-          status: 'Normal',
-        },
-        bodyTemperature: { average: '36.8°C', min: '36.5°C', max: '37.1°C', status: 'Normal' },
         oxygenSaturation: { average: '98%', min: '96%', max: '99%', status: 'Normal' },
       },
       environmentalMetrics: {
@@ -96,8 +89,8 @@ export const healthData: HealthData = {
     { icon: MdAir, label: 'Air Quality', value: '75 AQI', color: '#2ECC71' },
   ],
   reports: [
-    { id: 1, date: 'Jul 10, 2023', type: 'General Health Report', status: 'Normal' },
-    { id: 2, date: 'Jul 5, 2023', type: 'Air Quality Report', status: 'Warning' },
-    { id: 3, date: 'Jul 1, 2023', type: 'Activity Report', status: 'Normal' },
+    { id: 1, date: 'Jul 10, 2025', type: 'General Health Report', status: 'Normal' },
+    { id: 2, date: 'Jul 5, 2025', type: 'Air Quality Report', status: 'Warning' },
+    { id: 3, date: 'Jul 1, 2025', type: 'Activity Report', status: 'Normal' },
   ],
 };

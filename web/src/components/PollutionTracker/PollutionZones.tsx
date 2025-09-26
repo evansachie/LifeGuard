@@ -54,15 +54,23 @@ const PollutionZones = ({ onZoneClick, liveZones = [] }: PollutionZonesProps) =>
     };
   }, []);
 
-  // Combine live zones with Firebase zones and fallback to mock data
+  // Combine live zones with Firebase zones AND comprehensive mock data for presentation
   const activeZones = useMemo(() => {
     const combinedZones = [...liveZones];
 
+    // Always add Firebase real-time zones if available
     if (useRealData && realTimeZones.length > 0) {
       combinedZones.push(...realTimeZones);
-    } else if (liveZones.length === 0) {
-      combinedZones.push(...pollutionZones);
+      console.log(`📊 Added ${realTimeZones.length} Firebase zones to map`);
     }
+
+    // Always add comprehensive mock data for presentation
+    combinedZones.push(...pollutionZones);
+    console.log(`🗺️ Added ${pollutionZones.length} mock zones for comprehensive coverage`);
+    console.log(
+      `📍 Total zones on map: ${combinedZones.length} (Live: ${liveZones.length}, Firebase: ${realTimeZones.length}, Mock: ${pollutionZones.length})`
+    );
+
     return combinedZones;
   }, [liveZones, realTimeZones, useRealData]);
 

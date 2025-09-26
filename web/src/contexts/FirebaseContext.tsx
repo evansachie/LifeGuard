@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { database } from '../services/firebaseConfig';
 import { firebaseDataService, FirebaseSensorData } from '../services/firebaseDataService';
 import { SensorData } from '../types/ble.types';

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal/DeleteConfirmationModal';
 import { FaStickyNote, FaSearch, FaPlus } from 'react-icons/fa';
 import { useMemos } from '../../hooks/useMemos';
