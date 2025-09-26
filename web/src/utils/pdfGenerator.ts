@@ -13,7 +13,6 @@ export interface EnhancedHealthReportData {
   };
   vitals: {
     heartRate: { average: string; min: string; max: string; status: string };
-    bloodPressure: { average: string; min: string; max: string; status: string };
     bodyTemperature: { average: string; min: string; max: string; status: string };
     oxygenSaturation: { average: string; min: string; max: string; status: string };
   };
@@ -167,27 +166,9 @@ export const generateHealthReportPDF = (
         yPosition += 8;
       }
 
-      if (healthApiData.avgbloodPressureSystolic && healthApiData.avgbloodPressureDiastolic) {
-        pdf.text(
-          `Blood Pressure: ${Math.round(healthApiData.avgbloodPressureSystolic)}/${Math.round(healthApiData.avgbloodPressureDiastolic)} mmHg`,
-          margin,
-          yPosition
-        );
-        yPosition += 8;
-      }
-
       if (healthApiData.avgOxygenSaturation) {
         pdf.text(
           `Oxygen Saturation: ${healthApiData.avgOxygenSaturation.toFixed(1)}%`,
-          margin,
-          yPosition
-        );
-        yPosition += 8;
-      }
-
-      if (healthApiData.avgBodyTemperature) {
-        pdf.text(
-          `Body Temperature: ${healthApiData.avgBodyTemperature.toFixed(1)}°C`,
           margin,
           yPosition
         );
@@ -291,7 +272,6 @@ export const generateHealthReportPDF = (
     if (
       healthApiData &&
       (healthApiData.avgHeartRate ||
-        healthApiData.avgbloodPressureSystolic ||
         healthApiData.avgOxygenSaturation ||
         healthApiData.avgBodyTemperature)
     ) {
@@ -307,15 +287,6 @@ export const generateHealthReportPDF = (
 
       if (healthApiData.avgHeartRate) {
         pdf.text(`Heart Rate: ${healthApiData.avgHeartRate.toFixed(0)} bpm`, margin, yPosition);
-        yPosition += 8;
-      }
-
-      if (healthApiData.avgbloodPressureSystolic && healthApiData.avgbloodPressureDiastolic) {
-        pdf.text(
-          `Blood Pressure: ${Math.round(healthApiData.avgbloodPressureSystolic)}/${Math.round(healthApiData.avgbloodPressureDiastolic)} mmHg`,
-          margin,
-          yPosition
-        );
         yPosition += 8;
       }
 

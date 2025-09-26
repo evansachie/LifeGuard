@@ -54,13 +54,6 @@ export const generateHealthReport = async (userData: any): Promise<HealthReportD
       },
       vitals: {
         heartRate: { average: '72 BPM', min: '65 BPM', max: '85 BPM', status: 'Normal' },
-        bloodPressure: {
-          average: '120/80 mmHg',
-          min: '110/70 mmHg',
-          max: '130/85 mmHg',
-          status: 'Normal',
-        },
-        bodyTemperature: { average: '36.8°C', min: '36.5°C', max: '37.1°C', status: 'Normal' },
         oxygenSaturation: { average: '98%', min: '96%', max: '99%', status: 'Normal' },
       },
       environmentalMetrics: {
